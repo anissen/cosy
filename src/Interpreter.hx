@@ -1,9 +1,15 @@
 package;
 
 class Interpreter {
-	var environment = new Environment();
+	public final globals:Environment;
 	
-	public function new() {}
+	var environment:Environment;
+	
+	public function new() {
+		globals = new Environment();
+		globals.define('clock', new ClockCallable());
+		environment = globals;
+	}
 	
 	public function interpret(statements:Array<Stmt>) {
 		try {
@@ -19,6 +25,8 @@ class Interpreter {
 				executeBlock(statements, new Environment(environment));
 			case Expression(e):
 				evaluate(e);
+			case Function(name, params, body):
+				environment.define(name.lexeme, new Function(name, params, body, environment));
 			case If(cond, then, el):
 				if(isTruthy(evaluate(cond)))
 					execute(then);
@@ -26,6 +34,9 @@ class Interpreter {
 					execute(el);
 			case Print(e):
 				Sys.println(stringify(evaluate(e)));
+			case Return(keyword, value):
+				var value = if(value == null) null else evaluate(value);
+				throw new Return(value);
 			case While(cond, body):
 				while(isTruthy(evaluate(cond))) execute(body);
 			case Var(name, init):
@@ -35,7 +46,7 @@ class Interpreter {
 		}
 	}
 	
-	function executeBlock(statements:Array<Stmt>, environment:Environment) {
+	public function executeBlock(statements:Array<Stmt>, environment:Environment) {
 		var previous = this.environment;
 		try {
 			this.environment = environment;
@@ -113,6 +124,17 @@ class Interpreter {
 					case _:
 						null; // unreachable
 				}
+			case Call(callee, paren, args):
+				var callee = evaluate(callee);
+				var args = args.map(evaluate);
+				if(!Std.is(callee, Callable)) {
+					throw new RuntimeError(paren, 'Can only call functions and classes');
+				} else {
+					var func:Callable = callee;
+					var arity = func.arity();
+					if(args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
+					func.call(this, args);	
+				}
 			case Grouping(e):
 				evaluate(e);
 			case Variable(name):
@@ -148,3 +170,9 @@ class Interpreter {
 	}
 }
 
+private class ClockCallable implements Callable {
+	public function new() {}
+	public function arity() return 0;
+	public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.time();
+	public function toString() return '<native fn>';
+}

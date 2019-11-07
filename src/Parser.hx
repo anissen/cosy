@@ -21,6 +21,7 @@ class Parser {
 	
 	function declaration() {
 		try {
+			if(match([Fun])) return func('function');
 			if(match([Var])) return varDeclaration();
 			return statement();
 		} catch(e:ParseError) {
@@ -33,6 +34,7 @@ class Parser {
 		if(match([For])) return forStatement();
 		if(match([If])) return ifStatement();
 		if(match([Print])) return printStatement();
+		if(match([Return])) return returnStatement();
 		if(match([While])) return whileStatement();
 		if(match([LeftBrace])) return Block(block());
 		return expressionStatement();
@@ -81,6 +83,13 @@ class Parser {
 		return Print(value);
 	}
 	
+	function returnStatement():Stmt {
+		var keyword = previous();
+		var value = if(check(Semicolon)) null else expression();
+		consume(Semicolon, 'Expect ";" after return.');
+		return Return(keyword, value);
+	}
+	
 	function whileStatement():Stmt {
 		consume(LeftParen, 'Expect "(" after "while".');
 		var condition = expression();
@@ -116,6 +125,26 @@ class Parser {
 		
 		consume(Semicolon, 'Expect ";" after variable declaration.');
 		return Var(name, initializer);
+	}
+	
+	function func(kind:String):Stmt {
+		var name = consume(Identifier, 'Expect $kind name.');
+		consume(LeftParen, 'Expect "(" after $kind name.');
+		var params = [];
+		if(!check(RightParen)) {
+			do {
+				if(params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
+				params.push(consume(Identifier, 'Expect parameter name.'));
+			} while(match([Comma]));
+		}
+		
+		consume(RightParen, 'Expect ")" after parameters.');
+		
+		consume(LeftBrace, 'Expect "{" before $kind body');
+		
+		var body = block();
+		
+		return Function(name, params, body);
 	}
 	
 	function assignment():Expr {
@@ -211,8 +240,34 @@ class Parser {
 			var right = unary();
 			Unary(op, right);
 		} else {
-			primary();
+			call();
 		}
+	}
+	
+	function call():Expr {
+		var expr = primary();
+		
+		while(true) {
+			if(match([LeftParen]))
+				expr = finishCall(expr);
+			else
+				break;
+		}
+		
+		return expr;
+	}
+	
+	function finishCall(callee:Expr):Expr {
+		var args = [];
+		if(!check(RightParen)) {
+			do {
+				if(args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
+				args.push(expression());
+			} while(match([Comma]));
+		}
+		
+		var paren = consume(RightParen, 'Expect ")" after arguments.');
+		return Call(callee, paren, args);
 	}
 	
 	function primary():Expr {
