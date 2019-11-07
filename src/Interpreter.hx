@@ -19,8 +19,15 @@ class Interpreter {
 				executeBlock(statements, new Environment(environment));
 			case Expression(e):
 				evaluate(e);
+			case If(cond, then, el):
+				if(isTruthy(evaluate(cond)))
+					execute(then);
+				else if(el != null)
+					execute(el);
 			case Print(e):
 				Sys.println(stringify(evaluate(e)));
+			case While(cond, body):
+				while(isTruthy(evaluate(cond))) execute(body);
 			case Var(name, init):
 				var value:Any = null;
 				if(init != null) value = evaluate(init);
@@ -48,6 +55,13 @@ class Interpreter {
 				value;
 			case Literal(v):
 				v;
+			case Logical(left, op, right):
+				var left = evaluate(left);
+				switch op.type {
+					case Or if(isTruthy(left)): left;
+					case And if(!isTruthy(left)): left;
+					case _: evaluate(right);
+				}
 			case Unary(op, right):
 				var right = evaluate(right);
 				switch op.type {
@@ -57,7 +71,7 @@ class Interpreter {
 						checkNumberOperand(op, right);
 						-(right:Float);
 					case _:
-						null;
+						null; // unreachable
 				}
 			case Binary(left, op, right):
 				var left:Any = evaluate(left);
@@ -97,7 +111,7 @@ class Interpreter {
 					case EqualEqual:
 						isEqual(left, right);
 					case _:
-						null;
+						null; // unreachable
 				}
 			case Grouping(e):
 				evaluate(e);
@@ -130,7 +144,6 @@ class Interpreter {
 	
 	function stringify(v:Any) {
 		if(v == null) return 'nil';
-		
 		return Std.string(v);
 	}
 }

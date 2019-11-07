@@ -30,21 +30,70 @@ class Parser {
 	}
 	
 	function statement():Stmt {
+		if(match([For])) return forStatement();
+		if(match([If])) return ifStatement();
 		if(match([Print])) return printStatement();
+		if(match([While])) return whileStatement();
 		if(match([LeftBrace])) return Block(block());
 		return expressionStatement();
 	}
 	
-	function expressionStatement():Stmt {
-		var expr = expression();
-		consume(Semicolon, 'Expect ";" after expression.');
-		return Expression(expr);
+	function forStatement():Stmt {
+		consume(LeftParen, 'Expect "(" after "for".');
+		
+		var init =
+			if(match([Semicolon])) null;
+			else if(match([Var])) varDeclaration();
+			else expressionStatement();
+			
+		var condition:Expr = 
+			if(!check(Semicolon)) expression();
+			else Literal(true);
+		consume(Semicolon, 'Expect ";" after loop condition.');
+		
+		var increment = 
+			if(!check(RightParen)) expression();
+			else null;
+		consume(RightParen, 'Expect ")" after loop increment.');
+		
+		var body = statement();
+		if(increment != null) body = Block([body, Expression(increment)]);
+		
+		var statements:Array<Stmt> = [While(condition, body)];
+		if(init != null) statements.unshift(init);
+		
+		return Block(statements);
+	}
+	
+	function ifStatement():Stmt {
+		consume(LeftParen, 'Expect "(" after "if".');
+		var condition = expression();
+		consume(RightParen, 'Expect ")" after condition.');
+		
+		var then = statement();
+		var el = if(match([Else])) statement() else null;
+		return If(condition, then, el);
 	}
 	
 	function printStatement():Stmt {
 		var value = expression();
 		consume(Semicolon, 'Expect ";" after value.');
 		return Print(value);
+	}
+	
+	function whileStatement():Stmt {
+		consume(LeftParen, 'Expect "(" after "while".');
+		var condition = expression();
+		consume(RightParen, 'Expect ")" after condition.');
+		
+		var body = statement();
+		return While(condition, body);
+	}
+	
+	function expressionStatement():Stmt {
+		var expr = expression();
+		consume(Semicolon, 'Expect ";" after expression.');
+		return Expression(expr);
 	}
 	
 	function block():Array<Stmt> {
@@ -70,7 +119,7 @@ class Parser {
 	}
 	
 	function assignment():Expr {
-		var expr = equality();
+		var expr = or();
 		
 		if(match([Equal])) {
 			var equals = previous();
@@ -85,6 +134,26 @@ class Parser {
 			error(equals, 'Invalid assignment target.');
 		}
 		
+		return expr;
+	}
+	
+	function or():Expr {
+		var expr = and();
+		while(match([Or])) {
+			var op = previous();
+			var right = and();
+			expr = Logical(expr, op, right);
+		}
+		return expr;
+	}
+	
+	function and():Expr {
+		var expr = equality();
+		while(match([And])) {
+			var op = previous();
+			var right = equality();
+			expr = Logical(expr, op, right);
+		}
 		return expr;
 	}
 	
