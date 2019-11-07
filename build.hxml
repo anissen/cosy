@@ -1,0 +1,5 @@
+-cp src
+-main Lox
+-java bin
+
+-D jvm

@@ -1,0 +1,1 @@
+haxe build.hxml && java -jar bin/Lox.jar
