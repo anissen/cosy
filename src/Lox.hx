@@ -6,6 +6,7 @@ class Lox {
 	static var hadError = false;
 	
 	static function main() {
+		
 		switch Sys.args() {
 			case []:
 				runPrompt();
