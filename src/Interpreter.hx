@@ -108,7 +108,7 @@ class Interpreter {
 	
 	function isTruthy(v:Any):Bool {
 		if(v == null) return false;
-		if(Std.is(v, Bool)) v;
+		if(Std.is(v, Bool)) return v;
 		return true;
 	}
 	
