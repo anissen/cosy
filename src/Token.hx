@@ -3,7 +3,7 @@ package;
 class Token {
 	public final type:TokenType;
 	public final lexeme:String;
-	public final literal:Dynamic;
+	public final literal:Any;
 	public final line:Int;
 	
 	public function new(type, lexeme, literal, line) {

@@ -3,7 +3,11 @@ package;
 import sys.io.File;
 
 class Lox {
+	
+	static final interpreter = new Interpreter();
+	
 	static var hadError = false;
+	static var hadRuntimeError = false;
 	
 	static function main() {
 		
@@ -22,6 +26,7 @@ class Lox {
 		var content = File.getContent(path);
 		run(content);
 		if(hadError) Sys.exit(65);
+		if(hadRuntimeError) Sys.exit(70);
 	}
 	
 	static function runPrompt() {
@@ -40,7 +45,7 @@ class Lox {
 		
 		if(hadError) return;
 		
-		Sys.println(new AstPrinter().print(expression));
+		interpreter.interpret(expression);
 	}
 	
 	static function report(line:Int, where:String, message:String) {
@@ -54,6 +59,11 @@ class Lox {
 			case Token(token) if(token.type ==  Eof): report(token.line, ' at end', message);
 			case Token(token): report(token.line, 'at "${token.lexeme}}"', message);
 		}
+	}
+	
+	public static function runtimeError(e:RuntimeError) {
+		Sys.println('${e.message}\n[line ${e.token.line}]');
+		hadRuntimeError = true;
 	}
 }
 

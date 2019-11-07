@@ -157,7 +157,7 @@ class Scanner {
 		return source.charCodeAt(current - 1);
 	}
 	
-	function addToken(type:TokenType, ?literal:Dynamic) {
+	function addToken(type:TokenType, ?literal:Any) {
 		var text = source.substring(start, current);
 		tokens.push(new Token(type, text, literal, line));
 	}

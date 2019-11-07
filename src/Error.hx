@@ -1,5 +1,8 @@
 package;
 
 class Error {
-	public function new() {}
+	public final message:String;
+	public function new(?message) {
+		this.message = message;
+	}
 }
