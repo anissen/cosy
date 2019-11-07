@@ -35,17 +35,34 @@ class Lox {
 	static function run(source:String) {
 		var scanner = new Scanner(source);
 		var tokens = scanner.scanTokens();
-		for(token in tokens) {
-			Sys.println(token);
-		}
-	}
-	
-	public static function error(line:Int, message:String) {
-		report(line, '', message);
+		var parser = new Parser(tokens);
+		var expression = parser.parse();
+		
+		if(hadError) return;
+		
+		Sys.println(new AstPrinter().print(expression));
 	}
 	
 	static function report(line:Int, where:String, message:String) {
 		Sys.println('[line $line] Error $where: $message');
 		hadError = true;
 	}
+	
+	public static function error(data:ErrorData, message:String) {
+		switch data {
+			case Line(line): report(line, '', message);
+			case Token(token) if(token.type ==  Eof): report(token.line, ' at end', message);
+			case Token(token): report(token.line, 'at "${token.lexeme}}"', message);
+		}
+	}
+}
+
+enum ErrorDataType {
+	Line(v:Int);
+	Token(v:Token);
+}
+
+abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
+	@:from static inline function line(v:Int):ErrorData return Line(v);
+	@:from static inline function token(v:Token):ErrorData return Token(v);
 }
