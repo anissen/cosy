@@ -118,7 +118,7 @@ class Scanner {
 			while(isDigit(peek())) advance();
 		}
 		
-		addToken(Number, Std.parseFloat(source.substr(start, current)));
+		addToken(Number, Std.parseFloat(source.substring(start, current)));
 	}
 	
 	function isDigit(c:Int) {
