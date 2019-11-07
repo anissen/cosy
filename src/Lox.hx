@@ -57,7 +57,7 @@ class Lox {
 		switch data {
 			case Line(line): report(line, '', message);
 			case Token(token) if(token.type ==  Eof): report(token.line, ' at end', message);
-			case Token(token): report(token.line, 'at "${token.lexeme}}"', message);
+			case Token(token): report(token.line, 'at "${token.lexeme}"', message);
 		}
 	}
 	
