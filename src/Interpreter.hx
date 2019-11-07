@@ -1,24 +1,56 @@
 package;
 
 class Interpreter {
+	var environment = new Environment();
+	
 	public function new() {}
 	
-	public function interpret(expression:Expr) {
+	public function interpret(statements:Array<Stmt>) {
 		try {
-			var v = evaluate(expression);
-			Sys.println(stringify(v));
+			for(statement in statements) execute(statement);
 		} catch(e:RuntimeError) {
 			Lox.runtimeError(e);
 		}
 	}
 	
+	function execute(statement:Stmt) {
+		switch statement {
+			case Block(statements):
+				executeBlock(statements, new Environment(environment));
+			case Expression(e):
+				evaluate(e);
+			case Print(e):
+				Sys.println(stringify(evaluate(e)));
+			case Var(name, init):
+				var value:Any = null;
+				if(init != null) value = evaluate(init);
+				environment.define(name.lexeme, value);
+		}
+	}
+	
+	function executeBlock(statements:Array<Stmt>, environment:Environment) {
+		var previous = this.environment;
+		try {
+			this.environment = environment;
+			for(statement in statements) execute(statement);
+			this.environment = previous; // emulates "finally" statement
+		} catch(e:Dynamic) {
+			this.environment = previous; // emulates "finally" statement
+			throw e;
+		}
+	}
+	
 	function evaluate(expr:Expr):Any {
 		return switch expr {
+			case Assign(name, value):
+				var value = evaluate(value);
+				environment.assign(name, value);
+				value;
 			case Literal(v):
 				v;
 			case Unary(op, right):
 				var right = evaluate(right);
-				return switch op.type {
+				switch op.type {
 					case Bang:
 						!isTruthy(right);
 					case Minus:
@@ -31,7 +63,7 @@ class Interpreter {
 				var left:Any = evaluate(left);
 				var right:Any = evaluate(right);
 				
-				return switch op.type {
+				switch op.type {
 					case Minus:
 						checkNumberOperands(op, left, right);
 						(left:Float) - (right:Float);
@@ -43,7 +75,7 @@ class Interpreter {
 						(left:Float) * (right:Float);
 					case Plus:
 						if(Std.is(left, Float) && Std.is(right, Float))
-							(left:Float) + (right:Float);
+							(left:Float) + (right:Float);	
 						else if(Std.is(left, String) && Std.is(right, String))
 							(left:String) + (right:String);
 						else
@@ -69,6 +101,8 @@ class Interpreter {
 				}
 			case Grouping(e):
 				evaluate(e);
+			case Variable(name):
+				environment.get(name);
 		}
 	}
 	

@@ -9,15 +9,83 @@ class Parser {
 	}
 	
 	public function parse() {
-		return try {
-			expression();
-		} catch(e:ParserError) {
-			null;
-		}
+		var statements = [];
+		while(!isAtEnd())
+			statements.push(declaration());
+		return statements;
 	}
 	
 	function expression():Expr {
-		return equality();
+		return assignment();
+	}
+	
+	function declaration() {
+		try {
+			if(match([Var])) return varDeclaration();
+			return statement();
+		} catch(e:ParseError) {
+			synchronize();
+			return null;
+		}
+	}
+	
+	function statement():Stmt {
+		if(match([Print])) return printStatement();
+		if(match([LeftBrace])) return Block(block());
+		return expressionStatement();
+	}
+	
+	function expressionStatement():Stmt {
+		var expr = expression();
+		consume(Semicolon, 'Expect ";" after expression.');
+		return Expression(expr);
+	}
+	
+	function printStatement():Stmt {
+		var value = expression();
+		consume(Semicolon, 'Expect ";" after value.');
+		return Print(value);
+	}
+	
+	function block():Array<Stmt> {
+		var statements = [];
+		
+		while(!check(RightBrace) && !isAtEnd()) {
+			statements.push(declaration());
+		}
+		
+		consume(RightBrace, 'Expect "}" after block.');
+		return statements;
+	}
+	
+	function varDeclaration():Stmt {
+		var name = consume(Identifier, 'Expect variable name.');
+		
+		var initializer = null;
+		
+		if(match([Equal])) initializer = expression();
+		
+		consume(Semicolon, 'Expect ";" after variable declaration.');
+		return Var(name, initializer);
+	}
+	
+	function assignment():Expr {
+		var expr = equality();
+		
+		if(match([Equal])) {
+			var equals = previous();
+			var value = assignment();
+			
+			switch expr {
+				case Variable(name):
+					return Assign(name, value);
+				case _:
+			}
+			
+			error(equals, 'Invalid assignment target.');
+		}
+		
+		return expr;
 	}
 	
 	function equality():Expr {
@@ -83,6 +151,7 @@ class Parser {
 		if(match([True])) return Literal(true);
 		if(match([Nil])) return Literal(null);
 		if(match([Number, String])) return Literal(previous().literal);
+		if(match([Identifier])) return Variable(previous());
 		if(match([LeftParen])) {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');
@@ -130,7 +199,7 @@ class Parser {
 	
 	function error(token:Token, message:String) {
 		Lox.error(token, message);
-		return new ParserError();
+		return new ParseError();
 	}
 	
 	function synchronize() {
@@ -146,4 +215,4 @@ class Parser {
 	}
 }
 
-private class ParserError extends Error {}
+private class ParseError extends Error {}
