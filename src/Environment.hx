@@ -1,7 +1,7 @@
 package;
 
 class Environment {
-	final enclosing:Environment;
+	public final enclosing:Environment;
 	final values:Map<String, Any> = new Map();
 	
 	public function new(?enclosing) {

@@ -25,11 +25,22 @@ class Resolver {
 				beginScope();
 				resolveStmts(statements);
 				endScope();
-			case Class(name, methods):
+			case Class(name, superclass, methods):
 				var enclosingClass = currentClass;
 				currentClass = Class;
 				declare(name);
 				define(name);
+				
+				if(superclass != null) {
+					switch superclass {
+						case Variable(sname) if(name.lexeme == sname.lexeme): Lox.error(sname, 'A class cannot inherit from itself');
+						case _:
+					}
+					currentClass = Subclass;
+					resolveExpr(superclass);
+					beginScope();
+					scopes.peek().set('super', true);
+				}
 				
 				beginScope();
 				scopes.peek().set('this', true);
@@ -41,6 +52,9 @@ class Resolver {
 					case _: // unreachable
 				}
 				endScope();
+				
+				if(superclass != null) endScope();
+				
 				currentClass = enclosingClass;
 			case Var(name, init):
 				declare(name);
@@ -91,6 +105,13 @@ class Resolver {
 				resolveExpr(obj);
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
+			case Super(kw, method):
+				switch currentClass {
+					case None: Lox.error(kw, 'Cannot use "super" outside of a class.');
+					case Class: Lox.error(kw, 'Cannot use "super" in a class with no superclass.');
+					case Subclass: // ok
+				}
+				resolveLocal(expr, kw);
 			case This(kw):
 				if(currentClass == None)
 					Lox.error(kw, 'Cannot use "this" outside of a class');
@@ -164,4 +185,5 @@ private enum FunctionType {
 private enum ClassType {
 	None;
 	Class;
+	Subclass;
 }

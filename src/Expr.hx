@@ -10,6 +10,7 @@ enum Expr {
 	Logical(left:Expr, op:Token, right:Expr);
 	Set(obj:Expr, name:Token, value:Expr);
 	This(keyword:Token);
+	Super(keyword:Token, method:Token);
 	Unary(op:Token, right:Expr);
 	Variable(name:Token);
 }

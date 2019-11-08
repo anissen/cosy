@@ -26,8 +26,21 @@ class Interpreter {
 		switch statement {
 			case Block(statements):
 				executeBlock(statements, new Environment(environment));
-			case Class(name, meths):
+			case Class(name, superclass, meths):
+				var superclass:Klass = 
+					if(superclass != null) {
+						var sc = evaluate(superclass);
+						if(!Std.is(sc, Klass)) throw new RuntimeError(switch superclass {
+							case Variable(name): name;
+							case _: throw 'unreachable';
+						}, 'Superclass must be a class');
+						sc;
+					} else null;
 				environment.define(name.lexeme, null);
+				if(superclass != null) {
+					environment = new Environment(environment);
+					environment.define('super', superclass);
+				}
 				var methods = new Map();
 				for(method in meths) switch method {
 					case Function(name, params, body):
@@ -35,7 +48,8 @@ class Interpreter {
 						methods.set(name.lexeme, func);
 					case _: // unreachable
 				}
-				var klass = new Klass(name.lexeme, methods);
+				var klass = new Klass(name.lexeme, superclass, methods);
+				if(superclass != null) environment = environment.enclosing;
 				environment.assign(name, klass);
 			case Expression(e):
 				evaluate(e);
@@ -170,6 +184,13 @@ class Interpreter {
 				evaluate(e);
 			case Variable(name) | This(name):
 				lookUpVariable(name, expr);
+			case Super(kw, meth):
+				var distance = locals.get(expr);
+				var superclass:Klass = environment.getAt(distance, 'super');
+				var obj:Instance = environment.getAt(distance - 1, 'this');
+				var method = superclass.findMethod(meth.lexeme);
+				if(method == null) throw new RuntimeError(meth, 'Undefined property "${meth.lexeme}".');
+				method.bind(obj);
 		}
 	}
 	

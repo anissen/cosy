@@ -130,6 +130,13 @@ class Parser {
 	
 	function classDeclaration():Stmt {
 		var name = consume(Identifier, 'Expect class name');
+		
+		var superclass:Expr = 
+			if(match([Less])) {
+				consume(Identifier, 'Expect superclass name');
+				Variable(previous());
+			} else null;
+		
 		consume(LeftBrace, 'Expect "{" before class body.');
 		
 		var methods = [];
@@ -137,7 +144,7 @@ class Parser {
 			methods.push(func('method'));
 			
 		consume(RightBrace, 'Expect "}" after class body.');
-		return Class(name, methods);
+		return Class(name, superclass, methods);
 	}
 	
 	function func(kind:String):Stmt {
@@ -291,6 +298,12 @@ class Parser {
 		if(match([True])) return Literal(true);
 		if(match([Nil])) return Literal(null);
 		if(match([Number, String])) return Literal(previous().literal);
+		if(match([Super])) {
+			var keyword = previous();
+			consume(Dot, 'Expect "." after "super".');
+			var method = consume(Identifier, 'Expect superclass method name.');
+			return Super(keyword, method);
+		}
 		if(match([This])) return This(previous());
 		if(match([Identifier])) return Variable(previous());
 		if(match([LeftParen])) {

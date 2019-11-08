@@ -2,10 +2,12 @@ package;
 
 class Klass implements Callable {
 	public final name:String;
+	public final superclass:Klass;
 	public final methods:Map<String, Function>;
 	
-	public function new(name, methods) {
+	public function new(name, superclass, methods) {
 		this.name = name;
+		this.superclass = superclass;
 		this.methods = methods;
 	}
 	
@@ -28,6 +30,8 @@ class Klass implements Callable {
 	public function findMethod(name:String):Function {
 		if(methods.exists(name))
 			return methods.get(name);
+		if(superclass != null)
+			return superclass.findMethod(name);
 		return null;
 	}
 	
