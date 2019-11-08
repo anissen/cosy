@@ -1,7 +1,8 @@
 package;
 
 class Interpreter {
-	public final globals:Environment;
+	final globals:Environment;
+	final locals = new Locals();
 	
 	var environment:Environment;
 	
@@ -46,6 +47,10 @@ class Interpreter {
 		}
 	}
 	
+	public function resolve(expr:Expr, depth:Int) {
+		locals.set(expr, depth);
+	}
+	
 	public function executeBlock(statements:Array<Stmt>, environment:Environment) {
 		var previous = this.environment;
 		try {
@@ -62,7 +67,10 @@ class Interpreter {
 		return switch expr {
 			case Assign(name, value):
 				var value = evaluate(value);
-				environment.assign(name, value);
+				switch locals.get(expr) {
+					case null: globals.assign(name, value);
+					case distance: environment.assignAt(distance, name, value);
+				}
 				value;
 			case Literal(v):
 				v;
@@ -138,7 +146,14 @@ class Interpreter {
 			case Grouping(e):
 				evaluate(e);
 			case Variable(name):
-				environment.get(name);
+				lookUpVariable(name, expr);
+		}
+	}
+	
+	function lookUpVariable(name:Token, expr:Expr) {
+		return switch locals.get(expr) {
+			case null: globals.get(name);
+			case distance: environment.getAt(distance, name.lexeme);
 		}
 	}
 	
@@ -175,4 +190,10 @@ private class ClockCallable implements Callable {
 	public function arity() return 0;
 	public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.time();
 	public function toString() return '<native fn>';
+}
+
+abstract Locals(Map<{}, Int>) {
+	public inline function new() this = new Map();
+	public inline function get(expr:Expr):Null<Int> return this.get(cast expr); // this is a hack, depends on implementation details of ObjectMap
+	public inline function set(expr:Expr, v:Int) this.set(cast expr, v); // this is a hack, depends on implementation details of ObjectMap
 }

@@ -20,6 +20,10 @@ class Environment {
 		throw new RuntimeError(name, 'Undefined variable "${name.lexeme}".');
 	}
 	
+	public function getAt(distance:Int, name:String) {
+		return ancestor(distance).values.get(name);
+	}
+	
 	public function assign(name:Token, value:Any) {
 		if(values.exists(name.lexeme))
 			values.set(name.lexeme, value);
@@ -27,5 +31,15 @@ class Environment {
 			enclosing.assign(name, value);
 		else
 			throw new RuntimeError(name, 'Undefined variable "${name.lexeme}".');
+	}
+	
+	public function assignAt(distance:Int, name:Token, value:Any) {
+		return ancestor(distance).values.set(name.lexeme, value);
+	}
+	
+	public function ancestor(distance:Int) {
+		var env = this;
+		for(_ in 0...distance) env = env.enclosing;
+		return env;
 	}
 }
