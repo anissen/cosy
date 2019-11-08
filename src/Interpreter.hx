@@ -1,5 +1,7 @@
 package;
 
+import java.javax.management.ClassAttributeValueExp;
+
 class Interpreter {
 	final globals:Environment;
 	final locals = new Locals();
@@ -24,10 +26,21 @@ class Interpreter {
 		switch statement {
 			case Block(statements):
 				executeBlock(statements, new Environment(environment));
+			case Class(name, meths):
+				environment.define(name.lexeme, null);
+				var methods = new Map();
+				for(method in meths) switch method {
+					case Function(name, params, body):
+						var func = new Function(name, params, body, environment, name.lexeme == 'init');
+						methods.set(name.lexeme, func);
+					case _: // unreachable
+				}
+				var klass = new Klass(name.lexeme, methods);
+				environment.assign(name, klass);
 			case Expression(e):
 				evaluate(e);
 			case Function(name, params, body):
-				environment.define(name.lexeme, new Function(name, params, body, environment));
+				environment.define(name.lexeme, new Function(name, params, body, environment, false));
 			case If(cond, then, el):
 				if(isTruthy(evaluate(cond)))
 					execute(then);
@@ -143,9 +156,19 @@ class Interpreter {
 					if(args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
 					func.call(this, args);	
 				}
+			case Get(obj, name):
+				var obj = evaluate(obj);
+				if(Std.is(obj, Instance)) return (obj:Instance).get(name);
+				else throw new RuntimeError(name, 'Only instances have properties');
+			case Set(obj, name, value):
+				var obj = evaluate(obj);
+				if(!Std.is(obj, Instance)) throw new RuntimeError(name, 'Only instances have fields');
+				var value = evaluate(value);
+				(obj:Instance).set(name, value);
+				value;
 			case Grouping(e):
 				evaluate(e);
-			case Variable(name):
+			case Variable(name) | This(name):
 				lookUpVariable(name, expr);
 		}
 	}

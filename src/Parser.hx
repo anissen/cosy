@@ -21,6 +21,7 @@ class Parser {
 	
 	function declaration() {
 		try {
+			if(match([Class])) return classDeclaration();
 			if(match([Fun])) return func('function');
 			if(match([Var])) return varDeclaration();
 			return statement();
@@ -127,6 +128,18 @@ class Parser {
 		return Var(name, initializer);
 	}
 	
+	function classDeclaration():Stmt {
+		var name = consume(Identifier, 'Expect class name');
+		consume(LeftBrace, 'Expect "{" before class body.');
+		
+		var methods = [];
+		while(!check(RightBrace) && !isAtEnd())
+			methods.push(func('method'));
+			
+		consume(RightBrace, 'Expect "}" after class body.');
+		return Class(name, methods);
+	}
+	
 	function func(kind:String):Stmt {
 		var name = consume(Identifier, 'Expect $kind name.');
 		consume(LeftParen, 'Expect "(" after $kind name.');
@@ -155,8 +168,8 @@ class Parser {
 			var value = assignment();
 			
 			switch expr {
-				case Variable(name):
-					return Assign(name, value);
+				case Variable(name): return Assign(name, value);
+				case Get(obj, name): return Set(obj, name, value);
 				case _:
 			}
 			
@@ -250,7 +263,10 @@ class Parser {
 		while(true) {
 			if(match([LeftParen]))
 				expr = finishCall(expr);
-			else
+			else if(match([Dot])) {
+				var name = consume(Identifier, 'Expect property name after ".".');
+				expr = Get(expr, name);
+			} else
 				break;
 		}
 		
@@ -275,6 +291,7 @@ class Parser {
 		if(match([True])) return Literal(true);
 		if(match([Nil])) return Literal(null);
 		if(match([Number, String])) return Literal(previous().literal);
+		if(match([This])) return This(previous());
 		if(match([Identifier])) return Variable(previous());
 		if(match([LeftParen])) {
 			var expr = expression();

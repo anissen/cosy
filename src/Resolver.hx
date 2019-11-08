@@ -5,6 +5,7 @@ class Resolver {
 	
 	final scopes = new Stack<Map<String, Bool>>();
 	var currentFunction:FunctionType = None;
+	var currentClass:ClassType = None;
 	
 	public function new(interpreter) {
 		this.interpreter = interpreter;
@@ -19,11 +20,28 @@ class Resolver {
 	}
 	
 	function resolveStmt(stmt:Stmt) {
-		return switch stmt {
+		switch stmt {
 			case Block(statements):
 				beginScope();
 				resolveStmts(statements);
 				endScope();
+			case Class(name, methods):
+				var enclosingClass = currentClass;
+				currentClass = Class;
+				declare(name);
+				define(name);
+				
+				beginScope();
+				scopes.peek().set('this', true);
+				
+				for(method in methods) switch method {
+					case Function(name, params, body):
+						var declaration = name.lexeme == 'init' ? Initializer : Method;
+						resolveFunction(name, params, body, declaration);
+					case _: // unreachable
+				}
+				endScope();
+				currentClass = enclosingClass;
 			case Var(name, init):
 				declare(name);
 				if(init != null) resolveExpr(init);
@@ -40,7 +58,10 @@ class Resolver {
 				if(el != null) resolveStmt(el);
 			case Return(kw, val):
 				if(currentFunction == None) Lox.error(kw, 'Cannot return from top-level code.');
-				if(val != null) resolveExpr(val);
+				if(val != null) {
+					if(currentFunction == Initializer) Lox.error(kw, 'Cannot return value from an initializer.');
+					resolveExpr(val);
+				}
 			case While(cond, body):
 				resolveExpr(cond);
 				resolveStmt(body);
@@ -49,7 +70,7 @@ class Resolver {
 	}
 	
 	function resolveExpr(expr:Expr) {
-		return switch expr {
+		switch expr {
 			case Assign(name, value):
 				resolveExpr(value);
 				resolveLocal(expr, name);
@@ -63,8 +84,18 @@ class Resolver {
 			case Call(callee, paren, arguments):
 				resolveExpr(callee);
 				for(arg in arguments) resolveExpr(arg);
+			case Get(obj, name):
+				resolveExpr(obj);
+			case Set(obj, name, value):
+				resolveExpr(value);
+				resolveExpr(obj);
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
+			case This(kw):
+				if(currentClass == None)
+					Lox.error(kw, 'Cannot use "this" outside of a class');
+				else 
+					resolveLocal(expr, kw);
 			case Literal(_):
 				// skip
 				
@@ -126,5 +157,11 @@ abstract Stack<T>(Array<T>) {
 
 private enum FunctionType {
 	None;
+	Method;
+	Initializer;
 	Function;
+}
+private enum ClassType {
+	None;
+	Class;
 }
