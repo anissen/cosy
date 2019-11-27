@@ -1,6 +1,6 @@
-package;
+package lox;
 
-import TokenType;
+import lox.TokenType;
 
 class Scanner {
 	final source:String;

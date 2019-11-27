@@ -1,4 +1,4 @@
-package;
+package lox;
 
 class Function implements Callable {
 	final name:Token;

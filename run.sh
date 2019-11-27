@@ -1,1 +1,1 @@
-haxe build.hxml && java -jar bin/Lox.jar $@
+haxe build.hxml && java -jar bin/java/Lox.jar $@

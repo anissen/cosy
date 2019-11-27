@@ -1,5 +1,8 @@
 -cp src
--main Lox
--java bin
+-main lox.Lox
 
+# -js bin/node/lox.js
+# -lib hxnodejs
+
+-java bin/java
 -D jvm

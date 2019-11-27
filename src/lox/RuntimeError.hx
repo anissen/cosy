@@ -1,4 +1,4 @@
-package;
+package lox;
 
 class RuntimeError extends Error {
 	public final token:Token;

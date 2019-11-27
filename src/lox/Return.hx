@@ -1,4 +1,4 @@
-package;
+package lox;
 
 class Return extends Error {
 	public final value:Any;

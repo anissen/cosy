@@ -1,4 +1,4 @@
-package;
+package lox;
 
 class Environment {
 	public final enclosing:Environment;

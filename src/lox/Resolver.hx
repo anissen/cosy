@@ -1,4 +1,4 @@
-package;
+package lox;
 
 class Resolver {
 	final interpreter:Interpreter;

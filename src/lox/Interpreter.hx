@@ -1,6 +1,4 @@
-package;
-
-import java.javax.management.ClassAttributeValueExp;
+package lox;
 
 class Interpreter {
 	final globals:Environment;

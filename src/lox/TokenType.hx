@@ -1,4 +1,4 @@
-package;
+package lox;
 
 enum TokenType {
 	LeftParen; RightParen; LeftBrace; RightBrace;

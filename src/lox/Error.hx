@@ -1,4 +1,4 @@
-package;
+package lox;
 
 class Error {
 	public final message:String;

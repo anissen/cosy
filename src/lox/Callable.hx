@@ -1,4 +1,4 @@
-package;
+package lox;
 
 interface Callable {
 	function arity():Int;
