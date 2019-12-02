@@ -1,9 +1,14 @@
 package lox;
 
+typedef Variable = {
+	var name:Token;
+	var state:VariableState;
+}
+
 class Resolver {
 	final interpreter:Interpreter;
 	
-	final scopes = new Stack<Map<String, Bool>>();
+	final scopes = new Stack<Map<String, Variable>>();
 	var currentFunction:FunctionType = None;
 	var currentClass:ClassType = None;
 	
@@ -39,11 +44,11 @@ class Resolver {
 					currentClass = Subclass;
 					resolveExpr(superclass);
 					beginScope();
-					scopes.peek().set('super', true);
+					scopes.peek().set('super', { name: new Token(Super, 'super', null, name.line), state: Read });
 				}
 				
 				beginScope();
-				scopes.peek().set('this', true);
+				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read });
 				
 				for(method in methods) switch method {
 					case Function(name, params, body):
@@ -87,11 +92,11 @@ class Resolver {
 		switch expr {
 			case Assign(name, value):
 				resolveExpr(value);
-				resolveLocal(expr, name);
+				resolveLocal(expr, name, false);
 			case Variable(name):
-				if(!scopes.isEmpty() && scopes.peek().get(name.lexeme) == false)
+				if(!scopes.isEmpty() && scopes.peek().exists(name.lexeme) && scopes.peek().get(name.lexeme).state.match(Declared))
 					Lox.error(name, 'Cannot read local variable in its own initializer');
-				resolveLocal(expr, name);
+				resolveLocal(expr, name, true);
 			case Binary(left, _, right) | Logical(left, _, right):
 				resolveExpr(left);
 				resolveExpr(right);
@@ -111,15 +116,16 @@ class Resolver {
 					case Class: Lox.error(kw, 'Cannot use "super" in a class with no superclass.');
 					case Subclass: // ok
 				}
-				resolveLocal(expr, kw);
+				resolveLocal(expr, kw, true);
 			case This(kw):
 				if(currentClass == None)
-					Lox.error(kw, 'Cannot use "this" outside of a class');
+					Lox.error(kw, 'Cannot use "this" outside of a class.');
 				else 
-					resolveLocal(expr, kw);
+					resolveLocal(expr, kw, true);
 			case Literal(_):
 				// skip
-				
+			case AnonFunction(params, body): 
+				resolveFunction(null, params, body, Function);
 		}
 	}
 	
@@ -141,26 +147,34 @@ class Resolver {
 	}
 	
 	function endScope() {
-		scopes.pop();
+		var scope = scopes.pop();
+
+		for (name => variable in scope) {
+			if (variable.state.match(Defined)) Lox.error(variable.name, "Local variable is not used.");
+		}
 	}
 	
 	function declare(name:Token) {
 		if(scopes.isEmpty()) return;
 		var scope = scopes.peek();
 		if(scope.exists(name.lexeme)) Lox.error(name, 'Variable with this name already declared in this scope.');
-		scope.set(name.lexeme, false);
+		scope.set(name.lexeme, { name: name, state: Declared });
 	}
 	
 	function define(name:Token) {
 		if(scopes.isEmpty()) return;
-		scopes.peek().set(name.lexeme, true);
+		scopes.peek().set(name.lexeme, { name: name, state: Defined });
 	}
 	
-	function resolveLocal(expr:Expr, name:Token) {
+	function resolveLocal(expr:Expr, name:Token, isRead:Bool) {
 		var i = scopes.length - 1;
 		while(i >= 0) {
 			if(scopes.get(i).exists(name.lexeme)) {
 				interpreter.resolve(expr, scopes.length - 1 - i);
+
+				if(isRead) {
+					scopes.get(i).get(name.lexeme).state = Read;
+				}
 				return;
 			}
 			i--;
@@ -175,7 +189,11 @@ abstract Stack<T>(Array<T>) {
 	public inline function peek() return this[this.length - 1];
 	public inline function get(i:Int) return this[i];
 }
-
+private enum VariableState {
+	Declared;
+	Defined;
+	Read;
+}
 private enum FunctionType {
 	None;
 	Method;
