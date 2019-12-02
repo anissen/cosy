@@ -146,9 +146,17 @@ class Parser {
 		consume(RightBrace, 'Expect "}" after class body.');
 		return Class(name, superclass, methods);
 	}
-	
+
 	function func(kind:String):Stmt {
 		var name = consume(Identifier, 'Expect $kind name.');
+		var functionExpr = funcBody(kind);
+		return switch functionExpr {
+			case AnonFunction(params, body): Function(name, params, body);
+			case _: throw new RuntimeError(name, 'Invalid function declaration.');
+		}
+	}
+	
+	function funcBody(kind:String):Expr {
 		consume(LeftParen, 'Expect "(" after $kind name.');
 		var params = [];
 		if(!check(RightParen)) {
@@ -164,7 +172,7 @@ class Parser {
 		
 		var body = block();
 		
-		return Function(name, params, body);
+		return AnonFunction(params, body);
 	}
 	
 	function assignment():Expr {
@@ -306,6 +314,7 @@ class Parser {
 		}
 		if(match([This])) return This(previous());
 		if(match([Identifier])) return Variable(previous());
+		if(match([Fun])) return funcBody("function");
 		if(match([LeftParen])) {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');

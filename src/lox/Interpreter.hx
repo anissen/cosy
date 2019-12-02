@@ -193,6 +193,8 @@ class Interpreter {
 				var method = superclass.findMethod(meth.lexeme);
 				if(method == null) throw new RuntimeError(meth, 'Undefined property "${meth.lexeme}".');
 				method.bind(obj);
+			case AnonFunction(params, body):
+				new Function(null, params, body, environment, false);
 		}
 	}
 	
