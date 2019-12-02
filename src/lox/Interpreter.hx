@@ -132,12 +132,15 @@ class Interpreter {
 						checkNumberOperands(op, left, right);
 						(left:Float) * (right:Float);
 					case Plus:
-						if(Std.is(left, Float) && Std.is(right, Float))
-							(left:Float) + (right:Float);	
-						else if(Std.is(left, String) && Std.is(right, String))
+						if (Std.is(left, Float) && Std.is(right, Float))
+							(left:Float) + (right:Float);
+						else if (Std.is(left, Float) && Std.is(right, String))
+							(left:Float) + (right:String);
+						else if (Std.is(left, String) && Std.is(right, Float))
+							(left:String) + (right:Float);
+						else if (Std.is(left, String) && Std.is(right, String))
 							(left:String) + (right:String);
-						else
-							throw new RuntimeError(op, 'Operands must be two numbers or two strings.');
+						else throw new RuntimeError(op, "Operands cannot be concatinated.");
 					case Greater:
 						checkNumberOperands(op, left, right);
 						(left:Float) > (right:Float);
