@@ -5,6 +5,7 @@ class Interpreter {
 	final locals = new Locals();
 	
 	var environment:Environment;
+	static final uninitialized :Any = {};
 	
 	public function new() {
 		globals = new Environment();
@@ -66,7 +67,7 @@ class Interpreter {
 			case While(cond, body):
 				while(isTruthy(evaluate(cond))) execute(body);
 			case Var(name, init):
-				var value:Any = null;
+				var value:Any = uninitialized;
 				if(init != null) value = evaluate(init);
 				environment.define(name.lexeme, value);
 		}
@@ -193,10 +194,12 @@ class Interpreter {
 	}
 	
 	function lookUpVariable(name:Token, expr:Expr) {
-		return switch locals.get(expr) {
+		var value = switch locals.get(expr) {
 			case null: globals.get(name);
 			case distance: environment.getAt(distance, name.lexeme);
 		}
+		if (value == uninitialized) throw new RuntimeError(name, 'Accessing uninitialized variable "${name.lexeme}".');
+		return value;
 	}
 	
 	function isTruthy(v:Any):Bool {
