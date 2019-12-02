@@ -41,5 +41,5 @@ class Function implements Callable {
 		return new Function(name, params, body, env, isInitializer);
 	}
 	
-	public function toString() return '<fn ${name.lexeme}>';
+	public function toString() return (name != null ? '<fn ${name.lexeme}>' : '<fn>');
 }
