@@ -8,6 +8,7 @@ class Lox {
 	
 	static var hadError = false;
 	static var hadRuntimeError = false;
+    static var prettyPrint = false;
 	
 	static function main() {
 		
@@ -16,8 +17,11 @@ class Lox {
 				runPrompt();
 			case [v]:
 				runFile(v);
+            case ['--prettyprint', v]:
+                prettyPrint = true;
+				runFile(v);
 			case _:
-				Sys.println('Usage: hlox [script]');
+				Sys.println('Usage: hlox (--prettyprint) [script]');
 				Sys.exit(64);
 		}
 	}
@@ -49,6 +53,11 @@ class Lox {
 		resolver.resolve(statements);
 		
 		if(hadError) return;
+
+        if(prettyPrint) {
+            for (stmt in statements) Sys.println(new AstPrinter().printStmt(stmt));
+            return;
+        }
 		
 		interpreter.interpret(statements);
 	}
@@ -67,7 +76,7 @@ class Lox {
 	}
 	
 	public static function runtimeError(e:RuntimeError) {
-		Sys.println('${e.message}\n[line ${e.token.line}]');
+		Sys.println('[line ${e.token.line}] Runtime Error: ${e.message}');
 		hadRuntimeError = true;
 	}
 }
