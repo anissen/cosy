@@ -9,6 +9,7 @@ class Lox {
 	static var hadError = false;
 	static var hadRuntimeError = false;
     static var prettyPrint = false;
+    static var javascript = false;
 	
 	static function main() {
 		
@@ -20,8 +21,11 @@ class Lox {
             case ['--prettyprint', v]:
                 prettyPrint = true;
 				runFile(v);
+            case ['--javascript', v]:
+                javascript = true;
+				runFile(v);
 			case _:
-				Sys.println('Usage: hlox (--prettyprint) [script]');
+				Sys.println('Usage: hlox (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
 				Sys.exit(64);
 		}
 	}
@@ -55,7 +59,18 @@ class Lox {
 		if(hadError) return;
 
         if(prettyPrint) {
-            for (stmt in statements) Sys.println(new AstPrinter().printStmt(stmt));
+            var printer = new AstPrinter();
+            for (stmt in statements) Sys.println(printer.printStmt(stmt));
+            return;
+        }
+
+        if(javascript) {
+            // Hack to inject a JavaScript standard library
+            var stdLib = '// standard library\nlet clock = Date.now;\n';
+            Sys.println(stdLib);
+
+            var printer = new JavaScriptPrinter();
+            for (stmt in statements) Sys.println(printer.printStmt(stmt));
             return;
         }
 		
