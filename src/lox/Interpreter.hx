@@ -238,7 +238,7 @@ class Interpreter {
 private class ClockCallable implements Callable {
 	public function new() {}
 	public function arity() return 0;
-	public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.time();
+	public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.time() * 1000;
 	public function toString() return '<native fn>';
 }
 

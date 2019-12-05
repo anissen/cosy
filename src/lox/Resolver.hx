@@ -21,9 +21,21 @@ class Resolver {
 	}
 	
 	function resolveStmts(stmts:Array<Stmt>) {
-		for(s in stmts) resolveStmt(s);
+        var returnToken = null;
+        for (stmt in stmts) {
+            switch stmt {
+                case Return(kw, _): returnToken = kw;
+                case _:
+                    if (returnToken != null) {
+                        // TODO: We cannot report the correct token so we simply report the return token
+                        Lox.error(returnToken, 'Unreachable code after return statement.');
+                        returnToken = null;
+                    }
+            }
+            resolveStmt(stmt);
+        }
 	}
-	
+
 	function resolveStmt(stmt:Stmt) {
 		switch stmt {
 			case Block(statements):
@@ -84,7 +96,6 @@ class Resolver {
 			case While(cond, body):
 				resolveExpr(cond);
 				resolveStmt(body);
-				
 		}
 	}
 	
@@ -137,7 +148,7 @@ class Resolver {
 			declare(param);
 			define(param);
 		}
-		resolveStmts(body);
+        resolveStmts(body);
 		endScope();
 		currentFunction = enclosingFunction;
 	}

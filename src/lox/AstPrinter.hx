@@ -7,7 +7,7 @@ class AstPrinter {
 	var isInClass:Bool = false;
 
 	function indent():String {
-		return [ for (i in 0...indentAmount) "  " ].join("");
+		return [ for (_ in 0...indentAmount) "  " ].join("");
 	}
 
 	public function printStmt(statement:Stmt):String {
@@ -46,12 +46,12 @@ class AstPrinter {
 			case Call(callee, paren, arguments): '${printExpr(callee)}(${[ for (arg in arguments) printExpr(arg) ].join(',')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
-			case Literal(v): if (v == null) { 'nil'; } else if (Std.is(v, String)) { '"$v"'; } else { v; };
+			case Literal(v): if (v == null) { 'nil'; } else if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): 'this';
 			case Super(keyword, method): 'super.${method.lexeme}';
-			case Unary(op, right): '(${op.lexeme}${printExpr(right)})';
+			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body):
 				var parameters = [ for (token in params) token.lexeme ].join(',');
