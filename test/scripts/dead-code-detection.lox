@@ -1,0 +1,19 @@
+fun f() {
+  print "before return";
+  if (false) return;
+  print "after first return";
+  return;
+  print "after second return";
+}
+
+f();
+
+fun f2() {
+    while (true) {
+        print "while: before return";
+        return;
+        print "while: after return";
+    }
+}
+
+f2();

@@ -1,0 +1,30 @@
+var start = clock();
+
+class Doughnut {
+  cook() {
+    print "Fry until golden brown.";
+  }
+}
+
+class BostonCream < Doughnut {
+  cook() {
+    super.cook();
+    print "Pipe full of custard and coat with chocolate.";
+  }
+}
+
+BostonCream().cook();
+
+// Calculates the nth fibonacci number
+fun fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 2) + fibonacci(n - 1);
+}
+
+for (var i = 0; i < 30; i = i + 1) {
+  print fibonacci(i);
+}
+
+var end = clock();
+var diff = (end - start);
+print("Total time: " + diff + " ms");
