@@ -9,6 +9,8 @@ class Lox {
     static var hadRuntimeError = false;
     static var prettyPrint = false;
     static var javascript = false;
+    static var testing = false;
+    static var testOutput = '';
 
     static function main() {
         switch Sys.args() {
@@ -43,6 +45,24 @@ class Lox {
         }
     }
 
+    static public function test(source :String, prettyprint :Bool = false) :String {
+        prettyPrint = prettyprint;
+        testing = true;
+        testOutput = '';
+        run(source);
+        testing = false;
+        prettyPrint = false;
+        return StringTools.trim(testOutput);
+    }
+
+    static public function println(v :Dynamic) {
+        if (testing) {
+            testOutput += v + '\n';
+        } else {
+            Sys.println(v);
+        }
+    }
+
     static function run(source:String) {
         var scanner = new Scanner(source);
         var tokens = scanner.scanTokens();
@@ -58,17 +78,17 @@ class Lox {
 
         if (prettyPrint) {
             var printer = new AstPrinter();
-            for (stmt in statements) Sys.println(printer.printStmt(stmt));
+            for (stmt in statements) println(printer.printStmt(stmt));
             return;
         }
 
         if (javascript) {
             // Hack to inject a JavaScript standard library
             var stdLib = '// standard library\nlet clock = Date.now;\n';
-            Sys.println(stdLib);
+            println(stdLib);
 
             var printer = new JavaScriptPrinter();
-            for (stmt in statements) Sys.println(printer.printStmt(stmt));
+            for (stmt in statements) println(printer.printStmt(stmt));
             return;
         }
 
@@ -76,20 +96,20 @@ class Lox {
     }
 
     static function report(line:Int, where:String, message:String) {
-        Sys.println('[line $line] Error $where: $message');
+        println('[line $line] Error $where: $message');
         hadError = true;
     }
 
     public static function error(data:ErrorData, message:String) {
         switch data {
             case Line(line): report(line, '', message);
-            case Token(token) if (token.type == Eof): report(token.line, ' at end', message);
+            case Token(token) if (token.type == Eof): report(token.line, 'at end', message);
             case Token(token): report(token.line, 'at "${token.lexeme}"', message);
         }
     }
 
     public static function runtimeError(e:RuntimeError) {
-        Sys.println('[line ${e.token.line}] Runtime Error: ${e.message}');
+        println('[line ${e.token.line}] Runtime Error: ${e.message}');
         hadRuntimeError = true;
     }
 }

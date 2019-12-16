@@ -5,4 +5,5 @@
 # -lib hxnodejs
 
 -java bin/java
+# jvm: compilation is faster, executation is slower (at least for fibonacci)
 -D jvm

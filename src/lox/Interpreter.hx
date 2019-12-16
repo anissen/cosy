@@ -58,7 +58,7 @@ class Interpreter {
                 if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
             case Print(e):
-                Sys.println(stringify(evaluate(e)));
+                Lox.println(stringify(evaluate(e)));
             case Return(keyword, value):
                 var value = if(value == null) null else evaluate(value);
                 throw new Return(value);
