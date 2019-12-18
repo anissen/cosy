@@ -77,6 +77,12 @@ class Resolver {
 				declare(name);
 				if(init != null) resolveExpr(init);
 				define(name);
+            case For(name, from, to, body):
+                declare(name);
+                define(name);
+                resolveExpr(from);
+                resolveExpr(to);
+                resolveStmt(body);
 			case Function(name, params, body):
 				declare(name);
 				define(name);

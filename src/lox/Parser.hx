@@ -42,30 +42,13 @@ class Parser {
 	}
 	
 	function forStatement():Stmt {
-		consume(LeftParen, 'Expect "(" after "for".');
-		
-		var init =
-			if(match([Semicolon])) null;
-			else if(match([Var])) varDeclaration();
-			else expressionStatement();
-			
-		var condition:Expr = 
-			if(!check(Semicolon)) expression();
-			else Literal(true);
-		consume(Semicolon, 'Expect ";" after loop condition.');
-		
-		var increment = 
-			if(!check(RightParen)) expression();
-			else null;
-		consume(RightParen, 'Expect ")" after loop increment.');
-		
+        var name = consume(Identifier, 'Expect variable name.');
+        consume(In, 'Expect "in" after loop variable.');
+        var from = addition();
+        consume(DotDot, 'Expect ":" between from and to numbers.');
+        var to = addition();
 		var body = statement();
-		if(increment != null) body = Block([body, Expression(increment)]);
-		
-		var statements:Array<Stmt> = [While(condition, body)];
-		if(init != null) statements.unshift(init);
-		
-		return Block(statements);
+		return For(name, from, to, body);
 	}
 	
 	function ifStatement():Stmt {

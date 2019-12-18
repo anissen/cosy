@@ -52,6 +52,15 @@ class Interpreter {
                 environment.assign(name, klass);
             case Expression(e):
                 evaluate(e);
+            case For(name, from, to, body):
+                var fromVal = evaluate(from);
+                if (!Std.is(fromVal, Float)) Lox.error(name, 'Number expected in "from" clause of loop.');
+                var toVal = evaluate(to);
+                if (!Std.is(toVal, Float)) Lox.error(name, 'Number expected in "to" clause of loop.');
+                for (counter in (fromVal :Int)...(toVal :Int)) {
+                    environment.define(name.lexeme, counter);
+                    execute(body);
+                }
             case Function(name, params, body):
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):

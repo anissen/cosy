@@ -39,6 +39,7 @@ class JavaScriptPrinter {
 				indentAmount--;
 				'$declaration {\n$body\n${indent()}}';
 			case Expression(e): '${printExpr(e)};';
+			case For(name, from, to, body): 'for (var ${name.lexeme} = ${printExpr(from)}; ${name.lexeme} < ${printExpr(to)}; ${name.lexeme}++) ${printStmt(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
 				var parameters = [ for (token in params) token.lexeme ].join(',');

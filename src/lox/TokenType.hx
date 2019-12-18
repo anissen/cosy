@@ -2,7 +2,7 @@ package lox;
 
 enum TokenType {
 	LeftParen; RightParen; LeftBrace; RightBrace;
-	Comma; Dot; Minus; Plus; Semicolon; Slash; Star;
+	Comma; Dot; DotDot; Minus; Plus; Semicolon; Slash; Star;
 	
 	Bang; BangEqual;
 	Equal; EqualEqual;
@@ -11,7 +11,7 @@ enum TokenType {
 	
 	Identifier; String; Number;
 	
-	And; Class; Else; False; Fun; For; If; Nil; Or;
+	And; Class; Else; False; Fun; For; In; If; Nil; Or;
 	Print; Return; Super; This; True; Var; While;
 	
 	Eof;

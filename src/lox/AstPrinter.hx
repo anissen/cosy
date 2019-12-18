@@ -26,6 +26,7 @@ class AstPrinter {
 				indentAmount--;
 				'$declaration {\n$body\n${indent()}}';
 			case Expression(e): '${printExpr(e)};';
+			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}:${printExpr(to)} ${printStmt(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "fun "}${name.lexeme}';
 				var parameters = [ for (token in params) token.lexeme ].join(',');
