@@ -1,15 +1,18 @@
-var x = true;
-if (x) print("yes"); else print("no");
-x = false;
-if (x) print("yes"); else print("no");
+var x = true
+if (x) print("yes") else print("no")
+x = false
+if (x) print("yes") else print("no")
 
-print "hi" or 2; // "hi"
-print nil or "hello"; // "hello"
+print "hi" or 2 // "hi"
+print nil or "hello" // "hello"
 
-print "hi" and 2; // 2
-print nil and "hello"; // nil
+print "hi" and 2 // 2
+print nil and "hello" // nil
 
-var i = 0;
-while (i < 10) { print "while #" + i; i = i + 1; }
+var i = 0
+while (i < 10) {
+    print "while #" + i
+    i = i + 1
+}
 
-for (var j = 0; j < 10; j = j + 1) { print "for #" + j; }
+for j 0..10 { print "for #" + j }

@@ -43,9 +43,8 @@ class Parser {
 	
 	function forStatement():Stmt {
         var name = consume(Identifier, 'Expect variable name.');
-        consume(In, 'Expect "in" after loop variable.');
         var from = addition();
-        consume(DotDot, 'Expect ":" between from and to numbers.');
+        consume(DotDot, 'Expect ".." between from and to numbers.');
         var to = addition();
 		var body = statement();
 		return For(name, from, to, body);
@@ -63,14 +62,13 @@ class Parser {
 	
 	function printStatement():Stmt {
 		var value = expression();
-		consume(Semicolon, 'Expect ";" after value.');
 		return Print(value);
 	}
 	
 	function returnStatement():Stmt {
 		var keyword = previous();
-		var value = if(check(Semicolon)) null else expression();
-		consume(Semicolon, 'Expect ";" after return.');
+		//var value = if (check(NewLine)) null else expression();
+		var value = expression();
 		return Return(keyword, value);
 	}
 	
@@ -85,7 +83,6 @@ class Parser {
 	
 	function expressionStatement():Stmt {
 		var expr = expression();
-		consume(Semicolon, 'Expect ";" after expression.');
 		return Expression(expr);
 	}
 	
@@ -107,7 +104,6 @@ class Parser {
 		
 		if(match([Equal])) initializer = expression();
 		
-		consume(Semicolon, 'Expect ";" after variable declaration.');
 		return Var(name, initializer);
 	}
 	
@@ -152,7 +148,7 @@ class Parser {
 		consume(RightParen, 'Expect ")" after parameters.');
 		
 		consume(LeftBrace, 'Expect "{" before $kind body');
-		
+
 		var body = block();
 		
 		return AnonFunction(params, body);
@@ -351,7 +347,6 @@ class Parser {
 	function synchronize() {
 		advance();
 		while(!isAtEnd()) {
-			if(previous().type == Semicolon) return;
 			switch peek().type {
 				case Class | Fun | Var | For | If | While | Print | Return: return;
 				case _:

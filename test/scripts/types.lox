@@ -1,27 +1,27 @@
-var b1 = true;
-print b1;
-var b2 = false;
-print b2;
+var b1 = true
+print b1
+var b2 = false
+print b2
 
-var i1 = 100;
-print i1;
-var i2 = -7.5;
-print i2;
+var i1 = 100
+print i1
+var i2 = -7.5
+print i2
 
-var s1 = "hello";
-print s1;
+var s1 = "hello"
+print s1
 
-var n1 = nil;
-print n1;
+var n1 = nil
+print n1
 
-var nf1 = clock;
-print nf1;
+var nf1 = clock
+print nf1
 
-var f1 = fun () {};
-print f1;
-var f2 = fun (xyz) { print xyz; };
-print f2;
+var f1 = fun () {}
+print f1
+var f2 = fun (xyz) { print xyz }
+print f2
 
 class C {}
-var c = C();
-print c;
+var c = C()
+print c

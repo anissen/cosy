@@ -1,6 +1,6 @@
-var x = 3;
+var x = 3
 {
-  print x;
-  var x = 7;
-  print x;
+  print x
+  var x = 7
+  print x
 }

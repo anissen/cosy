@@ -13,7 +13,6 @@ class Scanner {
 		'false' => False,
 		'for' => For,
 		'fun' => Fun,
-		'in' => In,
 		'if' => If,
 		'nil' => Nil,
 		'or' => Or,
@@ -54,7 +53,6 @@ class Scanner {
 			case '.'.code: addToken(match('.'.code) ? DotDot : Dot);
 			case '-'.code: addToken(Minus);
 			case '+'.code: addToken(Plus);
-			case ';'.code: addToken(Semicolon);
 			case '*'.code: addToken(Star);
 			case '!'.code: addToken(match('='.code) ? BangEqual : Bang);
 			case '='.code: addToken(match('='.code) ? EqualEqual : Equal);

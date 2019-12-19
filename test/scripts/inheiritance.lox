@@ -1,23 +1,23 @@
 
 class Weapon {
     describe() {
-        print "This can be used to hurt people with.";
+        print "This can be used to hurt people with."
     }
 }
 
 class Axe < Weapon {}
 
-var axe = Axe();
-axe.describe();
+var axe = Axe()
+axe.describe()
 
-print "--------";
+print "--------"
 
 class Sword < Weapon {
     describe() {
-        super.describe();
-        print "Poke them with the pointy end.";
+        super.describe()
+        print "Poke them with the pointy end."
     }
 }
 
-var sword = Sword();
-sword.describe();
+var sword = Sword()
+sword.describe()

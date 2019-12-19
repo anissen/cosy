@@ -1,19 +1,19 @@
 fun f() {
-  print "before return";
-  if (false) return;
-  print "after first return";
-  return;
-  print "after second return";
+  print "before return"
+  if (false) return nil
+  print "after first return"
+  return nil
+  print "after second return"
 }
 
-f();
+f()
 
 fun f2() {
     while (true) {
-        print "while: before return";
-        return;
-        print "while: after return";
+        print "while: before return"
+        return nil
+        print "while: after return"
     }
 }
 
-f2();
+f2()
