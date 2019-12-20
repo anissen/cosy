@@ -1,10 +1,10 @@
 package lox;
 
 class Environment {
-	public final enclosing:Environment;
-	final values:Map<String, Any> = new Map();
+	public final enclosing:Null<Environment>;
+	final values:Map<String, Null<Any>> = new Map();
 	
-	public function new(?enclosing) {
+	public function new(?enclosing:Environment) {
 		this.enclosing = enclosing;
 	}
 	
@@ -12,7 +12,7 @@ class Environment {
 		values.set(name, value);
 	}
 	
-	public function get(name:Token):Any {
+	public function get(name:Token):Null<Any> {
 		if(values.exists(name.lexeme)) return values.get(name.lexeme);
 		
 		if(enclosing != null) return enclosing.get(name);
