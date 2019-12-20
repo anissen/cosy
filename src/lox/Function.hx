@@ -20,19 +20,17 @@ class Function implements Callable {
 	public function call(interpreter:Interpreter, args:Array<Any>):Any {
 		var environment = new Environment(closure);
 		
-		for(i in 0...params.length) 
+		for (i in 0...params.length) {
 			environment.define(params[i].lexeme, args[i]);
+        }
 			
-		return try {
+		try {
 			interpreter.executeBlock(body, environment);
-			null;
 		} catch(ret:Return) {
-			if(isInitializer) closure.getAt(0, 'this');
-			else ret.value;
+			if (!isInitializer) return ret.value;
 		}
 		
-		if(isInitializer) return closure.getAt(0, 'this');
-		
+        return (isInitializer ? closure.getAt(0, 'this') : null);
 	}
 	
 	public function bind(instance:Instance):Function {
