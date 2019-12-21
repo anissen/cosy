@@ -40,6 +40,7 @@ class JavaScriptPrinter {
 				'$declaration {\n$body\n${indent()}}';
 			case Expression(e): '${printExpr(e)};';
 			case For(name, from, to, body): 'for (var ${name.lexeme} = ${printExpr(from)}; ${name.lexeme} < ${printExpr(to)}; ${name.lexeme}++) ${printStmt(body)}';
+			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printStmt(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
 				var parameters = [ for (token in params) token.lexeme ].join(',');
@@ -48,7 +49,6 @@ class JavaScriptPrinter {
 			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
 			case Print(e): 'console.log(${printExpr(e)});';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-			case While(cond, body): 'while (${printExpr(cond)}) ${printStmt(body)}';
 			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}

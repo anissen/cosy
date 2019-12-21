@@ -83,6 +83,9 @@ class Resolver {
                 resolveExpr(from);
                 resolveExpr(to);
                 resolveStmt(body);
+            case ForCondition(cond, body):
+				if (cond != null) resolveExpr(cond);
+				resolveStmt(body);
 			case Function(name, params, body):
 				declare(name);
 				define(name);
@@ -99,9 +102,6 @@ class Resolver {
 					if(currentFunction == Initializer) Lox.error(kw, 'Cannot return value from an initializer.');
 					resolveExpr(val);
 				}
-			case While(cond, body):
-				resolveExpr(cond);
-				resolveStmt(body);
 		}
 	}
 	

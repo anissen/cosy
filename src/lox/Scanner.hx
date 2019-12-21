@@ -13,6 +13,7 @@ class Scanner {
 		'false' => False,
 		'for' => For,
 		'fun' => Fun,
+		'in' => In,
 		'if' => If,
 		'nil' => Nil,
 		'or' => Or,
@@ -21,8 +22,7 @@ class Scanner {
 		'super' => Super,
 		'this' => This,
 		'true' => True,
-		'var' => Var,
-		'while' => While,
+		'var' => Var
 	];
 	
 	var start = 0;

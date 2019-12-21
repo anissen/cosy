@@ -61,6 +61,8 @@ class Interpreter {
                     environment.define(name.lexeme, counter);
                     execute(body);
                 }
+            case ForCondition(cond, body):
+                while(cond != null ? isTruthy(evaluate(cond)) : true) execute(body);
             case Function(name, params, body):
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):
@@ -71,8 +73,6 @@ class Interpreter {
             case Return(keyword, value):
                 var value = if(value == null) null else evaluate(value);
                 throw new Return(value);
-            case While(cond, body):
-                while(isTruthy(evaluate(cond))) execute(body);
             case Var(name, init):
                 var value:Any = uninitialized;
                 if(init != null) value = evaluate(init);

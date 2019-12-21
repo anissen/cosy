@@ -27,6 +27,7 @@ class AstPrinter {
 				'$declaration {\n$body\n${indent()}}';
 			case Expression(e): '${printExpr(e)};';
 			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}:${printExpr(to)} ${printStmt(body)}';
+            case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printStmt(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "fun "}${name.lexeme}';
 				var parameters = [ for (token in params) token.lexeme ].join(',');
@@ -35,7 +36,6 @@ class AstPrinter {
 			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
 			case Print(e): 'print ${printExpr(e)};';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-			case While(cond, body): 'while (${printExpr(cond)}) ${printStmt(body)}';
 			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}

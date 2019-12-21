@@ -5,7 +5,7 @@
 - [x] No semi-colons
 - [ ] Change assignment to be a statement instead of an expression?
 - [ ] Everything is an expression (because it's easier), alternatively make _most_ statements into expressions
-- [ ] No variable shadowing allowed (does this have unforseen consequences?)
+- [ ] No variable shadowing
 - [ ] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
 - [ ] Static analysis for
     - [ ] Dead code
@@ -17,6 +17,10 @@
 - [ ] Yield functionality (generators or coroutines)
 - [ ] Modules
 - [ ] Experiment with bytecode
+- [ ] Support for arrays
+- [ ] Support for maps
+- [ ] String interpolation
+- [ ] ++ operator
 
 # Project wishlist
 - [ ] Enable null-safety feature for Haxe

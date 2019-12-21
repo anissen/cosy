@@ -10,9 +10,9 @@ print "hi" and 2 // 2
 print nil and "hello" // nil
 
 var i = 0
-while (i < 10) {
+for i < 10 {
     print "while #" + i
     i = i + 1
 }
 
-for j 0..10 { print "for #" + j }
+for j in 0..10 { print "for #" + j }

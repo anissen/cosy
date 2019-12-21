@@ -32,22 +32,32 @@ class Parser {
 	}
 	
 	function statement():Stmt {
+        // TODO: this list of match can be optimized by doing switch tokens[current]
 		if(match([For])) return forStatement();
 		if(match([If])) return ifStatement();
 		if(match([Print])) return printStatement();
 		if(match([Return])) return returnStatement();
-		if(match([While])) return whileStatement();
 		if(match([LeftBrace])) return Block(block());
 		return expressionStatement();
 	}
 	
 	function forStatement():Stmt {
-        var name = consume(Identifier, 'Expect variable name.');
-        var from = addition();
-        consume(DotDot, 'Expect ".." between from and to numbers.');
-        var to = addition();
-		var body = statement();
-		return For(name, from, to, body);
+        if (doubleCheck(In)) { // check if the next (not current) token is In
+            // for i min..max {
+            var name = consume(Identifier, 'Expect variable name.');
+            consume(In, 'Expect "in" after for loop identifier.');
+            var from = addition();
+            consume(DotDot, 'Expect ".." between from and to numbers.');
+            var to = addition();
+            var body = statement();
+            return For(name, from, to, body);
+        } else {
+            // for CONDITION {
+            // for {
+            var condition = (check(LeftBrace) ? null : expression());
+            var body = statement();
+            return ForCondition(condition, body);
+        }
 	}
 	
 	function ifStatement():Stmt {
@@ -70,15 +80,6 @@ class Parser {
 		//var value = if (check(NewLine)) null else expression();
 		var value = expression();
 		return Return(keyword, value);
-	}
-	
-	function whileStatement():Stmt {
-		consume(LeftParen, 'Expect "(" after "while".');
-		var condition = expression();
-		consume(RightParen, 'Expect ")" after condition.');
-		
-		var body = statement();
-		return While(condition, body);
 	}
 	
 	function expressionStatement():Stmt {
@@ -321,6 +322,13 @@ class Parser {
 		if(isAtEnd()) return false;
 		return peek().type == type;
 	}
+
+    function doubleCheck(type:TokenType) {
+		if (isAtEnd()) return false;
+        var next = tokens[current + 1];
+		if (next.type == Eof) return false;
+		return (next.type == type);
+	}
 	
 	function advance() {
 		if(!isAtEnd()) current++;
@@ -348,11 +356,10 @@ class Parser {
 		advance();
 		while(!isAtEnd()) {
 			switch peek().type {
-				case Class | Fun | Var | For | If | While | Print | Return: return;
-				case _:
+				case Class | Fun | Var | For | If | Print | Return: return;
+				case _: advance();
 			}
 		}
-		advance();
 	}
 }
 
