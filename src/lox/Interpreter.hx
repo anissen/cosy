@@ -75,7 +75,11 @@ class Interpreter {
                 throw new Return(value);
             case Var(name, init):
                 var value:Any = uninitialized;
-                if(init != null) value = evaluate(init);
+                if (init != null) value = evaluate(init);
+                environment.define(name.lexeme, value);
+            case Mut(name, init):
+                var value:Any = uninitialized;
+                if (init != null) value = evaluate(init);
                 environment.define(name.lexeme, value);
         }
     }

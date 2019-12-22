@@ -49,7 +49,8 @@ class JavaScriptPrinter {
 			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
 			case Print(e): 'console.log(${printExpr(e)});';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+			case Var(name, init): 'const var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+			case Mut(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}
 	

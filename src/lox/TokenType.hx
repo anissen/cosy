@@ -11,7 +11,7 @@ enum TokenType {
 	
 	Identifier; String; Number;
 	
-	And; Class; Else; False; Fun; For; In; If; Nil; Or;
+	And; Class; Else; False; Fun; For; In; If; Mut; Nil; Or;
 	Print; Return; Super; This; True; Var;
 	
 	Eof;

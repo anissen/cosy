@@ -15,6 +15,7 @@ class Scanner {
 		'fun' => Fun,
 		'in' => In,
 		'if' => If,
+		'mut' => Mut,
 		'nil' => Nil,
 		'or' => Or,
 		'print' => Print,

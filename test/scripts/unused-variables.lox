@@ -1,4 +1,4 @@
-var a = 5 // not reported unused because its top-level
+// var a = 5 // not reported unused because its top-level
 var b = 6
 print b
 
@@ -17,3 +17,6 @@ fun y(arg2) { // arg2: unused variable
     var local2
     print local2
 }
+
+x()
+y()

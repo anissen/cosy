@@ -37,6 +37,7 @@ class AstPrinter {
 			case Print(e): 'print ${printExpr(e)};';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
 			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+			case Mut(name, init): 'mut ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}
 	

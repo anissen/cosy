@@ -1,6 +1,6 @@
-var a = 3;
+var b = 3;
 {
-  var a = 4;
+  var a = b + 4;
   fun g() {
     return fun (x) {
       return (a + x) * 2;

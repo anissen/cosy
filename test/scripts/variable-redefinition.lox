@@ -3,3 +3,4 @@ fun bad() {
   var a = "second" // redefinition: should throw an error
   print a
 }
+bad()

@@ -24,6 +24,7 @@ class Parser {
 			if(match([Class])) return classDeclaration();
 			if(match([Fun])) return func('function');
 			if(match([Var])) return varDeclaration();
+			if(match([Mut])) return mutDeclaration();
 			return statement();
 		} catch(e:ParseError) {
 			synchronize();
@@ -106,6 +107,16 @@ class Parser {
 		if(match([Equal])) initializer = expression();
 		
 		return Var(name, initializer);
+	}
+
+    function mutDeclaration():Stmt {
+		var name = consume(Identifier, 'Expect variable name.');
+		
+		var initializer = null;
+		
+		if(match([Equal])) initializer = expression();
+		
+		return Mut(name, initializer);
 	}
 	
 	function classDeclaration():Stmt {

@@ -8,6 +8,7 @@ enum Stmt {
 	ForCondition(?cond:Expr, body:Stmt);
 	Function(name:Token, params:Array<Token>, body:Array<Stmt>);
 	If(cond:Expr, then:Stmt, el:Stmt);
+	Mut(name:Token, init:Expr);
 	Print(e:Expr);
 	Return(keyword:Token, value:Expr);
 	Var(name:Token, init:Expr);

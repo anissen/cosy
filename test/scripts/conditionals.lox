@@ -1,4 +1,4 @@
-var x = true
+mut x = true
 if (x) print("yes") else print("no")
 x = false
 if (x) print("yes") else print("no")

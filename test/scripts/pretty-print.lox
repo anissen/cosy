@@ -1,5 +1,5 @@
-var a=3{
-var a=4
+var b=3{
+var a=b+4
 fun g(){return fun(x){return(a+x)*2}}print g()(2)}
 // for(var i=0;i<10;i=i+1){fun g(){return fun(x){return(a+x)*2;};}print g()(2);}
 // var a=3;{var a=4;print fun(){return fun(x){return(a+x)*2;};}()(2);}

@@ -3,6 +3,7 @@ package lox;
 typedef Variable = {
 	var name:Token;
 	var state:VariableState;
+    var mutable:Bool;
 }
 
 class Resolver {
@@ -17,7 +18,9 @@ class Resolver {
 	}
 	
 	public inline function resolve(s) {
+        beginScope();
 		resolveStmts(s);
+        endScope();
 	}
 	
 	function resolveStmts(stmts:Array<Stmt>) {
@@ -56,11 +59,11 @@ class Resolver {
 					currentClass = Subclass;
 					resolveExpr(superclass);
 					beginScope();
-					scopes.peek().set('super', { name: new Token(Super, 'super', null, name.line), state: Read });
+					scopes.peek().set('super', { name: new Token(Super, 'super', null, name.line), state: Read, mutable: false });
 				}
 				
 				beginScope();
-				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read });
+				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read, mutable: false });
 				
 				for(method in methods) switch method {
 					case Function(name, params, body):
@@ -77,6 +80,10 @@ class Resolver {
 				declare(name);
 				if(init != null) resolveExpr(init);
 				define(name);
+            case Mut(name, init):
+				declare(name, true);
+				if(init != null) resolveExpr(init);
+				define(name, true);
             case For(name, from, to, body):
                 declare(name);
                 define(name);
@@ -108,6 +115,8 @@ class Resolver {
 	function resolveExpr(expr:Expr) {
 		switch expr {
 			case Assign(name, value):
+                if(!scopes.isEmpty() && scopes.peek().exists(name.lexeme) && !scopes.peek().get(name.lexeme).mutable)
+					Lox.error(name, 'Cannot reassign non-mutable variable.');
 				resolveExpr(value);
 				resolveLocal(expr, name, false);
 			case Variable(name):
@@ -171,16 +180,16 @@ class Resolver {
 		}
 	}
 	
-	function declare(name:Token) {
+	function declare(name:Token, mutable:Bool = false) {
 		if(scopes.isEmpty()) return;
 		var scope = scopes.peek();
 		if(scope.exists(name.lexeme)) Lox.error(name, 'Variable with this name already declared in this scope.');
-		scope.set(name.lexeme, { name: name, state: Declared });
+		scope.set(name.lexeme, { name: name, state: Declared, mutable: mutable });
 	}
 	
-	function define(name:Token) {
+	function define(name:Token, mutable:Bool = false) {
 		if(scopes.isEmpty()) return;
-		scopes.peek().set(name.lexeme, { name: name, state: Defined });
+		scopes.peek().set(name.lexeme, { name: name, state: Defined, mutable: mutable });
 	}
 	
 	function resolveLocal(expr:Expr, name:Token, isRead:Bool) {

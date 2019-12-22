@@ -1,6 +1,6 @@
 # Wish list
 
-- [ ] Immutable-by-default (e.g. introduce a `mut` keyword)
+- [x] Immutable-by-default (e.g. introduce a `mut` keyword)
 - [ ] Compile-time error to redefine variable/function
 - [x] No semi-colons
 - [ ] Change assignment to be a statement instead of an expression?
@@ -21,6 +21,10 @@
 - [ ] Support for maps
 - [ ] String interpolation
 - [ ] ++ operator
+- [ ] Strong types (requires variable initialization)
+- [ ] Typing phase
+- [ ] Optimization phase
+- [ ] Improve readme/documentation
 
 # Project wishlist
 - [ ] Enable null-safety feature for Haxe
