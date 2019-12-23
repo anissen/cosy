@@ -115,12 +115,12 @@ class Resolver {
 	function resolveExpr(expr:Expr) {
 		switch expr {
 			case Assign(name, value):
-                if(!scopes.isEmpty() && scopes.peek().exists(name.lexeme) && !scopes.peek().get(name.lexeme).mutable)
-					Lox.error(name, 'Cannot reassign non-mutable variable.');
+                var variable = findInScopes(name);
+                if (variable != null && !variable.mutable) Lox.error(name, 'Cannot reassign non-mutable variable.');
 				resolveExpr(value);
 				resolveLocal(expr, name, false);
 			case Variable(name):
-				if(!scopes.isEmpty() && scopes.peek().exists(name.lexeme) && scopes.peek().get(name.lexeme).state.match(Declared))
+				if (scopes.peek().exists(name.lexeme) && scopes.peek().get(name.lexeme).state.match(Declared))
 					Lox.error(name, 'Cannot read local variable in its own initializer');
 				resolveLocal(expr, name, true);
 			case Binary(left, _, right) | Logical(left, _, right):
@@ -181,37 +181,46 @@ class Resolver {
 	}
 	
 	function declare(name:Token, mutable:Bool = false) {
-		if(scopes.isEmpty()) return;
 		var scope = scopes.peek();
 		if(scope.exists(name.lexeme)) Lox.error(name, 'Variable with this name already declared in this scope.');
 		scope.set(name.lexeme, { name: name, state: Declared, mutable: mutable });
 	}
 	
 	function define(name:Token, mutable:Bool = false) {
-		if(scopes.isEmpty()) return;
 		scopes.peek().set(name.lexeme, { name: name, state: Defined, mutable: mutable });
 	}
 	
 	function resolveLocal(expr:Expr, name:Token, isRead:Bool) {
 		var i = scopes.length - 1;
-		while(i >= 0) {
-			if(scopes.get(i).exists(name.lexeme)) {
+		while (i >= 0) {
+            var scope = scopes.get(i);
+			if (scope.exists(name.lexeme)) {
 				interpreter.resolve(expr, scopes.length - 1 - i);
 
-				if(isRead) {
-					scopes.get(i).get(name.lexeme).state = Read;
+				if (isRead) {
+					scope.get(name.lexeme).state = Read;
 				}
 				return;
 			}
 			i--;
 		}
 	}
+
+    function findInScopes(name: Token) :Null<Variable> {
+        var identifier = name.lexeme;
+        var i = scopes.length - 1;
+        while (i >= 0) {
+            var scope = scopes.get(i);
+            if (scope.exists(identifier)) return scope.get(identifier);
+            i--;
+        }
+        return null;
+    }
 }
 
 @:forward(push, pop, length)
 abstract Stack<T>(Array<T>) {
 	public inline function new() this = [];
-	public inline function isEmpty() return this.length == 0;
 	public inline function peek() return this[this.length - 1];
 	public inline function get(i:Int) return this[i];
 }

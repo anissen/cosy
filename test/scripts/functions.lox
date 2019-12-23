@@ -30,7 +30,7 @@ print "result: " + h()
 }
 
 { // scoping rules
-    var outer_scope = 42
+    mut outer_scope = 42
     fun x() {
         outer_scope = outer_scope + 10
     }

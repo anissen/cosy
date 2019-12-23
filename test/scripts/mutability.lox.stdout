@@ -1,0 +1,2 @@
+[line 9] Error at "b": Cannot reassign non-mutable variable.
+[line 13] Error at "arg": Cannot reassign non-mutable variable.

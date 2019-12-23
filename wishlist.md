@@ -25,6 +25,8 @@
 - [ ] Typing phase
 - [ ] Optimization phase
 - [ ] Improve readme/documentation
+- [ ] Compile-time error if a variable is marked as `mut` but is not reassigned
+- [ ] `break` keyword
 
 # Project wishlist
 - [ ] Enable null-safety feature for Haxe

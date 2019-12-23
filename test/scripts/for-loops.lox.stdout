@@ -1,0 +1,9 @@
+loop #0
+loop #1
+loop #2
+conditional loop #0
+conditional loop #1
+conditional loop #2
+infinite loop #0
+infinite loop #1
+infinite loop #2
