@@ -62,12 +62,9 @@ class Parser {
 	}
 	
 	function ifStatement():Stmt {
-		consume(LeftParen, 'Expect "(" after "if".');
 		var condition = expression();
-		consume(RightParen, 'Expect ")" after condition.');
-		
 		var then = statement();
-		var el = if(match([Else])) statement() else null;
+		var el = if (match([Else])) statement() else null;
 		return If(condition, then, el);
 	}
 	

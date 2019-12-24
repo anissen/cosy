@@ -1,0 +1,14 @@
+
+fun first() {
+    print "first"
+    return false
+}
+
+fun second() {
+    print "second"
+    return true
+}
+
+first() or second()
+print "-"
+first() and second()

@@ -25,7 +25,7 @@ class AstPrinter {
 				isInClass = false;
 				indentAmount--;
 				'$declaration {\n$body\n${indent()}}';
-			case Expression(e): '${printExpr(e)};';
+			case Expression(e): '${printExpr(e)}';
 			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}:${printExpr(to)} ${printStmt(body)}';
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printStmt(body)}';
 			case Function(name, params, body):
@@ -33,11 +33,11 @@ class AstPrinter {
 				var parameters = [ for (token in params) token.lexeme ].join(',');
 				var block = printStmt(Block(body));
 				'$declaration($parameters) $block';
-			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
-			case Print(e): 'print ${printExpr(e)};';
-			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
-			case Mut(name, init): 'mut ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+			case If(cond, then, el): 'if ${printExpr(cond)} ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
+			case Print(e): 'print ${printExpr(e)}';
+			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '');
+			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
+			case Mut(name, init): 'mut ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
 		}
 	}
 	
@@ -48,8 +48,8 @@ class AstPrinter {
 			case Call(callee, paren, arguments): '${printExpr(callee)}(${[ for (arg in arguments) printExpr(arg) ].join(',')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
-			case Literal(v): if (v == null) { 'nil'; } else if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
-			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
+			case Literal(v): if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
+			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): 'this';
 			case Super(keyword, method): 'super.${method.lexeme}';

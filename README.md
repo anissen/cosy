@@ -20,3 +20,12 @@ for i 0..max {
 * Lambda functions (anonymous functions)
 * Compile-time validation
 * (...)
+
+
+<!--
+
+Notes:
+* Variables starting with _ are considered unused, i.e. using them will result in a compile-time error
+
+
+-->
