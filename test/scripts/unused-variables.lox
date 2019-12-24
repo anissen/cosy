@@ -20,3 +20,13 @@ fun y(arg2) { // arg2: unused variable
 
 x()
 y()
+
+// ----------
+
+fun f(_x) { // no error for unused argument
+    var _y // no error for unused variable
+    var _z = 5
+    print _z // error for used variable starting with _
+}
+
+f("hello")

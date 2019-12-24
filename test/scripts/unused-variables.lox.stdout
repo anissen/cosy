@@ -1,3 +1,4 @@
 [line 6] Error at "c": Local variable is not used.
 [line 12] Error at "local1": Local variable is not used.
 [line 16] Error at "arg2": Local variable is not used.
+[line 29] Error at "_z": Variables starting with _ are considered unused.

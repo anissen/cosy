@@ -53,7 +53,7 @@ class Scanner {
 			case '-'.code: addToken(Minus);
 			case '+'.code: addToken(Plus);
 			case '*'.code: addToken(Star);
-			case '_'.code: addToken(Underscore);
+			case '_'.code if (!isAlpha(peek())): addToken(Underscore);
 			case '.'.code: addToken(match('.'.code) ? DotDot : Dot);
 			case '!'.code: addToken(match('='.code) ? BangEqual : Bang);
 			case '='.code: addToken(match('='.code) ? EqualEqual : Equal);
@@ -69,9 +69,9 @@ class Scanner {
 			case '\n'.code: line++;
 			case '"'.code: string();
 			case _: 
-				if(isDigit(c)) {
+				if (isDigit(c)) {
 					number();
-				} else if(isAlpha(c)) {
+				} else if (isAlpha(c)) {
 					identifier();
 				} else {
 					Lox.error(line, 'Unexpected character: ${std.String.fromCharCode(c)}');

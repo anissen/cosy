@@ -122,6 +122,7 @@ class Resolver {
 			case Variable(name):
 				if (scopes.peek().exists(name.lexeme) && scopes.peek().get(name.lexeme).state.match(Declared))
 					Lox.error(name, 'Cannot read local variable in its own initializer');
+                if (StringTools.startsWith(name.lexeme, '_')) Lox.error(name, 'Variables starting with _ are considered unused.');
 				resolveLocal(expr, name, true);
 			case Binary(left, _, right) | Logical(left, _, right):
 				resolveExpr(left);
@@ -176,6 +177,7 @@ class Resolver {
 		var scope = scopes.pop();
 
 		for (name => variable in scope) {
+            if (StringTools.startsWith(variable.name.lexeme, '_')) continue; // ignore variables starting with underscore
 			if (variable.state.match(Defined)) Lox.error(variable.name, "Local variable is not used.");
 		}
 	}
