@@ -184,7 +184,12 @@ class Resolver {
 	
 	function declare(name:Token, mutable:Bool = false) {
 		var scope = scopes.peek();
-		if(scope.exists(name.lexeme)) Lox.error(name, 'Variable with this name already declared in this scope.');
+		if(scope.exists(name.lexeme)) {
+            Lox.error(name, 'Variable with this name already declared in this scope.');
+        } else {
+            var variable = findInScopes(name);
+            if (variable != null) Lox.error(name, 'Shadows existing variable.');
+        }
 		scope.set(name.lexeme, { name: name, state: Declared, mutable: mutable });
 	}
 	

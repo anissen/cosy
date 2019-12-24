@@ -1,3 +1,1 @@
-global
-block
-global
+[line 8] Error at "a": Shadows existing variable.

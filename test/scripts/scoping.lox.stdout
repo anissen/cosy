@@ -1,9 +1,3 @@
-inner a
-outer b
-global c
-outer a
-outer b
-global c
-global a
-global b
-global c
+[line 5] Error at "a": Shadows existing variable.
+[line 6] Error at "b": Shadows existing variable.
+[line 8] Error at "a": Shadows existing variable.
