@@ -7,7 +7,7 @@ fun f() {
     for i < 5 {
         print "conditional loop #" + i
         i = i + 1
-        if (i >= 3) return nil
+        if (i >= 3) return _
     }
 }
 f()
@@ -17,7 +17,7 @@ fun f2() {
     for {
         print "infinite loop #" + j
         j = j + 1
-        if (j >= 3) return nil
+        if (j >= 3) return _
     }
 }
 f2()

@@ -78,8 +78,7 @@ class Parser {
 	
 	function returnStatement():Stmt {
 		var keyword = previous();
-		//var value = if (check(NewLine)) null else expression();
-		var value = expression();
+		var value = if (match([Underscore])) null else expression();
 		return Return(keyword, value);
 	}
 	
@@ -295,7 +294,6 @@ class Parser {
 	function primary():Expr {
 		if(match([False])) return Literal(false);
 		if(match([True])) return Literal(true);
-		if(match([Nil])) return Literal(null);
 		if(match([Number, String])) return Literal(previous().literal);
 		if(match([Super])) {
 			var keyword = previous();

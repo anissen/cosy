@@ -4,10 +4,7 @@ x = false
 if (x) print("yes") else print("no")
 
 print "hi" or 2 // "hi"
-print nil or "hello" // "hello"
-
 print "hi" and 2 // 2
-print nil and "hello" // nil
 
 mut i = 0
 for i < 10 {

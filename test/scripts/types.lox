@@ -11,9 +11,6 @@ print i2
 var s1 = "hello"
 print s1
 
-var n1 = nil
-print n1
-
 var nf1 = clock
 print nf1
 

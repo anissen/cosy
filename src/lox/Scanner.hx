@@ -16,7 +16,6 @@ class Scanner {
 		'in' => In,
 		'if' => If,
 		'mut' => Mut,
-		'nil' => Nil,
 		'or' => Or,
 		'print' => Print,
 		'return' => Return,
@@ -51,10 +50,11 @@ class Scanner {
 			case '{'.code: addToken(LeftBrace);
 			case '}'.code: addToken(RightBrace);
 			case ','.code: addToken(Comma);
-			case '.'.code: addToken(match('.'.code) ? DotDot : Dot);
 			case '-'.code: addToken(Minus);
 			case '+'.code: addToken(Plus);
 			case '*'.code: addToken(Star);
+			case '_'.code: addToken(Underscore);
+			case '.'.code: addToken(match('.'.code) ? DotDot : Dot);
 			case '!'.code: addToken(match('='.code) ? BangEqual : Bang);
 			case '='.code: addToken(match('='.code) ? EqualEqual : Equal);
 			case '<'.code: addToken(match('='.code) ? LessEqual : Less);
