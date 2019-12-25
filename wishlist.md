@@ -1,6 +1,11 @@
 
 # Bugs
 - [ ] Counter variable in for-loops are declared in the scope containing the for-loop instead of inside the loop
+- [ ] [line 2] Error at "x": Local variable is not used.
+```js
+x()
+fun x() { print "hej" }
+```
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)
@@ -35,6 +40,11 @@
 - [ ] Simplify code now that...
   - [ ] Variable shadowing is gone
   - [ ] nil is gone (done?)
+- [ ] Compile for JavaScript
+  - [x] Make simple Cosy playground website
+  - [ ] Make playground available through github pages
+- [ ] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
+
 
 # Project wishlist
 - [ ] Enable null-safety feature for Haxe

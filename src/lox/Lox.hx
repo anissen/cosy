@@ -1,6 +1,10 @@
 package lox;
 
+#if sys
 import sys.io.File;
+#elseif js
+import js.Browser;
+#end
 
 class Lox {
     static final interpreter = new Interpreter();
@@ -13,6 +17,7 @@ class Lox {
     static var testOutput = '';
 
     static function main() {
+        #if sys
         switch Sys.args() {
             case []:
                 runPrompt();
@@ -28,8 +33,29 @@ class Lox {
                 Sys.println('Usage: hlox (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
                 Sys.exit(64);
         }
+        #elseif js
+        var sourceText = Browser.document.createTextAreaElement();
+        sourceText.rows = 40;
+        sourceText.cols = 120;
+        Browser.document.body.appendChild(sourceText);
+
+        var button = Browser.document.createButtonElement();
+        button.textContent = "Run";
+        Browser.document.body.appendChild(button);
+
+        var outputText = Browser.document.createTextAreaElement();
+        outputText.rows = 40;
+        outputText.cols = 120;
+        Browser.document.body.appendChild(outputText);
+
+        button.onclick = function(event) {
+            test(sourceText.value);
+            outputText.value = testOutput;
+        }
+        #end
     }
 
+    #if sys
     static function runFile(path:String) {
         var content = File.getContent(path);
         run(content);
@@ -44,6 +70,7 @@ class Lox {
             run(stdin.readLine());
         }
     }
+    #end
 
     static public function test(source :String, prettyprint :Bool = false) :String {
         prettyPrint = prettyprint;
@@ -59,7 +86,9 @@ class Lox {
         if (testing) {
             testOutput += v + '\n';
         } else {
+            #if sys
             Sys.println(v);
+            #end
         }
     }
 

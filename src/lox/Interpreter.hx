@@ -245,7 +245,7 @@ class Interpreter {
 private class ClockCallable implements Callable {
     public function new() {}
     public function arity() :Int return 0;
-    public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.time() * 1000;
+    public function call(interpreter:Interpreter, args:Array<Any>):Any return haxe.Timer.stamp() * 1000;
     public function toString() :String return '<native fn>';
 }
 
