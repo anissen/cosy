@@ -18,21 +18,32 @@ class Lox {
 
     static function main() {
         #if sys
-        switch Sys.args() {
-            case []:
-                runPrompt();
-            case [v]:
-                runFile(v);
-            case ['--prettyprint', v]:
-                prettyPrint = true;
-                runFile(v);
-            case ['--javascript', v]:
-                javascript = true;
-                runFile(v);
-            case _:
-                Sys.println('Usage: hlox (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
-                Sys.exit(64);
+        if (Sys.args().length == 0) {
+            return runPrompt();
         }
+        var argErrors = [];
+        for (i in 0...Sys.args().length - 1) {
+            var arg = Sys.args()[i];
+            switch arg {
+                case '--prettyprint': prettyPrint = true;
+                case '--javascript': javascript = true;
+                case _: argErrors.push(arg);
+            }
+        }
+        
+        if (argErrors.length > 0) {
+            Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
+            Sys.println('Usage: hlox (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
+            Sys.exit(64);
+        }
+
+        var file = Sys.args()[Sys.args().length - 1];
+        if (!sys.FileSystem.exists(file)) {
+            Sys.println('Source file not found: "$file"');
+            Sys.exit(64);
+        }
+
+        runFile(file);
         #elseif js
         var sourceText = Browser.document.createTextAreaElement();
         sourceText.rows = 40;

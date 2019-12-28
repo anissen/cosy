@@ -1,6 +1,6 @@
 
 # Bugs
-- [ ] Counter variable in for-loops are declared in the scope containing the for-loop instead of inside the loop
+- [ ] Counter variable in for-loops are declared in the scope containing the for-loop instead of inside the loop (maybe look at how function parameters are handled)
 - [ ] [line 2] Error at "x": Local variable is not used.
 ```js
 x()
@@ -44,7 +44,7 @@ fun x() { print "hej" }
   - [x] Make simple Cosy playground website
   - [ ] Make playground available through github pages
 - [ ] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
-
+- [ ] Disable some static analysis for REPL, e.g. checking for unused variables
 
 # Project wishlist
 - [ ] Enable null-safety feature for Haxe
