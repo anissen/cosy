@@ -85,14 +85,18 @@ class Resolver {
 				if(init != null) resolveExpr(init);
 				define(name, true);
             case For(name, from, to, body):
+                beginScope();
                 declare(name);
                 define(name);
                 resolveExpr(from);
                 resolveExpr(to);
-                resolveStmt(body);
+                resolveStmts(body);
+                endScope();
             case ForCondition(cond, body):
 				if (cond != null) resolveExpr(cond);
-				resolveStmt(body);
+                beginScope();
+				resolveStmts(body);
+                endScope();
 			case Function(name, params, body):
 				declare(name);
 				define(name);
@@ -168,7 +172,7 @@ class Resolver {
 		endScope();
 		currentFunction = enclosingFunction;
 	}
-	
+
 	function beginScope() {
 		scopes.push([]);
 	}
@@ -211,6 +215,8 @@ class Resolver {
 			}
 			i--;
 		}
+        if (name.lexeme == 'clock') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
+        Lox.error(name, 'Variable not declared in this scope.');
 	}
 
     function findInScopes(name: Token) :Null<Variable> {

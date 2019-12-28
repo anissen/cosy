@@ -21,26 +21,27 @@ class JavaScriptPrinter {
 		return [ for (_ in 0...indentAmount) "  " ].join("");
 	}
 
+    function printBlock(statements:Array<Stmt>):String {
+        indentAmount++;
+        var s = [ for (stmt in statements) indent() + printStmt(stmt) ].join('\n');
+        indentAmount--;
+        return '{\n$s\n${indent()}}';
+    }
+
 	public function printStmt(statement:Stmt):String {
 		return switch statement {
-			case Block(statements):
-				indentAmount++;
-				var s = [ for (stmt in statements) indent() + printStmt(stmt) ].join('\n');
-				indentAmount--;
-				'{\n$s\n${indent()}}';
+			case Block(statements): printBlock(statements);
 			case Class(name, superclass, methods):
                 var className = name.lexeme;
                 classNames.push(className);
 				var declaration = 'class $className' + (superclass != null ? ' extends ${printExpr(superclass)}' : '');
-				indentAmount++;
 				isInClass = true;
-				var body = [ for (method in methods) indent() + printStmt(method) ].join('\n');
+				var body = printBlock(methods);
 				isInClass = false;
-				indentAmount--;
-				'$declaration {\n$body\n${indent()}}';
+				'$declaration $body';
 			case Expression(e): '${printExpr(e)};';
-			case For(name, from, to, body): 'for (var ${name.lexeme} = ${printExpr(from)}; ${name.lexeme} < ${printExpr(to)}; ${name.lexeme}++) ${printStmt(body)}';
-			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printStmt(body)}';
+			case For(name, from, to, body): 'for (var ${name.lexeme} = ${printExpr(from)}; ${name.lexeme} < ${printExpr(to)}; ${name.lexeme}++) ${printBlock(body)}';
+			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
 				var parameters = [ for (token in params) token.lexeme ].join(',');

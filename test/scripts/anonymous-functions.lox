@@ -1,9 +1,9 @@
 fun thrice(fn) {
-  for i in 1..4 {
-    fn(i)
-  }
+    for i in 1..4 {
+        fn(i)
+    }
 }
 
 thrice(fun (a) {
-  print a + "!"
+    print a + "!"
 })

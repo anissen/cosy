@@ -9,4 +9,8 @@
 -D jvm
 #--macro nullSafety("lox", Loose)
 
+# -D no-traces
+# -dce full
+# -D analyzer-optimize
+# -D source-map
 # -js bin/js/hlox.js

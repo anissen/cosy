@@ -50,13 +50,15 @@ class Parser {
             var from = addition();
             consume(DotDot, 'Expect ".." between from and to numbers.');
             var to = addition();
-            var body = statement();
+            consume(LeftBrace, 'Expect "{" before loop body.');
+            var body = block();
             return For(name, from, to, body);
         } else {
             // for CONDITION {
             // for {
             var condition = (check(LeftBrace) ? null : expression());
-            var body = statement();
+            consume(LeftBrace, 'Expect "{" before loop body.');
+            var body = block();
             return ForCondition(condition, body);
         }
 	}

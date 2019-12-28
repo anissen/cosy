@@ -57,12 +57,14 @@ class Interpreter {
                 if (!Std.is(fromVal, Float)) Lox.error(name, 'Number expected in "from" clause of loop.');
                 var toVal = evaluate(to);
                 if (!Std.is(toVal, Float)) Lox.error(name, 'Number expected in "to" clause of loop.');
+                var env = new Environment(environment);
                 for (counter in (fromVal :Int)...(toVal :Int)) {
-                    environment.define(name.lexeme, counter);
-                    execute(body);
+                    env.define(name.lexeme, counter);
+                    executeBlock(body, env);
                 }
             case ForCondition(cond, body):
-                while(cond != null ? isTruthy(evaluate(cond)) : true) execute(body);
+                var env = new Environment(environment);
+                while(cond != null ? isTruthy(evaluate(cond)) : true) executeBlock(body, env);
             case Function(name, params, body):
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):

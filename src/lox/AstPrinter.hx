@@ -10,28 +10,29 @@ class AstPrinter {
 		return [ for (_ in 0...indentAmount) "  " ].join("");
 	}
 
+    function printBlock(statements:Array<Stmt>):String {
+        indentAmount++;
+        var s = [ for (stmt in statements) indent() + printStmt(stmt) ].join('\n');
+        indentAmount--;
+        return '{\n$s\n${indent()}}';
+    }
+
 	public function printStmt(statement:Stmt):String {
 		return switch statement {
-			case Block(statements):
-				indentAmount++;
-				var s = [ for (stmt in statements) indent() + printStmt(stmt) ].join('\n');
-				indentAmount--;
-				'{\n$s\n${indent()}}';
+			case Block(statements): printBlock(statements);
 			case Class(name, superclass, methods):
 				var declaration = 'class ${name.lexeme}' + (superclass != null ? ' < ${printExpr(superclass)}' : '');
-				indentAmount++;
 				isInClass = true;
-				var body = [ for (method in methods) indent() + printStmt(method) ].join('\n');
+                var body = printBlock(methods);
 				isInClass = false;
-				indentAmount--;
-				'$declaration {\n$body\n${indent()}}';
+				'$declaration $body';
 			case Expression(e): '${printExpr(e)}';
-			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}:${printExpr(to)} ${printStmt(body)}';
-            case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printStmt(body)}';
+			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
+            case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "fun "}${name.lexeme}';
 				var parameters = [ for (token in params) token.lexeme ].join(',');
-				var block = printStmt(Block(body));
+                var block = printBlock(body);
 				'$declaration($parameters) $block';
 			case If(cond, then, el): 'if ${printExpr(cond)} ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
 			case Print(e): 'print ${printExpr(e)}';

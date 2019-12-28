@@ -1,17 +1,17 @@
 fun f() {
   print "before return"
-  if (false) return nil
+  if (false) return _
   print "after first return"
-  return nil
+  return _
   print "after second return"
 }
 
 f()
 
 fun f2() {
-    while (true) {
+    for (true) {
         print "while: before return"
-        return nil
+        return _
         print "while: after return"
     }
 }
