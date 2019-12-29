@@ -1,0 +1,4 @@
+mut x
+var y = x = 4
+print x
+print y

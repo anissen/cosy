@@ -1,6 +1,5 @@
 
 # Bugs
-- [ ] Counter variable in for-loops are declared in the scope containing the for-loop instead of inside the loop (maybe look at how function parameters are handled)
 - [ ] [line 2] Error at "x": Local variable is not used.
 ```js
 x()
@@ -14,12 +13,12 @@ fun x() { print "hej" }
 - [ ] Change assignment to be a statement instead of an expression?
 - [ ] Everything is an expression (because it's easier), alternatively make _most_ statements into expressions
 - [x] No variable shadowing
-- [ ] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
+- [x] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
 - [ ] Static analysis for
     - [ ] Dead code
 - [ ] Class functions cannot override other functions (must be uniquely named)
 - [x] for-loop without sugaring (makes output code ugly)
-- [ ] Strong types by requiring variables to be initialized
+- [ ] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
 - [ ] Replace classes with structs, interfaces, traits and member-functions
 - [ ] Fibers á la Wren
 - [ ] Yield functionality (generators or coroutines)
@@ -28,8 +27,8 @@ fun x() { print "hej" }
 - [ ] Support for arrays
 - [ ] Support for maps
 - [ ] String interpolation
-- [ ] ++ operator
-- [ ] Strong types (requires variable initialization)
+- [ ] ++/-- operators
+- [ ] +=/-=/*=//= operators
 - [ ] Typing phase
 - [ ] Optimization phase
 - [ ] Improve readme/documentation
@@ -40,13 +39,20 @@ fun x() { print "hej" }
 - [ ] Simplify code now that...
   - [ ] Variable shadowing is gone
   - [ ] nil is gone (done?)
-- [ ] Compile for JavaScript
+- [ ] Cosy playground
+  - [x] Compile for JavaScript
   - [x] Make simple Cosy playground website
   - [ ] Make playground available through github pages
-- [ ] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
+  - [ ] Scan + parse + resolve the code on keypress or after a timeout
+  - [ ] Syntax highlighting for codemirror
+- [x] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
 - [ ] Disable some static analysis for REPL, e.g. checking for unused variables
+- [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
+- [ ] Make semicolons trigger a warning instead of an error?
+- [ ] Time a "real" project and do performance optimizations
 
 # Project wishlist
+- [ ] Make a syntax highlighting extension for vscode
 - [ ] Enable null-safety feature for Haxe
 - [ ] Unit tests
 - [ ] Simple CI?
