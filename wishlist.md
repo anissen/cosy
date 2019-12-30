@@ -8,7 +8,7 @@ fun x() { print "hej" }
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)
-- [ ] Compile-time error to redefine variable/function
+- [x] Compile-time error to redefine variable/function
 - [x] No semi-colons
 - [ ] Change assignment to be a statement instead of an expression?
 - [ ] Everything is an expression (because it's easier), alternatively make _most_ statements into expressions
@@ -50,6 +50,7 @@ fun x() { print "hej" }
 - [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
 - [ ] Make semicolons trigger a warning instead of an error?
 - [ ] Time a "real" project and do performance optimizations
+- [ ] Better error position reporting with character from-to indexes
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

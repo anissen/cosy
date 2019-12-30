@@ -6,7 +6,7 @@ class Scanner {
 	final source:String;
 	final tokens:Array<Token> = [];
 	
-	static var keywords = [
+	static final keywords = [
 		'and' => And,
 		'class' => Class,
 		'else' => Else,

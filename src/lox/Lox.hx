@@ -2,8 +2,6 @@ package lox;
 
 #if sys
 import sys.io.File;
-#elseif js
-import js.Browser;
 #end
 
 class Lox {
@@ -44,25 +42,6 @@ class Lox {
         }
 
         runFile(file);
-        #elseif js
-        var sourceText = Browser.document.createTextAreaElement();
-        sourceText.rows = 40;
-        sourceText.cols = 120;
-        Browser.document.body.appendChild(sourceText);
-
-        var button = Browser.document.createButtonElement();
-        button.textContent = "Run";
-        Browser.document.body.appendChild(button);
-
-        var outputText = Browser.document.createTextAreaElement();
-        outputText.rows = 40;
-        outputText.cols = 120;
-        Browser.document.body.appendChild(outputText);
-
-        button.onclick = function(event) {
-            test(sourceText.value);
-            outputText.value = testOutput;
-        }
         #end
     }
 
@@ -99,11 +78,33 @@ class Lox {
         } else {
             #if sys
             Sys.println(v);
+            #elseif js
+            js.Browser.console.log(v);
             #end
         }
     }
 
+    @:expose // TODO: Maybe expose shallow?
+    static function validate(source:String) {
+        hadError = false;
+
+        var scanner = new Scanner(source);
+        var tokens = scanner.scanTokens();
+        var parser = new Parser(tokens);
+        var statements = parser.parse();
+
+        if (hadError) return;
+
+        var resolver = new Resolver(interpreter);
+        resolver.resolve(statements);
+
+        if (hadError) return;
+    }
+
+    @:expose
     static function run(source:String) {
+        hadError = false;
+
         var scanner = new Scanner(source);
         var tokens = scanner.scanTokens();
         var parser = new Parser(tokens);

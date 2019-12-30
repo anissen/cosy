@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Cosy Playground</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'> 
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css">
+
+    <link href="style.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container">
+        <div class="page-header">
+          <h1><b>Cosy</b> Playground</h1>
+        </div>
+
+        <div class="row">
+          <div class="span12">
+            <h3>Examples</h3>
+            <form class="well form-inline">
+              <label for="exampleChooser">Select an example</label> 
+              <select id="exampleChooser" onchange="loadExample()">
+                <option selected="selected" disabled="disabled">Pick one</option>
+                <option value="examples/loops.lox">Loops</option>
+                <option value="examples/anonymous-functions.lox">Anonymous functions</option>
+                <option value="examples/fibonacci.lox">Fibonacci sequence</option>
+              </select>
+            </form>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span7">
+            <h3>Code</h3>
+            <textarea id="code" class="code" rows="20">print "hello world!"</textarea>
+            <br/>
+            <div class="alert alert-error" hidden="true" id="compileError">
+              <strong>Compilation error!</strong>
+              <p id="errorText">Too bad.</p>
+            </div>
+            <a id="runBtn" class="btn" onclick="run()">Run</a>
+          </div>
+          <div class="span5">
+            <h3>Output</h3>
+            <pre id="output" class="pre-scrollable biggerText CodeMirror-scroll" style="min-height: 150px;"></pre>
+          </div>
+        </div>
+    </div>
+
+    <script src="cosy.js"></script>
+    <script type="text/javascript">
+    const chooserEl = document.getElementById('exampleChooser');
+    const outputEl  = document.getElementById('output');
+    const notificationEl = document.getElementById("compileError");
+    
+    window.print = function(text) {
+        outputEl.innerText += text + '\n';
+    };
+    
+    var editor = CodeMirror.fromTextArea(document.getElementById('code'), { 
+        theme: 'default',
+        lineNumbers: false,
+        mode: 'javascript',
+        tabSize: 4,
+        indentUnit: 1,
+        indentWithTabs: false
+    });
+
+    var validateTimer = null;
+    editor.on('change', function(cm, change) {
+        if (validateTimer != null) clearInterval(validateTimer);
+        validateTimer = setTimeout(validate, 1000);
+    });
+
+    function loadExample() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', chooserEl.value);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                editor.setValue(xhr.responseText);
+                run();
+            } else {
+                alert('Request failed. Returned status of ' + xhr.status);
+            }
+        };
+        xhr.send();
+    }
+
+    function validate() {
+        errorMarkers.forEach(function(marker) {
+            marker.clear();
+        });
+
+        notificationEl.innerText = '';
+        notificationEl.hidden = true;
+        var old = console.log;
+        console.log = showError;
+        window.lox.Lox.validate(editor.getValue());
+        console.log = old;
+    }
+
+    function run() { 
+        outputEl.innerText = '';
+        var old = console.log;
+        console.log = window.print;
+        window.lox.Lox.run(editor.getValue());
+        console.log = old;
+    }
+    
+    var errorMarkers = [];
+    const showError = function(msg) {
+        console.warn(msg);
+        notificationEl.innerText += msg + '\n';
+        notificationEl.hidden = false;
+
+        var result = msg.match(/^\[line ([0-9]+)\]/);
+        console.warn(result);
+        var line = parseInt(result[1]);
+
+        let from = { line: line - 1, ch: 0 };
+        let to = { line: line - 1, ch: 1000 };
+
+        errorMarkers.push(editor.markText(from, to, { className: 'syntax-error', title: msg }));
+    };
+    </script>
+  </body>
+</html>

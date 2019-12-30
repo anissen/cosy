@@ -10,6 +10,7 @@
 #--macro nullSafety("lox", Loose)
 
 # -D no-traces
+# -lib closure
 # -dce full
 # -D analyzer-optimize
 # -D source-map
