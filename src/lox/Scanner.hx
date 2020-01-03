@@ -8,19 +8,19 @@ class Scanner {
 	
 	static final keywords = [
 		'and' => And,
-		'class' => Class,
+		'class' => Class, // TODO: remove
 		'else' => Else,
 		'false' => False,
 		'for' => For,
-		'fun' => Fun,
+		'fun' => Fun, // TODO: change to fn
 		'in' => In,
 		'if' => If,
 		'mut' => Mut,
 		'or' => Or,
 		'print' => Print,
 		'return' => Return,
-		'super' => Super,
-		'this' => This,
+		'super' => Super, // TODO: remove
+		'this' => This, // TODO: remove
 		'true' => True,
 		'var' => Var
 	];
@@ -67,7 +67,7 @@ class Scanner {
 				}
 			case ' '.code | '\r'.code | '\t'.code: // Ignore whitespace.
 			case '\n'.code: line++;
-			case '"'.code: string();
+			case '"'.code: string(); // TODO: change to using ' instead
 			case _: 
 				if (isDigit(c)) {
 					number();

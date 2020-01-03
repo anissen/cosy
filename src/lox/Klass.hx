@@ -35,7 +35,7 @@ class Klass implements Callable {
 		return null;
 	}
 	
-	public function toString() {
+	public function toString() :String {
 		return name;
 	}
 }
