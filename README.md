@@ -27,7 +27,7 @@ for i 0..max {
   * No variable shadowing
 * Compile-time validation
   * Unused variables
-  * Simple dead-code, i.e. statements following an unconditional `return` in a block
+  * Simple dead code detection, i.e. statements following an unconditional `return` in a block
 * Has built-in code formatter
 * (...)
 
