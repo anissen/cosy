@@ -15,7 +15,7 @@ h1 {
 }
 
 .CodeMirror-scroll {
-  height: auto;
+  /* height: auto; */
   max-height: 600px;
   overflow-y: scroll;
   overflow-x: auto;
