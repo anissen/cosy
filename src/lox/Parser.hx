@@ -47,9 +47,9 @@ class Parser {
             // for i min..max {
             var name = consume(Identifier, 'Expect variable name.');
             consume(In, 'Expect "in" after for loop identifier.');
-            var from = addition();
+            var from = expression();
             consume(DotDot, 'Expect ".." between from and to numbers.');
-            var to = addition();
+            var to = expression();
             consume(LeftBrace, 'Expect "{" before loop body.');
             var body = block();
             return For(name, from, to, body);

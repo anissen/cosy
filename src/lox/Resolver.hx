@@ -85,11 +85,12 @@ class Resolver {
 				if(init != null) resolveExpr(init);
 				define(name, true);
             case For(name, from, to, body):
+                resolveExpr(from);
+                resolveExpr(to);
+                
                 beginScope();
                 declare(name);
                 define(name);
-                resolveExpr(from);
-                resolveExpr(to);
                 resolveStmts(body);
                 endScope();
             case ForCondition(cond, body):

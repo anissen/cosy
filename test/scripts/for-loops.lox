@@ -1,5 +1,10 @@
 fun f() {
-    for j in 0..3 {
+    for j in 0..2 {
+        print "loop #" + j
+    }
+    var from = 2
+    var to = 4
+    for j in from..to {
         print "loop #" + j
     }
 }
