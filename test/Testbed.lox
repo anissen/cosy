@@ -34,21 +34,23 @@
 
 // -----------
 
-// mut x = fun() {
-//     return "a string"
-// }
-// print "x() = " + x()
-// x = fun() {
-//     return 12
-// }
-// print x()
-// x = fun() {
-//     fun z() {
-//         return true
+// {
+//     mut x = fun() {
+//         return "a string"
 //     }
-//     return z()
+//     print "x() = " + x()
+//     x = fun() {
+//         return 12
+//     }
+//     print x()
+//     x = fun() {
+//         fun z() {
+//             return true
+//         }
+//         return z()
+//     }
+//     print "x() = " + x()
 // }
-// print "x() = " + x()
 
 // -----------
 

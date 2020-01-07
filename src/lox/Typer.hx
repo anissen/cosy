@@ -60,7 +60,7 @@ class Typer {
             case ForCondition(cond, body): typeStmts(body);
 			case Function(name, params, body):
                 for (param in params) variableTypes.set(param.lexeme, Unknown); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
-                
+
                 // for (param in params) variableTypes.set(name.lexeme + '.' + param.lexeme, Unknown); // TODO: Temp hack!
 
                 functionName = name.lexeme;
@@ -96,7 +96,7 @@ class Typer {
                 if (varType.match(Unknown)) {
                     variableTypes.set(name.lexeme, assigningType);
                 } else if (!matchType(varType, assigningType)) {
-                    Lox.error(name, 'TYPER: Cannot assign ${assigningType} to ${varType}');
+                    Lox.error(name, 'Cannot assign ${assigningType} to ${varType}');
                 }
                 return assigningType;
 			case Variable(name):
@@ -105,15 +105,13 @@ class Typer {
 			case Binary(left, _, right): 
                 var leftType = typeExpr(left);
                 var rightType = typeExpr(right);
-                trace('leftType: $leftType');
-                trace('rightType: $rightType');
                 if (leftType.match(Text) || rightType.match(Text)) return Text;
                 if (leftType.match(Number) || rightType.match(Number)) return Number;
                 return Unknown;
             case Logical(left, _, right): Boolean;
 			case Call(callee, paren, arguments):
-                trace('callee: $callee');
-                trace(arguments);
+                // trace('callee: $callee');
+                // trace(arguments);
                 var calleeType = typeExpr(callee);
                 
                 // TODO: Here I should be able to determine (á la Interpreter.evaluate()) the function name and each argument name. This information I could use to set the types for the arguments (e.g. in the form 'function_name.arg_name' => type, alternatively associate a scope with each function). Subsequent calls to that function could then be checked against the same types
