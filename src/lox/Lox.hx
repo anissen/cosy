@@ -99,6 +99,11 @@ class Lox {
         resolver.resolve(statements);
 
         if (hadError) return;
+
+        var typer = new Typer(interpreter);
+        typer.type(statements);
+
+        if (hadError) return;
     }
 
     @:expose
@@ -114,6 +119,11 @@ class Lox {
 
         var resolver = new Resolver(interpreter);
         resolver.resolve(statements);
+
+        if (hadError) return;
+
+        var typer = new Typer(interpreter);
+        typer.type(statements);
 
         if (hadError) return;
 

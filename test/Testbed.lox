@@ -1,0 +1,51 @@
+// {
+//     mut i = "" + 42 + 1 + 0 + 1
+//     print i
+//     i = 22
+//     print i
+// }
+
+// -----------
+
+// {
+//     mut i // = "hej"
+//     print i
+//     i = 3
+//     // i = "hej"
+//     print i
+// }
+
+// -----------
+
+// var s = "hej"
+// print i
+// i = 33
+// print i
+// i = s
+// print i
+
+// -----------
+
+// mut x = 2
+// x = fun() {
+//     print "blah"
+// }
+// print x
+
+// -----------
+
+mut x = fun() {
+    return "a string"
+}
+print "x() = " + x()
+x = fun() {
+    return 12
+}
+print x()
+x = fun() {
+    fun z() {
+        return true
+    }
+    return z()
+}
+print "x() = " + x()
