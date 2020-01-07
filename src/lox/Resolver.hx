@@ -90,6 +90,7 @@ class Resolver {
                 define(name);
                 resolveExpr(from);
                 resolveExpr(to);
+                if (body.length == 0) Lox.error(name, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
             case ForCondition(cond, body):

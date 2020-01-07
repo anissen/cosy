@@ -34,18 +34,60 @@
 
 // -----------
 
-mut x = fun() {
-    return "a string"
+// mut x = fun() {
+//     return "a string"
+// }
+// print "x() = " + x()
+// x = fun() {
+//     return 12
+// }
+// print x()
+// x = fun() {
+//     fun z() {
+//         return true
+//     }
+//     return z()
+// }
+// print "x() = " + x()
+
+// -----------
+
+// fun f() {
+//     return _
+// }
+// mut x = f()
+
+// -----------
+
+// fun f(arg) {
+//     var a = arg + 1
+//     print "printing f arg: '" + a + "'"
+// }
+// f(12)
+// f("str")
+// f(true)
+
+// -----------
+
+// for i in "0".."3" {
+//     print i
+// }
+
+// -----------
+
+// for i in 0..3 {
+//     mut j = i
+//     j = "hej"
+//     print j
+// }
+
+// -----------
+
+fun f(arg) {
+    return arg
 }
-print "x() = " + x()
-x = fun() {
-    return 12
-}
-print x()
-x = fun() {
-    fun z() {
-        return true
-    }
-    return z()
-}
-print "x() = " + x()
+
+mut x = f(12)
+print x
+x = f("hej")
+print x
