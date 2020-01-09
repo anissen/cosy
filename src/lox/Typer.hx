@@ -153,8 +153,8 @@ class Typer {
         // trace(expr.getName() + ' => $ret');
         if (ret.match(Unknown)) {
             switch expr {
-                case Call(callee, paren, arguments): trace('[line ${paren.line}] Warning, ${expr.getName()} has type Unknown');
-                case _: trace('Warning, ${expr.getName()} has type Unknown');
+                case Call(callee, paren, arguments): Lox.warning(paren, '${expr.getName()} has type Unknown');
+                case _: Lox.warning(-1, '${expr.getName()} has type Unknown');
             }
         }
         return ret;

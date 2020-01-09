@@ -349,27 +349,27 @@ lox_AstPrinter.prototype = {
 		case 3:
 			return "for " + statement.name.lexeme + " in " + this.printExpr(statement.from) + ".." + this.printExpr(statement.to) + " " + this.printBlock(statement.body);
 		case 4:
-			var _g23 = statement.cond;
-			return "for " + (_g23 != null ? this.printExpr(_g23) : "") + " " + this.printBlock(statement.body);
+			var _g22 = statement.cond;
+			return "for " + (_g22 != null ? this.printExpr(_g22) : "") + " " + this.printBlock(statement.body);
 		case 5:
-			var _g19 = statement.body;
-			var _g18 = statement.params;
+			var _g18 = statement.body;
+			var _g17 = statement.params;
 			var declaration2 = "" + (this.isInClass ? "" : "fun ") + statement.name.lexeme;
 			var _g = [];
 			var _g1 = 0;
-			while(_g1 < _g18.length) _g.push(_g18[_g1++].lexeme);
-			return "" + declaration2 + "(" + _g.join(",") + ") " + this.printBlock(_g19);
+			while(_g1 < _g17.length) _g.push(_g17[_g1++].lexeme);
+			return "" + declaration2 + "(" + _g.join(",") + ") " + this.printBlock(_g18);
 		case 6:
-			var _g22 = statement.el;
-			return "if " + this.printExpr(statement.cond) + " " + this.printStmt(statement.then) + (_g22 != null ? " else " + this.printStmt(_g22) : "");
+			var _g21 = statement.el;
+			return "if " + this.printExpr(statement.cond) + " " + this.printStmt(statement.then) + (_g21 != null ? " else " + this.printStmt(_g21) : "");
 		case 7:
 			var _g11 = statement.init;
 			return "mut " + statement.name.lexeme + (_g11 != null ? " = " + this.printExpr(_g11) : "");
 		case 8:
 			return "print " + this.printExpr(statement.e);
 		case 9:
-			var _g14 = statement.value;
-			return "return" + (_g14 != null ? " " + this.printExpr(_g14) : "");
+			var _g13 = statement.value;
+			return "return" + (_g13 != null ? " " + this.printExpr(_g13) : "");
 		case 10:
 			var _g6 = statement.init;
 			return "var " + statement.name.lexeme + (_g6 != null ? " = " + this.printExpr(_g6) : "");
@@ -382,22 +382,22 @@ lox_AstPrinter.prototype = {
 		case 1:
 			return "" + this.printExpr(expr.left) + " " + expr.op.lexeme + " " + this.printExpr(expr.right);
 		case 2:
-			var _g13 = expr.$arguments;
+			var _g12 = expr.$arguments;
 			var tmp = "" + this.printExpr(expr.callee) + "(";
 			var _g = [];
 			var _g1 = 0;
-			while(_g1 < _g13.length) _g.push(this.printExpr(_g13[_g1++]));
+			while(_g1 < _g12.length) _g.push(this.printExpr(_g12[_g1++]));
 			return tmp + _g.join(",") + ")";
 		case 3:
 			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme;
 		case 4:
 			return "(" + this.printExpr(expr.e) + ")";
 		case 5:
-			var _g26 = expr.v;
-			if(typeof(_g26) == "string") {
-				return "\"" + Std.string(_g26) + "\"";
+			var _g25 = expr.v;
+			if(typeof(_g25) == "string") {
+				return "\"" + Std.string(_g25) + "\"";
 			} else {
-				return "" + Std.string(_g26);
+				return "" + Std.string(_g25);
 			}
 			break;
 		case 6:
@@ -413,12 +413,12 @@ lox_AstPrinter.prototype = {
 		case 11:
 			return expr.name.lexeme;
 		case 12:
-			var _g16 = expr.body;
-			var _g15 = expr.params;
+			var _g15 = expr.body;
+			var _g14 = expr.params;
 			var _g2 = [];
 			var _g11 = 0;
-			while(_g11 < _g15.length) _g2.push(_g15[_g11++].lexeme);
-			return "fun (" + _g2.join(",") + ") " + this.printStmt(lox_Stmt.Block(_g16));
+			while(_g11 < _g14.length) _g2.push(_g14[_g11++].lexeme);
+			return "fun (" + _g2.join(",") + ") " + this.printStmt(lox_Stmt.Block(_g15));
 		}
 	}
 	,__class__: lox_AstPrinter
@@ -512,16 +512,8 @@ lox_Error.__name__ = true;
 lox_Error.prototype = {
 	__class__: lox_Error
 };
-var lox_VariableType = $hxEnums["lox.VariableType"] = { __ename__ : true, __constructs__ : ["Unknown","Boolean","Number","String","Instance","Function"]
-	,Unknown: {_hx_index:0,__enum__:"lox.VariableType",toString:$estr}
-	,Boolean: {_hx_index:1,__enum__:"lox.VariableType",toString:$estr}
-	,Number: {_hx_index:2,__enum__:"lox.VariableType",toString:$estr}
-	,String: {_hx_index:3,__enum__:"lox.VariableType",toString:$estr}
-	,Instance: {_hx_index:4,__enum__:"lox.VariableType",toString:$estr}
-	,Function: ($_=function(ret) { return {_hx_index:5,ret:ret,__enum__:"lox.VariableType",toString:$estr}; },$_.__params__ = ["ret"],$_)
-};
 var lox_Expr = $hxEnums["lox.Expr"] = { __ename__ : true, __constructs__ : ["Assign","Binary","Call","Get","Grouping","Literal","Logical","Set","This","Super","Unary","Variable","AnonFunction"]
-	,Assign: ($_=function(name,value,type) { return {_hx_index:0,name:name,value:value,type:type,__enum__:"lox.Expr",toString:$estr}; },$_.__params__ = ["name","value","type"],$_)
+	,Assign: ($_=function(name,value) { return {_hx_index:0,name:name,value:value,__enum__:"lox.Expr",toString:$estr}; },$_.__params__ = ["name","value"],$_)
 	,Binary: ($_=function(left,op,right) { return {_hx_index:1,left:left,op:op,right:right,__enum__:"lox.Expr",toString:$estr}; },$_.__params__ = ["left","op","right"],$_)
 	,Call: ($_=function(callee,paren,$arguments) { return {_hx_index:2,callee:callee,paren:paren,$arguments:$arguments,__enum__:"lox.Expr",toString:$estr}; },$_.__params__ = ["callee","paren","$arguments"],$_)
 	,Get: ($_=function(obj,name) { return {_hx_index:3,obj:obj,name:name,__enum__:"lox.Expr",toString:$estr}; },$_.__params__ = ["obj","name"],$_)
@@ -627,6 +619,10 @@ var lox_Interpreter = function() {
 	this.locals = new haxe_ds_ObjectMap();
 	this.globals = new lox_Environment();
 	this.globals.define("clock",new lox__$Interpreter_ClockCallable());
+	this.globals.define("random",new lox__$Interpreter_RandomCallable());
+	this.globals.define("str_length",new lox__$Interpreter_StringLengthCallable());
+	this.globals.define("str_charAt",new lox__$Interpreter_StringCharAtCallable());
+	this.globals.define("input",new lox__$Interpreter_InputCallable());
 	this.environment = this.globals;
 };
 lox_Interpreter.__name__ = true;
@@ -719,21 +715,21 @@ lox_Interpreter.prototype = {
 			}
 			break;
 		case 4:
-			var _g24 = statement.body;
-			var _g23 = statement.cond;
+			var _g23 = statement.body;
+			var _g22 = statement.cond;
 			var env1 = new lox_Environment(this.environment);
-			while(_g23 != null ? this.isTruthy(this.evaluate(_g23)) : true) this.executeBlock(_g24,env1);
+			while(_g22 != null ? this.isTruthy(this.evaluate(_g22)) : true) this.executeBlock(_g23,env1);
 			break;
 		case 5:
-			var _g17 = statement.name;
-			this.environment.define(_g17.lexeme,new lox_Function(_g17,statement.params,statement.body,this.environment,false));
+			var _g16 = statement.name;
+			this.environment.define(_g16.lexeme,new lox_Function(_g16,statement.params,statement.body,this.environment,false));
 			break;
 		case 6:
-			var _g22 = statement.el;
+			var _g21 = statement.el;
 			if(this.isTruthy(this.evaluate(statement.cond))) {
 				this.execute(statement.then);
-			} else if(_g22 != null) {
-				this.execute(_g22);
+			} else if(_g21 != null) {
+				this.execute(_g21);
 			}
 			break;
 		case 7:
@@ -748,8 +744,8 @@ lox_Interpreter.prototype = {
 			lox_Lox.println(this.stringify(this.evaluate(statement.e)));
 			break;
 		case 9:
-			var _g14 = statement.value;
-			throw new js__$Boot_HaxeError(new lox_Return(_g14 == null ? null : this.evaluate(_g14)));
+			var _g13 = statement.value;
+			throw new js__$Boot_HaxeError(new lox_Return(_g13 == null ? null : this.evaluate(_g13)));
 		case 10:
 			var _g6 = statement.init;
 			var value1 = lox_Interpreter.uninitialized;
@@ -789,12 +785,12 @@ lox_Interpreter.prototype = {
 			}
 			return value;
 		case 1:
-			var _g22 = expr.op;
+			var _g21 = expr.op;
 			var left = this.evaluate(expr.left);
 			var right = this.evaluate(expr.right);
-			switch(_g22.type._hx_index) {
+			switch(_g21.type._hx_index) {
 			case 7:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left - right;
 			case 8:
 				if(typeof(left) == "number" && typeof(right) == "number") {
@@ -806,65 +802,65 @@ lox_Interpreter.prototype = {
 				} else if(typeof(left) == "string" && typeof(right) == "string") {
 					return left + right;
 				} else {
-					throw new js__$Boot_HaxeError(new lox_RuntimeError(_g22,"Operands cannot be concatinated."));
+					throw new js__$Boot_HaxeError(new lox_RuntimeError(_g21,"Operands cannot be concatinated."));
 				}
 				break;
 			case 9:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left / right;
 			case 10:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left * right;
 			case 13:
 				return !this.isEqual(left,right);
 			case 15:
 				return this.isEqual(left,right);
 			case 16:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left > right;
 			case 17:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left >= right;
 			case 18:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left < right;
 			case 19:
-				this.checkNumberOperands(_g22,left,right);
+				this.checkNumberOperands(_g21,left,right);
 				return left <= right;
 			default:
 				return null;
 			}
 			break;
 		case 2:
-			var _g13 = expr.$arguments;
-			var _g12 = expr.paren;
+			var _g12 = expr.$arguments;
+			var _g11 = expr.paren;
 			var callee = this.evaluate(expr.callee);
 			var f = $bind(this,this.evaluate);
-			var result = new Array(_g13.length);
+			var result = new Array(_g12.length);
 			var _g1 = 0;
-			var _g11 = _g13.length;
-			while(_g1 < _g11) {
+			var _g13 = _g12.length;
+			while(_g1 < _g13) {
 				var i = _g1++;
-				result[i] = f(_g13[i]);
+				result[i] = f(_g12[i]);
 			}
 			if(!js_Boot.__implements(callee,lox_Callable)) {
-				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g12,"Can only call functions and classes"));
+				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g11,"Can only call functions and classes"));
 			} else {
 				var func = callee;
 				var arity = func.arity();
 				if(result.length != arity) {
-					throw new js__$Boot_HaxeError(new lox_RuntimeError(_g12,"Expected " + arity + " argument(s) but got " + result.length + "."));
+					throw new js__$Boot_HaxeError(new lox_RuntimeError(_g11,"Expected " + arity + " argument(s) but got " + result.length + "."));
 				}
 				return func.call(this,result);
 			}
 			break;
 		case 3:
-			var _g20 = expr.name;
+			var _g19 = expr.name;
 			var obj = this.evaluate(expr.obj);
 			if(((obj) instanceof lox_Instance)) {
-				return obj.get(_g20);
+				return obj.get(_g19);
 			} else {
-				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g20,"Only instances have properties"));
+				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g19,"Only instances have properties"));
 			}
 			break;
 		case 4:
@@ -894,24 +890,24 @@ lox_Interpreter.prototype = {
 			}
 			break;
 		case 7:
-			var _g9 = expr.name;
+			var _g8 = expr.name;
 			var obj1 = this.evaluate(expr.obj);
 			if(!((obj1) instanceof lox_Instance)) {
-				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g9,"Only instances have fields"));
+				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g8,"Only instances have fields"));
 			}
 			var value1 = this.evaluate(expr.value);
-			obj1.set(_g9,value1);
+			obj1.set(_g8,value1);
 			return value1;
 		case 8:
 			return this.lookUpVariable(expr.keyword,expr);
 		case 9:
-			var _g25 = expr.method;
+			var _g24 = expr.method;
 			var distance = this.locals.h[expr.__id__];
 			var superclass = this.environment.getAt(distance,"super");
 			var obj2 = this.environment.getAt(distance - 1,"this");
-			var method = superclass.findMethod(_g25.lexeme);
+			var method = superclass.findMethod(_g24.lexeme);
 			if(method == null) {
-				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g25,"Undefined property \"" + _g25.lexeme + "\"."));
+				throw new js__$Boot_HaxeError(new lox_RuntimeError(_g24,"Undefined property \"" + _g24.lexeme + "\"."));
 			}
 			return method.bind(obj2);
 		case 10:
@@ -995,6 +991,70 @@ lox__$Interpreter_ClockCallable.prototype = {
 	}
 	,__class__: lox__$Interpreter_ClockCallable
 };
+var lox__$Interpreter_RandomCallable = function() {
+};
+lox__$Interpreter_RandomCallable.__name__ = true;
+lox__$Interpreter_RandomCallable.__interfaces__ = [lox_Callable];
+lox__$Interpreter_RandomCallable.prototype = {
+	arity: function() {
+		return 0;
+	}
+	,call: function(interpreter,args) {
+		return Math.random();
+	}
+	,toString: function() {
+		return "<native fn>";
+	}
+	,__class__: lox__$Interpreter_RandomCallable
+};
+var lox__$Interpreter_StringLengthCallable = function() {
+};
+lox__$Interpreter_StringLengthCallable.__name__ = true;
+lox__$Interpreter_StringLengthCallable.__interfaces__ = [lox_Callable];
+lox__$Interpreter_StringLengthCallable.prototype = {
+	arity: function() {
+		return 1;
+	}
+	,call: function(interpreter,args) {
+		return args[0].length;
+	}
+	,toString: function() {
+		return "<native fn>";
+	}
+	,__class__: lox__$Interpreter_StringLengthCallable
+};
+var lox__$Interpreter_StringCharAtCallable = function() {
+};
+lox__$Interpreter_StringCharAtCallable.__name__ = true;
+lox__$Interpreter_StringCharAtCallable.__interfaces__ = [lox_Callable];
+lox__$Interpreter_StringCharAtCallable.prototype = {
+	arity: function() {
+		return 2;
+	}
+	,call: function(interpreter,args) {
+		return args[0].charAt(args[1]);
+	}
+	,toString: function() {
+		return "<native fn>";
+	}
+	,__class__: lox__$Interpreter_StringCharAtCallable
+};
+var lox__$Interpreter_InputCallable = function() {
+};
+lox__$Interpreter_InputCallable.__name__ = true;
+lox__$Interpreter_InputCallable.__interfaces__ = [lox_Callable];
+lox__$Interpreter_InputCallable.prototype = {
+	arity: function() {
+		return 0;
+	}
+	,call: function(interpreter,args) {
+		throw new js__$Boot_HaxeError("Not implemented on this platform!");
+	}
+	,toString: function() {
+		return "<native fn>";
+	}
+	,__class__: lox__$Interpreter_InputCallable
+};
 var lox_JavaScriptPrinter = function() {
 	this.classNames = [];
 	this.isInClass = false;
@@ -1043,27 +1103,27 @@ lox_JavaScriptPrinter.prototype = {
 			var _g = statement.name;
 			return "for (var " + _g.lexeme + " = " + this.printExpr(statement.from) + "; " + _g.lexeme + " < " + this.printExpr(statement.to) + "; " + _g.lexeme + "++) " + this.printBlock(statement.body);
 		case 4:
-			var _g23 = statement.cond;
-			return "while (" + (_g23 != null ? this.printExpr(_g23) : "true") + ") " + this.printBlock(statement.body);
+			var _g22 = statement.cond;
+			return "while (" + (_g22 != null ? this.printExpr(_g22) : "true") + ") " + this.printBlock(statement.body);
 		case 5:
-			var _g19 = statement.body;
-			var _g18 = statement.params;
+			var _g18 = statement.body;
+			var _g17 = statement.params;
 			var declaration1 = "" + (this.isInClass ? "" : "function ") + statement.name.lexeme;
 			var _g1 = [];
 			var _g11 = 0;
-			while(_g11 < _g18.length) _g1.push(_g18[_g11++].lexeme);
-			return "" + declaration1 + "(" + _g1.join(",") + ") " + this.printStmt(lox_Stmt.Block(_g19));
+			while(_g11 < _g17.length) _g1.push(_g17[_g11++].lexeme);
+			return "" + declaration1 + "(" + _g1.join(",") + ") " + this.printStmt(lox_Stmt.Block(_g18));
 		case 6:
-			var _g22 = statement.el;
-			return "if (" + this.printExpr(statement.cond) + ") " + this.printStmt(statement.then) + (_g22 != null ? " else " + this.printStmt(_g22) : "");
+			var _g21 = statement.el;
+			return "if (" + this.printExpr(statement.cond) + ") " + this.printStmt(statement.then) + (_g21 != null ? " else " + this.printStmt(_g21) : "");
 		case 7:
 			var _g111 = statement.init;
 			return "var " + statement.name.lexeme + (_g111 != null ? " = " + this.printExpr(_g111) : "") + ";";
 		case 8:
 			return "console.log(" + this.printExpr(statement.e) + ");";
 		case 9:
-			var _g14 = statement.value;
-			return "return" + (_g14 != null ? " " + this.printExpr(_g14) : "") + ";";
+			var _g13 = statement.value;
+			return "return" + (_g13 != null ? " " + this.printExpr(_g13) : "") + ";";
 		case 10:
 			var _g6 = statement.init;
 			return "const " + statement.name.lexeme + (_g6 != null ? " = " + this.printExpr(_g6) : "") + ";";
@@ -1074,29 +1134,29 @@ lox_JavaScriptPrinter.prototype = {
 		case 0:
 			return "" + expr.name.lexeme + " = " + this.printExpr(expr.value);
 		case 1:
-			var _g22 = expr.op;
-			return "" + this.printExpr(expr.left) + " " + (_g22.type._hx_index == 15 ? "===" : _g22.lexeme) + " " + this.printExpr(expr.right);
+			var _g21 = expr.op;
+			return "" + this.printExpr(expr.left) + " " + (_g21.type._hx_index == 15 ? "===" : _g21.lexeme) + " " + this.printExpr(expr.right);
 		case 2:
-			var _g13 = expr.$arguments;
+			var _g12 = expr.$arguments;
 			var calleeName = this.printExpr(expr.callee);
 			var tmp = this.classNames.indexOf(calleeName) != -1 ? "new " : "";
 			var tmp1 = "" + calleeName + "(";
 			var _g = [];
 			var _g1 = 0;
-			while(_g1 < _g13.length) _g.push(this.printExpr(_g13[_g1++]));
+			while(_g1 < _g12.length) _g.push(this.printExpr(_g12[_g1++]));
 			return tmp + (tmp1 + _g.join(",") + ")");
 		case 3:
 			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme;
 		case 4:
 			return "(" + this.printExpr(expr.e) + ")";
 		case 5:
-			var _g26 = expr.v;
-			if(_g26 == null) {
+			var _g25 = expr.v;
+			if(_g25 == null) {
 				return "null";
-			} else if(typeof(_g26) == "string") {
-				return "\"" + Std.string(_g26) + "\"";
+			} else if(typeof(_g25) == "string") {
+				return "\"" + Std.string(_g25) + "\"";
 			} else {
-				return "" + Std.string(_g26);
+				return "" + Std.string(_g25);
 			}
 			break;
 		case 6:
@@ -1112,12 +1172,12 @@ lox_JavaScriptPrinter.prototype = {
 		case 11:
 			return expr.name.lexeme;
 		case 12:
-			var _g16 = expr.body;
-			var _g15 = expr.params;
+			var _g15 = expr.body;
+			var _g14 = expr.params;
 			var _g2 = [];
 			var _g11 = 0;
-			while(_g11 < _g15.length) _g2.push(_g15[_g11++].lexeme);
-			return "function (" + _g2.join(",") + ") " + this.printStmt(lox_Stmt.Block(_g16));
+			while(_g11 < _g14.length) _g2.push(_g14[_g11++].lexeme);
+			return "function (" + _g2.join(",") + ") " + this.printStmt(lox_Stmt.Block(_g15));
 		}
 	}
 	,__class__: lox_JavaScriptPrinter
@@ -1190,6 +1250,10 @@ lox_Lox.validate = $hx_exports["lox"]["Lox"]["validate"] = function(source) {
 	if(lox_Lox.hadError) {
 		return;
 	}
+	new lox_Typer(lox_Lox.interpreter).typeStmts(statements);
+	if(lox_Lox.hadError) {
+		return;
+	}
 };
 lox_Lox.run = $hx_exports["lox"]["Lox"]["run"] = function(source) {
 	lox_Lox.hadError = false;
@@ -1201,6 +1265,10 @@ lox_Lox.run = $hx_exports["lox"]["Lox"]["run"] = function(source) {
 	resolver.beginScope();
 	resolver.resolveStmts(statements);
 	resolver.endScope();
+	if(lox_Lox.hadError) {
+		return;
+	}
+	new lox_Typer(lox_Lox.interpreter).typeStmts(statements);
 	if(lox_Lox.hadError) {
 		return;
 	}
@@ -1218,6 +1286,24 @@ lox_Lox.run = $hx_exports["lox"]["Lox"]["run"] = function(source) {
 		return;
 	}
 	lox_Lox.interpreter.interpret(statements);
+};
+lox_Lox.reportWarning = function(line,where,message) {
+	lox_Lox.println("[line " + line + "] Warning " + where + ": " + message);
+};
+lox_Lox.warning = function(data,message) {
+	switch(data._hx_index) {
+	case 0:
+		lox_Lox.reportWarning(data.v,"",message);
+		break;
+	case 1:
+		var _g = data.v;
+		if(_g.type == lox_TokenType.Eof) {
+			lox_Lox.reportWarning(_g.line,"at end",message);
+		} else {
+			lox_Lox.reportWarning(_g.line,"at \"" + _g.lexeme + "\"",message);
+		}
+		break;
+	}
 };
 lox_Lox.report = function(line,where,message) {
 	lox_Lox.println("[line " + line + "] Error " + where + ": " + message);
@@ -1349,7 +1435,7 @@ lox_Parser.prototype = {
 		if(this.match([lox_TokenType.Equal])) {
 			initializer = this.expression();
 		}
-		return lox_Stmt.Mut(name,initializer,this.getType(initializer));
+		return lox_Stmt.Mut(name,initializer);
 	}
 	,classDeclaration: function() {
 		var name = this.consume(lox_TokenType.Identifier,"Expect class name");
@@ -1402,7 +1488,7 @@ lox_Parser.prototype = {
 			case 3:
 				return lox_Expr.Set(expr.obj,expr.name,value);
 			case 11:
-				return lox_Expr.Assign(expr.name,value,this.getType(value));
+				return lox_Expr.Assign(expr.name,value);
 			default:
 			}
 			this.error(equals,"Invalid assignment target.");
@@ -1561,27 +1647,6 @@ lox_Parser.prototype = {
 			this.advance();
 		}
 	}
-	,getType: function(expr) {
-		if(expr == null) {
-			return lox_VariableType.Unknown;
-		}
-		switch(expr._hx_index) {
-		case 5:
-			var _g1 = expr.v;
-			if(typeof(_g1) == "number") {
-				return lox_VariableType.Number;
-			} else if(typeof(_g1) == "string") {
-				return lox_VariableType.String;
-			} else {
-				return lox_VariableType.Unknown;
-			}
-			break;
-		case 11:
-			return lox_VariableType.Unknown;
-		default:
-			return lox_VariableType.Unknown;
-		}
-	}
 	,__class__: lox_Parser
 };
 var lox__$Parser_ParseError = function(message) {
@@ -1641,7 +1706,7 @@ lox_Resolver.prototype = {
 				this.resolveExpr(_g8);
 				this.beginScope();
 				var this1 = this.scopes;
-				var value = { name : new lox_Token(lox_TokenType.Super,"super",null,_g7.line), state : lox__$Resolver_VariableState.Read, mutable : false, type : lox_VariableType.Instance};
+				var value = { name : new lox_Token(lox_TokenType.Super,"super",null,_g7.line), state : lox__$Resolver_VariableState.Read, mutable : false};
 				var _this = this1[this1.length - 1];
 				if(__map_reserved["super"] != null) {
 					_this.setReserved("super",value);
@@ -1651,7 +1716,7 @@ lox_Resolver.prototype = {
 			}
 			this.beginScope();
 			var this2 = this.scopes;
-			var value1 = { name : new lox_Token(lox_TokenType.This,"this",null,_g7.line), state : lox__$Resolver_VariableState.Read, mutable : false, type : lox_VariableType.Instance};
+			var value1 = { name : new lox_Token(lox_TokenType.This,"this",null,_g7.line), state : lox__$Resolver_VariableState.Read, mutable : false};
 			var _this1 = this2[this2.length - 1];
 			if(__map_reserved["this"] != null) {
 				_this1.setReserved("this",value1);
@@ -1677,62 +1742,65 @@ lox_Resolver.prototype = {
 			this.resolveExpr(stmt.e);
 			break;
 		case 3:
-			var _g3 = stmt.name;
+			var _g3 = stmt.body;
+			var _g4 = stmt.name;
 			this.resolveExpr(stmt.from);
 			this.resolveExpr(stmt.to);
 			this.beginScope();
-			this.declare(_g3);
-			this.define(_g3);
-			this.resolveStmts(stmt.body);
+			this.declare(_g4);
+			this.define(_g4);
+			if(_g3.length == 0) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g4),"Loop body is empty.");
+			}
+			this.resolveStmts(_g3);
 			this.endScope();
 			break;
 		case 4:
-			var _g23 = stmt.cond;
-			if(_g23 != null) {
-				this.resolveExpr(_g23);
+			var _g22 = stmt.cond;
+			if(_g22 != null) {
+				this.resolveExpr(_g22);
 			}
 			this.beginScope();
 			this.resolveStmts(stmt.body);
 			this.endScope();
 			break;
 		case 5:
-			var _g16 = stmt.name;
-			this.declare(_g16);
-			this.define(_g16);
-			this.resolveFunction(_g16,stmt.params,stmt.body,lox__$Resolver_FunctionType.Function);
+			var _g15 = stmt.name;
+			this.declare(_g15);
+			this.define(_g15);
+			this.resolveFunction(_g15,stmt.params,stmt.body,lox__$Resolver_FunctionType.Function);
 			break;
 		case 6:
-			var _g22 = stmt.el;
+			var _g21 = stmt.el;
 			this.resolveExpr(stmt.cond);
 			this.resolveStmt(stmt.then);
-			if(_g22 != null) {
-				this.resolveStmt(_g22);
+			if(_g21 != null) {
+				this.resolveStmt(_g21);
 			}
 			break;
 		case 7:
-			var _g12 = stmt.type;
 			var _g11 = stmt.init;
 			var _g10 = stmt.name;
-			this.declare(_g10,true,_g12);
+			this.declare(_g10,true);
 			if(_g11 != null) {
 				this.resolveExpr(_g11);
 			}
-			this.define(_g10,true,_g12);
+			this.define(_g10,true);
 			break;
 		case 8:
 			this.resolveExpr(stmt.e);
 			break;
 		case 9:
-			var _g14 = stmt.value;
-			var _g13 = stmt.keyword;
+			var _g13 = stmt.value;
+			var _g12 = stmt.keyword;
 			if(this.currentFunction == lox__$Resolver_FunctionType.None) {
-				lox_Lox.error(lox_ErrorDataType.Token(_g13),"Cannot return from top-level code.");
+				lox_Lox.error(lox_ErrorDataType.Token(_g12),"Cannot return from top-level code.");
 			}
-			if(_g14 != null) {
+			if(_g13 != null) {
 				if(this.currentFunction == lox__$Resolver_FunctionType.Initializer) {
-					lox_Lox.error(lox_ErrorDataType.Token(_g13),"Cannot return value from an initializer.");
+					lox_Lox.error(lox_ErrorDataType.Token(_g12),"Cannot return value from an initializer.");
 				}
-				this.resolveExpr(_g14);
+				this.resolveExpr(_g13);
 			}
 			break;
 		case 10:
@@ -1751,10 +1819,8 @@ lox_Resolver.prototype = {
 		case 0:
 			var _g5 = expr.name;
 			var variable = this.findInScopes(_g5);
-			if(variable != null) {
-				if(!variable.mutable) {
-					lox_Lox.error(lox_ErrorDataType.Token(_g5),"Cannot reassign non-mutable variable.");
-				}
+			if(variable != null && !variable.mutable) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g5),"Cannot reassign non-mutable variable.");
 			}
 			this.resolveExpr(expr.value);
 			this.resolveLocal(expr,_g5,false);
@@ -1764,10 +1830,10 @@ lox_Resolver.prototype = {
 			this.resolveExpr(expr.right);
 			break;
 		case 2:
-			var _g13 = expr.$arguments;
+			var _g12 = expr.$arguments;
 			this.resolveExpr(expr.callee);
 			var _g = 0;
-			while(_g < _g13.length) this.resolveExpr(_g13[_g++]);
+			while(_g < _g12.length) this.resolveExpr(_g12[_g++]);
 			break;
 		case 3:
 			this.resolveExpr(expr.obj);
@@ -1786,51 +1852,51 @@ lox_Resolver.prototype = {
 			this.resolveExpr(expr.obj);
 			break;
 		case 8:
-			var _g18 = expr.keyword;
+			var _g17 = expr.keyword;
 			if(this.currentClass == lox__$Resolver_ClassType.None) {
-				lox_Lox.error(lox_ErrorDataType.Token(_g18),"Cannot use \"this\" outside of a class.");
+				lox_Lox.error(lox_ErrorDataType.Token(_g17),"Cannot use \"this\" outside of a class.");
 			} else {
-				this.resolveLocal(expr,_g18,true);
+				this.resolveLocal(expr,_g17,true);
 			}
 			break;
 		case 9:
-			var _g24 = expr.keyword;
+			var _g23 = expr.keyword;
 			switch(this.currentClass._hx_index) {
 			case 0:
-				lox_Lox.error(lox_ErrorDataType.Token(_g24),"Cannot use \"super\" outside of a class.");
+				lox_Lox.error(lox_ErrorDataType.Token(_g23),"Cannot use \"super\" outside of a class.");
 				break;
 			case 1:
-				lox_Lox.error(lox_ErrorDataType.Token(_g24),"Cannot use \"super\" in a class with no superclass.");
+				lox_Lox.error(lox_ErrorDataType.Token(_g23),"Cannot use \"super\" in a class with no superclass.");
 				break;
 			case 2:
 				break;
 			}
-			this.resolveLocal(expr,_g24,true);
+			this.resolveLocal(expr,_g23,true);
 			break;
 		case 10:
 			this.resolveExpr(expr.right);
 			break;
 		case 11:
-			var _g17 = expr.name;
+			var _g16 = expr.name;
 			var tmp;
 			var this1 = this.scopes;
-			var key = _g17.lexeme;
+			var key = _g16.lexeme;
 			var _this = this1[this1.length - 1];
 			if(__map_reserved[key] != null ? _this.existsReserved(key) : _this.h.hasOwnProperty(key)) {
 				var this2 = this.scopes;
-				var key1 = _g17.lexeme;
+				var key1 = _g16.lexeme;
 				var _this1 = this2[this2.length - 1];
 				tmp = (__map_reserved[key1] != null ? _this1.getReserved(key1) : _this1.h[key1]).state._hx_index == 0;
 			} else {
 				tmp = false;
 			}
 			if(tmp) {
-				lox_Lox.error(lox_ErrorDataType.Token(_g17),"Cannot read local variable in its own initializer");
+				lox_Lox.error(lox_ErrorDataType.Token(_g16),"Cannot read local variable in its own initializer");
 			}
-			if(StringTools.startsWith(_g17.lexeme,"_")) {
-				lox_Lox.error(lox_ErrorDataType.Token(_g17),"Variables starting with _ are considered unused.");
+			if(StringTools.startsWith(_g16.lexeme,"_")) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g16),"Variables starting with _ are considered unused.");
 			}
-			this.resolveLocal(expr,_g17,true);
+			this.resolveLocal(expr,_g16,true);
 			break;
 		case 12:
 			this.resolveFunction(null,expr.params,expr.body,lox__$Resolver_FunctionType.Function);
@@ -1867,10 +1933,7 @@ lox_Resolver.prototype = {
 			}
 		}
 	}
-	,declare: function(name,mutable,type) {
-		if(type == null) {
-			type = lox_VariableType.Unknown;
-		}
+	,declare: function(name,mutable) {
 		if(mutable == null) {
 			mutable = false;
 		}
@@ -1883,24 +1946,21 @@ lox_Resolver.prototype = {
 			lox_Lox.error(lox_ErrorDataType.Token(name),"Shadows existing variable.");
 		}
 		var key1 = name.lexeme;
-		var value = { name : name, state : lox__$Resolver_VariableState.Declared, mutable : mutable, type : type};
+		var value = { name : name, state : lox__$Resolver_VariableState.Declared, mutable : mutable};
 		if(__map_reserved[key1] != null) {
 			scope.setReserved(key1,value);
 		} else {
 			scope.h[key1] = value;
 		}
 	}
-	,define: function(name,mutable,type) {
-		if(type == null) {
-			type = lox_VariableType.Unknown;
-		}
+	,define: function(name,mutable) {
 		if(mutable == null) {
 			mutable = false;
 		}
 		var this1 = this.scopes;
 		var key = name.lexeme;
 		var _this = this1[this1.length - 1];
-		var value = { name : name, state : lox__$Resolver_VariableState.Defined, mutable : mutable, type : type};
+		var value = { name : name, state : lox__$Resolver_VariableState.Defined, mutable : mutable};
 		if(__map_reserved[key] != null) {
 			_this.setReserved(key,value);
 		} else {
@@ -1922,7 +1982,7 @@ lox_Resolver.prototype = {
 			}
 			--i;
 		}
-		if(name.lexeme == "clock") {
+		if(name.lexeme == "clock" || name.lexeme == "random" || name.lexeme == "str_length" || name.lexeme == "str_charAt" || name.lexeme == "input") {
 			return;
 		}
 		lox_Lox.error(lox_ErrorDataType.Token(name),"Variable not declared in this scope.");
@@ -2204,7 +2264,7 @@ var lox_Stmt = $hxEnums["lox.Stmt"] = { __ename__ : true, __constructs__ : ["Blo
 	,ForCondition: ($_=function(cond,body) { return {_hx_index:4,cond:cond,body:body,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["cond","body"],$_)
 	,Function: ($_=function(name,params,body) { return {_hx_index:5,name:name,params:params,body:body,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["name","params","body"],$_)
 	,If: ($_=function(cond,then,el) { return {_hx_index:6,cond:cond,then:then,el:el,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["cond","then","el"],$_)
-	,Mut: ($_=function(name,init,type) { return {_hx_index:7,name:name,init:init,type:type,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["name","init","type"],$_)
+	,Mut: ($_=function(name,init) { return {_hx_index:7,name:name,init:init,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["name","init"],$_)
 	,Print: ($_=function(e) { return {_hx_index:8,e:e,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["e"],$_)
 	,Return: ($_=function(keyword,value) { return {_hx_index:9,keyword:keyword,value:value,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["keyword","value"],$_)
 	,Var: ($_=function(name,init) { return {_hx_index:10,name:name,init:init,__enum__:"lox.Stmt",toString:$estr}; },$_.__params__ = ["name","init"],$_)
@@ -2221,6 +2281,283 @@ lox_Token.prototype = {
 		return "" + Std.string(this.type) + " " + this.lexeme + " " + Std.string(this.literal);
 	}
 	,__class__: lox_Token
+};
+var lox_VariableType = $hxEnums["lox.VariableType"] = { __ename__ : true, __constructs__ : ["Unknown","Void","Boolean","Number","Text","Instance","Function"]
+	,Unknown: {_hx_index:0,__enum__:"lox.VariableType",toString:$estr}
+	,Void: {_hx_index:1,__enum__:"lox.VariableType",toString:$estr}
+	,Boolean: {_hx_index:2,__enum__:"lox.VariableType",toString:$estr}
+	,Number: {_hx_index:3,__enum__:"lox.VariableType",toString:$estr}
+	,Text: {_hx_index:4,__enum__:"lox.VariableType",toString:$estr}
+	,Instance: {_hx_index:5,__enum__:"lox.VariableType",toString:$estr}
+	,Function: ($_=function(ret) { return {_hx_index:6,ret:ret,__enum__:"lox.VariableType",toString:$estr}; },$_.__params__ = ["ret"],$_)
+};
+var lox_Typer = function(interpreter) {
+	this.returnValue = lox_VariableType.Void;
+	this.functionName = null;
+	this.variableTypes = new haxe_ds_StringMap();
+	this.interpreter = interpreter;
+	var _this = this.variableTypes;
+	var value = lox_VariableType.Number;
+	if(__map_reserved["clock"] != null) {
+		_this.setReserved("clock",value);
+	} else {
+		_this.h["clock"] = value;
+	}
+	var _this1 = this.variableTypes;
+	var value1 = lox_VariableType.Number;
+	if(__map_reserved["random"] != null) {
+		_this1.setReserved("random",value1);
+	} else {
+		_this1.h["random"] = value1;
+	}
+	var _this2 = this.variableTypes;
+	var value2 = lox_VariableType.Number;
+	if(__map_reserved["str_length"] != null) {
+		_this2.setReserved("str_length",value2);
+	} else {
+		_this2.h["str_length"] = value2;
+	}
+	var _this3 = this.variableTypes;
+	var value3 = lox_VariableType.Text;
+	if(__map_reserved["str_charAt"] != null) {
+		_this3.setReserved("str_charAt",value3);
+	} else {
+		_this3.h["str_charAt"] = value3;
+	}
+	var _this4 = this.variableTypes;
+	var value4 = lox_VariableType.Text;
+	if(__map_reserved["input"] != null) {
+		_this4.setReserved("input",value4);
+	} else {
+		_this4.h["input"] = value4;
+	}
+};
+lox_Typer.__name__ = true;
+lox_Typer.prototype = {
+	typeStmts: function(stmts) {
+		var _g = 0;
+		while(_g < stmts.length) this.typeStmt(stmts[_g++]);
+	}
+	,typeStmt: function(stmt) {
+		switch(stmt._hx_index) {
+		case 0:
+			this.typeStmts(stmt.statements);
+			break;
+		case 1:
+			this.typeStmts(stmt.methods);
+			break;
+		case 2:
+			this.typeExpr(stmt.e);
+			break;
+		case 3:
+			var _g = stmt.name;
+			if(this.typeExpr(stmt.from)._hx_index != 3) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g),"\"From\" clause must evaluate to a number");
+			}
+			if(this.typeExpr(stmt.to)._hx_index != 3) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g),"\"To\" clause must evaluate to a number");
+			}
+			var key = _g.lexeme;
+			var _this = this.variableTypes;
+			var value = lox_VariableType.Number;
+			if(__map_reserved[key] != null) {
+				_this.setReserved(key,value);
+			} else {
+				_this.h[key] = value;
+			}
+			this.typeStmts(stmt.body);
+			break;
+		case 4:
+			this.typeStmts(stmt.body);
+			break;
+		case 5:
+			var _g17 = stmt.body;
+			var _g16 = stmt.params;
+			var _g15 = stmt.name;
+			var _g1 = 0;
+			while(_g1 < _g16.length) {
+				var key1 = _g16[_g1++].lexeme;
+				var _this1 = this.variableTypes;
+				var value1 = lox_VariableType.Unknown;
+				if(__map_reserved[key1] != null) {
+					_this1.setReserved(key1,value1);
+				} else {
+					_this1.h[key1] = value1;
+				}
+			}
+			this.functionName = _g15.lexeme;
+			this.returnValue = lox_VariableType.Void;
+			this.typeStmts(_g17);
+			var key2 = _g15.lexeme;
+			var value2 = lox_VariableType.Function(this.returnValue != null ? this.returnValue : lox_VariableType.Void);
+			var _this2 = this.variableTypes;
+			if(__map_reserved[key2] != null) {
+				_this2.setReserved(key2,value2);
+			} else {
+				_this2.h[key2] = value2;
+			}
+			this.functionName = null;
+			break;
+		case 6:
+			var _g21 = stmt.el;
+			this.typeStmt(stmt.then);
+			if(_g21 != null) {
+				this.typeStmt(_g21);
+			}
+			break;
+		case 7:
+			var _g11 = stmt.init;
+			var _g10 = stmt.name;
+			var initType = _g11 != null ? this.typeExpr(_g11) : lox_VariableType.Unknown;
+			if(initType._hx_index == 1) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g10),"Cannot assign Void to a variable");
+			}
+			var key3 = _g10.lexeme;
+			var _this3 = this.variableTypes;
+			if(__map_reserved[key3] != null) {
+				_this3.setReserved(key3,initType);
+			} else {
+				_this3.h[key3] = initType;
+			}
+			break;
+		case 8:
+			break;
+		case 9:
+			var _g13 = stmt.value;
+			if(_g13 != null) {
+				this.returnValue = this.typeExpr(_g13);
+			} else {
+				this.returnValue = lox_VariableType.Void;
+			}
+			break;
+		case 10:
+			var _g6 = stmt.init;
+			var _g5 = stmt.name;
+			var initType1 = _g6 != null ? this.typeExpr(_g6) : lox_VariableType.Unknown;
+			if(initType1._hx_index == 1) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g5),"Cannot assign Void to a variable");
+			}
+			var key4 = _g5.lexeme;
+			var _this4 = this.variableTypes;
+			if(__map_reserved[key4] != null) {
+				_this4.setReserved(key4,initType1);
+			} else {
+				_this4.h[key4] = initType1;
+			}
+			break;
+		}
+	}
+	,typeExpr: function(expr) {
+		var ret;
+		switch(expr._hx_index) {
+		case 0:
+			var _g5 = expr.name;
+			var assigningType = this.typeExpr(expr.value);
+			var key = _g5.lexeme;
+			var _this = this.variableTypes;
+			var varType = __map_reserved[key] != null ? _this.getReserved(key) : _this.h[key];
+			if(varType == null ? false : varType._hx_index == 0) {
+				var key1 = _g5.lexeme;
+				var _this1 = this.variableTypes;
+				if(__map_reserved[key1] != null) {
+					_this1.setReserved(key1,assigningType);
+				} else {
+					_this1.h[key1] = assigningType;
+				}
+			} else if(!this.matchType(varType,assigningType)) {
+				lox_Lox.error(lox_ErrorDataType.Token(_g5),"Cannot assign " + Std.string(assigningType) + " to " + Std.string(varType));
+			}
+			return assigningType;
+		case 1:
+			var leftType = this.typeExpr(expr.left);
+			var rightType = this.typeExpr(expr.right);
+			if(leftType._hx_index == 4 || rightType._hx_index == 4) {
+				return lox_VariableType.Text;
+			}
+			if(leftType._hx_index == 3 || rightType._hx_index == 3) {
+				return lox_VariableType.Number;
+			}
+			return lox_VariableType.Unknown;
+		case 2:
+			ret = this.typeExpr(expr.callee);
+			break;
+		case 3:
+			ret = lox_VariableType.Unknown;
+			break;
+		case 4:
+			ret = this.typeExpr(expr.e);
+			break;
+		case 5:
+			var _g25 = expr.v;
+			ret = typeof(_g25) == "number" ? lox_VariableType.Number : typeof(_g25) == "string" ? lox_VariableType.Text : typeof(_g25) == "boolean" ? lox_VariableType.Boolean : lox_VariableType.Unknown;
+			break;
+		case 6:
+			ret = lox_VariableType.Boolean;
+			break;
+		case 7:
+			ret = lox_VariableType.Unknown;
+			break;
+		case 8:
+			ret = lox_VariableType.Instance;
+			break;
+		case 9:
+			ret = lox_VariableType.Instance;
+			break;
+		case 10:
+			ret = this.typeExpr(expr.right);
+			break;
+		case 11:
+			var _g16 = expr.name;
+			var key2 = _g16.lexeme;
+			var _this2 = this.variableTypes;
+			if(__map_reserved[key2] != null ? _this2.existsReserved(key2) : _this2.h.hasOwnProperty(key2)) {
+				var key3 = _g16.lexeme;
+				var _this3 = this.variableTypes;
+				if(__map_reserved[key3] != null) {
+					return _this3.getReserved(key3);
+				} else {
+					return _this3.h[key3];
+				}
+			} else {
+				return lox_VariableType.Unknown;
+			}
+			break;
+		case 12:
+			this.returnValue = lox_VariableType.Void;
+			this.typeStmts(expr.body);
+			ret = lox_VariableType.Function(this.returnValue);
+			break;
+		}
+		if(ret == null) {
+			console.log("src/lox/Typer.hx:144:","-----------");
+			console.log("src/lox/Typer.hx:145:","null!!");
+			console.log("src/lox/Typer.hx:146:",expr);
+			if(expr._hx_index == 2) {
+				console.log("src/lox/Typer.hx:148:","line " + expr.paren.line);
+			}
+			console.log("src/lox/Typer.hx:151:","-----------");
+		}
+		if(ret._hx_index == 0) {
+			if(expr._hx_index == 2) {
+				lox_Lox.warning(lox_ErrorDataType.Token(expr.paren),"" + $hxEnums[expr.__enum__].__constructs__[expr._hx_index] + " has type Unknown");
+			} else {
+				lox_Lox.warning(lox_ErrorDataType.Line(-1),"" + $hxEnums[expr.__enum__].__constructs__[expr._hx_index] + " has type Unknown");
+			}
+		}
+		return ret;
+	}
+	,matchType: function(type1,type2) {
+		if(type1._hx_index == 6) {
+			if(type2._hx_index == 6) {
+				return this.matchType(type1.ret,type2.ret);
+			} else {
+				return false;
+			}
+		} else {
+			return type1 == type2;
+		}
+	}
+	,__class__: lox_Typer
 };
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $global.$haxeUID++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = m.bind(o); o.hx__closures__[m.__id__] = f; } return f; }
 $global.$haxeUID |= 0;

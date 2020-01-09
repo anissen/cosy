@@ -146,6 +146,18 @@ class Lox {
         interpreter.interpret(statements);
     }
 
+    static function reportWarning(line:Int, where:String, message:String) {
+        println('[line $line] Warning $where: $message');
+    }
+
+    public static function warning(data:ErrorData, message:String) {
+        switch data {
+            case Line(line): reportWarning(line, '', message);
+            case Token(token) if (token.type == Eof): reportWarning(token.line, 'at end', message);
+            case Token(token): reportWarning(token.line, 'at "${token.lexeme}"', message);
+        }
+    }
+
     static function report(line:Int, where:String, message:String) {
         println('[line $line] Error $where: $message');
         hadError = true;

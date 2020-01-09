@@ -61,13 +61,13 @@ if 3 < 5 and 4 == 4 {
 
 
 // loop with counter
-for i in 0..10 {
+for i in 0..3 {
     print "loop #" + i
 }
 
 // loop with condition
 mut j = 0
-for j < 10 {
+for j < 3 {
     print "conditional loop #i"
     j = j + 1
 }
@@ -96,11 +96,11 @@ print_courteously("make me a sandwich")
 
 // functions can tage functions as arguments
 fun do_n_times(f, n) {
-    for i in 0..n+1 {
+    for i in 0..n {
         f(i)
     }
 }
-do_n_times(fun(x) { print "i'm called " + x + " time(s)" }, 3)
+do_n_times(fun(x) { print "i'm called " + (x + 1) + " time(s)" }, 3)
 
 // functions act as closures
 fun counter(start, increment) {
@@ -144,14 +144,14 @@ if !a print b + c + d + e
 
 // variables can be marked purposely unused with an underscore
 var _unused = 42 // this is okay
-for _i in 0..2 {
+for _i in 0..1 {
     print "the counter variable is unused, but that's okay"
 }
 
 
 // that's it for the basics
 // for more examples see:
-///https://github.com/anissen/cosy/tree/master/test/scripts</textarea>
+// https://github.com/anissen/cosy/tree/master/test/scripts</textarea>
             <br/>
             <div class="alert alert-error" hidden="true" id="compileError">
               <strong>Compilation error!</strong>
@@ -237,13 +237,14 @@ for _i in 0..2 {
         notificationEl.hidden = false;
 
         var result = msg.match(/^\[line ([0-9]+)\]/);
+        var isWarning = msg.match(/^\[line ([0-9]+)\] Warning/);
         console.warn(result);
         var line = parseInt(result[1]);
 
         let from = { line: line - 1, ch: 0 };
         let to = { line: line - 1, ch: 1000 };
 
-        errorMarkers.push(editor.markText(from, to, { className: 'syntax-error', title: msg }));
+        errorMarkers.push(editor.markText(from, to, { className: (isWarning ? 'code-warning' : 'code-error'), title: msg }));
     };
 
     // loadExample('../../test/examples/cosy-basics.lox');
