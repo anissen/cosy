@@ -10,6 +10,10 @@ class Interpreter {
     public function new() {
         globals = new Environment();
         globals.define('clock', new ClockCallable());
+        globals.define('random', new RandomCallable());
+        globals.define('str_length', new StringLengthCallable());
+        globals.define('str_charAt', new StringCharAtCallable());
+        globals.define('input', new InputCallable());
         environment = globals;
     }
 
@@ -248,6 +252,34 @@ private class ClockCallable implements Callable {
     public function new() {}
     public function arity() :Int return 0;
     public function call(interpreter:Interpreter, args:Array<Any>):Any return haxe.Timer.stamp() * 1000;
+    public function toString() :String return '<native fn>';
+}
+
+private class RandomCallable implements Callable {
+    public function new() {}
+    public function arity() :Int return 0;
+    public function call(interpreter:Interpreter, args:Array<Any>):Any return Math.random();
+    public function toString() :String return '<native fn>';
+}
+
+private class StringLengthCallable implements Callable {
+    public function new() {}
+    public function arity() :Int return 1;
+    public function call(interpreter:Interpreter, args:Array<Any>):Any return (args[0] :String).length;
+    public function toString() :String return '<native fn>';
+}
+
+private class StringCharAtCallable implements Callable {
+    public function new() {}
+    public function arity() :Int return 2;
+    public function call(interpreter:Interpreter, args:Array<Any>):Any return (args[0] :String).charAt((args[1] :Int));
+    public function toString() :String return '<native fn>';
+}
+
+private class InputCallable implements Callable {
+    public function new() {}
+    public function arity() :Int return 0;
+    public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.stdin().readLine();
     public function toString() :String return '<native fn>';
 }
 

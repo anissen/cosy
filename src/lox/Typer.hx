@@ -19,6 +19,11 @@ class Typer {
 	
 	public function new(interpreter) {
 		this.interpreter = interpreter;
+        variableTypes.set('clock', Number);
+        variableTypes.set('random', Number);
+        variableTypes.set('str_length', Number);
+        variableTypes.set('str_charAt', Text);
+        variableTypes.set('input', Text);
 	}
 	
 	public inline function type(stmts:Array<Stmt>) {
