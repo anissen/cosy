@@ -279,7 +279,13 @@ private class StringCharAtCallable implements Callable {
 private class InputCallable implements Callable {
     public function new() {}
     public function arity() :Int return 0;
-    public function call(interpreter:Interpreter, args:Array<Any>):Any return Sys.stdin().readLine();
+    public function call(interpreter:Interpreter, args:Array<Any>):Any {
+        #if sys
+        return Sys.stdin().readLine();
+        #else
+        throw 'Not implemented on this platform!';
+        #end
+    }
     public function toString() :String return '<native fn>';
 }
 

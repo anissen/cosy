@@ -106,7 +106,11 @@ class Typer {
                 return assigningType;
 			case Variable(name):
                 // trace('Variable ${name.lexeme} has type ${variableTypes.get(name.lexeme)}');
-                return variableTypes.get(name.lexeme);
+                if (variableTypes.exists(name.lexeme)) {
+                    return variableTypes.get(name.lexeme);
+                } else { // can happen for recursive function calls
+                    return Unknown;
+                }
 			case Binary(left, _, right): 
                 var leftType = typeExpr(left);
                 var rightType = typeExpr(right);
@@ -136,10 +140,23 @@ class Typer {
                 typeStmts(body);
                 Function(returnValue);
 		}
-        if (ret.match(Unknown)) {
-            trace('Warning, ${expr.getName()} has type Unknown');
+        if (ret == null) {
+            trace('-----------');
+            trace('null!!');
+            trace(expr);
+            switch expr {
+                case Call(callee, paren, arguments): trace('line ${paren.line}');
+                case _:
+            }
+            trace('-----------');
         }
         // trace(expr.getName() + ' => $ret');
+        if (ret.match(Unknown)) {
+            switch expr {
+                case Call(callee, paren, arguments): trace('[line ${paren.line}] Warning, ${expr.getName()} has type Unknown');
+                case _: trace('Warning, ${expr.getName()} has type Unknown');
+            }
+        }
         return ret;
 	}
 
