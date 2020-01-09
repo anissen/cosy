@@ -91,6 +91,7 @@ class Resolver {
                 beginScope();
                 declare(name);
                 define(name);
+                if (body.length == 0) Lox.error(name, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
             case ForCondition(cond, body):
@@ -216,7 +217,7 @@ class Resolver {
 			}
 			i--;
 		}
-        if (name.lexeme == 'clock') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
+        if (name.lexeme == 'clock' || name.lexeme == 'random' || name.lexeme == 'str_length' || name.lexeme == 'str_charAt' || name.lexeme == 'input') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
         Lox.error(name, 'Variable not declared in this scope.');
 	}
 
