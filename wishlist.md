@@ -49,6 +49,7 @@ fun x() { print "hej" }
 - [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
 - [ ] Make semicolons trigger a warning instead of an error?
 - [ ] Time a "real" project and do performance optimizations
+- [ ] Algebraic data types
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
 

@@ -58,8 +58,16 @@ class Typer {
                 if (initType.match(Void)) Lox.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
             case For(name, from, to, body):
-                if (!typeExpr(from).match(Number)) Lox.error(name, '"From" clause must evaluate to a number');
-                if (!typeExpr(to).match(Number)) Lox.error(name, '"To" clause must evaluate to a number');
+                switch typeExpr(from) {
+                    case Unknown: Lox.warning(name, '"From" clause has type Unknown');
+                    case Number:
+                    case _: Lox.error(name, '"From" clause must evaluate to a number');
+                }
+                switch typeExpr(to) {
+                    case Unknown: Lox.warning(name, '"From" clause has type Unknown');
+                    case Number:
+                    case _: Lox.error(name, '"From" clause must evaluate to a number');
+                }
                 variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);

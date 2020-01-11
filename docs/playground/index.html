@@ -247,6 +247,7 @@ for _i in 0..1 {
         errorMarkers.push(editor.markText(from, to, { className: (isWarning ? 'code-warning' : 'code-error'), title: msg }));
     };
 
+    validate();
     // loadExample('../../test/examples/cosy-basics.lox');
     </script>
   </body>

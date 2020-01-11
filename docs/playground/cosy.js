@@ -2350,12 +2350,26 @@ lox_Typer.prototype = {
 			this.typeExpr(stmt.e);
 			break;
 		case 3:
+			var _g3 = stmt.body;
+			var _g2 = stmt.to;
 			var _g = stmt.name;
-			if(this.typeExpr(stmt.from)._hx_index != 3) {
+			switch(this.typeExpr(stmt.from)._hx_index) {
+			case 0:
+				lox_Lox.warning(lox_ErrorDataType.Token(_g),"\"From\" clause has type Unknown");
+				break;
+			case 3:
+				break;
+			default:
 				lox_Lox.error(lox_ErrorDataType.Token(_g),"\"From\" clause must evaluate to a number");
 			}
-			if(this.typeExpr(stmt.to)._hx_index != 3) {
-				lox_Lox.error(lox_ErrorDataType.Token(_g),"\"To\" clause must evaluate to a number");
+			switch(this.typeExpr(_g2)._hx_index) {
+			case 0:
+				lox_Lox.warning(lox_ErrorDataType.Token(_g),"\"From\" clause has type Unknown");
+				break;
+			case 3:
+				break;
+			default:
+				lox_Lox.error(lox_ErrorDataType.Token(_g),"\"From\" clause must evaluate to a number");
 			}
 			var key = _g.lexeme;
 			var _this = this.variableTypes;
@@ -2365,7 +2379,7 @@ lox_Typer.prototype = {
 			} else {
 				_this.h[key] = value;
 			}
-			this.typeStmts(stmt.body);
+			this.typeStmts(_g3);
 			break;
 		case 4:
 			this.typeStmts(stmt.body);
@@ -2529,13 +2543,13 @@ lox_Typer.prototype = {
 			break;
 		}
 		if(ret == null) {
-			console.log("src/lox/Typer.hx:144:","-----------");
-			console.log("src/lox/Typer.hx:145:","null!!");
-			console.log("src/lox/Typer.hx:146:",expr);
+			console.log("src/lox/Typer.hx:154:","-----------");
+			console.log("src/lox/Typer.hx:155:","null!!");
+			console.log("src/lox/Typer.hx:156:",expr);
 			if(expr._hx_index == 2) {
-				console.log("src/lox/Typer.hx:148:","line " + expr.paren.line);
+				console.log("src/lox/Typer.hx:158:","line " + expr.paren.line);
 			}
-			console.log("src/lox/Typer.hx:151:","-----------");
+			console.log("src/lox/Typer.hx:161:","-----------");
 		}
 		if(ret._hx_index == 0) {
 			if(expr._hx_index == 2) {
