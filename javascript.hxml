@@ -1,0 +1,8 @@
+-cp src
+-main lox.Lox
+# -D no-traces
+# -lib closure
+-dce full
+-D analyzer-optimize
+-D source-map
+-js bin/js/cosy.js

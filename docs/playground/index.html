@@ -27,136 +27,16 @@
           <div class="span7">
             <h3>Code <select id="exampleChooser" class="pull-right" onchange="selectExample()">
                 <option selected="selected" disabled="disabled">Examples</option>
-                <!-- <option value="../../test/examples/cosy-basics.lox">Cosy basics</option> -->
+                <option value="examples/ex-cosy-basics.lox">Cosy basics</option>
                 <option value="examples/loops.lox">Loops</option>
                 <option value="examples/anonymous-functions.lox">Anonymous functions</option>
                 <option value="examples/fibonacci.lox">Fibonacci sequence</option>
               </select></h3>
-            <textarea id="code" class="code" rows="130">// the basics of cosy
-
-// print to output
-print "hello world!"
-
-
-// variables and types
-var a = true     // Boolean
-var b = 1        // Number
-var c = "hello"  // String
-
-// variables are immutable by default
-var d = 42
-// d = 24 // error
-
-// use the `mut` keyword to create a mutable variable
-mut e = 42
-e = 24 // ok
-
-
-// conditional branching
-if 3 < 5 and 4 == 4 {
-    print "true"
-} else {
-    print "false"
-}
-
-
-// loop with counter
-for i in 0..3 {
-    print "loop #" + i
-}
-
-// loop with condition
-mut j = 0
-for j < 3 {
-    print "conditional loop #i"
-    j = j + 1
-}
-
-
-// functions
-fun say(name) {
-    print "hello " + name
-}
-say("world")
-
-// lambda functions
-var square = fun(value Num) {
-    return value * value
-}
-print "5 * 5 = " + square(5) // TODO: This is not type checked -- argument can be "5"
-
-// functions can return functions
-fun say_with_extra_text(extra_text Str) {
-    return fun(text) {
-        print text + extra_text
-    }
-}
-var print_courteously = say_with_extra_text(", please!")
-print_courteously("make me a sandwich")
-
-// functions can tage functions as arguments
-fun do_n_times(f, n Num) { // f should be Fn()
-    for i in 0..n {
-        f(i)
-    }
-}
-do_n_times(fun(x) { print "i'm called " + (x + 1) + " time(s)" }, 3)
-
-// functions act as closures
-fun counter(start, increment) {
-    mut count = start
-    return fun() {
-        count = count + increment
-        return count
-    }
-}
-print "counting down..."
-var count_down = counter(3, -1)
-print count_down()
-print count_down()
-print count_down()
-
-
-// dead code is not allowed
-fun dead_code() {
-    print "i'm always printing this"
-    return true
-    // print "i'm never printing this" // error
-}
-dead_code()
-
-
-// shadowing of variables are not allowed
-{
-    var unique = true
-    {
-        //var unique = 3 // error
-    }
-        print unique
-}
-
-
-// unused variables are not allowed
-var unused = 42 // error if the line below is removed
-print unused
-// because of this, we also have to use the variables defined at the top
-if !a print b + c + d + e
-
-// variables can be marked purposely unused with an underscore
-var _unused = 42 // this is okay
-for _i in 0..1 {
-    print "the counter variable is unused, but that's okay"
-}
-
-
-// that's it for the basics
-// for more examples see:
-// https://github.com/anissen/cosy/tree/master/test/scripts</textarea>
+            <textarea id="code" class="code" rows="130">// print to output
+print "hello world!"</textarea>
             <br/>
-            <div class="alert alert-error" hidden="true" id="compileError">
-              <strong>Compilation error!</strong>
-              <p id="errorText">Too bad.</p>
-            </div>
+            <div class="alert alert-error" hidden="true" id="errors"></div>
+            <div class="alert" hidden="true" id="warnings"></div>
             <a id="runBtn" class="btn" onclick="run()">Run</a>
           </div>
           <div class="span5">
@@ -170,7 +50,8 @@ for _i in 0..1 {
     <script type="text/javascript">
     const chooserEl = document.getElementById('exampleChooser');
     const outputEl  = document.getElementById('output');
-    const notificationEl = document.getElementById("compileError");
+    const errorsEl = document.getElementById("errors");
+    const warningsEl = document.getElementById("warnings");
     
     window.print = function(text) {
         outputEl.innerText += text + '\n';
@@ -214,8 +95,10 @@ for _i in 0..1 {
             marker.clear();
         });
 
-        notificationEl.innerText = '';
-        notificationEl.hidden = true;
+        errorsEl.innerText = '';
+        errorsEl.hidden = true;
+        warningsEl.innerText = '';
+        warningsEl.hidden = true;
         var old = console.log;
         console.log = showError;
         window.lox.Lox.validate(editor.getValue());
@@ -233,11 +116,18 @@ for _i in 0..1 {
     var errorMarkers = [];
     const showError = function(msg) {
         console.warn(msg);
-        notificationEl.innerText += msg + '\n';
-        notificationEl.hidden = false;
 
         var result = msg.match(/^\[line ([0-9]+)\]/);
         var isWarning = msg.match(/^\[line ([0-9]+)\] Warning/);
+
+        if (isWarning) {
+            warningsEl.innerText += msg + '\n';
+            warningsEl.hidden = false;
+        } else {
+            errorsEl.innerText += msg + '\n';
+            errorsEl.hidden = false;
+        }
+
         console.warn(result);
         var line = parseInt(result[1]);
 
@@ -247,8 +137,8 @@ for _i in 0..1 {
         errorMarkers.push(editor.markText(from, to, { className: (isWarning ? 'code-warning' : 'code-error'), title: msg }));
     };
 
-    validate();
-    // loadExample('../../test/examples/cosy-basics.lox');
+    // validate();
+    loadExample('examples/ex-cosy-basics.lox');
     </script>
   </body>
 </html>

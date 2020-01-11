@@ -53,6 +53,7 @@ fun x() { print "hej" }
 - [ ] Pure functions as default (cannot modify variables outside scope)
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
+- [ ] `for 0..10` syntax, instead of `for _i in 0..10` (if possible)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
