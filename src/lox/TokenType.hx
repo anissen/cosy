@@ -13,6 +13,8 @@ enum TokenType {
 	
 	And; Class; Else; False; Fun; For; In; If; Mut; Or;
 	Print; Return; Super; This; True; Var;
+
+    BooleanType; NumberType; StringType; FunctionType;
 	
 	Eof;
 }

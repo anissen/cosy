@@ -22,7 +22,11 @@ class Scanner {
 		'super' => Super, // TODO: remove
 		'this' => This, // TODO: remove
 		'true' => True,
-		'var' => Var
+		'var' => Var,
+		'Bool' => BooleanType,
+		'Num' => NumberType,
+		'Str' => StringType,
+		// 'Fun' => FunctionType,
 	];
 	
 	var start = 0;

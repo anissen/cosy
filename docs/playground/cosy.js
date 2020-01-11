@@ -1464,12 +1464,18 @@ lox_Parser.prototype = {
 	,funcBody: function(kind) {
 		this.consume(lox_TokenType.LeftParen,"Expect \"(\" after " + kind + " name.");
 		var params = [];
+		var types = [];
 		if(!this.check(lox_TokenType.RightParen)) {
 			while(true) {
 				if(params.length >= 255) {
 					this.error(this.peek(),"Cannot have more than 255 parameters.");
 				}
 				params.push(this.consume(lox_TokenType.Identifier,"Expect parameter name."));
+				if(this.check(lox_TokenType.Type(lox_VariableType.Boolean))) {
+					types.push(this.consume(lox_TokenType.Type(lox_VariableType.Boolean),"Expect boolean."));
+				} else if(this.check(lox_TokenType.Type(lox_VariableType.Number))) {
+					types.push(this.consume(lox_TokenType.Type(lox_VariableType.Number),"Expect number."));
+				}
 				if(!this.match([lox_TokenType.Comma])) {
 					break;
 				}
@@ -1607,6 +1613,7 @@ lox_Parser.prototype = {
 		if(this.isAtEnd()) {
 			return false;
 		}
+		console.log("src/lox/Parser.hx:337:",Std.string(this.peek().type) + " == " + Std.string(type));
 		return this.peek().type == type;
 	}
 	,doubleCheck: function(type) {
@@ -2035,7 +2042,7 @@ lox_RuntimeError.__super__ = lox_Error;
 lox_RuntimeError.prototype = $extend(lox_Error.prototype,{
 	__class__: lox_RuntimeError
 });
-var lox_TokenType = $hxEnums["lox.TokenType"] = { __ename__ : true, __constructs__ : ["LeftParen","RightParen","LeftBrace","RightBrace","Comma","Dot","DotDot","Minus","Plus","Slash","Star","Underscore","Bang","BangEqual","Equal","EqualEqual","Greater","GreaterEqual","Less","LessEqual","Identifier","String","Number","And","Class","Else","False","Fun","For","In","If","Mut","Or","Print","Return","Super","This","True","Var","Eof"]
+var lox_TokenType = $hxEnums["lox.TokenType"] = { __ename__ : true, __constructs__ : ["LeftParen","RightParen","LeftBrace","RightBrace","Comma","Dot","DotDot","Minus","Plus","Slash","Star","Underscore","Bang","BangEqual","Equal","EqualEqual","Greater","GreaterEqual","Less","LessEqual","Identifier","String","Number","And","Class","Else","False","Fun","For","In","If","Mut","Or","Print","Return","Super","This","True","Var","Type","Eof"]
 	,LeftParen: {_hx_index:0,__enum__:"lox.TokenType",toString:$estr}
 	,RightParen: {_hx_index:1,__enum__:"lox.TokenType",toString:$estr}
 	,LeftBrace: {_hx_index:2,__enum__:"lox.TokenType",toString:$estr}
@@ -2075,7 +2082,17 @@ var lox_TokenType = $hxEnums["lox.TokenType"] = { __ename__ : true, __constructs
 	,This: {_hx_index:36,__enum__:"lox.TokenType",toString:$estr}
 	,True: {_hx_index:37,__enum__:"lox.TokenType",toString:$estr}
 	,Var: {_hx_index:38,__enum__:"lox.TokenType",toString:$estr}
-	,Eof: {_hx_index:39,__enum__:"lox.TokenType",toString:$estr}
+	,Type: ($_=function(type) { return {_hx_index:39,type:type,__enum__:"lox.TokenType",toString:$estr}; },$_.__params__ = ["type"],$_)
+	,Eof: {_hx_index:40,__enum__:"lox.TokenType",toString:$estr}
+};
+var lox_VariableType = $hxEnums["lox.VariableType"] = { __ename__ : true, __constructs__ : ["Unknown","Void","Boolean","Number","Text","Instance","Function"]
+	,Unknown: {_hx_index:0,__enum__:"lox.VariableType",toString:$estr}
+	,Void: {_hx_index:1,__enum__:"lox.VariableType",toString:$estr}
+	,Boolean: {_hx_index:2,__enum__:"lox.VariableType",toString:$estr}
+	,Number: {_hx_index:3,__enum__:"lox.VariableType",toString:$estr}
+	,Text: {_hx_index:4,__enum__:"lox.VariableType",toString:$estr}
+	,Instance: {_hx_index:5,__enum__:"lox.VariableType",toString:$estr}
+	,Function: ($_=function(ret) { return {_hx_index:6,ret:ret,__enum__:"lox.VariableType",toString:$estr}; },$_.__params__ = ["ret"],$_)
 };
 var lox_Scanner = function(source) {
 	this.line = 1;
@@ -2281,15 +2298,6 @@ lox_Token.prototype = {
 		return "" + Std.string(this.type) + " " + this.lexeme + " " + Std.string(this.literal);
 	}
 	,__class__: lox_Token
-};
-var lox_VariableType = $hxEnums["lox.VariableType"] = { __ename__ : true, __constructs__ : ["Unknown","Void","Boolean","Number","Text","Instance","Function"]
-	,Unknown: {_hx_index:0,__enum__:"lox.VariableType",toString:$estr}
-	,Void: {_hx_index:1,__enum__:"lox.VariableType",toString:$estr}
-	,Boolean: {_hx_index:2,__enum__:"lox.VariableType",toString:$estr}
-	,Number: {_hx_index:3,__enum__:"lox.VariableType",toString:$estr}
-	,Text: {_hx_index:4,__enum__:"lox.VariableType",toString:$estr}
-	,Instance: {_hx_index:5,__enum__:"lox.VariableType",toString:$estr}
-	,Function: ($_=function(ret) { return {_hx_index:6,ret:ret,__enum__:"lox.VariableType",toString:$estr}; },$_.__params__ = ["ret"],$_)
 };
 var lox_Typer = function(interpreter) {
 	this.returnValue = lox_VariableType.Void;
@@ -2543,13 +2551,13 @@ lox_Typer.prototype = {
 			break;
 		}
 		if(ret == null) {
-			console.log("src/lox/Typer.hx:154:","-----------");
-			console.log("src/lox/Typer.hx:155:","null!!");
-			console.log("src/lox/Typer.hx:156:",expr);
+			console.log("src/lox/Typer.hx:152:","-----------");
+			console.log("src/lox/Typer.hx:153:","null!!");
+			console.log("src/lox/Typer.hx:154:",expr);
 			if(expr._hx_index == 2) {
-				console.log("src/lox/Typer.hx:158:","line " + expr.paren.line);
+				console.log("src/lox/Typer.hx:156:","line " + expr.paren.line);
 			}
-			console.log("src/lox/Typer.hx:161:","-----------");
+			console.log("src/lox/Typer.hx:159:","-----------");
 		}
 		if(ret._hx_index == 0) {
 			if(expr._hx_index == 2) {
@@ -2723,6 +2731,30 @@ lox_Scanner.keywords = (function($this) {
 			_g.setReserved("var",value15);
 		} else {
 			_g.h["var"] = value15;
+		}
+	}
+	{
+		var value16 = lox_TokenType.Type(lox_VariableType.Boolean);
+		if(__map_reserved["Bool"] != null) {
+			_g.setReserved("Bool",value16);
+		} else {
+			_g.h["Bool"] = value16;
+		}
+	}
+	{
+		var value17 = lox_TokenType.Type(lox_VariableType.Number);
+		if(__map_reserved["Number"] != null) {
+			_g.setReserved("Number",value17);
+		} else {
+			_g.h["Number"] = value17;
+		}
+	}
+	{
+		var value18 = lox_TokenType.Type(lox_VariableType.Text);
+		if(__map_reserved["String"] != null) {
+			_g.setReserved("String",value18);
+		} else {
+			_g.h["String"] = value18;
 		}
 	}
 	$r = _g;

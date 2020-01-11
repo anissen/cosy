@@ -85,11 +85,51 @@
 
 // -----------
 
-fun f(arg) {
-    return arg
-}
+// {
+//     fun f(arg Num) {
+//         return arg
+//     }
 
-mut x = f(12)
-print x
-x = f("hej")
-print x
+//     mut x = f(12)
+//     print x
+//     x = f("hej")
+//     print x
+// }
+
+// -----------
+
+// {
+//     fun f(arg Str) {
+//         return arg
+//     }
+
+//     mut x = f(12)
+//     print x
+//     x = f("hej")
+//     print x
+// }
+
+// -----------
+
+// {
+//     mut f = fun(x Num, y Str) {
+//         print x + y
+//     }
+//     f(4, "hej")
+//     f = fun(x Str, y Num) {
+//         print x + y
+//     }
+//     f("dav", 5)
+// }
+
+// -----------
+
+{
+    fun times(f, n Num) {
+        for _i in 0..n {
+            f()
+        }
+    }
+    print times
+    // times(fun() { print "hello" }, 3)
+}

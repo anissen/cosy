@@ -6,7 +6,7 @@ enum Stmt {
 	Expression(e:Expr);
 	For(name:Token, from:Expr, to:Expr, body:Array<Stmt>);
 	ForCondition(?cond:Expr, body:Array<Stmt>);
-	Function(name:Token, params:Array<Token>, body:Array<Stmt>);
+	Function(name:Token, params:Array<Param>, body:Array<Stmt>);
 	If(cond:Expr, then:Stmt, el:Stmt);
 	Mut(name:Token, init:Expr);
 	Print(e:Expr);

@@ -2,7 +2,7 @@ package lox;
 
 class Function implements Callable {
 	final name:Token;
-	final params:Array<Token>;
+	final params:Array<Param>;
 	final body:Array<Stmt>;
 	final closure:Environment;
 	final isInitializer:Bool;
@@ -21,7 +21,7 @@ class Function implements Callable {
 		var environment = new Environment(closure);
 		
 		for (i in 0...params.length) {
-			environment.define(params[i].lexeme, args[i]);
+			environment.define(params[i].name.lexeme, args[i]);
         }
 			
 		try {

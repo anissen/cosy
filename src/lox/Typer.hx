@@ -8,7 +8,7 @@ enum VariableType {
     Text;
     Instance;
     // Function;
-    Function(/* params:Array<VariableType> */ ret:VariableType);
+    Function(paramTypes:Array<VariableType>, returnType:VariableType);
 }
 
 class Typer {
@@ -64,15 +64,20 @@ class Typer {
                     case _: Lox.error(name, '"From" clause must evaluate to a number');
                 }
                 switch typeExpr(to) {
-                    case Unknown: Lox.warning(name, '"From" clause has type Unknown');
+                    case Unknown: Lox.warning(name, '"To" clause has type Unknown');
                     case Number:
-                    case _: Lox.error(name, '"From" clause must evaluate to a number');
+                    case _: Lox.error(name, '"To" clause must evaluate to a number');
                 }
                 variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);
 			case Function(name, params, body):
-                for (param in params) variableTypes.set(param.lexeme, Unknown); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
+                // TODO: Enable if strict.
+                // for (i in 0...params.length) {
+                //     if (params[i].type.match(Unknown)) Lox.warning(params[i].name, 'Parameter has type Unknown');
+                // }
+                var types = [ for (param in params) param.type ];
+                for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
                 // for (param in params) variableTypes.set(name.lexeme + '.' + param.lexeme, Unknown); // TODO: Temp hack!
 
@@ -81,7 +86,7 @@ class Typer {
                 typeStmts(body);
                 // trace('function $functionName has type $returnValue');
                 var returnType = (returnValue != null ? returnValue : Void);
-                variableTypes.set(name.lexeme, Function(returnType)); 
+                variableTypes.set(name.lexeme, Function(types, returnType)); 
                 functionName = null;
 			case Expression(e): typeExpr(e);
             case Print(e):
@@ -109,7 +114,7 @@ class Typer {
                 if (varType.match(Unknown)) {
                     variableTypes.set(name.lexeme, assigningType);
                 } else if (!matchType(varType, assigningType)) {
-                    Lox.error(name, 'Cannot assign ${assigningType} to ${varType}');
+                    Lox.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType)}');
                 }
                 return assigningType;
 			case Variable(name):
@@ -127,9 +132,29 @@ class Typer {
                 return Unknown;
             case Logical(left, _, right): Boolean;
 			case Call(callee, paren, arguments):
-                // trace('callee: $callee');
+                // trace('callee: $callee, line ${paren.line}');
                 // trace(arguments);
                 var calleeType = typeExpr(callee);
+                switch calleeType {
+                    case Function(paramTypes, returnType):
+                        var argumentTypes = [ for (arg in arguments) typeExpr(arg) ];
+                        if (arguments.length != paramTypes.length) {
+                            Lox.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
+                        } else {
+                            for (i in 0...paramTypes.length) {
+                                if (argumentTypes[i].match(Unknown)) Lox.warning(paren, 'Argument ${i + 1} has type Unknown.');
+                                if (paramTypes[i].match(Unknown)) continue;
+                                if (!matchType(argumentTypes[i], paramTypes[i])) {
+                                    Lox.error(paren, 'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
+                                }
+                            }
+                        }
+                    case _:
+                }
+                // trace(calleeType);
+                // if (!matchType(calleeType, Function(argumentTypes, Unknown))) {
+                //     Lox.error(paren, 'Cannot call ${calleeType} with ${argumentTypes}');
+                // }
                 
                 // TODO: Here I should be able to determine (á la Interpreter.evaluate()) the function name and each argument name. This information I could use to set the types for the arguments (e.g. in the form 'function_name.arg_name' => type, alternatively associate a scope with each function). Subsequent calls to that function could then be checked against the same types
                 
@@ -144,9 +169,19 @@ class Typer {
 			case Literal(v) if (Std.is(v, Bool)): Boolean;
 			case Literal(v): Unknown;
 			case AnonFunction(params, body):
+                // TODO: Enable if strict.
+                // for (i in 0...params.length) {
+                //     if (params[i].type.match(Unknown)) Lox.warning(params[i].name, 'Parameter has type Unknown');
+                // }
+                var types = [ for (param in params) param.type ];
+
+
+                // TODO: Same logic as for Function (factor it out)
+
+
                 returnValue = Void; // TODO: This is PROBABLY not good enough for nested functions -- we need to keep track of scoping!
                 typeStmts(body);
-                Function(returnValue);
+                Function(types, returnValue);
 		}
         if (ret == null) {
             trace('-----------');
@@ -170,12 +205,30 @@ class Typer {
 
     function matchType(type1 :VariableType, type2 :VariableType) :Bool {
         return switch type1 {
-            case Function(v1):
+            case Function(params1, v1):
                 switch type2 {
-                    case Function(v2): matchType(v1, v2);
+                    case Function(params2, v2):
+                        for (param1 in params1) {
+                            for (param2 in params2) {
+                                if (!matchType(param1, param2)) return false;
+                            }
+                        }
+                        matchType(v1, v2);
                     case _: false;
                 }
             case _: type1 == type2;
+        }
+    }
+
+    function formatType(type :VariableType) :String {
+        return switch type {
+            case Function(paramTypes, returnType):
+                var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
+                'Fun(${paramStr.join(", ")})';
+            case Text: 'Str';
+            case Number: 'Num';
+            case Boolean: 'Bool';
+            case _: Std.string(type);
         }
     }
 }

@@ -44,7 +44,7 @@ class JavaScriptPrinter {
 			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
 			case Function(name, params, body):
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
-				var parameters = [ for (token in params) token.lexeme ].join(',');
+				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
 				'$declaration($parameters) $block';
 			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
@@ -73,7 +73,7 @@ class JavaScriptPrinter {
 			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body):
-				var parameters = [ for (token in params) token.lexeme ].join(',');
+				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
 				'function ($parameters) $block';
 		}

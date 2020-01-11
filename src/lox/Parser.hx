@@ -151,7 +151,16 @@ class Parser {
 		if(!check(RightParen)) {
 			do {
 				if(params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
-				params.push(consume(Identifier, 'Expect parameter name.'));
+                var name = consume(Identifier, 'Expect parameter name.');
+                var type = Typer.VariableType.Unknown;
+                if (match([BooleanType])) {
+                    type = Typer.VariableType.Boolean;
+                } else if (match([NumberType])) {
+                    type = Typer.VariableType.Number;
+                } else if (match([StringType])) {
+                    type = Typer.VariableType.Text;
+                }
+                params.push({ name: name, type: type });
 			} while(match([Comma]));
 		}
 		

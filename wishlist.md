@@ -50,6 +50,7 @@ fun x() { print "hej" }
 - [ ] Make semicolons trigger a warning instead of an error?
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
+- [ ] Pure functions as default (cannot modify variables outside scope)
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
 

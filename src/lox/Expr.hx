@@ -13,5 +13,5 @@ enum Expr {
 	Super(keyword:Token, method:Token);
 	Unary(op:Token, right:Expr);
 	Variable(name:Token);
-	AnonFunction(params:Array<Token>, body:Array<Stmt>);
+	AnonFunction(params:Array<Param>, body:Array<Stmt>);
 }

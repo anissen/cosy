@@ -162,13 +162,13 @@ class Resolver {
 		}
 	}
 	
-	function resolveFunction(name:Token, params:Array<Token>, body:Array<Stmt>, type:FunctionType) {
+	function resolveFunction(name:Token, params:Array<Param>, body:Array<Stmt>, type:FunctionType) {
 		var enclosingFunction = currentFunction;
 		currentFunction = type;
 		beginScope();
 		for(param in params) {
-			declare(param);
-			define(param);
+			declare(param.name);
+			define(param.name);
 		}
         resolveStmts(body);
 		endScope();
