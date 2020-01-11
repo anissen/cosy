@@ -80,13 +80,13 @@ fun say(name) {
 say("world")
 
 // lambda functions
-var square = fun(value) {
+var square = fun(value Num) {
     return value * value
 }
-print "5 * 5 = " + square(5)
+print "5 * 5 = " + square(5) // TODO: This is not type checked -- argument can be "5"
 
 // functions can return functions
-fun say_with_extra_text(extra_text) {
+fun say_with_extra_text(extra_text Str) {
     return fun(text) {
         print text + extra_text
     }
@@ -95,7 +95,7 @@ var print_courteously = say_with_extra_text(", please!")
 print_courteously("make me a sandwich")
 
 // functions can tage functions as arguments
-fun do_n_times(f, n) {
+fun do_n_times(f, n Num) { // f should be Fn()
     for i in 0..n {
         f(i)
     }
