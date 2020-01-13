@@ -110,7 +110,7 @@ class Typer {
                 // trace('get ${name.lexeme}');
                 var varType = variableTypes.get(name.lexeme);
                 // trace('varType: $varType');
-                // trace('var type: ${varType.getName()}, assigning type: ${assigningType.getName()}');
+                // trace('var type: ${formatType(varType)}, assigning type: ${formatType(assigningType)}');
                 if (varType.match(Unknown)) {
                     variableTypes.set(name.lexeme, assigningType);
                 } else if (!matchType(varType, assigningType)) {
@@ -208,6 +208,7 @@ class Typer {
             case Function(params1, v1):
                 switch type2 {
                     case Function(params2, v2):
+                        if (params1.length != params2.length) return false;
                         for (param1 in params1) {
                             for (param2 in params2) {
                                 if (!matchType(param1, param2)) return false;
@@ -224,7 +225,11 @@ class Typer {
         return switch type {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
-                'Fun(${paramStr.join(", ")})';
+                var returnStr = switch returnType {
+                    case Void: '';
+                    case _: ' ' + formatType(returnType);
+                }
+                'Fun(${paramStr.join(", ")})$returnStr';
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';

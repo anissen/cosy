@@ -5,6 +5,7 @@
 x()
 fun x() { print "hej" }
 ```
+- [ ] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)
@@ -18,7 +19,7 @@ fun x() { print "hej" }
     - [x] Simple dead code
 - [ ] Class functions cannot override other functions (must be uniquely named)
 - [x] for-loop without sugaring (makes output code ugly)
-- [ ] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
+- [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
 - [ ] Replace classes with structs, interfaces, traits and member-functions
 - [ ] Modules
 - [ ] Experiment with bytecode
@@ -27,7 +28,7 @@ fun x() { print "hej" }
 - [ ] String interpolation
 - [ ] ++/-- operators
 - [ ] +=/-=/*=//= operators
-- [ ] Typing phase
+- [x] Typing phase
 - [ ] Optimization phase
 - [ ] Improve readme/documentation
 - [x] Compile-time error if a variable is marked as `mut` but is not reassigned
@@ -54,6 +55,7 @@ fun x() { print "hej" }
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
 - [ ] `for 0..10` syntax, instead of `for _i in 0..10` (if possible)
+- [ ] Make a `strict` mode that requires specifying type information for function parameters and return values
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

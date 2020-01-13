@@ -124,12 +124,53 @@
 
 // -----------
 
+// {
+//     fun times(f Fun(Num), n Num) {
+//         for i in 0..n {
+//             f(i)
+//         }
+//     }
+//     // print times
+//     times(fun(x Num) { print "called " + x + " time(s)" }, 3)
+// }
+
+// -----------
+
+// {
+//     fun f(n Num) {
+//         return n + 23
+//     }
+
+//     fun f2(s Str) {
+//         return s + 45
+//     }
+
+//     mut x = f
+//     print x(3)
+//     x = f2
+//     print x("d")
+// }
+
+// -----------
+
+// {
+//     fun square(x Num) {
+//         return x * x
+//     }
+//     mut s = square(5)
+//     s = square(s)
+//     print s
+// }
+
+// -----------
+
 {
-    fun times(f, n Num) {
-        for _i in 0..n {
-            f()
-        }
+    fun square(x Num) {
+        return x * x
     }
-    print times
-    // times(fun() { print "hello" }, 3)
+    mut s = square(5)
+    s = square(s)
+    print s
 }
+
+// -----------

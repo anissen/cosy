@@ -26,7 +26,7 @@ class Scanner {
 		'Bool' => BooleanType,
 		'Num' => NumberType,
 		'Str' => StringType,
-		// 'Fun' => FunctionType,
+		'Fun' => FunctionType,
 	];
 	
 	var start = 0;

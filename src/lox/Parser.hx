@@ -143,7 +143,30 @@ class Parser {
 			case AnonFunction(params, body): Function(name, params, body);
 			case _: throw new RuntimeError(name, 'Invalid function declaration.');
 		}
-	}
+    }
+    
+    function paramType() :Typer.VariableType {
+        return if (match([BooleanType])) {
+            Boolean;
+        } else if (match([NumberType])) {
+            Number;
+        } else if (match([StringType])) {
+            Text;
+        } else if (match([FunctionType])) {
+            consume(LeftParen, 'Expect "(" after Fun.');
+            var funcParamTypes = [];
+            while (!check(RightParen)) {
+                funcParamTypes.push(paramType());
+                if (!match([Comma])) break;
+            }
+            consume(RightParen, 'Expect ")" after parameters.');
+            var returnType = paramType();
+            if (returnType.match(Unknown)) returnType = Void; // implicit Void
+            Function(funcParamTypes, returnType);
+        } else {
+            Unknown;
+        }
+    }
 	
 	function funcBody(kind:String):Expr {
 		consume(LeftParen, 'Expect "(" after $kind name.');
@@ -152,15 +175,18 @@ class Parser {
 			do {
 				if(params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
                 var name = consume(Identifier, 'Expect parameter name.');
-                var type = Typer.VariableType.Unknown;
-                if (match([BooleanType])) {
-                    type = Typer.VariableType.Boolean;
-                } else if (match([NumberType])) {
-                    type = Typer.VariableType.Number;
-                } else if (match([StringType])) {
-                    type = Typer.VariableType.Text;
-                }
-                params.push({ name: name, type: type });
+                // var type = Typer.VariableType.Unknown;
+                // if (match([BooleanType])) {
+                //     type = Typer.VariableType.Boolean;
+                // } else if (match([NumberType])) {
+                //     type = Typer.VariableType.Number;
+                // } else if (match([StringType])) {
+                //     type = Typer.VariableType.Text;
+                // } else if (match([FunctionType])) {
+                //     consume(LeftParen, 'Expect "(" after Fun.');
+                //     consume(RightParen, 'Expect ")" after parameters.');            
+                // }
+                params.push({ name: name, type: paramType() });
 			} while(match([Comma]));
 		}
 		
