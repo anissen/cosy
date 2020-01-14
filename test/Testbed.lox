@@ -164,13 +164,30 @@
 
 // -----------
 
-{
-    fun square(x Num) {
-        return x * x
-    }
-    mut s = square(5)
-    s = square(s)
-    print s
-}
+// {
+//     fun square(x Num) {
+//         return x * x
+//     }
+//     fun foo(x Num) {
+//         return "" + x
+//     }
+//     mut s = square(5)
+//     s = foo(s)
+//     print s
+// }
 
 // -----------
+
+{
+    fun gamble(x Num) Str {
+        if x < 5 {
+            return x
+        } else {
+            return "hej"
+        }
+    }
+    mut s = gamble(3)
+    print s
+    s = gamble(5)
+    print s
+}

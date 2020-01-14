@@ -137,10 +137,10 @@ class Parser {
 	}
 
 	function func(kind:String):Stmt {
-		var name = consume(Identifier, 'Expect $kind name.');
+        var name = consume(Identifier, 'Expect $kind name.');
 		var functionExpr = funcBody(kind);
 		return switch functionExpr {
-			case AnonFunction(params, body): Function(name, params, body);
+			case AnonFunction(params, body, returnType): Function(name, params, body, returnType);
 			case _: throw new RuntimeError(name, 'Invalid function declaration.');
 		}
     }
@@ -175,28 +175,20 @@ class Parser {
 			do {
 				if(params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
                 var name = consume(Identifier, 'Expect parameter name.');
-                // var type = Typer.VariableType.Unknown;
-                // if (match([BooleanType])) {
-                //     type = Typer.VariableType.Boolean;
-                // } else if (match([NumberType])) {
-                //     type = Typer.VariableType.Number;
-                // } else if (match([StringType])) {
-                //     type = Typer.VariableType.Text;
-                // } else if (match([FunctionType])) {
-                //     consume(LeftParen, 'Expect "(" after Fun.');
-                //     consume(RightParen, 'Expect ")" after parameters.');            
-                // }
                 params.push({ name: name, type: paramType() });
 			} while(match([Comma]));
 		}
 		
 		consume(RightParen, 'Expect ")" after parameters.');
-		
+        
+        var returnType = paramType();
+        // if (returnType.match(Unknown)) returnType = Void; // implicit Void
+
 		consume(LeftBrace, 'Expect "{" before $kind body');
 
 		var body = block();
 		
-		return AnonFunction(params, body);
+		return AnonFunction(params, body, returnType);
 	}
 	
 	function assignment():Expr {

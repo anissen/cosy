@@ -40,7 +40,7 @@ class Typer {
         for (expr in exprs) {
             typeExpr(expr);
         }
-	}
+    }
 
 	function typeStmt(stmt:Stmt) {
         // trace(stmt.getName());
@@ -71,29 +71,16 @@ class Typer {
                 variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);
-			case Function(name, params, body):
-                // TODO: Enable if strict.
-                // for (i in 0...params.length) {
-                //     if (params[i].type.match(Unknown)) Lox.warning(params[i].name, 'Parameter has type Unknown');
-                // }
-                var types = [ for (param in params) param.type ];
-                for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
-
-                // for (param in params) variableTypes.set(name.lexeme + '.' + param.lexeme, Unknown); // TODO: Temp hack!
-
-                functionName = name.lexeme;
-                returnValue = Void;
-                typeStmts(body);
-                // trace('function $functionName has type $returnValue');
-                var returnType = (returnValue != null ? returnValue : Void);
-                variableTypes.set(name.lexeme, Function(types, returnType)); 
-                functionName = null;
+			case Function(name, params, body, returnType): handleFunc(name, params, body, returnType);
 			case Expression(e): typeExpr(e);
             case Print(e):
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
                 // trace('return $val');
                 // variableTypes.set(functionName, (val != null ? typeExpr(val) : Unknown));
+
+                // TODO: Check that the return type matches that of the function
+
                 if (val != null) {
                     returnValue = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
                 } else {
@@ -135,8 +122,10 @@ class Typer {
                 // trace('callee: $callee, line ${paren.line}');
                 // trace(arguments);
                 var calleeType = typeExpr(callee);
+                var type = Unknown;
                 switch calleeType {
                     case Function(paramTypes, returnType):
+                        type = returnType;
                         var argumentTypes = [ for (arg in arguments) typeExpr(arg) ];
                         if (arguments.length != paramTypes.length) {
                             Lox.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
@@ -158,7 +147,9 @@ class Typer {
                 
                 // TODO: Here I should be able to determine (á la Interpreter.evaluate()) the function name and each argument name. This information I could use to set the types for the arguments (e.g. in the form 'function_name.arg_name' => type, alternatively associate a scope with each function). Subsequent calls to that function could then be checked against the same types
                 
-                calleeType;
+                // calleeType;
+                // trace(type);
+                type;
 			case Get(obj, name): Unknown;
 			case Set(obj, name, value): Unknown;
 			case Grouping(e) | Unary(_, e): typeExpr(e);
@@ -168,20 +159,7 @@ class Typer {
 			case Literal(v) if (Std.is(v, String)): Text;
 			case Literal(v) if (Std.is(v, Bool)): Boolean;
 			case Literal(v): Unknown;
-			case AnonFunction(params, body):
-                // TODO: Enable if strict.
-                // for (i in 0...params.length) {
-                //     if (params[i].type.match(Unknown)) Lox.warning(params[i].name, 'Parameter has type Unknown');
-                // }
-                var types = [ for (param in params) param.type ];
-
-
-                // TODO: Same logic as for Function (factor it out)
-
-
-                returnValue = Void; // TODO: This is PROBABLY not good enough for nested functions -- we need to keep track of scoping!
-                typeStmts(body);
-                Function(types, returnValue);
+			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
 		}
         if (ret == null) {
             trace('-----------');
@@ -201,7 +179,33 @@ class Typer {
             }
         }
         return ret;
-	}
+    }
+    
+    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType) :VariableType {
+        // TODO: Enable if strict.
+        // for (i in 0...params.length) {
+        //     if (params[i].type.match(Unknown)) Lox.warning(params[i].name, 'Parameter has type Unknown');
+        // }
+        var types = [ for (param in params) param.type ];
+        for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
+
+        // for (param in params) variableTypes.set(name.lexeme + '.' + param.lexeme, Unknown); // TODO: Temp hack!
+
+        functionName = (name != null ? name.lexeme : null);
+        returnValue = Void;
+        typeStmts(body);
+        // trace('function $functionName has type $returnValue');
+        // var returnType = (returnValue != null ? returnValue : Void);
+
+        var computedReturnType = switch returnType {
+            case Unknown: returnValue;
+            case _: returnType;
+        }
+
+        if (name != null) variableTypes.set(name.lexeme, Function(types, computedReturnType)); 
+        functionName = null;
+        return Function(types, computedReturnType);
+    }
 
     function matchType(type1 :VariableType, type2 :VariableType) :Bool {
         return switch type1 {
@@ -227,9 +231,10 @@ class Typer {
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
                 var returnStr = switch returnType {
                     case Void: '';
-                    case _: ' ' + formatType(returnType);
+                    case _: ' -> ' + formatType(returnType);
                 }
-                'Fun(${paramStr.join(", ")})$returnStr';
+                var funcStr = 'Fun(${paramStr.join(", ")})$returnStr';
+                return (returnType.match(Void) ? funcStr : '($funcStr)');
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';

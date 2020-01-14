@@ -46,7 +46,7 @@ class Interpreter {
                 }
                 var methods = new Map();
                 for(method in meths) switch method {
-                    case Function(name, params, body):
+                    case Function(name, params, body, returnType):
                         var func = new Function(name, params, body, environment, name.lexeme == 'init');
                         methods.set(name.lexeme, func);
                     case _: // unreachable
@@ -69,7 +69,7 @@ class Interpreter {
             case ForCondition(cond, body):
                 var env = new Environment(environment);
                 while(cond != null ? isTruthy(evaluate(cond)) : true) executeBlock(body, env);
-            case Function(name, params, body):
+            case Function(name, params, body, returnType):
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):
                 if (isTruthy(evaluate(cond))) execute(then);
@@ -206,7 +206,7 @@ class Interpreter {
                 var method = superclass.findMethod(meth.lexeme);
                 if (method == null) throw new RuntimeError(meth, 'Undefined property "${meth.lexeme}".');
                 method.bind(obj);
-            case AnonFunction(params, body):
+            case AnonFunction(params, body, returnType):
                 new Function(null, params, body, environment, false);
         }
     }

@@ -29,7 +29,7 @@ class AstPrinter {
 			case Expression(e): '${printExpr(e)}';
 			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
-			case Function(name, params, body):
+			case Function(name, params, body, returnType):
 				var declaration = '${isInClass ? "" : "fun "}${name.lexeme}';
 				var parameters = [ for (param in params) formatParam(param) ].join(', ');
                 var block = printBlock(body);
@@ -56,26 +56,27 @@ class AstPrinter {
 			case Super(keyword, method): 'super.${method.lexeme}';
 			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
-			case AnonFunction(params, body):
+			case AnonFunction(params, body, returnType):
 				var parameters = [ for (param in params) formatParam(param) ].join(',');
 				var block = printStmt(Block(body));
 				'fun ($parameters) $block';
 		}
-	}
+    }
+    
+    function formatType(type :Typer.VariableType) {
+        return switch type {
+            case Function(paramTypes, returnType):
+                var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
+                'Fun(${paramStr.join(", ")})';
+            case Text: 'Str';
+            case Number: 'Num';
+            case Boolean: 'Bool';
+            case Unknown: ''; // Ignore Unknown in this case to leave it out of the prettified code
+            case _: Std.string(type);
+        }
+    }
 
     function formatParam(param :Param) :String {
-        function formatType(type :Typer.VariableType) {
-            return switch type {
-                case Function(paramTypes, returnType):
-                    var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
-                    'Fun(${paramStr.join(", ")})';
-                case Text: 'Str';
-                case Number: 'Num';
-                case Boolean: 'Bool';
-                case Unknown: ''; // Ignore Unknown in this case to leave it out of the prettified code
-                case _: Std.string(param.type);
-            }
-        }
         var typeStr = formatType(param.type);
         return param.name.lexeme + (typeStr != '' ? ' $typeStr' : '');
     }

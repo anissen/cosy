@@ -42,7 +42,7 @@ class JavaScriptPrinter {
 			case Expression(e): '${printExpr(e)};';
 			case For(name, from, to, body): 'for (var ${name.lexeme} = ${printExpr(from)}; ${name.lexeme} < ${printExpr(to)}; ${name.lexeme}++) ${printBlock(body)}';
 			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
-			case Function(name, params, body):
+			case Function(name, params, body, returnType):
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
 				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
@@ -72,7 +72,7 @@ class JavaScriptPrinter {
 			case Super(keyword, method): 'super.${method.lexeme}';
 			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
-			case AnonFunction(params, body):
+			case AnonFunction(params, body, returnType):
 				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
 				'function ($parameters) $block';

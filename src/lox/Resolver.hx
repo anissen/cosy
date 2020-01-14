@@ -66,7 +66,7 @@ class Resolver {
 				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read, mutable: false });
 				
 				for(method in methods) switch method {
-					case Function(name, params, body):
+					case Function(name, params, body, returnType):
 						var declaration = name.lexeme == 'init' ? Initializer : Method;
 						resolveFunction(name, params, body, declaration);
 					case _: // unreachable
@@ -99,7 +99,7 @@ class Resolver {
                 beginScope();
 				resolveStmts(body);
                 endScope();
-			case Function(name, params, body):
+			case Function(name, params, body, returnType):
 				declare(name);
 				define(name);
 				resolveFunction(name, params, body, Function);
@@ -157,7 +157,7 @@ class Resolver {
 					resolveLocal(expr, kw, true);
 			case Literal(_):
 				// skip
-			case AnonFunction(params, body): 
+			case AnonFunction(params, body, returnType): 
 				resolveFunction(null, params, body, Function);
 		}
 	}
