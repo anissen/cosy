@@ -4,7 +4,7 @@ body {
 }
 
 h1 {
-  font: 400 50px/1.3 'Bree Serif', Georgia, serif;
+  font: 400 40px/1.3 'Bree Serif', Georgia, serif;
 }
 
 .CodeMirror {
@@ -12,11 +12,10 @@ h1 {
   font-family: Monaco, Menlo,"Andale Mono","lucida console","Courier New",monospace !important;
   font-size: 14px;
   border: 1px solid #eee;
+  height: 500px;
 }
 
 .CodeMirror-scroll {
-  /* height: auto; */
-  max-height: 600px;
   overflow-y: scroll;
   overflow-x: auto;
 }
