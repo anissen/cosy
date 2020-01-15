@@ -16,7 +16,7 @@ class Typer {
     var variableTypes :Map<String, VariableType> = new Map();
     var functionName:String = null; // Hack to determine the function return type from the return keyword
     var typedReturnType :VariableType = Unknown; // Hack to determine the function return type from the return keyword
-    var inferedReturnType :VariableType = Void; // Hack to determine the function return type from the return keyword
+    var inferredReturnType :VariableType = Void; // Hack to determine the function return type from the return keyword
 	
 	public function new(interpreter) {
 		this.interpreter = interpreter;
@@ -83,14 +83,14 @@ class Typer {
                 // TODO: Check that the return type matches that of the function
 
                 if (val != null) {
-                    inferedReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
+                    inferredReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
                     if (typedReturnType.match(Unknown)) {
-                        typedReturnType = inferedReturnType;
-                    } else if (typedReturnType != inferedReturnType) {
-                        Lox.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferedReturnType)}');
+                        typedReturnType = inferredReturnType;
+                    } else if (typedReturnType != inferredReturnType) {
+                        Lox.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
                     }
                 } else {
-                    inferedReturnType = Void;
+                    inferredReturnType = Void;
                 }
 		}
 	}
@@ -199,11 +199,12 @@ class Typer {
 
         functionName = (name != null ? name.lexeme : null);
         typedReturnType = returnType;
+        inferredReturnType = Void;
         typeStmts(body);
         // var returnType = (returnValue != null ? returnValue : Void);
         
         var computedReturnType = switch returnType {
-            case Unknown: inferedReturnType;
+            case Unknown: inferredReturnType;
             case _: returnType;
         }
 
