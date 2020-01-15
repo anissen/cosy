@@ -2341,7 +2341,8 @@ var lox_VariableType = $hxEnums["lox.VariableType"] = { __ename__ : true, __cons
 	,Function: ($_=function(paramTypes,returnType) { return {_hx_index:6,paramTypes:paramTypes,returnType:returnType,__enum__:"lox.VariableType",toString:$estr}; },$_.__params__ = ["paramTypes","returnType"],$_)
 };
 var lox_Typer = function(interpreter) {
-	this.returnValue = lox_VariableType.Void;
+	this.inferredReturnType = lox_VariableType.Void;
+	this.typedReturnType = lox_VariableType.Unknown;
 	this.functionName = null;
 	this.variableTypes = new haxe_ds_StringMap();
 	this.interpreter = interpreter;
@@ -2459,13 +2460,19 @@ lox_Typer.prototype = {
 			}
 			break;
 		case 8:
+			this.typeExpr(stmt.e);
 			break;
 		case 9:
 			var _g13 = stmt.value;
 			if(_g13 != null) {
-				this.returnValue = this.typeExpr(_g13);
+				this.inferredReturnType = this.typeExpr(_g13);
+				if(this.typedReturnType._hx_index == 0) {
+					this.typedReturnType = this.inferredReturnType;
+				} else if(this.typedReturnType != this.inferredReturnType) {
+					lox_Lox.error(lox_ErrorDataType.Token(stmt.keyword),"Function expected to return " + this.formatType(this.typedReturnType) + " but got " + this.formatType(this.inferredReturnType));
+				}
 			} else {
-				this.returnValue = lox_VariableType.Void;
+				this.inferredReturnType = lox_VariableType.Void;
 			}
 			break;
 		case 10:
@@ -2594,13 +2601,13 @@ lox_Typer.prototype = {
 			break;
 		}
 		if(ret == null) {
-			console.log("src/lox/Typer.hx:165:","-----------");
-			console.log("src/lox/Typer.hx:166:","null!!");
-			console.log("src/lox/Typer.hx:167:",expr);
+			console.log("src/lox/Typer.hx:174:","-----------");
+			console.log("src/lox/Typer.hx:175:","null!!");
+			console.log("src/lox/Typer.hx:176:",expr);
 			if(expr._hx_index == 2) {
-				console.log("src/lox/Typer.hx:169:","line " + expr.paren.line);
+				console.log("src/lox/Typer.hx:178:","line " + expr.paren.line);
 			}
-			console.log("src/lox/Typer.hx:172:","-----------");
+			console.log("src/lox/Typer.hx:181:","-----------");
 		}
 		if(ret._hx_index == 0) {
 			if(expr._hx_index == 2) {
@@ -2629,9 +2636,10 @@ lox_Typer.prototype = {
 			}
 		}
 		this.functionName = name != null ? name.lexeme : null;
-		this.returnValue = lox_VariableType.Void;
+		this.typedReturnType = returnType;
+		this.inferredReturnType = lox_VariableType.Void;
 		this.typeStmts(body);
-		var computedReturnType = returnType._hx_index == 0 ? this.returnValue : returnType;
+		var computedReturnType = returnType._hx_index == 0 ? this.inferredReturnType : returnType;
 		if(name != null) {
 			var key1 = name.lexeme;
 			var value1 = lox_VariableType.Function(_g,computedReturnType);
