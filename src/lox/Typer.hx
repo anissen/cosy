@@ -73,7 +73,7 @@ class Typer {
             case ForCondition(cond, body): typeStmts(body);
 			case Function(name, params, body, returnType): handleFunc(name, params, body, returnType);
 			case Expression(e): typeExpr(e);
-            case Print(e):
+            case Print(e): typeExpr(e);
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
                 // trace('return $val');
@@ -150,8 +150,8 @@ class Typer {
                 // calleeType;
                 // trace(type);
                 type;
-			case Get(obj, name): Unknown;
-			case Set(obj, name, value): Unknown;
+			case Get(obj, name): Unknown; // TODO: Implement
+			case Set(obj, name, value): Unknown; // TODO: Implement
 			case Grouping(e) | Unary(_, e): typeExpr(e);
 			case Super(kw, method): Instance;
 			case This(kw): Instance;

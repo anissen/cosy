@@ -104,12 +104,12 @@ var print_courteously = say_with_extra_text(", please!")
 print_courteously("make me a sandwich")
 
 // functions can tage functions as arguments
-fun do_n_times(f, n Num) { // f should be Fn()
+fun do_n_times(f Fun(Num), n Num) {
     for i in 0..n {
         f(i)
     }
 }
-do_n_times(fun(x) { print "i'm called " + (x + 1) + " time(s)" }, 3)
+do_n_times(fun(x Num) { print "i'm called " + (x + 1) + " time(s)" }, 3)
 
 // functions act as closures
 fun counter(start, increment) {
