@@ -178,16 +178,29 @@
 
 // -----------
 
-{
-    fun gamble(x Num) Str {
-        if x < 5 {
-            return x
-        } else {
-            return "hej"
-        }
-    }
-    mut s = gamble(3)
-    print s
-    s = gamble(5)
-    print s
-}
+// {
+//     fun gamble(x Num) Str {
+//         if x < 5 {
+//             return 5
+//         } else if x < 7 {
+//             return "hej"
+//         } else {
+//             return 8
+//         }
+//     }
+//     mut s = gamble(3)
+//     print s
+//     s = gamble(6)
+//     print s
+// }
+
+// -----------
+
+// {
+//     fun do_fun(f Fun(Num), n Num) {
+//         f(n)
+//     }
+//     do_fun(fun(x Num) { print "i'm fun " + x }, 3)
+// }
+
+// -----------

@@ -15,7 +15,8 @@ class Typer {
 	final interpreter:Interpreter;
     var variableTypes :Map<String, VariableType> = new Map();
     var functionName:String = null; // Hack to determine the function return type from the return keyword
-    var returnValue :VariableType = Void; // Hack to determine the function return type from the return keyword
+    var typedReturnType :VariableType = Unknown; // Hack to determine the function return type from the return keyword
+    var inferedReturnType :VariableType = Void; // Hack to determine the function return type from the return keyword
 	
 	public function new(interpreter) {
 		this.interpreter = interpreter;
@@ -50,6 +51,7 @@ class Typer {
 			case Var(name, init): 
                 // trace('set ${name.lexeme} (var)');
                 var initType = (init != null ? typeExpr(init) : Unknown);
+                // trace('set var ${name.lexeme} = $initType');
                 if (initType.match(Void)) Lox.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
             case Mut(name, init):
@@ -76,15 +78,19 @@ class Typer {
             case Print(e): typeExpr(e);
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
-                // trace('return $val');
                 // variableTypes.set(functionName, (val != null ? typeExpr(val) : Unknown));
 
                 // TODO: Check that the return type matches that of the function
 
                 if (val != null) {
-                    returnValue = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
+                    inferedReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
+                    if (typedReturnType.match(Unknown)) {
+                        typedReturnType = inferedReturnType;
+                    } else if (typedReturnType != inferedReturnType) {
+                        Lox.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferedReturnType)}');
+                    }
                 } else {
-                    returnValue = Void;
+                    inferedReturnType = Void;
                 }
 		}
 	}
@@ -192,13 +198,12 @@ class Typer {
         // for (param in params) variableTypes.set(name.lexeme + '.' + param.lexeme, Unknown); // TODO: Temp hack!
 
         functionName = (name != null ? name.lexeme : null);
-        returnValue = Void;
+        typedReturnType = returnType;
         typeStmts(body);
-        // trace('function $functionName has type $returnValue');
         // var returnType = (returnValue != null ? returnValue : Void);
-
+        
         var computedReturnType = switch returnType {
-            case Unknown: returnValue;
+            case Unknown: inferedReturnType;
             case _: returnType;
         }
 
