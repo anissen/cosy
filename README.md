@@ -92,7 +92,7 @@ say("world")
 var square = fun(value Num) {
     return value * value
 }
-print "5 * 5 = " + square(5) // TODO: This is not type checked -- argument can be "5"
+print "5 * 5 = " + square(5)
 
 // functions can return functions
 fun say_with_extra_text(extra_text Str) {
