@@ -69,7 +69,7 @@ fun do_n_times(f Fun(Num), n Num) {
 do_n_times(fun(x Num) { print "i'm called " + (x + 1) + " time(s)" }, 3)
 
 // functions act as closures
-fun counter(start, increment) {
+fun counter(start, increment) Fun() Num {
     mut count = start
     return fun() {
         count = count + increment
