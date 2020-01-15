@@ -14,9 +14,8 @@ enum VariableType {
 class Typer {
 	final interpreter:Interpreter;
     var variableTypes :Map<String, VariableType> = new Map();
-    var functionName:String = null; // Hack to determine the function return type from the return keyword
-    var typedReturnType :VariableType = Unknown; // Hack to determine the function return type from the return keyword
-    var inferredReturnType :VariableType = Void; // Hack to determine the function return type from the return keyword
+    var typedReturnType :VariableType = Unknown;
+    var inferredReturnType :VariableType = Void;
 	
 	public function new(interpreter) {
 		this.interpreter = interpreter;
@@ -44,18 +43,14 @@ class Typer {
     }
 
 	function typeStmt(stmt:Stmt) {
-        // trace(stmt.getName());
 		switch stmt {
 			case Block(statements): typeStmts(statements);
 			case Class(name, superclass, methods): typeStmts(methods);
 			case Var(name, init): 
-                // trace('set ${name.lexeme} (var)');
                 var initType = (init != null ? typeExpr(init) : Unknown);
-                // trace('set var ${name.lexeme} = $initType');
                 if (initType.match(Void)) Lox.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
             case Mut(name, init):
-                // trace('set ${name.lexeme} (mut)');
                 var initType = (init != null ? typeExpr(init) : Unknown);
                 if (initType.match(Void)) Lox.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
@@ -78,10 +73,6 @@ class Typer {
             case Print(e): typeExpr(e);
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
-                // variableTypes.set(functionName, (val != null ? typeExpr(val) : Unknown));
-
-                // TODO: Check that the return type matches that of the function
-
                 if (val != null) {
                     inferredReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
                     if (typedReturnType.match(Unknown)) {
@@ -98,12 +89,8 @@ class Typer {
 	function typeExpr(expr:Expr) :VariableType {
 		var ret = switch expr {
 			case Assign(name, value):
-                // trace('assign, ${name.lexeme} <= $value');
                 var assigningType = typeExpr(value);
-                // trace('get ${name.lexeme}');
                 var varType = variableTypes.get(name.lexeme);
-                // trace('varType: $varType');
-                // trace('var type: ${formatType(varType)}, assigning type: ${formatType(assigningType)}');
                 if (varType.match(Unknown)) {
                     variableTypes.set(name.lexeme, assigningType);
                 } else if (!matchType(varType, assigningType)) {
@@ -111,7 +98,6 @@ class Typer {
                 }
                 return assigningType;
 			case Variable(name):
-                // trace('Variable ${name.lexeme} has type ${variableTypes.get(name.lexeme)}');
                 if (variableTypes.exists(name.lexeme)) {
                     return variableTypes.get(name.lexeme);
                 } else { // can happen for recursive function calls
@@ -125,8 +111,6 @@ class Typer {
                 return Unknown;
             case Logical(left, _, right): Boolean;
 			case Call(callee, paren, arguments):
-                // trace('callee: $callee, line ${paren.line}');
-                // trace(arguments);
                 var calleeType = typeExpr(callee);
                 var type = Unknown;
                 switch calleeType {
@@ -146,15 +130,6 @@ class Typer {
                         }
                     case _:
                 }
-                // trace(calleeType);
-                // if (!matchType(calleeType, Function(argumentTypes, Unknown))) {
-                //     Lox.error(paren, 'Cannot call ${calleeType} with ${argumentTypes}');
-                // }
-                
-                // TODO: Here I should be able to determine (á la Interpreter.evaluate()) the function name and each argument name. This information I could use to set the types for the arguments (e.g. in the form 'function_name.arg_name' => type, alternatively associate a scope with each function). Subsequent calls to that function could then be checked against the same types
-                
-                // calleeType;
-                // trace(type);
                 type;
 			case Get(obj, name): Unknown; // TODO: Implement
 			case Set(obj, name, value): Unknown; // TODO: Implement
@@ -167,23 +142,13 @@ class Typer {
 			case Literal(v): Unknown;
 			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
 		}
-        if (ret == null) {
-            trace('-----------');
-            trace('null!!');
-            trace(expr);
-            switch expr {
-                case Call(callee, paren, arguments): trace('line ${paren.line}');
-                case _:
-            }
-            trace('-----------');
-        }
-        // trace(expr.getName() + ' => $ret');
-        if (ret.match(Unknown)) {
-            switch expr {
-                case Call(callee, paren, arguments): Lox.warning(paren, '${expr.getName()} has type Unknown');
-                case _: Lox.warning(-1, '${expr.getName()} has type Unknown');
-            }
-        }
+        // TODO: Enable as error if strict
+        // if (ret.match(Unknown)) {
+        //     switch expr {
+        //         case Call(callee, paren, arguments): Lox.warning(paren, '${expr.getName()} has type Unknown');
+        //         case _: Lox.warning(-1, '${expr.getName()} has type Unknown');
+        //     }
+        // }
         return ret;
     }
     
@@ -195,21 +160,16 @@ class Typer {
         var types = [ for (param in params) param.type ];
         for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
-        // for (param in params) variableTypes.set(name.lexeme + '.' + param.lexeme, Unknown); // TODO: Temp hack!
-
-        functionName = (name != null ? name.lexeme : null);
         typedReturnType = returnType;
         inferredReturnType = Void;
         typeStmts(body);
-        // var returnType = (returnValue != null ? returnValue : Void);
         
         var computedReturnType = switch returnType {
             case Unknown: inferredReturnType;
             case _: returnType;
         }
 
-        if (name != null) variableTypes.set(name.lexeme, Function(types, computedReturnType)); 
-        functionName = null;
+        if (name != null) variableTypes.set(name.lexeme, Function(types, computedReturnType));
         return Function(types, computedReturnType);
     }
 

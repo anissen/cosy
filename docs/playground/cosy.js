@@ -2343,7 +2343,6 @@ var lox_VariableType = $hxEnums["lox.VariableType"] = { __ename__ : true, __cons
 var lox_Typer = function(interpreter) {
 	this.inferredReturnType = lox_VariableType.Void;
 	this.typedReturnType = lox_VariableType.Unknown;
-	this.functionName = null;
 	this.variableTypes = new haxe_ds_StringMap();
 	this.interpreter = interpreter;
 	var _this = this.variableTypes;
@@ -2600,22 +2599,6 @@ lox_Typer.prototype = {
 			ret = this.handleFunc(null,expr.params,expr.body,expr.returnType);
 			break;
 		}
-		if(ret == null) {
-			console.log("src/lox/Typer.hx:174:","-----------");
-			console.log("src/lox/Typer.hx:175:","null!!");
-			console.log("src/lox/Typer.hx:176:",expr);
-			if(expr._hx_index == 2) {
-				console.log("src/lox/Typer.hx:178:","line " + expr.paren.line);
-			}
-			console.log("src/lox/Typer.hx:181:","-----------");
-		}
-		if(ret._hx_index == 0) {
-			if(expr._hx_index == 2) {
-				lox_Lox.warning(lox_ErrorDataType.Token(expr.paren),"" + $hxEnums[expr.__enum__].__constructs__[expr._hx_index] + " has type Unknown");
-			} else {
-				lox_Lox.warning(lox_ErrorDataType.Line(-1),"" + $hxEnums[expr.__enum__].__constructs__[expr._hx_index] + " has type Unknown");
-			}
-		}
 		return ret;
 	}
 	,handleFunc: function(name,params,body,returnType) {
@@ -2635,7 +2618,6 @@ lox_Typer.prototype = {
 				_this.h[key] = value;
 			}
 		}
-		this.functionName = name != null ? name.lexeme : null;
 		this.typedReturnType = returnType;
 		this.inferredReturnType = lox_VariableType.Void;
 		this.typeStmts(body);
@@ -2650,7 +2632,6 @@ lox_Typer.prototype = {
 				_this1.h[key1] = value1;
 			}
 		}
-		this.functionName = null;
 		return lox_VariableType.Function(_g,computedReturnType);
 	}
 	,matchType: function(type1,type2) {
