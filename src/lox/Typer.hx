@@ -75,9 +75,8 @@ class Typer {
 			case Return(kw, val):
                 if (val != null) {
                     inferredReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
-                    if (typedReturnType.match(Unknown)) {
-                        typedReturnType = inferredReturnType;
-                    } else if (typedReturnType != inferredReturnType) {
+                    
+                    if (!typedReturnType.match(Unknown) && typedReturnType != inferredReturnType) {
                         Lox.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
                     }
                 } else {
