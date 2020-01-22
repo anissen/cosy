@@ -2465,9 +2465,7 @@ lox_Typer.prototype = {
 			var _g13 = stmt.value;
 			if(_g13 != null) {
 				this.inferredReturnType = this.typeExpr(_g13);
-				if(this.typedReturnType._hx_index == 0) {
-					this.typedReturnType = this.inferredReturnType;
-				} else if(this.typedReturnType != this.inferredReturnType) {
+				if(this.typedReturnType._hx_index != 0 && this.typedReturnType != this.inferredReturnType) {
 					lox_Lox.error(lox_ErrorDataType.Token(stmt.keyword),"Function expected to return " + this.formatType(this.typedReturnType) + " but got " + this.formatType(this.inferredReturnType));
 				}
 			} else {
