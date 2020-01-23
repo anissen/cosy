@@ -13,8 +13,8 @@ fi
 echo -ne "\033[0m"
 echo -ne "\033[0;31m"
 # use 2>&1 to redirect stderr into stdout
-# hl bin/hxlox.hl $options ../test/scripts/$filename 2>&1 | diff ../test/scripts/$filename.stdout -
-#hl bin/hl/hxlox.hl $filename 2>&1 | diff $filename.stdout -
+# hl bin/cosy.hl $options ../test/scripts/$filename 2>&1 | diff ../test/scripts/$filename.stdout -
+#hl bin/hl/cosy.hl $filename 2>&1 | diff $filename.stdout -
 ./run.sh $filename 2>&1 | diff $filename.stdout -
 retVal=$?
 echo -ne "\033[0m"

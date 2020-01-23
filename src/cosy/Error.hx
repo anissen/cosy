@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Error {
 	public final message:Null<String>;

@@ -1,6 +1,6 @@
-package lox;
+package cosy;
 
-import lox.TokenType;
+import cosy.TokenType;
 
 class Scanner {
 	final source:String;
@@ -12,7 +12,7 @@ class Scanner {
 		'else' => Else,
 		'false' => False,
 		'for' => For,
-		'fun' => Fun, // TODO: change to fn
+		'fun' => Fun,
 		'in' => In,
 		'if' => If,
 		'mut' => Mut,
@@ -71,14 +71,14 @@ class Scanner {
 				}
 			case ' '.code | '\r'.code | '\t'.code: // Ignore whitespace.
 			case '\n'.code: line++;
-			case '"'.code: string(); // TODO: change to using ' instead
+			case '"'.code: string();
 			case _: 
 				if (isDigit(c)) {
 					number();
 				} else if (isAlpha(c)) {
 					identifier();
 				} else {
-					Lox.error(line, 'Unexpected character: ${std.String.fromCharCode(c)}');
+					Cosy.error(line, 'Unexpected character: ${std.String.fromCharCode(c)}');
 				}
 		}
 	}
@@ -97,16 +97,16 @@ class Scanner {
 	
 	function string() {
 		while(peek() != '"'.code && !isAtEnd()) {
-			if(peek() == '\n'.code) line++;
+			if (peek() == '\n'.code) line++;
 			advance();
 		}
 		
-		if(isAtEnd()) {
-			Lox.error(line, 'Unterminated string.');
+		if (isAtEnd()) {
+			Cosy.error(line, 'Unterminated string.');
 			return;
 		}
 		
-		// The closing "
+		// The closing '
 		advance();
 		
 		var value = source.substring(start + 1, current - 1);
@@ -116,9 +116,8 @@ class Scanner {
 	function number() {
 		while(isDigit(peek())) advance();
 		
-		if(peek() == '.'.code && isDigit(peekNext())) {
+		if (peek() == '.'.code && isDigit(peekNext())) {
 			advance();
-			
 			while(isDigit(peek())) advance();
 		}
 		
@@ -140,19 +139,19 @@ class Scanner {
 	}
 	
 	function match(expected:Int) {
-		if(isAtEnd()) return false;
-		if(source.charCodeAt(current) != expected) return false;
+		if (isAtEnd()) return false;
+		if (source.charCodeAt(current) != expected) return false;
 		current++;
 		return true;
 	}
 	
 	function peek() {
-		if(isAtEnd()) return 0;
+		if (isAtEnd()) return 0;
 		return source.charCodeAt(current);
 	}
 	
 	function peekNext() {
-		if(current + 1 >= source.length) return 0;
+		if (current + 1 >= source.length) return 0;
 		return source.charCodeAt(current + 1);
 	}
 	

@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Interpreter {
     final globals:Environment;
@@ -21,7 +21,7 @@ class Interpreter {
         try {
             for (statement in statements) execute(statement);
         } catch (e:RuntimeError) {
-            Lox.runtimeError(e);
+            Cosy.runtimeError(e);
         }
     }
 
@@ -58,9 +58,9 @@ class Interpreter {
                 evaluate(e);
             case For(name, from, to, body):
                 var fromVal = evaluate(from);
-                if (!Std.is(fromVal, Float)) Lox.error(name, 'Number expected in "from" clause of loop.');
+                if (!Std.is(fromVal, Float)) Cosy.error(name, 'Number expected in "from" clause of loop.');
                 var toVal = evaluate(to);
-                if (!Std.is(toVal, Float)) Lox.error(name, 'Number expected in "to" clause of loop.');
+                if (!Std.is(toVal, Float)) Cosy.error(name, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 for (counter in (fromVal :Int)...(toVal :Int)) {
                     env.define(name.lexeme, counter);
@@ -75,7 +75,7 @@ class Interpreter {
                 if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
             case Print(e):
-                Lox.println(stringify(evaluate(e)));
+                Cosy.println(stringify(evaluate(e)));
             case Return(keyword, value):
                 var value = if(value == null) null else evaluate(value);
                 throw new Return(value);

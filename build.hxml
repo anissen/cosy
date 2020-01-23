@@ -1,10 +1,10 @@
 -cp src
--main lox.Lox
+-main cosy.Cosy
 
-# -js bin/node/hlox.js
+# -js bin/node/cosy.js
 # -lib hxnodejs
 
 -java bin/java
 # jvm: compilation is faster, executation is slower (at least for fibonacci)
 -D jvm
-#--macro nullSafety("lox", Loose)
+#--macro nullSafety("cosy", Loose)

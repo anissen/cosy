@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 typedef Param = {
     name :Token,

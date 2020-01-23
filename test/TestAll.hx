@@ -1,6 +1,6 @@
 import sys.FileSystem;
 import sys.io.File;
-import lox.Lox;
+import cosy.cosy;
 import utest.Assert;
 import utest.Runner;
 import utest.ui.Report;
@@ -19,7 +19,7 @@ class TestFiles extends utest.Test {
     function testFiles() {
         var scriptsDir = 'test/scripts/';
         for (file in FileSystem.readDirectory(scriptsDir)) {
-            if (!StringTools.endsWith(file, '.lox')) continue;
+            if (!StringTools.endsWith(file, '.cosy')) continue;
 
             trace('Testing $file');
             var path = scriptsDir + file;
@@ -30,27 +30,27 @@ class TestFiles extends utest.Test {
             }
             var script = File.getContent(path);
             var output = StringTools.rtrim(File.getContent('$path.stdout'));
-            Assert.equals(output, Lox.test(script, prettyPrint));
+            Assert.equals(output, cosy.test(script, prettyPrint));
         }
     }
 }
 
 class TestTypes extends utest.Test {
     function testBoolean() {
-        Assert.equals('true', Lox.test('var b = true; print b;'));
-        Assert.equals('false', Lox.test('var b = false; print b;'));
+        Assert.equals('true', cosy.test('var b = true; print b;'));
+        Assert.equals('false', cosy.test('var b = false; print b;'));
     }
 
     function testNumber() {
-        Assert.equals('0', Lox.test('var i = 0; print i;'));
-        Assert.equals('100', Lox.test('var i = 100; print i;'));
-        Assert.equals('7.5', Lox.test('var i = 7.5; print i;'));
-        Assert.equals('-7.5', Lox.test('var i = -7.5; print i;'));
+        Assert.equals('0', cosy.test('var i = 0; print i;'));
+        Assert.equals('100', cosy.test('var i = 100; print i;'));
+        Assert.equals('7.5', cosy.test('var i = 7.5; print i;'));
+        Assert.equals('-7.5', cosy.test('var i = -7.5; print i;'));
     }
 
     function testString() {
-        Assert.equals('', Lox.test('var s = ""; print s;'));
-        Assert.equals('hello', Lox.test('var s = "hello"; print s;'));
-        Assert.equals('hello\nworld', Lox.test('var s = "hello\nworld"; print s;'));
+        Assert.equals('', cosy.test('var s = ""; print s;'));
+        Assert.equals('hello', cosy.test('var s = "hello"; print s;'));
+        Assert.equals('hello\nworld', cosy.test('var s = "hello\nworld"; print s;'));
     }
 }

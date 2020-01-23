@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 typedef Variable = {
 	var name:Token;
@@ -31,7 +31,7 @@ class Resolver {
                 case _:
                     if (returnToken != null) {
                         // TODO: We cannot report the correct token so we simply report the return token
-                        Lox.error(returnToken, 'Unreachable code after return statement.');
+                        Cosy.error(returnToken, 'Unreachable code after return statement.');
                         returnToken = null;
                     }
             }
@@ -53,7 +53,7 @@ class Resolver {
 				
 				if(superclass != null) {
 					switch superclass {
-						case Variable(sname) if(name.lexeme == sname.lexeme): Lox.error(sname, 'A class cannot inherit from itself');
+						case Variable(sname) if(name.lexeme == sname.lexeme): Cosy.error(sname, 'A class cannot inherit from itself');
 						case _:
 					}
 					currentClass = Subclass;
@@ -91,7 +91,7 @@ class Resolver {
                 beginScope();
                 declare(name);
                 define(name);
-                if (body.length == 0) Lox.error(name, 'Loop body is empty.');
+                if (body.length == 0) Cosy.error(name, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
             case ForCondition(cond, body):
@@ -110,9 +110,9 @@ class Resolver {
 				resolveStmt(then);
 				if(el != null) resolveStmt(el);
 			case Return(kw, val):
-				if(currentFunction == None) Lox.error(kw, 'Cannot return from top-level code.');
+				if(currentFunction == None) Cosy.error(kw, 'Cannot return from top-level code.');
 				if(val != null) {
-					if(currentFunction == Initializer) Lox.error(kw, 'Cannot return value from an initializer.');
+					if(currentFunction == Initializer) Cosy.error(kw, 'Cannot return value from an initializer.');
 					resolveExpr(val);
 				}
 		}
@@ -122,13 +122,13 @@ class Resolver {
 		switch expr {
 			case Assign(name, value):
                 var variable = findInScopes(name);
-                if (variable != null && !variable.mutable) Lox.error(name, 'Cannot reassign non-mutable variable.');
+                if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign non-mutable variable.');
 				resolveExpr(value);
 				resolveLocal(expr, name, false);
 			case Variable(name):
 				if (scopes.peek().exists(name.lexeme) && scopes.peek().get(name.lexeme).state.match(Declared))
-					Lox.error(name, 'Cannot read local variable in its own initializer');
-                if (StringTools.startsWith(name.lexeme, '_')) Lox.error(name, 'Variables starting with _ are considered unused.');
+					Cosy.error(name, 'Cannot read local variable in its own initializer');
+                if (StringTools.startsWith(name.lexeme, '_')) Cosy.error(name, 'Variables starting with _ are considered unused.');
 				resolveLocal(expr, name, true);
 			case Binary(left, _, right) | Logical(left, _, right):
 				resolveExpr(left);
@@ -145,14 +145,14 @@ class Resolver {
 				resolveExpr(e);
 			case Super(kw, method):
 				switch currentClass {
-					case None: Lox.error(kw, 'Cannot use "super" outside of a class.');
-					case Class: Lox.error(kw, 'Cannot use "super" in a class with no superclass.');
+					case None: Cosy.error(kw, 'Cannot use "super" outside of a class.');
+					case Class: Cosy.error(kw, 'Cannot use "super" in a class with no superclass.');
 					case Subclass: // ok
 				}
 				resolveLocal(expr, kw, true);
 			case This(kw):
 				if(currentClass == None)
-					Lox.error(kw, 'Cannot use "this" outside of a class.');
+					Cosy.error(kw, 'Cannot use "this" outside of a class.');
 				else 
 					resolveLocal(expr, kw, true);
 			case Literal(_):
@@ -184,17 +184,17 @@ class Resolver {
 
 		for (name => variable in scope) {
             if (StringTools.startsWith(variable.name.lexeme, '_')) continue; // ignore variables starting with underscore
-			if (variable.state.match(Defined)) Lox.error(variable.name, "Local variable is not used.");
+			if (variable.state.match(Defined)) Cosy.error(variable.name, "Local variable is not used.");
 		}
 	}
 	
 	function declare(name:Token, mutable:Bool = false) {
 		var scope = scopes.peek();
 		if(scope.exists(name.lexeme)) {
-            Lox.error(name, 'Variable with this name already declared in this scope.');
+            Cosy.error(name, 'Variable with this name already declared in this scope.');
         } else {
             var variable = findInScopes(name);
-            if (variable != null) Lox.error(name, 'Shadows existing variable.');
+            if (variable != null) Cosy.error(name, 'Shadows existing variable.');
         }
 		scope.set(name.lexeme, { name: name, state: Declared, mutable: mutable });
 	}
@@ -218,7 +218,7 @@ class Resolver {
 			i--;
 		}
         if (name.lexeme == 'clock' || name.lexeme == 'random' || name.lexeme == 'str_length' || name.lexeme == 'str_charAt' || name.lexeme == 'input') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
-        Lox.error(name, 'Variable not declared in this scope.');
+        Cosy.error(name, 'Variable not declared in this scope.');
 	}
 
     function findInScopes(name: Token) :Null<Variable> {

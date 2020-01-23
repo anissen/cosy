@@ -1,10 +1,10 @@
-package lox;
+package cosy;
 
 #if sys
 import sys.io.File;
 #end
 
-class Lox {
+class Cosy {
     static final interpreter = new Interpreter();
 
     static var hadError = false;
@@ -31,7 +31,7 @@ class Lox {
         
         if (argErrors.length > 0) {
             Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
-            Sys.println('Usage: hlox (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
+            Sys.println('Usage: hcosy (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
             Sys.exit(64);
         }
 
@@ -158,6 +158,7 @@ class Lox {
     }
 
     static function report(line:Int, where:String, message:String) {
+        // println('\033[1;31m[line $line] Error $where: $message\033[0m');
         println('[line $line] Error $where: $message');
         hadError = true;
     }

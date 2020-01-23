@@ -1,3 +1,3 @@
-# haxe build.hxml && java -jar bin/java/Lox.jar $@ 
-# haxe build.hxml && cp bin/js/hlox.js docs/playground/cosy.js && java -jar bin/java/Lox.jar $@ 
-haxe -cp src --run lox.Lox $@
+# haxe build.hxml && java -jar bin/java/cosy.jar $@ 
+# haxe build.hxml && cp bin/js/cosy.js docs/playground/cosy.js && java -jar bin/java/cosy.jar $@ 
+haxe -cp src --run cosy.Cosy $@

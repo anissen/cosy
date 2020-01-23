@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Parser {
 	final tokens:Array<Token>;
@@ -383,7 +383,7 @@ class Parser {
 	}
 	
 	function error(token:Token, message:String) {
-		Lox.error(token, message);
+		Cosy.error(token, message);
 		return new ParseError();
 	}
 	

@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class RuntimeError extends Error {
 	public final token:Token;

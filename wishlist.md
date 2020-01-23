@@ -17,6 +17,8 @@ fun x() { print "hej" }
 - [x] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
 - [x] Static analysis for
     - [x] Simple dead code
+    - [ ] Variables written multiple times without being read
+    - [ ] `if` with constant conditional expression
 - [ ] Class functions cannot override other functions (must be uniquely named)
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
@@ -52,10 +54,14 @@ fun x() { print "hej" }
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
 - [ ] Pure functions as default (cannot modify variables outside scope)
+- [ ] "Transform" functions that promote data-oriented design; must be pure, must not include `if` + called functions must satify the same constraints
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
 - [ ] `for 0..10` syntax, instead of `for _i in 0..10` (if possible)
 - [ ] Make a `strict` mode that requires specifying type information for function parameters and return values
+- [x] Rename files from `.lox` to `.cosy`
+- [ ] Change `fun` to `fn`
+- [ ] Change `"` to `'`
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

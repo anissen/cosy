@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Optimizer {
 	public function new() {

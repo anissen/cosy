@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 enum VariableType {
     Unknown;
@@ -45,22 +45,22 @@ class Typer {
 			case Class(name, superclass, methods): typeStmts(methods);
 			case Var(name, init): 
                 var initType = (init != null ? typeExpr(init) : Unknown);
-                if (initType.match(Void)) Lox.error(name, 'Cannot assign Void to a variable');
+                if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
             case Mut(name, init):
                 var initType = (init != null ? typeExpr(init) : Unknown);
-                if (initType.match(Void)) Lox.error(name, 'Cannot assign Void to a variable');
+                if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
             case For(name, from, to, body):
                 switch typeExpr(from) {
-                    case Unknown: Lox.warning(name, '"From" clause has type Unknown');
+                    case Unknown: Cosy.warning(name, '"From" clause has type Unknown');
                     case Number:
-                    case _: Lox.error(name, '"From" clause must evaluate to a number');
+                    case _: Cosy.error(name, '"From" clause must evaluate to a number');
                 }
                 switch typeExpr(to) {
-                    case Unknown: Lox.warning(name, '"To" clause has type Unknown');
+                    case Unknown: Cosy.warning(name, '"To" clause has type Unknown');
                     case Number:
-                    case _: Lox.error(name, '"To" clause must evaluate to a number');
+                    case _: Cosy.error(name, '"To" clause must evaluate to a number');
                 }
                 variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);
@@ -74,7 +74,7 @@ class Typer {
                     inferredReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
                     
                     if (!typedReturnType.match(Unknown) && typedReturnType != inferredReturnType) {
-                        Lox.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
+                        Cosy.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
                     }
                 } else {
                     inferredReturnType = Void;
@@ -90,7 +90,7 @@ class Typer {
                 if (varType.match(Unknown)) {
                     variableTypes.set(name.lexeme, assigningType);
                 } else if (!matchType(varType, assigningType)) {
-                    Lox.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType)}');
+                    Cosy.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType)}');
                 }
                 return assigningType;
 			case Variable(name):
@@ -114,13 +114,13 @@ class Typer {
                         type = returnType;
                         var argumentTypes = [ for (arg in arguments) typeExpr(arg) ];
                         if (arguments.length != paramTypes.length) {
-                            Lox.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
+                            Cosy.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
                         } else {
                             for (i in 0...paramTypes.length) {
-                                if (argumentTypes[i].match(Unknown)) Lox.warning(paren, 'Argument ${i + 1} has type Unknown.');
+                                if (argumentTypes[i].match(Unknown)) Cosy.warning(paren, 'Argument ${i + 1} has type Unknown.');
                                 if (paramTypes[i].match(Unknown)) continue;
                                 if (!matchType(argumentTypes[i], paramTypes[i])) {
-                                    Lox.error(paren, 'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
+                                    Cosy.error(paren, 'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
                                 }
                             }
                         }
@@ -141,8 +141,8 @@ class Typer {
         // TODO: Enable as error if strict
         // if (ret.match(Unknown)) {
         //     switch expr {
-        //         case Call(callee, paren, arguments): Lox.warning(paren, '${expr.getName()} has type Unknown');
-        //         case _: Lox.warning(-1, '${expr.getName()} has type Unknown');
+        //         case Call(callee, paren, arguments): Cosy.warning(paren, '${expr.getName()} has type Unknown');
+        //         case _: Cosy.warning(-1, '${expr.getName()} has type Unknown');
         //     }
         // }
         return ret;
@@ -151,7 +151,7 @@ class Typer {
     function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType) :VariableType {
         // TODO: Enable if strict.
         // for (i in 0...params.length) {
-        //     if (params[i].type.match(Unknown)) Lox.warning(params[i].name, 'Parameter has type Unknown');
+        //     if (params[i].type.match(Unknown)) Cosy.warning(params[i].name, 'Parameter has type Unknown');
         // }
         var types = [ for (param in params) param.type ];
         for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.

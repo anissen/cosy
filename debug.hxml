@@ -1,4 +1,4 @@
 -cp src
 -debug
---run lox.Lox
-test/Testbed.lox
+--run cosy.Cosy
+test/Testbed.cosy

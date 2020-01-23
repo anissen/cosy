@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class AstPrinter {
 	public function new() {}

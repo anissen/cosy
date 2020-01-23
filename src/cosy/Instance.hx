@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Instance {
 	final klass:Klass;

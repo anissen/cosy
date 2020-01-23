@@ -1,46 +1,3 @@
-
-# Cosy
-
-Cosy is a simple and pleasant programming language. It has an multi-platform interpreter and can trans-compile to JavaScript.
-
-```js
-print 'hello world'
-```
-
-<!-- ```js
-var max = 3
-for i 0..max {
-    print 'loop #' + i
-}
-``` -->
-
-## High-level features
-
-* Familiar syntax
-* Lambda functions (anonymous functions)
-* Gradural typing
-* Small and concise
-  * Cosy is made with fewer than 2000 lines of source code
-  * Few keywords (`and`, `class`, `else`, `false`, `for`, `fun`, `in`, `if`, `mut`, `or`, `print`, `return`, `super`, `this`, `true` and `var`)
-* Safety
-  * Variable are immutable by default
-  * No `null` or `nil`
-  * No variable shadowing
-* Compile-time validation
-  * Unused variables
-  * Simple dead code detection, i.e. statements following an unconditional `return` in a block
-  * Type checking
-* Has built-in code formatter
-* Interactive ([REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)) mode
-* Inspired by
-  * cosy
-  * V
-  * Rust
-  * Haxe
-* (...)
-
-## Code examples
-```js
 // the basics of cosy
 
 // print to output
@@ -161,16 +118,3 @@ for _i in 0..1 {
 // that's it for the basics
 // for more examples see:
 // https://github.com/anissen/cosy/tree/master/test/scripts
-```
-
-<!--
-Notes:
-* Variables starting with _ are considered unused, i.e. using them will result in a compile-time error
-* Pretty printing
-
-Inspiration from
-* cosy
-* V
-* Haxe
-* Rust
--->

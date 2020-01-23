@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Token {
 	public final type:TokenType;

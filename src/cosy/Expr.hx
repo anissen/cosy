@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 enum Expr {
 	Assign(name:Token, value:Expr);

@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Environment {
 	public final enclosing:Null<Environment>;

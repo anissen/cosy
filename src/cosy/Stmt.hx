@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 enum Stmt {
 	Block(statements:Array<Stmt>);

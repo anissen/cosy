@@ -1,4 +1,4 @@
-package lox;
+package cosy;
 
 class Klass implements Callable {
 	public final name:String;

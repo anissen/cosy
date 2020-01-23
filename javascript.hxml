@@ -1,5 +1,5 @@
 -cp src
--main lox.Lox
+-main cosy.Cosy
 # -D no-traces
 # -lib closure
 -dce full
