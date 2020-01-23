@@ -98,7 +98,7 @@ class Lox {
         var resolver = new Resolver(interpreter);
         resolver.resolve(statements);
 
-        var typer = new Typer(interpreter);
+        var typer = new Typer();
         typer.type(statements);
 
         if (hadError) return;
@@ -118,7 +118,7 @@ class Lox {
         var resolver = new Resolver(interpreter);
         resolver.resolve(statements);
 
-        var typer = new Typer(interpreter);
+        var typer = new Typer();
         typer.type(statements);
 
         if (hadError) return;

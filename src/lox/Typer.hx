@@ -7,18 +7,15 @@ enum VariableType {
     Number;
     Text;
     Instance;
-    // Function;
     Function(paramTypes:Array<VariableType>, returnType:VariableType);
 }
 
 class Typer {
-	final interpreter:Interpreter;
     var variableTypes :Map<String, VariableType> = new Map();
     var typedReturnType :VariableType = Unknown;
     var inferredReturnType :VariableType = Void;
 	
-	public function new(interpreter) {
-		this.interpreter = interpreter;
+	public function new() {
         variableTypes.set('clock', Number);
         variableTypes.set('random', Number);
         variableTypes.set('str_length', Number);
@@ -173,19 +170,15 @@ class Typer {
     }
 
     function matchType(type1 :VariableType, type2 :VariableType) :Bool {
-        return switch type1 {
-            case Function(params1, v1):
-                switch type2 {
-                    case Function(params2, v2):
-                        if (params1.length != params2.length) return false;
-                        for (param1 in params1) {
-                            for (param2 in params2) {
-                                if (!matchType(param1, param2)) return false;
-                            }
-                        }
-                        matchType(v1, v2);
-                    case _: false;
+        return switch [type1, type2] {
+            case [Function(params1, v1), Function(params2, v2)]:
+                if (params1.length != params2.length) return false;
+                for (param1 in params1) {
+                    for (param2 in params2) {
+                        if (!matchType(param1, param2)) return false;
+                    }
                 }
+                matchType(v1, v2);
             case _: type1 == type2;
         }
     }
