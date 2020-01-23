@@ -123,6 +123,9 @@ class Lox {
 
         if (hadError) return;
 
+        var optimizer = new Optimizer();
+        statements = optimizer.optimize(statements);
+
         if (prettyPrint) {
             var printer = new AstPrinter();
             for (stmt in statements) println(printer.printStmt(stmt));
