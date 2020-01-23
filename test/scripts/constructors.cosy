@@ -3,23 +3,23 @@ class Dog {
     init(text) {
         this.text = text
         //return nil // early returns are possible
-        //print "unreachable"
+        //print 'unreachable'
     }
     say() {
-        print this.text + ", bark bark!"
+        print this.text + ', bark bark!'
     }
 }
 
-var dog = Dog("I'm a dog")
+var dog = Dog('I\'m a dog')
 dog.say()
 
-print dog.init("I'm a cat in disguise") // reinitialization is allowed, returning the object
+print dog.init('I\'m a cat in disguise') // reinitialization is allowed, returning the object
 dog.say()
 
 class Sheep {
     // no constructor
     say() {
-        print "Bah!"
+        print 'Bah!'
     }
 }
 var sheep = Sheep()

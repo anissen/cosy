@@ -1,7 +1,7 @@
 
 class Weapon {
     describe() {
-        print "This can be used to hurt people with."
+        print 'This can be used to hurt people with.'
     }
 }
 
@@ -10,12 +10,12 @@ class Axe < Weapon {}
 var axe = Axe()
 axe.describe()
 
-print "--------"
+print '--------'
 
 class Sword < Weapon {
     describe() {
         super.describe()
-        print "Poke them with the pointy end."
+        print 'Poke them with the pointy end.'
     }
 }
 

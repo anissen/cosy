@@ -1,20 +1,20 @@
 
-fun random_word() {
+fn random_word() {
     var rnd = random();
-    if (rnd < 0.1)      return "WOBNIAR";
-    else if (rnd < 0.2) return "EMOSEWA";
-    else if (rnd < 0.3) return "SESSALGNUS";
-    else if (rnd < 0.4) return "TUCREPAP";
-    else if (rnd < 0.5) return "TOLIPEFAS";
-    else if (rnd < 0.6) return "DLEIFRAG";
-    else if (rnd < 0.7) return "ELCYCIB";
-    else if (rnd < 0.8) return "RETUPMOC";
-    else if (rnd < 0.9) return "NOLEMRETAW";
-    else if (rnd < 1.0) return "HTOLCELBAT";
+    if (rnd < 0.1)      return 'WOBNIAR';
+    else if (rnd < 0.2) return 'EMOSEWA';
+    else if (rnd < 0.3) return 'SESSALGNUS';
+    else if (rnd < 0.4) return 'TUCREPAP';
+    else if (rnd < 0.5) return 'TOLIPEFAS';
+    else if (rnd < 0.6) return 'DLEIFRAG';
+    else if (rnd < 0.7) return 'ELCYCIB';
+    else if (rnd < 0.8) return 'RETUPMOC';
+    else if (rnd < 0.9) return 'NOLEMRETAW';
+    else if (rnd < 1.0) return 'HTOLCELBAT';
 }
 
-fun decrypt(str) {
-    var r = "";
+fn decrypt(str) {
+    var r = '';
     var length = str_length(str);
     for (var i = length - 1; i >= 0; i = i - 1) {
         r = r + str_charAt(str, i);
@@ -26,18 +26,18 @@ class HangmanWord {
     init(word_to_guess) {
         this.word_to_guess = word_to_guess;
         this.word_length = str_length(word_to_guess);
-        this.letters_guessed = "";
+        this.letters_guessed = '';
         this.guessed_length = 0;
     }
 
     get_display_word() {
-        var word_display = "";
+        var word_display = '';
         for (var i = 0; i < this.word_length; i = i + 1) {
             var letter = str_charAt(this.word_to_guess, i);
             if (this.has_guessed_letter(letter)) {
-                word_display = word_display + letter + " ";
+                word_display = word_display + letter + ' ';
             } else {
-                word_display = word_display + "_ ";
+                word_display = word_display + '_ ';
             }
         }
         return word_display;
@@ -85,17 +85,17 @@ class HangmanWord {
 
 class ConsoleGame {
     init(title) {
-        print "Welcome to " + title + "!";
-        print "";
+        print 'Welcome to ' + title + '!';
+        print '';
 
         this.play();
 
-        print "";
-        print "Thanks for playing :)";
+        print '';
+        print 'Thanks for playing :)';
     }
 
     play() {
-        print "[This game cannot be played]";
+        print '[This game cannot be played]';
     }
 }
 
@@ -103,24 +103,24 @@ class Hangman < ConsoleGame {
     init(word, wrong_guesses_remaining) {
         this.word = word;
         this.wrong_guesses_remaining = wrong_guesses_remaining;
-        super.init("Hangman");
+        super.init('Hangman');
     }
 
     play() {
-        print "You need to guess '" + this.word.get_display_word() + "'!";
-        print "Wrong guesses remaining: " + this.wrong_guesses_remaining;
-        print "-------------------------";
-        print "Guess: ";
+        print 'You need to guess '' + this.word.get_display_word() + ''!';
+        print 'Wrong guesses remaining: ' + this.wrong_guesses_remaining;
+        print '-------------------------';
+        print 'Guess: ';
         var letter = input();
-        print "";
+        print '';
 
         if (str_length(letter) != 1) {
-            print "'" + letter + "' is not a valid answer!";
+            print ''' + letter + '' is not a valid answer!';
             return this.play();
         }
         
         if (this.word.already_guessed(letter)) {
-            print "You already guessed that!";
+            print 'You already guessed that!';
             this.wrong_guesses_remaining = this.wrong_guesses_remaining - 1;
             
             return this.play();
@@ -129,22 +129,22 @@ class Hangman < ConsoleGame {
         this.word.letters_guessed = this.word.letters_guessed + letter;
 
         if (this.word.is_correct_guess(letter)) {
-            print "Correct!";
-            print "";
+            print 'Correct!';
+            print '';
         } else {
-            print "Wrong guess!";
-            print "";
+            print 'Wrong guess!';
+            print '';
             this.wrong_guesses_remaining = this.wrong_guesses_remaining - 1;
             if (this.wrong_guesses_remaining <= 0) {
-                print "Game over: You lost!";
-                print "The correct word was " + this.word.word_to_guess;
+                print 'Game over: You lost!';
+                print 'The correct word was ' + this.word.word_to_guess;
                 return;
             }
         }
 
         if (this.word.has_won()) {
-            print "The correct word is " + this.word.word_to_guess;
-            print "Game over: You won!";
+            print 'The correct word is ' + this.word.word_to_guess;
+            print 'Game over: You won!';
             return;
         }
 

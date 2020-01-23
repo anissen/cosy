@@ -40,6 +40,9 @@ StringTools.startsWith = function(s,start) {
 		return false;
 	}
 };
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
+};
 var cosy_AstPrinter = function() {
 	this.isInClass = false;
 	this.indentAmount = 0;
@@ -90,7 +93,7 @@ cosy_AstPrinter.prototype = {
 		case 5:
 			var _g18 = statement.body;
 			var _g17 = statement.params;
-			var declaration2 = "" + (this.isInClass ? "" : "fun ") + statement.name.lexeme;
+			var declaration2 = "" + (this.isInClass ? "" : "fn ") + statement.name.lexeme;
 			var _g = [];
 			var _g1 = 0;
 			while(_g1 < _g17.length) _g.push(this.formatParam(_g17[_g1++]));
@@ -154,7 +157,7 @@ cosy_AstPrinter.prototype = {
 			var _g2 = [];
 			var _g11 = 0;
 			while(_g11 < _g14.length) _g2.push(this.formatParam(_g14[_g11++]));
-			return "fun (" + _g2.join(",") + ") " + this.printStmt(cosy_Stmt.Block(_g15));
+			return "fn (" + _g2.join(",") + ") " + this.printStmt(cosy_Stmt.Block(_g15));
 		}
 	}
 	,formatType: function(type) {
@@ -172,7 +175,7 @@ cosy_AstPrinter.prototype = {
 			var _g1 = [];
 			var _g11 = 0;
 			while(_g11 < _g.length) _g1.push(this.formatType(_g[_g11++]));
-			return "Fun(" + _g1.join(", ") + ")";
+			return "Fn(" + _g1.join(", ") + ")";
 		default:
 			return Std.string(type);
 		}
@@ -1150,7 +1153,7 @@ cosy_Parser.prototype = {
 			if(this.match([cosy_TokenType.Class])) {
 				return this.classDeclaration();
 			}
-			if(this.match([cosy_TokenType.Fun])) {
+			if(this.match([cosy_TokenType.Fn])) {
 				return this.func("function");
 			}
 			if(this.match([cosy_TokenType.Var])) {
@@ -1405,7 +1408,7 @@ cosy_Parser.prototype = {
 		if(this.match([cosy_TokenType.Identifier])) {
 			return cosy_Expr.Variable(this.previous());
 		}
-		if(this.match([cosy_TokenType.Fun])) {
+		if(this.match([cosy_TokenType.Fn])) {
 			return this.funcBody("function");
 		}
 		if(this.match([cosy_TokenType.LeftParen])) {
@@ -1861,7 +1864,7 @@ cosy_RuntimeError.__super__ = cosy_Error;
 cosy_RuntimeError.prototype = $extend(cosy_Error.prototype,{
 	__class__: cosy_RuntimeError
 });
-var cosy_TokenType = $hxEnums["cosy.TokenType"] = { __ename__ : true, __constructs__ : ["LeftParen","RightParen","LeftBrace","RightBrace","Comma","Dot","DotDot","Minus","Plus","Slash","Star","Underscore","Bang","BangEqual","Equal","EqualEqual","Greater","GreaterEqual","Less","LessEqual","Identifier","String","Number","And","Class","Else","False","Fun","For","In","If","Mut","Or","Print","Return","Super","This","True","Var","BooleanType","NumberType","StringType","FunctionType","Eof"]
+var cosy_TokenType = $hxEnums["cosy.TokenType"] = { __ename__ : true, __constructs__ : ["LeftParen","RightParen","LeftBrace","RightBrace","Comma","Dot","DotDot","Minus","Plus","Slash","Star","Underscore","Bang","BangEqual","Equal","EqualEqual","Greater","GreaterEqual","Less","LessEqual","Identifier","String","Number","And","Class","Else","False","Fn","For","In","If","Mut","Or","Print","Return","Super","This","True","Var","BooleanType","NumberType","StringType","FunctionType","Eof"]
 	,LeftParen: {_hx_index:0,__enum__:"cosy.TokenType",toString:$estr}
 	,RightParen: {_hx_index:1,__enum__:"cosy.TokenType",toString:$estr}
 	,LeftBrace: {_hx_index:2,__enum__:"cosy.TokenType",toString:$estr}
@@ -1889,7 +1892,7 @@ var cosy_TokenType = $hxEnums["cosy.TokenType"] = { __ename__ : true, __construc
 	,Class: {_hx_index:24,__enum__:"cosy.TokenType",toString:$estr}
 	,Else: {_hx_index:25,__enum__:"cosy.TokenType",toString:$estr}
 	,False: {_hx_index:26,__enum__:"cosy.TokenType",toString:$estr}
-	,Fun: {_hx_index:27,__enum__:"cosy.TokenType",toString:$estr}
+	,Fn: {_hx_index:27,__enum__:"cosy.TokenType",toString:$estr}
 	,For: {_hx_index:28,__enum__:"cosy.TokenType",toString:$estr}
 	,In: {_hx_index:29,__enum__:"cosy.TokenType",toString:$estr}
 	,If: {_hx_index:30,__enum__:"cosy.TokenType",toString:$estr}
@@ -1935,7 +1938,7 @@ cosy_Scanner.prototype = {
 		case 33:
 			this.addToken(this.match(61) ? cosy_TokenType.BangEqual : cosy_TokenType.Bang);
 			break;
-		case 34:
+		case 39:
 			this.string();
 			break;
 		case 40:
@@ -2010,7 +2013,7 @@ cosy_Scanner.prototype = {
 		this.addToken(_g == null ? cosy_TokenType.Identifier : _g);
 	}
 	,string: function() {
-		while(this.peek() != 34 && !this.isAtEnd()) {
+		while((this.peek() != 39 || this.peekPrevious() == 92) && !this.isAtEnd()) {
 			if(this.peek() == 10) {
 				this.line++;
 			}
@@ -2021,7 +2024,7 @@ cosy_Scanner.prototype = {
 			return;
 		}
 		this.advance();
-		this.addToken(cosy_TokenType.String,this.source.substring(this.start + 1,this.current - 1));
+		this.addToken(cosy_TokenType.String,StringTools.replace(this.source.substring(this.start + 1,this.current - 1),"\\'","'"));
 	}
 	,number: function() {
 		while(this.isDigit(this.peek())) this.advance();
@@ -2073,6 +2076,12 @@ cosy_Scanner.prototype = {
 			return 0;
 		}
 		return HxOverrides.cca(this.source,this.current + 1);
+	}
+	,peekPrevious: function() {
+		if(this.current - 1 >= this.source.length) {
+			return 0;
+		}
+		return HxOverrides.cca(this.source,this.current - 1);
 	}
 	,advance: function() {
 		this.current++;
@@ -2453,7 +2462,7 @@ cosy_Typer.prototype = {
 			var _g11 = 0;
 			while(_g11 < _g.length) _g2.push(this.formatType(_g[_g11++]));
 			var returnStr = _g1._hx_index == 1 ? "" : " -> " + this.formatType(_g1);
-			var funcStr = "Fun(" + _g2.join(", ") + ")" + returnStr;
+			var funcStr = "Fn(" + _g2.join(", ") + ")" + returnStr;
 			if(_g1._hx_index == 1) {
 				return funcStr;
 			} else {
@@ -2795,11 +2804,11 @@ cosy_Scanner.keywords = (function($this) {
 		}
 	}
 	{
-		var value5 = cosy_TokenType.Fun;
-		if(__map_reserved["fun"] != null) {
-			_g.setReserved("fun",value5);
+		var value5 = cosy_TokenType.Fn;
+		if(__map_reserved["fn"] != null) {
+			_g.setReserved("fn",value5);
 		} else {
-			_g.h["fun"] = value5;
+			_g.h["fn"] = value5;
 		}
 	}
 	{
@@ -2908,10 +2917,10 @@ cosy_Scanner.keywords = (function($this) {
 	}
 	{
 		var value19 = cosy_TokenType.FunctionType;
-		if(__map_reserved["Fun"] != null) {
-			_g.setReserved("Fun",value19);
+		if(__map_reserved["Fn"] != null) {
+			_g.setReserved("Fn",value19);
 		} else {
-			_g.h["Fun"] = value19;
+			_g.h["Fn"] = value19;
 		}
 	}
 	$r = _g;

@@ -1,14 +1,14 @@
 
-fun first() {
-    print "first"
+fn first() {
+    print 'first'
     return false
 }
 
-fun second() {
-    print "second"
+fn second() {
+    print 'second'
     return true
 }
 
 first() or second()
-print "-"
+print '-'
 first() and second()

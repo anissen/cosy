@@ -1,11 +1,11 @@
-var a = "global"
+var a = 'global'
 {
-  fun showA() {
+  fn showA() {
     print a
   }
 
   showA()
-  var a = "block"
+  var a = 'block'
   print a
   showA()
 }

@@ -9,7 +9,7 @@ print b
 b = 7
 print b
 
-fun f(arg) {
+fn f(arg) {
     arg = 5
     print arg
 }

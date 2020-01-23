@@ -8,15 +8,15 @@ print i1
 var i2 = -7.5
 print i2
 
-var s1 = "hello"
+var s1 = 'hello'
 print s1
 
 var nf1 = clock
 print nf1
 
-var f1 = fun () {}
+var f1 = fn () {}
 print f1
-var f2 = fun (xyz) { print xyz }
+var f2 = fn (xyz) { print xyz }
 print f2
 
 class C {}

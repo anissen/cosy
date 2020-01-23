@@ -22,7 +22,7 @@ class Parser {
 	function declaration() {
 		try {
 			if(match([Class])) return classDeclaration();
-			if(match([Fun])) return func('function');
+			if(match([Fn])) return func('function');
 			if(match([Var])) return varDeclaration();
 			if(match([Mut])) return mutDeclaration();
 			return statement();
@@ -329,7 +329,7 @@ class Parser {
 		}
 		if(match([This])) return This(previous());
 		if(match([Identifier])) return Variable(previous());
-		if(match([Fun])) return funcBody("function");
+		if(match([Fn])) return funcBody("function");
 		if(match([LeftParen])) {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');
@@ -391,7 +391,7 @@ class Parser {
 		advance();
 		while(!isAtEnd()) {
 			switch peek().type {
-				case Class | Fun | Var | For | If | Print | Return: return;
+				case Class | Fn | Var | For | If | Print | Return: return;
 				case _: advance();
 			}
 		}

@@ -30,7 +30,7 @@ class AstPrinter {
 			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body, returnType):
-				var declaration = '${isInClass ? "" : "fun "}${name.lexeme}';
+				var declaration = '${isInClass ? "" : "fn "}${name.lexeme}';
 				var parameters = [ for (param in params) formatParam(param) ].join(', ');
                 var block = printBlock(body);
 				'$declaration($parameters) $block';
@@ -59,7 +59,7 @@ class AstPrinter {
 			case AnonFunction(params, body, returnType):
 				var parameters = [ for (param in params) formatParam(param) ].join(',');
 				var block = printStmt(Block(body));
-				'fun ($parameters) $block';
+				'fn ($parameters) $block';
 		}
     }
     
@@ -67,7 +67,7 @@ class AstPrinter {
         return switch type {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
-                'Fun(${paramStr.join(", ")})';
+                'Fn(${paramStr.join(", ")})';
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';

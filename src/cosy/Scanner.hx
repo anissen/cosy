@@ -12,7 +12,7 @@ class Scanner {
 		'else' => Else,
 		'false' => False,
 		'for' => For,
-		'fun' => Fun,
+		'fn' => Fn,
 		'in' => In,
 		'if' => If,
 		'mut' => Mut,
@@ -26,7 +26,7 @@ class Scanner {
 		'Bool' => BooleanType,
 		'Num' => NumberType,
 		'Str' => StringType,
-		'Fun' => FunctionType,
+		'Fn' => FunctionType,
 	];
 	
 	var start = 0;
@@ -71,7 +71,7 @@ class Scanner {
 				}
 			case ' '.code | '\r'.code | '\t'.code: // Ignore whitespace.
 			case '\n'.code: line++;
-			case '"'.code: string();
+			case '\''.code: string();
 			case _: 
 				if (isDigit(c)) {
 					number();
@@ -96,7 +96,7 @@ class Scanner {
 	}
 	
 	function string() {
-		while(peek() != '"'.code && !isAtEnd()) {
+		while ((peek() != '\''.code || peekPrevious() == '\\'.code) && !isAtEnd()) {
 			if (peek() == '\n'.code) line++;
 			advance();
 		}
@@ -110,7 +110,7 @@ class Scanner {
 		advance();
 		
 		var value = source.substring(start + 1, current - 1);
-		addToken(String, value);
+		addToken(String, StringTools.replace(value, '\\\'', '\''));
 	}
 	
 	function number() {
@@ -153,6 +153,11 @@ class Scanner {
 	function peekNext() {
 		if (current + 1 >= source.length) return 0;
 		return source.charCodeAt(current + 1);
+    }
+    
+    function peekPrevious() {
+		if (current - 1 >= source.length) return 0;
+		return source.charCodeAt(current - 1);
 	}
 	
 	function advance():Int {

@@ -1,20 +1,20 @@
 mut word_to_guess
 var rnd = random()
-if (rnd < 0.1)      word_to_guess = "TABLECLOTH"
-else if (rnd < 0.2) word_to_guess = "WATERMELON"
-else if (rnd < 0.3) word_to_guess = "COMPUTER"
-else if (rnd < 0.4) word_to_guess = "BICYCLE"
-else if (rnd < 0.5) word_to_guess = "GARFIELD"
-else if (rnd < 0.6) word_to_guess = "SAFEPILOT"
-else if (rnd < 0.7) word_to_guess = "PAPERCUT"
-else if (rnd < 0.8) word_to_guess = "SUNGLASSES"
-else if (rnd < 0.9) word_to_guess = "AWESOME"
-else if (rnd < 1.0) word_to_guess = "RAINBOW"
+if (rnd < 0.1)      word_to_guess = 'TABLECLOTH'
+else if (rnd < 0.2) word_to_guess = 'WATERMELON'
+else if (rnd < 0.3) word_to_guess = 'COMPUTER'
+else if (rnd < 0.4) word_to_guess = 'BICYCLE'
+else if (rnd < 0.5) word_to_guess = 'GARFIELD'
+else if (rnd < 0.6) word_to_guess = 'SAFEPILOT'
+else if (rnd < 0.7) word_to_guess = 'PAPERCUT'
+else if (rnd < 0.8) word_to_guess = 'SUNGLASSES'
+else if (rnd < 0.9) word_to_guess = 'AWESOME'
+else if (rnd < 1.0) word_to_guess = 'RAINBOW'
 var word_length = str_length(word_to_guess)
-mut letters_guessed = ""
+mut letters_guessed = ''
 mut wrong_guesses_remaining = 5
 
-fun has_guessed_letter(letter) {
+fn has_guessed_letter(letter) {
     var guessed_letters_length = str_length(letters_guessed)
     for i in 0..guessed_letters_length {
         if str_charAt(letters_guessed, i) == letter {
@@ -24,20 +24,20 @@ fun has_guessed_letter(letter) {
     return false
 }
 
-fun get_display_word() {
-    mut word_display = ""
+fn get_display_word() {
+    mut word_display = ''
     for i in 0..word_length {
         var letter = str_charAt(word_to_guess, i)
         if has_guessed_letter(letter) {
-            word_display = word_display + letter + " "
+            word_display = word_display + letter + ' '
         } else {
-            word_display = word_display + "_ "
+            word_display = word_display + '_ '
         }
     }
     return word_display
 }
 
-fun has_won() {
+fn has_won() {
     for i in 0..word_length {
         var letter = str_charAt(word_to_guess, i)
         if !has_guessed_letter(letter) {
@@ -47,24 +47,24 @@ fun has_won() {
     return true
 }
 
-fun hangman() {
-    print "You need to guess '" + get_display_word() + "'!"
-    print "Wrong guesses remaining: " + wrong_guesses_remaining
-    print "-------------------------"
-    print "Guess: "
+fn hangman() {
+    print 'You need to guess '' + get_display_word() + ''!'
+    print 'Wrong guesses remaining: ' + wrong_guesses_remaining
+    print '-------------------------'
+    print 'Guess: '
     var letter = input()
-    print ""
+    print ''
 
     if str_length(letter) != 1 {
-        print "'" + letter + "' is not a valid answer!"
+        print ''' + letter + '' is not a valid answer!'
         return hangman()
     }
 
-    fun already_guessed() {
+    fn already_guessed() {
         var length = str_length(letters_guessed)
         for i in 0..length {
             if (str_charAt(letters_guessed, i) == letter) {
-                print "You already guessed that!"
+                print 'You already guessed that!'
                 wrong_guesses_remaining = wrong_guesses_remaining - 1
                 return true
             }
@@ -78,7 +78,7 @@ fun hangman() {
 
     letters_guessed = letters_guessed + letter
 
-    fun is_correct_guess() {
+    fn is_correct_guess() {
         for i in 0..word_length {
             if str_charAt(word_to_guess, i) == letter {
                 return true
@@ -88,32 +88,32 @@ fun hangman() {
     }
 
     if is_correct_guess() {
-        print "Correct!"
-        print ""
+        print 'Correct!'
+        print ''
     } else {
-        print "Wrong guess!"
-        print ""
+        print 'Wrong guess!'
+        print ''
         wrong_guesses_remaining = wrong_guesses_remaining - 1
         if wrong_guesses_remaining <= 0 {
-            print "Game over: You lost!"
-            print "The correct word was " + word_to_guess
+            print 'Game over: You lost!'
+            print 'The correct word was ' + word_to_guess
             return _
         }
     }
 
     if has_won() {
-        print "The correct word is " + word_to_guess
-        print "Game over: You won!"
+        print 'The correct word is ' + word_to_guess
+        print 'Game over: You won!'
         return _
     }
 
     hangman()
 }
 
-print "Welcome to Hangman!"
-print ""
+print 'Welcome to Hangman!'
+print ''
 
 hangman()
 
-print ""
-print "Thanks for playing :)"
+print ''
+print 'Thanks for playing :)'

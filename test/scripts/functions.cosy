@@ -1,37 +1,37 @@
-fun f(a, b) { print a + " " + b + "!" }
-f("Hello", "World")
-// f("hax0r")
+fn f(a, b) { print a + ' ' + b + '!' }
+f('Hello', 'World')
+// f('hax0r')
 
-// fun f() { print "!!!" } // should cause a 'redefinition error'
+// fn f() { print '!!!' } // should cause a 'redefinition error'
 
-//fun x(a, b, c, d, e, f, g, h, i, h, j) { print "too many parameters!" }
+//fn x(a, b, c, d, e, f, g, h, i, h, j) { print 'too many parameters!' }
 
 print clock
 print f
 
-fun h() {
-    print "step 1"
+fn h() {
+    print 'step 1'
     return 1
-    //print "step 2"
+    //print 'step 2'
     //return 2
 }
-print "result: " + h()
+print 'result: ' + h()
 
 { // return inner funciton
-    fun make_hi_func() {
-        fun say_hi(text) {
-            return "Hi " + text
+    fn make_hi_func() {
+        fn say_hi(text) {
+            return 'Hi ' + text
         }
         return say_hi
     }
 
     var say_hi_to = make_hi_func()
-    print say_hi_to("John")
+    print say_hi_to('John')
 }
 
 { // scoping rules
     mut outer_scope = 42
-    fun x() {
+    fn x() {
         outer_scope = outer_scope + 10
     }
     print outer_scope
@@ -40,8 +40,8 @@ print "result: " + h()
 }
 
 {
-    fun make_add_func(a) {
-        fun do_add(b) {
+    fn make_add_func(a) {
+        fn do_add(b) {
             return a + b
         }
         return do_add

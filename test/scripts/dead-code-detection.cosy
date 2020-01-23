@@ -1,18 +1,18 @@
-fun f() {
-  print "before return"
+fn f() {
+  print 'before return'
   if (false) return _
-  print "after first return"
+  print 'after first return'
   return _
-  print "after second return"
+  print 'after second return'
 }
 
 f()
 
-fun f2() {
+fn f2() {
     for (true) {
-        print "while: before return"
+        print 'while: before return'
         return _
-        print "while: after return"
+        print 'while: after return'
     }
 }
 

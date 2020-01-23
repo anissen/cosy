@@ -1,13 +1,13 @@
 // the basics of cosy
 
 // print to output
-print "hello world!"
+print 'hello world!'
 
 
 // variables and types
 var a = true     // Boolean
 var b = 1        // Number
-var c = "hello"  // String
+var c = 'hello'  // String
 
 // variables are immutable by default
 var d = 42
@@ -20,63 +20,63 @@ e = 24 // ok
 
 // conditional branching
 if 3 < 5 and 4 == 4 {
-    print "true"
+    print 'true'
 } else {
-    print "false"
+    print 'false'
 }
 
 
 // loop with counter
 for i in 0..3 {
-    print "loop #" + i
+    print 'loop #' + i
 }
 
 // loop with condition
 mut j = 0
 for j < 3 {
-    print "conditional loop #i"
+    print 'conditional loop #i'
     j = j + 1
 }
 
 
 // functions
-fun say(name) {
-    print "hello " + name
+fn say(name) {
+    print 'hello ' + name
 }
-say("world")
+say('world')
 
 // lambda functions
-var square = fun(value Num) {
+var square = fn(value Num) {
     return value * value
 }
-print "5 * 5 = " + square(5)
+print '5 * 5 = ' + square(5)
 
 // functions can return functions
-fun say_with_extra_text(extra_text Str) {
-    return fun(text) {
+fn say_with_extra_text(extra_text Str) {
+    return fn(text) {
         print text + extra_text
     }
 }
-var print_courteously = say_with_extra_text(", please!")
-print_courteously("make me a sandwich")
+var print_courteously = say_with_extra_text(', please!')
+print_courteously('make me a sandwich')
 
 // functions can tage functions as arguments
-fun do_n_times(f Fun(Num), n Num) {
+fn do_n_times(f Fn(Num), n Num) {
     for i in 0..n {
         f(i)
     }
 }
-do_n_times(fun(x Num) { print "i'm called " + (x + 1) + " time(s)" }, 3)
+do_n_times(fn(x Num) { print 'i\'m called ' + (x + 1) + ' time(s)' }, 3)
 
 // functions act as closures
-fun counter(start, increment) Fun() Num {
+fn counter(start, increment) Fn() Num {
     mut count = start
-    return fun() {
+    return fn() {
         count = count + increment
         return count
     }
 }
-print "counting down..."
+print 'counting down...'
 var count_down = counter(3, -1)
 print count_down()
 print count_down()
@@ -84,10 +84,10 @@ print count_down()
 
 
 // dead code is not allowed
-fun dead_code() {
-    print "i'm always printing this"
+fn dead_code() {
+    print 'i\'m always printing this'
     return true
-    // print "i'm never printing this" // error
+    // print 'i\'m never printing this' // error
 }
 dead_code()
 
@@ -111,7 +111,7 @@ if !a print b + c + d + e
 // variables can be marked purposely unused with an underscore
 var _unused = 42 // this is okay
 for _i in 0..1 {
-    print "the counter variable is unused, but that's okay"
+    print 'the counter variable is unused, but that\'s okay'
 }
 
 

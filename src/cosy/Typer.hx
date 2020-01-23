@@ -191,7 +191,7 @@ class Typer {
                     case Void: '';
                     case _: ' -> ' + formatType(returnType);
                 }
-                var funcStr = 'Fun(${paramStr.join(", ")})$returnStr';
+                var funcStr = 'Fn(${paramStr.join(", ")})$returnStr';
                 return (returnType.match(Void) ? funcStr : '($funcStr)');
             case Text: 'Str';
             case Number: 'Num';

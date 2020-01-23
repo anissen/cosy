@@ -1,5 +1,5 @@
 print this // error: Cannot use 'this' outside of a class.
-fun a() {
+fn a() {
     print this // error: Cannot use 'this' outside of a class.
 }
 a()

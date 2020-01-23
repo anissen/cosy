@@ -60,8 +60,8 @@ fun x() { print "hej" }
 - [ ] `for 0..10` syntax, instead of `for _i in 0..10` (if possible)
 - [ ] Make a `strict` mode that requires specifying type information for function parameters and return values
 - [x] Rename files from `.lox` to `.cosy`
-- [ ] Change `fun` to `fn`
-- [ ] Change `"` to `'`
+- [x] Change `fun` to `fn`
+- [x] Change `"` to `'`
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

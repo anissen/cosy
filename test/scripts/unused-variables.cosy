@@ -8,12 +8,12 @@ print b
     print d
 }
 
-fun x(arg1) {
+fn x(arg1) {
     var local1 // local1: unused variable
     print arg1
 }
 
-fun y(arg2) { // arg2: unused variable
+fn y(arg2) { // arg2: unused variable
     var local2
     print local2
 }
@@ -23,10 +23,10 @@ y(false)
 
 // ----------
 
-fun f(_x) { // no error for unused argument
+fn f(_x) { // no error for unused argument
     var _y // no error for unused variable
     var _z = 5
     print _z // error for used variable starting with _
 }
 
-f("hello")
+f('hello')

@@ -1,5 +1,5 @@
 {
-    mut i = "" + 42 + 1 + 0 + 1
+    mut i = '' + 42 + 1 + 0 + 1
     print i
     i = 22
     print i
@@ -8,17 +8,17 @@
 // -----------
 
 {
-    mut i // = "hej"
+    mut i // = 'hej'
     print i
     i = 3
-    i = "hej"
+    i = 'hej'
     print i
 }
 
 // -----------
 
 {
-    var s = "hej"
+    var s = 'hej'
     mut i
     print i
     i = 33
@@ -31,8 +31,8 @@
 
 {
     mut x = 2
-    x = fun() {
-        print "blah"
+    x = fn() {
+        print 'blah'
     }
     print x
 }
@@ -40,27 +40,27 @@
 // -----------
 
 {
-    mut x = fun() {
-        return "a string"
+    mut x = fn() {
+        return 'a string'
     }
-    print "x() = " + x()
-    x = fun() {
+    print 'x() = ' + x()
+    x = fn() {
         return 12
     }
     print x()
-    x = fun() {
-        fun z() {
+    x = fn() {
+        fn z() {
             return true
         }
         return z()
     }
-    print "x() = " + x()
+    print 'x() = ' + x()
 }
 
 // -----------
 
 {
-    fun f() {
+    fn f() {
         return _
     }
     mut x = f()
@@ -70,19 +70,19 @@
 // -----------
 
 {
-    fun f(arg) {
+    fn f(arg) {
         var a = arg + 1
-        print "printing f arg: '" + a + "'"
+        print 'printing f arg: "' + a + '"'
     }
     f(12)
-    f("str")
+    f('str')
     f(true)
 }
 
 // -----------
 
 {
-    for i in "0".."3" {
+    for i in '0'..'3' {
         print i
     }
 }
@@ -92,7 +92,7 @@
 {
     for i in 0..3 {
         mut j = i
-        j = "hej"
+        j = 'hej'
         print j
     }
 }
@@ -100,75 +100,75 @@
 // -----------
 
 {
-    fun f(arg Num) {
+    fn f(arg Num) {
         return arg
     }
 
     mut x = f(12)
     print x
-    x = f("hej")
+    x = f('hej')
     print x
 }
 
 // -----------
 
 {
-    fun f(arg Str) {
+    fn f(arg Str) {
         return arg
     }
 
     mut x = f(12)
     print x
-    x = f("hej")
+    x = f('hej')
     print x
 }
 
 // -----------
 
 {
-    mut f = fun(x Num, y Str) {
+    mut f = fn(x Num, y Str) {
         print x + y
     }
-    f(4, "hej")
-    f = fun(x Str, y Num) {
+    f(4, 'hej')
+    f = fn(x Str, y Num) {
         print x + y
     }
-    f("dav", 5)
+    f('dav', 5)
 }
 
 // -----------
 
 {
-    fun times(f Fun(Num), n Num) {
+    fn times(f Fn(Num), n Num) {
         for i in 0..n {
             f(i)
         }
     }
     // print times
-    times(fun(x Num) { print "called " + x + " time(s)" }, 3)
+    times(fn(x Num) { print 'called ' + x + ' time(s)' }, 3)
 }
 
 // -----------
 
 {
-    fun f(n Num) {
+    fn f(n Num) {
         return n + 23
     }
 
-    fun f2(s Str) {
+    fn f2(s Str) {
         return s + 45
     }
 
     mut x = f
     print x(3)
     x = f2
-    print x("d")
+    print x('d')
 }
 
 // -----------
 
 {
-    fun square(x Num) {
+    fn square(x Num) {
         return x * x
     }
     mut s = square(5)
@@ -179,11 +179,11 @@
 // -----------
 
 {
-    fun square(x Num) {
+    fn square(x Num) {
         return x * x
     }
-    fun foo(x Num) {
-        return "" + x
+    fn foo(x Num) {
+        return '' + x
     }
     mut s = square(5)
     s = foo(s)
@@ -193,11 +193,11 @@
 // -----------
 
 {
-    fun gamble(x Num) Str {
+    fn gamble(x Num) Str {
         if x < 5 {
             return 5
         } else if x < 7 {
-            return "hej"
+            return 'hej'
         } else {
             return 8
         }
@@ -211,17 +211,17 @@
 // -----------
 
 {
-    fun do_fun(f Fun(Num), n Num) {
+    fn do_fun(f Fn(Num), n Num) {
         f(n)
     }
-    do_fun(fun(x Num) { print "i'm fun " + x }, 3)
+    do_fun(fn(x Num) { print 'i\'m fn ' + x }, 3)
 }
 
 // -----------
 
 {
-    fun counter(start Num) Fun() Num {
-        return fun() {
+    fn counter(start Num) Fn() Num {
+        return fn() {
             return start
         }
     }
@@ -231,10 +231,10 @@
 // -----------
 
 {
-    fun f(param Num) {
+    fn f(param Num) {
         print param * param
     }
-    var param = "hej"
+    var param = 'hej'
     print param
     f(5)
 }

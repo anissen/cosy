@@ -1,6 +1,6 @@
 import sys.FileSystem;
 import sys.io.File;
-import cosy.cosy;
+import cosy.Cosy;
 import utest.Assert;
 import utest.Runner;
 import utest.ui.Report;
