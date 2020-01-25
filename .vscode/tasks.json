@@ -6,7 +6,7 @@
 		{
 			"label": "Run",
 			"type": "shell",
-			"command": "./run.sh",
+			"command": "./scripts/run.sh",
 			"problemMatcher": [
 				"$haxe-absolute",
 				"$haxe",
