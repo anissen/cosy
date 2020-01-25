@@ -1,2 +1,24 @@
-var i = 10
-print i
+{
+  var i = 10
+  print i
+}
+{
+  var i = 10
+  if i > 7 {
+    print 'yes'
+  }
+}
+{
+  var j = 'hello world'
+  print j
+}
+{
+  var i = 7 + 'hello' + ' ' + 'world' + 2 + 1
+  print i
+}
+{
+  print 5
+  print -1
+  print 15
+  print 10
+}

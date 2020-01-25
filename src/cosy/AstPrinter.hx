@@ -49,7 +49,7 @@ class AstPrinter {
 			case Call(callee, paren, arguments): '${printExpr(callee)}(${[ for (arg in arguments) printExpr(arg) ].join(', ')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
-			case Literal(v): if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
+			case Literal(v): if (Std.is(v, String)) { '\'$v\''; } else { '$v'; };
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): 'this';

@@ -19,6 +19,7 @@ fun x() { print "hej" }
     - [x] Simple dead code
     - [ ] Variables written multiple times without being read
     - [ ] `if` with constant conditional expression
+    - [ ] Useless expressions, e.g. `'hello world'`
 - [ ] Class functions cannot override other functions (must be uniquely named)
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
