@@ -134,7 +134,7 @@ cosy_AstPrinter.prototype = {
 		case 5:
 			var _g26 = expr.v;
 			if(typeof(_g26) == "string") {
-				return "\"" + Std.string(_g26) + "\"";
+				return "'" + Std.string(_g26) + "'";
 			} else {
 				return "" + Std.string(_g26);
 			}
@@ -1101,10 +1101,26 @@ cosy_Optimizer.prototype = {
 		return _g;
 	}
 	,optimizeStmt: function(stmt) {
-		if(stmt._hx_index == 10) {
-			var _g1 = stmt.init;
-			return cosy_Stmt.Var(stmt.name,_g1 != null ? this.optimizeExpr(_g1) : _g1);
-		} else {
+		switch(stmt._hx_index) {
+		case 0:
+			return cosy_Stmt.Block(this.optimizeStmts(stmt.statements));
+		case 2:
+			return cosy_Stmt.Expression(this.optimizeExpr(stmt.e));
+		case 6:
+			var _g11 = stmt.el;
+			return cosy_Stmt.If(this.optimizeExpr(stmt.cond),this.optimizeStmt(stmt.then),_g11 != null ? this.optimizeStmt(_g11) : null);
+		case 7:
+			var _g4 = stmt.init;
+			return cosy_Stmt.Mut(stmt.name,_g4 != null ? this.optimizeExpr(_g4) : _g4);
+		case 8:
+			return cosy_Stmt.Print(this.optimizeExpr(stmt.e));
+		case 9:
+			var _g6 = stmt.value;
+			return cosy_Stmt.Return(stmt.keyword,_g6 != null ? this.optimizeExpr(_g6) : null);
+		case 10:
+			var _g2 = stmt.init;
+			return cosy_Stmt.Var(stmt.name,_g2 != null ? this.optimizeExpr(_g2) : _g2);
+		default:
 			return stmt;
 		}
 	}
@@ -1118,6 +1134,26 @@ cosy_Optimizer.prototype = {
 				if(r._hx_index == 5) {
 					var _g11 = r.v;
 					if(typeof(_g) == "number" && typeof(_g11) == "number") {
+						var tmp;
+						switch(_g1.type._hx_index) {
+						case 7:
+							tmp = _g - _g11;
+							break;
+						case 8:
+							tmp = _g + _g11;
+							break;
+						case 9:
+							tmp = _g / _g11;
+							break;
+						case 10:
+							tmp = _g * _g11;
+							break;
+						default:
+							cosy_Cosy.error(cosy_ErrorDataType.Token(_g1),"Invalid operator.");
+							return cosy_Expr.Binary(l,_g1,r);
+						}
+						return cosy_Expr.Literal(tmp);
+					} else if(typeof(_g) == "string" && typeof(_g11) == "string") {
 						return cosy_Expr.Literal(_g + _g11);
 					} else {
 						return cosy_Expr.Binary(l,_g1,r);
