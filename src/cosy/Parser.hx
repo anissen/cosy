@@ -1,16 +1,16 @@
 package cosy;
 
 class Parser {
-	final tokens:Array<Token>;
+	final tokens: Array<Token>;
 	var current = 0;
 	
-	public function new(tokens:Array<Token>) {
+	public function new(tokens: Array<Token>) {
 		this.tokens = tokens;
 	}
 	
 	public function parse() {
 		var statements = [];
-		while(!isAtEnd())
+		while (!isAtEnd())
 			statements.push(declaration());
 		return statements;
 	}
@@ -21,12 +21,12 @@ class Parser {
 	
 	function declaration() {
 		try {
-			if(match([Class])) return classDeclaration();
-			if(match([Fn])) return func('function');
-			if(match([Var])) return varDeclaration();
-			if(match([Mut])) return mutDeclaration();
+			if (match([Class])) return classDeclaration();
+			if (match([Fn])) return func('function');
+			if (match([Var])) return varDeclaration();
+			if (match([Mut])) return mutDeclaration();
 			return statement();
-		} catch(e:ParseError) {
+		} catch (e :ParseError) {
 			synchronize();
 			return null;
 		}
@@ -34,11 +34,11 @@ class Parser {
 	
 	function statement():Stmt {
         // TODO: this list of match can be optimized by doing switch tokens[current]
-		if(match([For])) return forStatement();
-		if(match([If])) return ifStatement();
-		if(match([Print])) return printStatement();
-		if(match([Return])) return returnStatement();
-		if(match([LeftBrace])) return Block(block());
+		if (match([For])) return forStatement();
+		if (match([If])) return ifStatement();
+		if (match([Print])) return printStatement();
+		if (match([Return])) return returnStatement();
+		if (match([LeftBrace])) return Block(block());
 		return expressionStatement();
 	}
 	
@@ -89,7 +89,7 @@ class Parser {
 	function block():Array<Stmt> {
 		var statements = [];
 		
-		while(!check(RightBrace) && !isAtEnd()) {
+		while (!check(RightBrace) && !isAtEnd()) {
 			statements.push(declaration());
 		}
 		
@@ -102,7 +102,7 @@ class Parser {
 		
 		var initializer = null;
 		
-		if(match([Equal])) initializer = expression();
+		if (match([Equal])) initializer = expression();
 		
 		return Var(name, initializer);
 	}
@@ -112,7 +112,7 @@ class Parser {
 		
 		var initializer = null;
 		
-		if(match([Equal])) initializer = expression();
+		if (match([Equal])) initializer = expression();
 		
 		return Mut(name, initializer);
 	}
@@ -121,7 +121,7 @@ class Parser {
 		var name = consume(Identifier, 'Expect class name');
 		
 		var superclass:Expr = 
-			if(match([Less])) {
+			if (match([Less])) {
 				consume(Identifier, 'Expect superclass name');
 				Variable(previous());
 			} else null;
@@ -129,7 +129,7 @@ class Parser {
 		consume(LeftBrace, 'Expect "{" before class body.');
 		
 		var methods = [];
-		while(!check(RightBrace) && !isAtEnd())
+		while (!check(RightBrace) && !isAtEnd())
 			methods.push(func('method'));
 			
 		consume(RightBrace, 'Expect "}" after class body.');
@@ -171,12 +171,12 @@ class Parser {
 	function funcBody(kind:String):Expr {
 		consume(LeftParen, 'Expect "(" after $kind name.');
 		var params = [];
-		if(!check(RightParen)) {
+		if (!check(RightParen)) {
 			do {
-				if(params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
+				if (params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
                 var name = consume(Identifier, 'Expect parameter name.');
                 params.push({ name: name, type: paramType() });
-			} while(match([Comma]));
+			} while (match([Comma]));
 		}
 		
 		consume(RightParen, 'Expect ")" after parameters.');
@@ -191,10 +191,10 @@ class Parser {
 		return AnonFunction(params, body, returnType);
 	}
 	
-	function assignment():Expr {
+	function assignment() :Expr {
 		var expr = or();
 		
-		if(match([Equal])) {
+		if (match([Equal])) {
 			var equals = previous();
 			var value = assignment();
 			
@@ -212,7 +212,7 @@ class Parser {
 	
 	function or():Expr {
 		var expr = and();
-		while(match([Or])) {
+		while (match([Or])) {
 			var op = previous();
 			var right = and();
 			expr = Logical(expr, op, right);
@@ -222,7 +222,7 @@ class Parser {
 	
 	function and():Expr {
 		var expr = equality();
-		while(match([And])) {
+		while (match([And])) {
 			var op = previous();
 			var right = equality();
 			expr = Logical(expr, op, right);
@@ -233,7 +233,7 @@ class Parser {
 	function equality():Expr {
 		var expr = comparison();
 		
-		while(match([BangEqual, EqualEqual])) {
+		while (match([BangEqual, EqualEqual])) {
 			var op = previous();
 			var right = comparison();
 			expr = Binary(expr, op, right);
@@ -245,7 +245,7 @@ class Parser {
 	function comparison():Expr {
 		var expr = addition();
 		
-		while(match([Greater, GreaterEqual, Less, LessEqual])) {
+		while (match([Greater, GreaterEqual, Less, LessEqual])) {
 			var op = previous();
 			var right = addition();
 			expr = Binary(expr, op, right);
@@ -257,7 +257,7 @@ class Parser {
 	function addition():Expr {
 		var expr = multiplication();
 		
-		while(match([Minus, Plus])) {
+		while (match([Minus, Plus])) {
 			var op = previous();
 			var right = multiplication();
 			expr = Binary(expr, op, right);
@@ -269,7 +269,7 @@ class Parser {
 	function multiplication():Expr {
 		var expr = unary();
 		
-		while(match([Star, Slash])) {
+		while (match([Star, Slash])) {
 			var op = previous();
 			var right = multiplication();
 			expr = Binary(expr, op, right);
@@ -279,7 +279,7 @@ class Parser {
 	}
 	
 	function unary():Expr {
-		return if(match([Bang, Minus])) {
+		return if (match([Bang, Minus])) {
 			var op = previous();
 			var right = unary();
 			Unary(op, right);
@@ -291,14 +291,15 @@ class Parser {
 	function call():Expr {
 		var expr = primary();
 		
-		while(true) {
-			if(match([LeftParen]))
+		while (true) {
+			if (match([LeftParen])) {
 				expr = finishCall(expr);
-			else if(match([Dot])) {
+            } else if (match([Dot])) {
 				var name = consume(Identifier, 'Expect property name after ".".');
 				expr = Get(expr, name);
-			} else
-				break;
+			} else {
+                break;
+            }
 		}
 		
 		return expr;
@@ -306,11 +307,11 @@ class Parser {
 	
 	function finishCall(callee:Expr):Expr {
 		var args = [];
-		if(!check(RightParen)) {
+		if (!check(RightParen)) {
 			do {
-				if(args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
+				if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
 				args.push(expression());
-			} while(match([Comma]));
+			} while (match([Comma]));
 		}
 		
 		var paren = consume(RightParen, 'Expect ")" after arguments.');
@@ -318,19 +319,19 @@ class Parser {
 	}
 	
 	function primary():Expr {
-		if(match([False])) return Literal(false);
-		if(match([True])) return Literal(true);
-		if(match([Number, String])) return Literal(previous().literal);
-		if(match([Super])) {
+		if (match([False])) return Literal(false);
+		if (match([True])) return Literal(true);
+		if (match([Number, String])) return Literal(previous().literal);
+		if (match([Super])) {
 			var keyword = previous();
 			consume(Dot, 'Expect "." after "super".');
 			var method = consume(Identifier, 'Expect superclass method name.');
 			return Super(keyword, method);
 		}
-		if(match([This])) return This(previous());
-		if(match([Identifier])) return Variable(previous());
-		if(match([Fn])) return funcBody("function");
-		if(match([LeftParen])) {
+		if (match([This])) return This(previous());
+		if (match([Identifier])) return Variable(previous());
+		if (match([Fn])) return funcBody("function");
+		if (match([LeftParen])) {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');
 			return Grouping(expr);
@@ -339,13 +340,13 @@ class Parser {
 	}
 	
 	function consume(type:TokenType, message:String) {
-		if(check(type)) return advance();
+		if (check(type)) return advance();
 		throw error(peek(), message);
 	}
 	
 	function match(types:Array<TokenType>) {
-		for(type in types) {
-			if(check(type)) {
+		for (type in types) {
+			if (check(type)) {
 				advance();
 				return true;
 			}
@@ -354,7 +355,7 @@ class Parser {
 	}
 	
 	function check(type:TokenType) {
-		if(isAtEnd()) return false;
+		if (isAtEnd()) return false;
 		return peek().type == type;
 	}
 
@@ -366,7 +367,7 @@ class Parser {
 	}
 	
 	function advance() {
-		if(!isAtEnd()) current++;
+		if (!isAtEnd()) current++;
 		return previous();
 	}
 	
@@ -389,7 +390,7 @@ class Parser {
 	
 	function synchronize() {
 		advance();
-		while(!isAtEnd()) {
+		while (!isAtEnd()) {
 			switch peek().type {
 				case Class | Fn | Var | For | If | Print | Return: return;
 				case _: advance();
