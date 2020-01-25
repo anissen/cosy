@@ -62,6 +62,7 @@ fun x() { print "hej" }
 - [x] Rename files from `.lox` to `.cosy`
 - [x] Change `fun` to `fn`
 - [x] Change `"` to `'`
+- [ ] Consider integrations
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
