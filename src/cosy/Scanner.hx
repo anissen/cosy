@@ -27,6 +27,7 @@ class Scanner {
 		'Num' => NumberType,
 		'Str' => StringType,
 		'Fn' => FunctionType,
+		'Array' => ArrayType,
 	];
 	
 	var start = 0;

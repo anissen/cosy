@@ -2,7 +2,7 @@
 
 echo -ne "\033[0;34m"
 echo "> Compiling cosy..."
-haxe scripts/build.hxml
+haxe build.hxml
 
 echo -ne "\033[0;35m"
 echo "> Validating"

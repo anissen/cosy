@@ -137,7 +137,7 @@ class Typer {
                         } else {
                             for (i in 0...paramTypes.length) {
                                 if (argumentTypes[i].match(Unknown)) Cosy.warning(paren, 'Argument ${i + 1} has type Unknown.');
-                                if (paramTypes[i].match(Unknown)) continue;
+                                // if (paramTypes[i].match(Unknown)) continue;
                                 if (!matchType(argumentTypes[i], paramTypes[i])) {
                                     Cosy.error(paren, 'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
                                 }
@@ -188,8 +188,9 @@ class Typer {
         return Function(types, computedReturnType);
     }
 
-    function matchType(type1 :VariableType, type2 :VariableType) :Bool {
-        return switch [type1, type2] {
+    function matchType(to :VariableType, from :VariableType) :Bool {
+        return switch [to, from] {
+            case [_, Unknown]: true;
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
                 for (param1 in params1) {
@@ -198,7 +199,8 @@ class Typer {
                     }
                 }
                 matchType(v1, v2);
-            case _: type1 == type2;
+            case [Array(t1), Array(t2)]: matchType(t1, t2);
+            case _: to == from;
         }
     }
 
@@ -212,6 +214,7 @@ class Typer {
                 }
                 var funcStr = 'Fn(${paramStr.join(", ")})$returnStr';
                 return (returnType.match(Void) ? funcStr : '($funcStr)');
+            case Array(t): (t.match(Unknown) ? 'Array' : 'Array(${formatType(t)})');
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';

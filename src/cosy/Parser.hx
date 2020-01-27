@@ -187,6 +187,8 @@ class Parser {
             var returnType = paramType();
             if (returnType.match(Unknown)) returnType = Void; // implicit Void
             Function(funcParamTypes, returnType);
+        } else if (match([ArrayType])) {
+            Array(paramType());
         } else {
             Unknown;
         }
@@ -216,7 +218,7 @@ class Parser {
 	}
 	
 	function assignment():Expr {
-		var expr = or(); //array(); //or(); // TODO: Should array() be here or later??
+		var expr = or();
 		
 		if (match([Equal])) {
 			var equals = previous();
