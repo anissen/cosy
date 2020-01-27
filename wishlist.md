@@ -42,6 +42,7 @@ fun x() { print "hej" }
 - [ ] Simplify code now that...
   - [ ] Variable shadowing is gone
   - [ ] nil is gone (done?)
+  - [x] for-loops can be made without an identifer (underscores are not required on unused loop counters anymore)
 - [ ] Cosy playground
   - [x] Compile for JavaScript
   - [x] Make simple Cosy playground website

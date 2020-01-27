@@ -41,25 +41,49 @@ class Parser {
 		if (match([LeftBrace])) return Block(block());
 		return expressionStatement();
 	}
-	
+
 	function forStatement():Stmt {
-        if (doubleCheck(In)) { // check if the next (not current) token is In
-            // for i min..max {
-            var name = consume(Identifier, 'Expect variable name.');
-            consume(In, 'Expect "in" after for loop identifier.');
+       return if (checkUntil(DotDot, LeftBrace)) {
+            // ForMinMax:
+            // for 0..10
+            // for i in 0..10
+            var name = null;
+            if (check(Identifier)) {
+                name = consume(Identifier, 'Expect variable name.');
+                if (StringTools.startsWith(name.lexeme, '_')) error(name, 'Loop counters cannot be marked as unused. Use `for min...max` syntax instead.');
+                consume(In, 'Expect "in" after for loop identifier.');
+            }
+
             var from = expression();
             consume(DotDot, 'Expect ".." between from and to numbers.');
             var to = expression();
-            consume(LeftBrace, 'Expect "{" before loop body.');
+            
+            consume(LeftBrace, 'Expect "{" before loop body.');    
             var body = block();
-            return For(name, from, to, body);
+            
+            For(name, from, to, body);
+        } else if (checkUntil(In, LeftBrace)) {
+            // ForArray:
+            // for i in [3,4,5]
+            var name = consume(Identifier, 'Expect variable name.');
+            consume(In, 'Expect "in" after for loop identifier.');
+
+            var array = expression();
+            
+            consume(LeftBrace, 'Expect "{" before loop body.');    
+            var body = block();
+            
+            ForArray(name, array, body);
         } else {
-            // for CONDITION {
-            // for {
+            // ForCondition:
+            // for i < 10
+            // for
             var condition = (check(LeftBrace) ? null : expression());
+                
             consume(LeftBrace, 'Expect "{" before loop body.');
             var body = block();
-            return ForCondition(condition, body);
+            
+            ForCondition(condition, body);
         }
 	}
 	
@@ -191,8 +215,8 @@ class Parser {
 		return AnonFunction(params, body, returnType);
 	}
 	
-	function assignment() :Expr {
-		var expr = or();
+	function assignment():Expr {
+		var expr = or(); //array(); //or(); // TODO: Should array() be here or later??
 		
 		if (match([Equal])) {
 			var equals = previous();
@@ -208,8 +232,8 @@ class Parser {
 		}
 		
 		return expr;
-	}
-	
+    }
+
 	function or():Expr {
 		var expr = and();
 		while (match([Or])) {
@@ -335,16 +359,32 @@ class Parser {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');
 			return Grouping(expr);
-		}
+        }
+        if (match([LeftBracket])) {
+            return arrayLiteral();
+        }
 		throw error(peek(), 'Expect expression.');
-	}
+    }
+    
+    function arrayLiteral():Expr {
+        var keyword = previous();
+        var exprs = [];
+        while (!check(RightBracket) && !isAtEnd()) {
+            exprs.push(expression());
+            if (!check(RightBracket)) {
+                consume(Comma, 'Expect "," between array values.');
+            }
+        }
+        consume(RightBracket, 'Expect "]" after array literal.');
+        return ArrayLiteral(keyword, exprs);
+    }
 	
-	function consume(type:TokenType, message:String) {
+	function consume(type:TokenType, message:String):Token {
 		if (check(type)) return advance();
 		throw error(peek(), message);
 	}
 	
-	function match(types:Array<TokenType>) {
+	function match(types:Array<TokenType>):Bool {
 		for (type in types) {
 			if (check(type)) {
 				advance();
@@ -354,32 +394,34 @@ class Parser {
 		return false;
 	}
 	
-	function check(type:TokenType) {
+	function check(type:TokenType):Bool {
 		if (isAtEnd()) return false;
 		return peek().type == type;
 	}
 
-    function doubleCheck(type:TokenType) {
-		if (isAtEnd()) return false;
-        var next = tokens[current + 1];
-		if (next.type == Eof) return false;
-		return (next.type == type);
+    function checkUntil(type:TokenType, until:TokenType):Bool {
+        var cur = current;
+        do {
+            if (tokens[cur].type == type) return true;
+            cur++;
+        } while (tokens[cur].type != until && tokens[cur].type != Eof);
+        return false;
 	}
 	
-	function advance() {
+	function advance():Token {
 		if (!isAtEnd()) current++;
 		return previous();
 	}
 	
-	function isAtEnd() {
+	function isAtEnd():Bool {
 		return peek().type == Eof;
 	}
 	
-	function peek() {
+	function peek():Token {
 		return tokens[current];
 	}
 	
-	function previous() {
+	function previous():Token {
 		return tokens[current - 1];
 	}
 	
@@ -400,3 +442,10 @@ class Parser {
 }
 
 private class ParseError extends Error {}
+
+enum LoopType {
+    Unknown;
+    ForMinMax;
+    ForArray;
+    ForCondition;
+}

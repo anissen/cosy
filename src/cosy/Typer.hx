@@ -52,6 +52,7 @@ class Typer {
                 if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
             case For(name, from, to, body):
+                // TODO: Name can be null!
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(name, '"From" clause has type Unknown');
                     case Number:
@@ -62,6 +63,10 @@ class Typer {
                     case Number:
                     case _: Cosy.error(name, '"To" clause must evaluate to a number');
                 }
+                if (name != null) variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
+                typeStmts(body);
+            case ForArray(name, array, body):
+                // TODO: Implement this
                 variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);
@@ -84,6 +89,8 @@ class Typer {
 	
 	function typeExpr(expr:Expr) :VariableType {
 		var ret = switch expr {
+            case ArrayLiteral(keyword, exprs):
+                return Unknown; // TODO: Implement
 			case Assign(name, value):
                 var assigningType = typeExpr(value);
                 var varType = variableTypes.get(name.lexeme);

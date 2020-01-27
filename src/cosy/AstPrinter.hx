@@ -28,6 +28,7 @@ class AstPrinter {
 				'$declaration $body';
 			case Expression(e): '${printExpr(e)}';
 			case For(name, from, to, body): 'for ${name.lexeme} in ${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
+			case ForArray(name, array, body): 'for ${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body, returnType):
 				var declaration = '${isInClass ? "" : "fn "}${name.lexeme}';
@@ -44,6 +45,7 @@ class AstPrinter {
 	
 	public function printExpr(expr:Expr):String {
 		return switch expr {
+            case ArrayLiteral(keyword, exprs): '[' + [ for (expr in exprs) ${printExpr(expr)} ].join(',') + ']';
 			case Assign(name, value): '${name.lexeme} = ${printExpr(value)}';
 			case Binary(left, op, right): '${printExpr(left)} ${op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): '${printExpr(callee)}(${[ for (arg in arguments) printExpr(arg) ].join(', ')})';

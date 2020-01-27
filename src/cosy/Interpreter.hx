@@ -63,7 +63,14 @@ class Interpreter {
                 if (!Std.is(toVal, Float)) Cosy.error(name, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 for (counter in (fromVal :Int)...(toVal :Int)) {
-                    env.define(name.lexeme, counter);
+                    if (name != null) env.define(name.lexeme, counter);
+                    executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                }
+            case ForArray(name, array, body):
+                var arr :Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
+                var env = new Environment(environment);
+                for (elem in arr) {
+                    env.define(name.lexeme, elem);
                     executeBlock(body, env);
                 }
             case ForCondition(cond, body):
@@ -109,6 +116,8 @@ class Interpreter {
     @SuppressWarnings('checkstyle:CyclomaticComplexity', 'checkstyle:NestedControlFlow', 'checkstyle:MethodLength')
     function evaluate(expr :Expr) :Any {
         return switch expr {
+            case ArrayLiteral(keyword, exprs):
+                [ for (expr in exprs) evaluate(expr) ];
             case Assign(name, value):
                 var value = evaluate(value);
                 switch locals.get(expr) {

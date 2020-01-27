@@ -41,6 +41,7 @@ class JavaScriptPrinter {
 				'$declaration $body';
 			case Expression(e): '${printExpr(e)};';
 			case For(name, from, to, body): 'for (var ${name.lexeme} = ${printExpr(from)}; ${name.lexeme} < ${printExpr(to)}; ${name.lexeme}++) ${printBlock(body)}';
+			case ForArray(name, array, body): 'for (${name.lexeme} of ${printExpr(array)}) ${printBlock(body)}';
 			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
 			case Function(name, params, body, returnType):
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
@@ -57,6 +58,7 @@ class JavaScriptPrinter {
 	
 	public function printExpr(expr:Expr):String {
 		return switch expr {
+            case ArrayLiteral(keyword, exprs): '[' + [ for (expr in exprs) ${printExpr(expr)} ].join(',') + ']';
 			case Assign(name, value): '${name.lexeme} = ${printExpr(value)}';
 			case Binary(left, op, right): '${printExpr(left)} ${op.type.match(EqualEqual) ? '===' : op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): 

@@ -89,6 +89,17 @@ class Resolver {
                 resolveExpr(to);
                 
                 beginScope();
+                if (name != null) {
+                    declare(name);
+                    define(name);
+                }
+                if (body.length == 0) Cosy.error(name, 'Loop body is empty.'); // TODO: Name can be null
+                resolveStmts(body);
+                endScope();
+            case ForArray(name, array, body):
+                resolveExpr(array);
+                
+                beginScope();
                 declare(name);
                 define(name);
                 if (body.length == 0) Cosy.error(name, 'Loop body is empty.');
@@ -120,6 +131,8 @@ class Resolver {
 	
 	function resolveExpr(expr:Expr) {
 		switch expr {
+            case ArrayLiteral(keyword, exprs):
+                for (expr in exprs) resolveExpr(expr);
 			case Assign(name, value):
                 var variable = findInScopes(name);
                 if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign non-mutable variable.');
