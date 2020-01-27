@@ -8,6 +8,7 @@ enum VariableType {
     Text;
     Instance;
     Function(paramTypes:Array<VariableType>, returnType:VariableType);
+    Array(type:VariableType);
 }
 
 class Typer {
@@ -90,7 +91,18 @@ class Typer {
 	function typeExpr(expr:Expr) :VariableType {
 		var ret = switch expr {
             case ArrayLiteral(keyword, exprs):
-                return Unknown; // TODO: Implement
+                var arrayType = Unknown;
+                for (i in 0...exprs.length) {
+                    var elemType = typeExpr(exprs[i]);
+                    if (!elemType.match(Unknown)) {
+                        if (arrayType.match(Unknown)) {
+                            arrayType = elemType;
+                        } else if (elemType != arrayType) {
+                            Cosy.error(keyword, 'Array values expected to be ${formatType(arrayType)} but got ${formatType(elemType)} at index $i.');
+                        }
+                    }
+                }
+                return Array(arrayType);
 			case Assign(name, value):
                 var assigningType = typeExpr(value);
                 var varType = variableTypes.get(name.lexeme);
