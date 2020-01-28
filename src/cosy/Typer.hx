@@ -79,7 +79,7 @@ class Typer {
                 if (val != null) {
                     inferredReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
                     
-                    if (!typedReturnType.match(Unknown) && typedReturnType != inferredReturnType) {
+                    if (!matchType(inferredReturnType, typedReturnType)) {
                         Cosy.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
                     }
                 } else {
