@@ -50,16 +50,17 @@ print 'hello world!'
 
 // variables and types
 var a = true     // Boolean
-var b = 1        // Number
+var b = 1.2      // Number
 var c = 'hello'  // String
+var d = [3, 4]   // Array
 
 // variables are immutable by default
-var d = 42
-// d = 24 // error
+var immutable = 42
+// immutable = 24 // error
 
 // use the `mut` keyword to create a mutable variable
-mut e = 42
-e = 24 // ok
+mut mutable = 42
+mutable = 24 // ok
 
 
 // conditional branching
@@ -75,11 +76,21 @@ for i in 0..3 {
     print 'loop #' + i
 }
 
+// loop without counter
+for 0..3 {
+	print 'no counter'
+}
+
 // loop with condition
 mut j = 0
 for j < 3 {
     print 'conditional loop #i'
     j = j + 1
+}
+
+// loop over array
+for i in [5, 6, 7] {
+	print 'array value: ' + i
 }
 
 
@@ -150,13 +161,13 @@ dead_code()
 var unused = 42 // error if the line below is removed
 print unused
 // because of this, we also have to use the variables defined at the top
-if !a print b + c + d + e
+if !a print b + c + d + immutable + mutable
 
 // variables can be marked purposely unused with an underscore
-var _unused = 42 // this is okay
-for _i in 0..1 {
-    print 'the counter variable is unused, but that\'s okay'
+fn some_function(_unused) {
+  print 'the arg is unused, but that\'s okay'
 }
+some_function(1234)
 
 
 // that's it for the basics
