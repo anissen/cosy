@@ -76,7 +76,7 @@ class Typer {
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
                 if (val != null) {
-                    inferredReturnType = typeExpr(val); // TODO: This is PROBABLY not enough for nested functions!
+                    inferredReturnType = typeExpr(val);
                     
                     if (!matchType(inferredReturnType, typedReturnType)) {
                         Cosy.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
@@ -96,7 +96,7 @@ class Typer {
                     if (!elemType.match(Unknown)) {
                         if (arrayType.match(Unknown)) {
                             arrayType = elemType;
-                        } else if (elemType != arrayType) {
+                        } else if (!matchType(elemType, arrayType)) {
                             Cosy.error(keyword, 'Array values expected to be ${formatType(arrayType)} but got ${formatType(elemType)} at index $i.');
                         }
                     }
@@ -136,7 +136,6 @@ class Typer {
                         } else {
                             for (i in 0...paramTypes.length) {
                                 if (argumentTypes[i].match(Unknown)) Cosy.warning(paren, 'Argument ${i + 1} has type Unknown.');
-                                // if (paramTypes[i].match(Unknown)) continue;
                                 if (!matchType(argumentTypes[i], paramTypes[i])) {
                                     Cosy.error(paren, 'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
                                 }

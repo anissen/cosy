@@ -70,6 +70,7 @@ class AstPrinter {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
                 'Fn(${paramStr.join(", ")})';
+            case Array(t): StringTools.trim('Array ' + formatType(t));
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
