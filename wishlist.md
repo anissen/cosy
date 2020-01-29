@@ -27,6 +27,10 @@ fun x() { print "hej" }
 - [ ] Modules
 - [ ] Experiment with bytecode
 - [ ] Support for arrays
+  - [x] Support for array literal
+  - [ ] Support for array length
+  - [ ] Support for push
+  - [ ] Support for array indexing
 - [ ] Support for maps
 - [ ] String interpolation
 - [ ] ++/-- operators
@@ -56,10 +60,10 @@ fun x() { print "hej" }
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
 - [ ] Pure functions as default (cannot modify variables outside scope)
-- [ ] "Transform" functions that promote data-oriented design; must be pure, must not include `if` + called functions must satify the same constraints
+- [ ] "Transform" functions that promote data-oriented design; must be pure, must not include `if` + called functions must satify the same constraints. Could be done with annotations, e.g. `[transform] fn trans() { ... }`
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
-- [ ] `for 0..10` syntax, instead of `for _i in 0..10` (if possible)
+- [x] `for 0..10` syntax, instead of `for _i in 0..10`
 - [ ] Make a `strict` mode that requires specifying type information for function parameters and return values
 - [x] Rename files from `.lox` to `.cosy`
 - [x] Change `fun` to `fn`

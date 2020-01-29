@@ -21,7 +21,7 @@ for i 0..max {
 * Gradural typing
 * Small and concise
   * Cosy is made with fewer than 2000 lines of source code
-  * Few keywords <!-- (`and`, `class`, `else`, `false`, `for`, `fun`, `in`, `if`, `mut`, `or`, `print`, `return`, `super`, `this`, `true` and `var`) -->
+  * Only 18 keywords (`and`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `true`, `var`, `Bool`, `Num`, `Str`, `Array` and `Fn`)
 * Safety
   * Variable are immutable by default
   * No `null` or `nil`
@@ -32,6 +32,7 @@ for i 0..max {
   * Type checking
 * Has built-in code formatter
 * Interactive ([REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)) mode
+* Simple code optimization
 * Inspired by
   * cosy
   * V
