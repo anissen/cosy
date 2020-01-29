@@ -5,8 +5,8 @@
 [line 47] Error at "x": Cannot assign (Fn() -> Num) to (Fn() -> Str)
 [line 51] Error at "x": Cannot assign (Fn() -> Bool) to (Fn() -> Str)
 [line 66] Error at "x": Cannot assign Void to a variable
-[line 85] Error at "i": "From" clause must evaluate to a number
-[line 85] Error at "i": "To" clause must evaluate to a number
+[line 85] Error at "for": "From" clause must evaluate to a number
+[line 85] Error at "for": "To" clause must evaluate to a number
 [line 95] Error at "j": Cannot assign Str to Num
 [line 109] Error at ")": Expected argument 1 to be Num but got Str.
 [line 120] Error at ")": Expected argument 1 to be Str but got Num.

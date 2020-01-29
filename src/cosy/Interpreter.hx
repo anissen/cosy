@@ -56,11 +56,11 @@ class Interpreter {
                 environment.assign(name, klass);
             case Expression(e):
                 evaluate(e);
-            case For(name, from, to, body):
+            case For(keyword, name, from, to, body):
                 var fromVal = evaluate(from);
-                if (!Std.is(fromVal, Float)) Cosy.error(name, 'Number expected in "from" clause of loop.');
+                if (!Std.is(fromVal, Float)) Cosy.error(keyword, 'Number expected in "from" clause of loop.');
                 var toVal = evaluate(to);
-                if (!Std.is(toVal, Float)) Cosy.error(name, 'Number expected in "to" clause of loop.');
+                if (!Std.is(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 for (counter in (fromVal :Int)...(toVal :Int)) {
                     if (name != null) env.define(name.lexeme, counter);

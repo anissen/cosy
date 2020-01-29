@@ -52,17 +52,16 @@ class Typer {
                 var initType = (init != null ? typeExpr(init) : Unknown);
                 if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
                 variableTypes.set(name.lexeme, initType);
-            case For(name, from, to, body):
-                // TODO: Name can be null!
+            case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
-                    case Unknown: Cosy.warning(name, '"From" clause has type Unknown');
+                    case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
                     case Number:
-                    case _: Cosy.error(name, '"From" clause must evaluate to a number');
+                    case _: Cosy.error(keyword, '"From" clause must evaluate to a number');
                 }
                 switch typeExpr(to) {
-                    case Unknown: Cosy.warning(name, '"To" clause has type Unknown');
+                    case Unknown: Cosy.warning(keyword, '"To" clause has type Unknown');
                     case Number:
-                    case _: Cosy.error(name, '"To" clause must evaluate to a number');
+                    case _: Cosy.error(keyword, '"To" clause must evaluate to a number');
                 }
                 if (name != null) variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);

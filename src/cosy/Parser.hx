@@ -44,6 +44,8 @@ class Parser {
 
 	function forStatement():Stmt {
        return if (checkUntil(DotDot, LeftBrace)) {
+            var keyword = previous();
+
             // ForMinMax:
             // for 0..10
             // for i in 0..10
@@ -61,7 +63,7 @@ class Parser {
             consume(LeftBrace, 'Expect "{" before loop body.');    
             var body = block();
             
-            For(name, from, to, body);
+            For(keyword, name, from, to, body);
         } else if (checkUntil(In, LeftBrace)) {
             // ForArray:
             // for i in [3,4,5]

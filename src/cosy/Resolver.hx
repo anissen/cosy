@@ -84,7 +84,7 @@ class Resolver {
 				declare(name, true);
 				if(init != null) resolveExpr(init);
 				define(name, true);
-            case For(name, from, to, body):
+            case For(keyword, name, from, to, body):
                 resolveExpr(from);
                 resolveExpr(to);
                 
@@ -93,7 +93,7 @@ class Resolver {
                     declare(name);
                     define(name);
                 }
-                if (body.length == 0) Cosy.error(name, 'Loop body is empty.'); // TODO: Name can be null
+                if (body.length == 0) Cosy.error(keyword, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
             case ForArray(name, array, body):
