@@ -1,17 +1,17 @@
 for j in 0..3 {
-    print "loop #" + j
+    print 'loop #' + j
 }
 
 mut i = 0
 for i < 3 {
-    print "conditional loop #" + i
+    print 'conditional loop #' + i
     i = i + 1
 }
 
-fun f() {
+fn f() {
     mut j = 0
     for {
-        print "infinite loop #" + j
+        print 'infinite loop #' + j
         j = j + 1
         if (j >= 3) return _
     }
