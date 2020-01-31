@@ -231,7 +231,7 @@ cosy_AstPrinter.prototype = {
 		case 7:
 			return StringTools.trim("Array " + this.formatType(type.type));
 		default:
-			return Std.string(type);
+			return "" + Std.string(type);
 		}
 	}
 	,formatParam: function(param) {
@@ -508,13 +508,9 @@ cosy_Interpreter.prototype = {
 		case 4:
 			var _g17 = expr.name;
 			var obj = this.evaluate(expr.obj);
-			if(_g17.lexeme == "length" && ((obj) instanceof Array)) {
-				return obj.length;
-			}
-			if(_g17.lexeme == "push" && ((obj) instanceof Array)) {
-				return new cosy__$Interpreter_ArrayPushCallable(obj);
-			}
-			if(((obj) instanceof cosy_Instance)) {
+			if(((obj) instanceof Array)) {
+				return this.arrayGet(obj,_g17);
+			} else if(((obj) instanceof cosy_Instance)) {
 				return obj.get(_g17);
 			} else {
 				throw new js__$Boot_HaxeError(new cosy_RuntimeError(_g17,"Only instances have properties"));
@@ -584,6 +580,47 @@ cosy_Interpreter.prototype = {
 			return this.lookUpVariable(expr.name,expr);
 		case 13:
 			return new cosy_Function(null,expr.params,expr.body,this.environment,false);
+		}
+	}
+	,arrayGet: function(array,name) {
+		switch(name.lexeme) {
+		case "concat":
+			return new cosy__$Interpreter_ArrayCallable(1,function(args) {
+				var _this = args[0];
+				var f = $bind(array,$arrayPush);
+				var result = new Array(_this.length);
+				var _g = 0;
+				var _g1 = _this.length;
+				while(_g < _g1) {
+					var i = _g++;
+					result[i] = f(_this[i]);
+				}
+				return result;
+			});
+		case "get":
+			return new cosy__$Interpreter_ArrayCallable(1,function(args1) {
+				return array[args1[0]];
+			});
+		case "length":
+			return array.length;
+		case "pop":
+			return new cosy__$Interpreter_ArrayCallable(0,function(_) {
+				return array.pop();
+			});
+		case "push":
+			return new cosy__$Interpreter_ArrayCallable(1,function(args2) {
+				var f1 = $bind(array,$arrayPush);
+				var result1 = new Array(args2.length);
+				var _g2 = 0;
+				var _g11 = args2.length;
+				while(_g2 < _g11) {
+					var i1 = _g2++;
+					result1[i1] = f1(args2[i1]);
+				}
+				return result1;
+			});
+		default:
+			throw new js__$Boot_HaxeError(new cosy_RuntimeError(name,"Undefined method \"" + name.lexeme + "\"."));
 		}
 	}
 	,lookUpVariable: function(name,expr) {
@@ -1001,22 +1038,23 @@ cosy_Instance.prototype = {
 	}
 	,__class__: cosy_Instance
 };
-var cosy__$Interpreter_ArrayPushCallable = function(arr) {
-	this.array = arr;
+var cosy__$Interpreter_ArrayCallable = function(arityValue,method) {
+	this.arityValue = arityValue;
+	this.method = method;
 };
-cosy__$Interpreter_ArrayPushCallable.__name__ = true;
-cosy__$Interpreter_ArrayPushCallable.__interfaces__ = [cosy_Callable];
-cosy__$Interpreter_ArrayPushCallable.prototype = {
+cosy__$Interpreter_ArrayCallable.__name__ = true;
+cosy__$Interpreter_ArrayCallable.__interfaces__ = [cosy_Callable];
+cosy__$Interpreter_ArrayCallable.prototype = {
 	arity: function() {
-		return 1;
+		return this.arityValue;
 	}
 	,call: function(interpreter,args) {
-		return this.array.push(args[0]);
+		return this.method(args);
 	}
 	,toString: function() {
 		return "<native fn>";
 	}
-	,__class__: cosy__$Interpreter_ArrayPushCallable
+	,__class__: cosy__$Interpreter_ArrayCallable
 };
 var cosy_JavaScriptPrinter = function() {
 	this.classNames = [];
@@ -2726,7 +2764,7 @@ cosy_Typer.prototype = {
 			}
 			break;
 		default:
-			return Std.string(type);
+			return "" + Std.string(type);
 		}
 	}
 	,__class__: cosy_Typer
@@ -2996,6 +3034,7 @@ js_Boot.__resolveNativeClass = function(name) {
 	return $global[name];
 };
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $global.$haxeUID++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = m.bind(o); o.hx__closures__[m.__id__] = f; } return f; }
+function $arrayPush(x) { this.push(x); }
 $global.$haxeUID |= 0;
 if( String.fromCodePoint == null ) String.fromCodePoint = function(c) { return c < 0x10000 ? String.fromCharCode(c) : String.fromCharCode((c>>10)+0xD7C0)+String.fromCharCode((c&0x3FF)+0xDC00); }
 String.prototype.__class__ = String;

@@ -186,6 +186,7 @@ class Interpreter {
             case Call(callee, paren, args):
                 var callee = evaluate(callee);
                 var args = args.map(evaluate);
+
                 if (!Std.is(callee, Callable)) {
                     throw new RuntimeError(paren, 'Can only call functions and classes');
                 } else {
@@ -196,7 +197,9 @@ class Interpreter {
                 }
             case Get(obj, name):
                 var obj = evaluate(obj);
-                if (Std.is(obj, Instance)) return (obj: Instance).get(name);
+                
+                if (Std.is(obj, Array)) return arrayGet(obj, name);
+                else if (Std.is(obj, Instance)) return (obj: Instance).get(name);
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 var obj = evaluate(obj);
@@ -217,6 +220,17 @@ class Interpreter {
                 method.bind(obj);
             case AnonFunction(params, body, returnType):
                 new Function(null, params, body, environment, false);
+        }
+    }
+
+    function arrayGet(array: Array<Any>, name: Token) :Any {
+        return switch name.lexeme {
+            case 'length': array.length;
+            case 'get': new ArrayCallable(1, (args -> array[(args[0] :Int)]));
+            case 'push': new ArrayCallable(1, (args -> args.map(array.push)));
+            case 'concat': new ArrayCallable(1, (args -> (args[0] :Array<Any>).map(array.push)));
+            case 'pop': new ArrayCallable(0, (_ -> array.pop()));
+            case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }
 
@@ -295,6 +309,18 @@ private class InputCallable implements Callable {
         throw 'Not implemented on this platform!';
         #end
     }
+    public function toString() :String return '<native fn>';
+}
+
+private class ArrayCallable implements Callable {
+    final arityValue: Int;
+    final method: (args: Array<Any>) -> Any;
+    public function new(arityValue: Int, method: (args: Array<Any>) -> Any) {
+        this.arityValue = arityValue;
+        this.method = method;
+    }
+    public function arity() :Int return arityValue;
+    public function call(interpreter :Interpreter, args :Array<Any>) :Any return method(args);
     public function toString() :String return '<native fn>';
 }
 

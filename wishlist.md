@@ -28,9 +28,10 @@ fun x() { print "hej" }
 - [ ] Experiment with bytecode
 - [ ] Support for arrays
   - [x] Support for array literal
-  - [ ] Support for array length
-  - [ ] Support for push
-  - [ ] Support for array indexing
+  - [x] Support for array length
+  - [x] Support for push
+  - [x] Support for getting value at index
+  - [ ] Support for array indexing?
 - [ ] Support for maps
 - [ ] String interpolation
 - [ ] ++/-- operators
