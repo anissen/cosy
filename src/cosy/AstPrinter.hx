@@ -75,7 +75,7 @@ class AstPrinter {
             case Number: 'Num';
             case Boolean: 'Bool';
             case Unknown: ''; // Ignore Unknown in this case to leave it out of the prettified code
-            case _: Std.string(type);
+            case _: '$type';
         }
     }
 

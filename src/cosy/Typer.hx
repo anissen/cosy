@@ -216,7 +216,7 @@ class Typer {
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
-            case _: Std.string(type);
+            case _: '$type';
         }
     }
 }
