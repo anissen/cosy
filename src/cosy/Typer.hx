@@ -144,7 +144,21 @@ class Typer {
                     case _:
                 }
                 type;
-			case Get(obj, name): Unknown; // TODO: Implement
+			case Get(obj, name):
+                var objType = typeExpr(obj);
+                return switch objType {
+                    case Array(t):
+                        return switch name.lexeme {
+                            case 'length': Number;
+                            case 'push': Function([t], Void);
+                            case 'concat': Function([Array(t)], Void);
+                            case 'pop': Function([], t);
+                            case 'get': Function([Number], t);
+                            case _: Cosy.error(name, 'Unknown array property or function.'); Void;
+                        }
+                    case _: Unknown;
+                    // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
+                }
 			case Set(obj, name, value): Unknown; // TODO: Implement
 			case Grouping(e) | Unary(_, e): typeExpr(e);
 			case Super(kw, method): Instance;
