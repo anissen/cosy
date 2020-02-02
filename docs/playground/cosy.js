@@ -605,7 +605,11 @@ cosy.Interpreter = class cosy_Interpreter {
 			return array.length;
 		case "pop":
 			return new cosy._Interpreter.ArrayCallable(0,function(_) {
-				return array.pop();
+				if(array.length == 0) {
+					throw new js._Boot.HaxeError(new cosy.RuntimeError(name,"Cannot pop from empty array."));
+				} else {
+					return array.pop();
+				}
 			});
 		case "push":
 			return new cosy._Interpreter.ArrayCallable(1,function(args2) {

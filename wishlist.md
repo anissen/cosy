@@ -6,6 +6,7 @@ x()
 fun x() { print "hej" }
 ```
 - [ ] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
+- [ ] Array method calls is not checked for immutability
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)
