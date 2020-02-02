@@ -147,8 +147,9 @@ class Resolver {
 				resolveExpr(left);
 				resolveExpr(right);
 			case Call(callee, paren, arguments):
+                // TODO: Check if the method call can mutate its object, e.g. Array.push(x) or Struct.func()
 				resolveExpr(callee);
-				for(arg in arguments) resolveExpr(arg);
+				for (arg in arguments) resolveExpr(arg);
 			case Get(obj, name):
 				resolveExpr(obj);
 			case Set(obj, name, value):

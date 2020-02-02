@@ -224,6 +224,8 @@ class Interpreter {
     }
 
     function arrayGet(array: Array<Any>, name: Token) :Any {
+        // TODO: This functions should (together with the Array functionality in Typer) be moved out into its own class, like Klass.
+        // TODO: Argument types must match! Change arity to array of types, e.g. 'get' has Number
         return switch name.lexeme {
             case 'length': array.length;
             case 'get': new ArrayCallable(1, (args -> array[(args[0] :Int)]));
