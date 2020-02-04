@@ -31,7 +31,7 @@ class Cosy {
         
         if (argErrors.length > 0) {
             Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
-            Sys.println('Usage: hcosy (options) [script]\n\nOptions:\n --prettyprint\tPrints the formatted script\n --javascript\tPrints the corresponding JavaScript code');
+            Sys.println('Usage: cosy (options) [source file]\n\nOptions:\n --prettyprint\tPrints the formatted source\n --javascript\tPrints the corresponding JavaScript code');
             Sys.exit(64);
         }
 

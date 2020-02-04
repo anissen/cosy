@@ -1,44 +1,32 @@
 
 # Cosy
-
 Cosy is a simple and pleasant programming language. It has an multi-platform interpreter and can trans-compile to JavaScript.
 
 ```js
 print 'hello world'
 ```
 
-<!-- ```js
-var max = 3
-for i 0..max {
-    print 'loop #' + i
-}
-``` -->
-
 ## High-level features
+* Familiar syntax.
+* Lambda functions (anonymous functions).
+* Gradural typing.
+* Small and concise.
+  * Cosy is made with fewer than 2000 lines of source code.
+  * Only 18 keywords (`and`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `true`, `var`, `Bool`, `Num`, `Str`, `Array` and `Fn`).
+* Safety.
+  * Variable are immutable by default.
+  * No `null` or `nil`.
+  * No variable shadowing.
+* Compile-time validation.
+  * Unused variables,
+  * Simple dead code detection, i.e. statements following an unconditional `return` in a block.
+  * Type checking.
+* Has built-in code formatter.
+* Web based [playground](http://andersnissen.com/cosy/playground/).
+* Interactive ([REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)) mode.
+* Simple code optimization.
+* Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/). Originally based on [Lox](http://www.craftinginterpreters.com/).
 
-* Familiar syntax
-* Lambda functions (anonymous functions)
-* Gradural typing
-* Small and concise
-  * Cosy is made with fewer than 2000 lines of source code
-  * Only 18 keywords (`and`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `true`, `var`, `Bool`, `Num`, `Str`, `Array` and `Fn`)
-* Safety
-  * Variable are immutable by default
-  * No `null` or `nil`
-  * No variable shadowing
-* Compile-time validation
-  * Unused variables
-  * Simple dead code detection, i.e. statements following an unconditional `return` in a block
-  * Type checking
-* Has built-in code formatter
-* Interactive ([REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)) mode
-* Simple code optimization
-* Inspired by
-  * cosy
-  * V
-  * Rust
-  * Haxe
-* (...)
 
 ## Code examples
 ```js
@@ -78,7 +66,7 @@ for i in 0..3 {
 
 // loop without counter
 for 0..3 {
-	print 'no counter'
+    print 'no counter'
 }
 
 // loop with condition
@@ -90,7 +78,7 @@ for j < 3 {
 
 // loop over array
 for i in [5, 6, 7] {
-	print 'array value: ' + i
+    print 'array value: ' + i
 }
 
 
@@ -153,7 +141,7 @@ dead_code()
     {
         //var unique = 3 // error
     }
- 	print unique
+    print unique
 }
 
 
@@ -165,7 +153,7 @@ if !a print b + c + d + immutable + mutable
 
 // variables can be marked purposely unused with an underscore
 fn some_function(_unused) {
-  print 'the arg is unused, but that\'s okay'
+print 'the arg is unused, but that\'s okay'
 }
 some_function(1234)
 
@@ -176,13 +164,54 @@ some_function(1234)
 ```
 
 <!--
-Notes:
-* Variables starting with _ are considered unused, i.e. using them will result in a compile-time error
-* Pretty printing
-
-Inspiration from
-* cosy
-* V
-* Haxe
-* Rust
+<details>
+<summary>Cosy basics</summary>
+...
+</details>
 -->
+
+## Usage
+Usage: `cosy (options) (source file)`
+
+Options:
+* `--prettyprint`
+  
+    Prints the formatted source.
+
+* `--javascript`
+  
+    Prints the corresponding JavaScript code.
+
+If `(source file)` is omitted, Cosy is started in REPL mode.
+
+Cosy is written in [Haxe](https://haxe.org/) and requires the Haxe compiler to build.
+
+<!--
+Information about using Cosy as stand-alone and integrated into other code as a library
+-->
+
+### Using Haxe interpreter
+Build & run: `haxe -cp src --run cosy.Cosy [OPTIONS] [SOURCE_FILE]`.
+
+### Using JavaScript
+Build: `haxe scripts/javascript.hxml`.
+
+Include in your HTML body: `<script src="cosy.js"></script>`.
+
+Run: `window.cosy.Cosy.run([SOURCE]);`.
+
+### Using Java
+Build: `haxe -cp src -main cosy.Cosy -java bin/java`.
+
+Run: `java -jar bin/java/cosy.jar [OPTIONS] [SOURCE_FILE]`.
+
+<!--
+### Using C++
+_Coming soon_
+
+### Using HashLink bytecode or C
+_Coming soon_
+-->
+
+## License
+MIT
