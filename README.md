@@ -18,7 +18,7 @@ print 'hello world'
   * No `null` or `nil`.
   * No variable shadowing.
 * Compile-time validation.
-  * Unused variables,
+  * Unused variables.
   * Simple dead code detection, i.e. statements following an unconditional `return` in a block.
   * Type checking.
 * Has built-in code formatter.
@@ -153,7 +153,7 @@ if !a print b + c + d + immutable + mutable
 
 // variables can be marked purposely unused with an underscore
 fn some_function(_unused) {
-print 'the arg is unused, but that\'s okay'
+    print 'the arg is unused, but that\'s okay'
 }
 some_function(1234)
 
@@ -182,7 +182,7 @@ Options:
   
     Prints the corresponding JavaScript code.
 
-If `(source file)` is omitted, Cosy is started in REPL mode.
+If called without arguments, Cosy is started in REPL mode.
 
 Cosy is written in [Haxe](https://haxe.org/) and requires the Haxe compiler to build.
 
@@ -198,7 +198,7 @@ Build: `haxe scripts/javascript.hxml`.
 
 Include in your HTML body: `<script src="cosy.js"></script>`.
 
-Run: `window.cosy.Cosy.run([SOURCE]);`.
+Run: `window.cosy.Cosy.run([SOURCE])`.
 
 ### Using Java
 Build: `haxe -cp src -main cosy.Cosy -java bin/java`.
