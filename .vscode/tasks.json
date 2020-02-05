@@ -6,7 +6,7 @@
 		{
 			"label": "Run",
 			"type": "shell",
-			"command": "./scripts/run.sh",
+			"command": "./scripts/run.sh test/Testbed.cosy",
 			"problemMatcher": [
 				"$haxe-absolute",
 				"$haxe",

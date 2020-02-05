@@ -19,6 +19,7 @@ fun x() { print "hej" }
 - [x] Static analysis for
     - [x] Simple dead code
     - [ ] Variables written multiple times without being read
+    - [ ] Using uninitialized variables
     - [ ] `if` with constant conditional expression
     - [ ] Useless expressions, e.g. `'hello world'`
     - [ ] Function and variable names uses snake_case

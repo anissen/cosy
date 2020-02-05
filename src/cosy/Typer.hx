@@ -84,6 +84,7 @@ class Typer {
                 } else {
                     inferredReturnType = Void;
                 }
+            case Struct(name, declarations): typeStmts(declarations);
 		}
 	}
 	

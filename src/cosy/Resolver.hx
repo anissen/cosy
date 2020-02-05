@@ -2,8 +2,9 @@ package cosy;
 
 typedef Variable = {
 	var name:Token;
-	var state:VariableState;
+    var state:VariableState;
     var mutable:Bool;
+    var member:Bool;
 }
 
 class Resolver {
@@ -11,6 +12,7 @@ class Resolver {
 	
 	final scopes = new Stack<Map<String, Variable>>();
 	var currentFunction:FunctionType = None;
+	var currentStruct:StructType = None;
 	var currentClass:ClassType = None;
 	
 	public function new(interpreter) {
@@ -59,11 +61,11 @@ class Resolver {
 					currentClass = Subclass;
 					resolveExpr(superclass);
 					beginScope();
-					scopes.peek().set('super', { name: new Token(Super, 'super', null, name.line), state: Read, mutable: false });
+					scopes.peek().set('super', { name: new Token(Super, 'super', null, name.line), state: Read, mutable: false, member: false });
 				}
 				
 				beginScope();
-				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read, mutable: false });
+				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read, mutable: false, member: false });
 				
 				for(method in methods) switch method {
 					case Function(name, params, body, returnType):
@@ -77,13 +79,15 @@ class Resolver {
 				
 				currentClass = enclosingClass;
 			case Var(name, init):
-				declare(name);
+                var member = currentStruct.match(Struct);
+				declare(name, false, member);
 				if(init != null) resolveExpr(init);
-				define(name);
+				define(name, false, member);
             case Mut(name, init):
-				declare(name, true);
+                var member = currentStruct.match(Struct);
+				declare(name, true, member);
 				if(init != null) resolveExpr(init);
-				define(name, true);
+				define(name, true, member);
             case For(keyword, name, from, to, body):
                 resolveExpr(from);
                 resolveExpr(to);
@@ -125,7 +129,15 @@ class Resolver {
 				if(val != null) {
 					if(currentFunction == Initializer) Cosy.error(kw, 'Cannot return value from an initializer.');
 					resolveExpr(val);
-				}
+                }
+            case Struct(name, declarations):
+                declare(name); // TODO: Remove this?
+                define(name); // TODO: Remove this?
+                currentStruct = Struct;
+                beginScope();
+                resolveStmts(declarations);
+                endScope();
+                currentStruct = None;
 		}
 	}
 	
@@ -196,11 +208,11 @@ class Resolver {
 
 		for (name => variable in scope) {
             if (StringTools.startsWith(variable.name.lexeme, '_')) continue; // ignore variables starting with underscore
-			if (variable.state.match(Defined)) Cosy.error(variable.name, "Local variable is not used.");
+			if (!variable.member && variable.state.match(Defined)) Cosy.error(variable.name, "Local variable is not used.");
 		}
 	}
 	
-	function declare(name:Token, mutable:Bool = false) {
+	function declare(name:Token, mutable:Bool = false, member:Bool = false) {
 		var scope = scopes.peek();
 		if (scope.exists(name.lexeme)) {
             Cosy.error(name, 'Variable with this name already declared in this scope.');
@@ -208,11 +220,11 @@ class Resolver {
             var variable = findInScopes(name);
             if (variable != null) Cosy.error(name, 'Shadows existing variable.');
         }
-		scope.set(name.lexeme, { name: name, state: Declared, mutable: mutable });
+		scope.set(name.lexeme, { name: name, state: Declared, mutable: mutable, member: member });
 	}
 	
-	function define(name:Token, mutable:Bool = false) {
-		scopes.peek().set(name.lexeme, { name: name, state: Defined, mutable: mutable });
+	function define(name:Token, mutable:Bool = false, member:Bool = false) {
+		scopes.peek().set(name.lexeme, { name: name, state: Defined, mutable: mutable, member: member });
 	}
 	
 	function resolveLocal(expr:Expr, name:Token, isRead:Bool) {
@@ -261,6 +273,10 @@ private enum FunctionType {
 	Method;
 	Initializer;
 	Function;
+}
+private enum StructType {
+	None;
+	Struct;
 }
 private enum ClassType {
 	None;

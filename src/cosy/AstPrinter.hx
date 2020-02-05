@@ -37,7 +37,8 @@ class AstPrinter {
 				'$declaration($parameters) $block';
 			case If(cond, then, el): 'if ${printExpr(cond)} ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
 			case Print(e): 'print ${printExpr(e)}';
-			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '');
+            case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '');
+            case Struct(name, declarations): 'struct ${name.lexeme} ${printBlock(declarations)}';
 			case Var(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
 			case Mut(name, init): 'mut ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
 		}

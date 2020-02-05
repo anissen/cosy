@@ -86,6 +86,8 @@ class Interpreter {
             case Return(keyword, value):
                 var value = if(value == null) null else evaluate(value);
                 throw new Return(value);
+            case Struct(name, declarations):
+                // TODO: Implement
             case Var(name, init):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);

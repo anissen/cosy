@@ -22,6 +22,7 @@ class Parser {
 	function declaration() {
 		try {
 			if (match([Class])) return classDeclaration();
+			if (match([Struct])) return structDeclaration();
 			if (match([Fn])) return func('function');
 			if (match([Var])) return varDeclaration();
 			if (match([Mut])) return mutDeclaration();
@@ -160,6 +161,24 @@ class Parser {
 			
 		consume(RightBrace, 'Expect "}" after class body.');
 		return Class(name, superclass, methods);
+	}
+    
+    function structDeclaration(): Stmt {
+		var name = consume(Identifier, 'Expect class name');
+        consume(LeftBrace, 'Expect "{" before struct body.');
+
+        var declarations = [];
+        while (!check(RightBrace) && !isAtEnd()) {
+            if (match([Var])) declarations.push(varDeclaration());
+            else if (match([Mut])) declarations.push(mutDeclaration());
+            else {
+                Cosy.error(tokens[current], 'Structs can only contain variable definitions.');
+                break;
+            }
+        }
+        
+		consume(RightBrace, 'Expect "}" after struct body.');
+		return Struct(name, declarations);
 	}
 
 	function func(kind:String):Stmt {

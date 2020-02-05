@@ -1,0 +1,8 @@
+
+struct Point {
+	mut x = 0
+	mut y = 0
+}
+
+// var point = Point { x: 5, y: 13 }
+// print point.x + ', ' + point.y

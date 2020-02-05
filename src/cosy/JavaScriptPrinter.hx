@@ -51,7 +51,8 @@ class JavaScriptPrinter {
 				var block = printStmt(Block(body));
 				'$declaration($parameters) $block';
 			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
-			case Print(e): 'console.log(${printExpr(e)});';
+            case Print(e): 'console.log(${printExpr(e)});';
+            case Struct(name, declarations): 'class ${name.lexeme} ${printBlock(declarations)}'; // TODO: This does not work.
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
 			case Var(name, init): 'const ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 			case Mut(name, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';

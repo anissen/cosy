@@ -19,6 +19,7 @@ class Scanner {
 		'or' => Or,
 		'print' => Print,
 		'return' => Return,
+		'struct' => Struct,
 		'super' => Super, // TODO: remove
 		'this' => This, // TODO: remove
 		'true' => True,

@@ -12,5 +12,6 @@ enum Stmt {
 	Mut(name:Token, init:Expr);
 	Print(e:Expr);
 	Return(keyword:Token, value:Expr);
+	Struct(name:Token, declarations:Array<Stmt>);
 	Var(name:Token, init:Expr);
 }
