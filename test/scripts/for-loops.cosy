@@ -1,4 +1,10 @@
 fn f() {
+	for 0..2 {
+		print 'loop'
+	}
+}
+
+fn f1() {
     for j in 0..2 {
         print 'loop #' + j
     }
@@ -9,7 +15,7 @@ fn f() {
     }
 }
 
-fn f1() {
+fn f2() {
     mut i = 0
     for i < 5 {
         print 'conditional loop #' + i
@@ -18,7 +24,7 @@ fn f1() {
     }
 }
 
-fn f2() {
+fn f3() {
     mut j = 0
     for {
         print 'infinite loop #' + j
@@ -30,3 +36,4 @@ fn f2() {
 f()
 f1()
 f2()
+f3()

@@ -165,10 +165,8 @@ class Resolver {
 				}
 				resolveLocal(expr, kw, true);
 			case This(kw):
-				if(currentClass == None)
-					Cosy.error(kw, 'Cannot use "this" outside of a class.');
-				else 
-					resolveLocal(expr, kw, true);
+				if (currentClass == None) Cosy.error(kw, 'Cannot use "this" outside of a class.');
+				else resolveLocal(expr, kw, true);
 			case Literal(_):
 				// skip
 			case AnonFunction(params, body, returnType): 
@@ -180,7 +178,7 @@ class Resolver {
 		var enclosingFunction = currentFunction;
 		currentFunction = type;
 		beginScope();
-		for(param in params) {
+		for (param in params) {
 			declare(param.name);
 			define(param.name);
 		}
@@ -204,7 +202,7 @@ class Resolver {
 	
 	function declare(name:Token, mutable:Bool = false) {
 		var scope = scopes.peek();
-		if(scope.exists(name.lexeme)) {
+		if (scope.exists(name.lexeme)) {
             Cosy.error(name, 'Variable with this name already declared in this scope.');
         } else {
             var variable = findInScopes(name);

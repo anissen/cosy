@@ -1,0 +1,69 @@
+{
+	var x = [5, 6, 7]
+	print x
+
+	for e in x {
+		print e
+	}
+}
+
+{
+	for e in [7,8,9] {
+		print e
+	}
+}
+
+{
+	fn f(a Array Num) {
+		print a
+	}
+	f([4,8,12])
+	var y = [13,16]
+	f(y)
+}
+
+{
+	mut array = [6, 7]
+	print 'array: '
+	print array
+	print 'array.push(8): '
+	array.push(8)
+	print array
+	var p = array.push
+	print 'array.length: ' + array.length
+	p(9)
+	print 'array.push(9): '
+	print array
+	print 'array.length: ' + array.length
+	print 'concat([10, 11]): '
+	array.concat([10, 11])
+	print array
+	print 'array.pop(): '
+	array.pop()
+	print array
+	print 'array.get(2): '
+	print array.get(2)
+	print 'array.get(3): '
+	print array.get(3)
+}
+
+{
+	fn do_array_of_fn(functions) {
+		for ff in functions {
+			ff()
+		}
+	}
+	do_array_of_fn([fn() { print '1' }, fn() { print '2' }])
+}
+
+{
+	var arr = ['5','6','7']
+	// arr.push('8')
+
+	fn array_push(a Array Str) {
+		//a.push('9')
+		print a
+	}
+	array_push(arr)
+	print arr
+}

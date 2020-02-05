@@ -40,7 +40,7 @@ fun x() { print "hej" }
 - [ ] ++/-- operators
 - [ ] +=/-=/*=//= operators
 - [x] Typing phase
-- [ ] Optimization phase
+- [x] Optimization phase
 - [ ] Improve readme/documentation
 - [x] Compile-time error if a variable is marked as `mut` but is not reassigned
 - [ ] `break` keyword
@@ -51,6 +51,7 @@ fun x() { print "hej" }
   - [ ] Variable shadowing is gone
   - [ ] nil is gone (done?)
   - [x] for-loops can be made without an identifer (underscores are not required on unused loop counters anymore)
+  - [ ] Classes are gone
 - [ ] Cosy playground
   - [x] Compile for JavaScript
   - [x] Make simple Cosy playground website
