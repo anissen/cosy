@@ -87,7 +87,15 @@ class Interpreter {
                 var value = if(value == null) null else evaluate(value);
                 throw new Return(value);
             case Struct(name, declarations):
-                // TODO: Implement
+                environment.define(name.lexeme, null);
+                var fields:Map<String, Any> = new Map();
+                for (decl in declarations) switch decl {
+                    case Var(name, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case Mut(name, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case _:
+                }
+                var struct = new StructInstance(name, fields);
+                environment.assign(name, struct);
             case Var(name, init):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
@@ -205,7 +213,7 @@ class Interpreter {
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 var obj = evaluate(obj);
-                if (!Std.is(obj, Instance)) throw new RuntimeError(name, 'Only instances have fields');
+                if (!Std.is(obj, Instance) && !Std.is(obj, StructInstance)) throw new RuntimeError(name, 'Only instances have fields');
                 var value = evaluate(value);
                 (obj: Instance).set(name, value);
                 value;

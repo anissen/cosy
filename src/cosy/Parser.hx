@@ -115,7 +115,6 @@ class Parser {
 	
 	function block():Array<Stmt> {
 		var statements = [];
-		
 		while (!check(RightBrace) && !isAtEnd()) {
 			statements.push(declaration());
 		}

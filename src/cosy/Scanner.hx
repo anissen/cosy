@@ -58,6 +58,7 @@ class Scanner {
 			case '['.code: addToken(LeftBracket);
 			case ']'.code: addToken(RightBracket);
 			case ','.code: addToken(Comma);
+			// case ':'.code: addToken(Colon);
 			case '-'.code: addToken(Minus);
 			case '+'.code: addToken(Plus);
 			case '*'.code: addToken(Star);

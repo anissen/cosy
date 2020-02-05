@@ -1,8 +1,17 @@
 
 struct Point {
-	mut x = 0
-	mut y = 0
+	mut x
+	mut y = 4
 }
 
-// var point = Point { x: 5, y: 13 }
-// print point.x + ', ' + point.y
+var point = Point// { x = 5, y = 13 }
+point.y = 7
+//print point.x + ', ' + point.y
+print point
+
+// {
+// fn struct_as_arg(s) {
+// 	print s
+// }
+// struct_as_arg(Point { x = 3, y = 4 })
+// }
