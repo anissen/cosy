@@ -1,11 +1,11 @@
 package cosy;
 
 class StructInstance {
-    final name: Token;
+    final structName: Token;
 	final fields: Map<String, Any>;
 	
 	public function new(name: Token, fields: Map<String, Any>) {
-		this.name = name;
+		this.structName = name;
 		this.fields = fields;
 	}
 	
@@ -15,11 +15,12 @@ class StructInstance {
 	}
 	
 	public function set(name:Token, value:Any) {
+        if (!fields.exists(name.lexeme)) return Cosy.error(name, '${name.lexeme} is not a property of ${name.lexeme}');
 		fields.set(name.lexeme, value);
 	}
 	
 	public function toString() {
         var fieldsArray = [ for (key => value in fields) '$key = $value' ];
-		return '${name.lexeme} instance { ${fieldsArray.join(', ')} }';
+		return '${structName.lexeme} instance { ${fieldsArray.join(', ')} }';
 	}
 }

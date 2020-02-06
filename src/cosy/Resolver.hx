@@ -78,12 +78,12 @@ class Resolver {
 				if(superclass != null) endScope();
 				
 				currentClass = enclosingClass;
-			case Var(name, init):
+			case Var(name, type, init):
                 var member = currentStruct.match(Struct);
 				declare(name, false, member);
 				if(init != null) resolveExpr(init);
 				define(name, false, member);
-            case Mut(name, init):
+            case Mut(name, type, init):
                 var member = currentStruct.match(Struct);
 				declare(name, true, member);
 				if(init != null) resolveExpr(init);

@@ -90,17 +90,17 @@ class Interpreter {
                 environment.define(name.lexeme, null);
                 var fields:Map<String, Any> = new Map();
                 for (decl in declarations) switch decl {
-                    case Var(name, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
-                    case Mut(name, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
-                    case _:
+                    case Var(name, type, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case Mut(name, type, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case _: // should never happen
                 }
                 var struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
-            case Var(name, init):
+            case Var(name, type, init):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
                 environment.define(name.lexeme, value);
-            case Mut(name, init):
+            case Mut(name, type, init):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
                 environment.define(name.lexeme, value);
@@ -209,13 +209,15 @@ class Interpreter {
                 var obj = evaluate(obj);
                 
                 if (Std.is(obj, Array)) return arrayGet(obj, name);
+                else if (Std.is(obj, StructInstance)) (obj :StructInstance).get(name);
                 else if (Std.is(obj, Instance)) return (obj: Instance).get(name);
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 var obj = evaluate(obj);
-                if (!Std.is(obj, Instance) && !Std.is(obj, StructInstance)) throw new RuntimeError(name, 'Only instances have fields');
                 var value = evaluate(value);
-                (obj: Instance).set(name, value);
+                if (Std.is(obj, Instance)) (obj: Instance).set(name, value);
+                else if (Std.is(obj, StructInstance)) (obj :StructInstance).set(name, value);
+                else throw new RuntimeError(name, 'Only instances have fields');
                 value;
             case Grouping(e):
                 evaluate(e);

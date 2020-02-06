@@ -44,14 +44,18 @@ class Typer {
 		switch stmt {
 			case Block(statements): typeStmts(statements);
 			case Class(name, superclass, methods): typeStmts(methods);
-			case Var(name, init): 
+			case Var(name, type, init): 
                 var initType = (init != null ? typeExpr(init) : Unknown);
                 if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
-                variableTypes.set(name.lexeme, initType);
-            case Mut(name, init):
+                if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
+                var computedType = (!type.match(Unknown) ? type : initType);
+                variableTypes.set(name.lexeme, computedType);
+            case Mut(name, type, init):
                 var initType = (init != null ? typeExpr(init) : Unknown);
                 if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
-                variableTypes.set(name.lexeme, initType);
+                if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
+                var computedType = (!type.match(Unknown) ? type : initType);
+                variableTypes.set(name.lexeme, computedType);
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
@@ -66,8 +70,12 @@ class Typer {
                 if (name != null) variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
                 typeStmts(body);
             case ForArray(name, array, body):
-                // TODO: Implement this
-                variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
+                var arrayType = typeExpr(array);
+                switch arrayType {
+                    case Array(t): variableTypes.set(name.lexeme, t);
+                    case Unknown: // TODO: Error in struct.
+                    case _: Cosy.error(name, 'Can only loop over value of type array.');
+                }
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);
 			case Function(name, params, body, returnType): handleFunc(name, params, body, returnType);

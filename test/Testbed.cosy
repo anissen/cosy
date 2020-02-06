@@ -1,13 +1,24 @@
 
 struct Point {
-	mut x
+	mut x Num = 2
 	mut y = 4
 }
 
 var point = Point// { x = 5, y = 13 }
+point.x = 5
 point.y = 7
+// point.z = 8 // TODO: This should fail
+// point.w = fn() { // TODO: This should fail
+// 	print 'hello'
+// }
 //print point.x + ', ' + point.y
 print point
+point.x = 'hej'
+print point
+print 'point.y is ' + point.y
+
+mut x = 'hej'
+print x
 
 // {
 // fn struct_as_arg(s) {

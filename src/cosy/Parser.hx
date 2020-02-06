@@ -124,23 +124,23 @@ class Parser {
 	}
 	
 	function varDeclaration():Stmt {
-		var name = consume(Identifier, 'Expect variable name.');
+        var name = consume(Identifier, 'Expect variable name.');
+        var type = paramType();
 		
 		var initializer = null;
-		
 		if (match([Equal])) initializer = expression();
 		
-		return Var(name, initializer);
+		return Var(name, type, initializer);
 	}
-
+    
     function mutDeclaration():Stmt {
-		var name = consume(Identifier, 'Expect variable name.');
+        var name = consume(Identifier, 'Expect variable name.');
+        var type = paramType();
 		
 		var initializer = null;
-		
 		if (match([Equal])) initializer = expression();
 		
-		return Mut(name, initializer);
+		return Mut(name, type, initializer);
 	}
 	
 	function classDeclaration():Stmt {
