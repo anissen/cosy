@@ -1,10 +1,15 @@
 
 struct Point {
 	mut x Num = 2
-	mut y = 4
+    var y = 4
 }
 
-var point = Point// { x = 5, y = 13 }
+struct Fake {
+	mut x Num = 2
+    mut a = '4'
+}
+
+mut point = Point // { x = 5, y = 13 }
 point.x = 5
 point.y = 7
 // point.z = 8 // TODO: This should fail
@@ -13,12 +18,17 @@ point.y = 7
 // }
 //print point.x + ', ' + point.y
 print point
-point.x = 'hej'
-print point
+// point.x = 'hej'
+// print point
 print 'point.y is ' + point.y
+point = Fake
 
-mut x = 'hej'
-print x
+
+// fn struct_as_arg(s) {
+//     print 'struct_as_arg'
+//     print s
+// }
+// struct_as_arg(point)
 
 // {
 // fn struct_as_arg(s) {

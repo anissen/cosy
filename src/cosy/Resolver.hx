@@ -166,7 +166,14 @@ class Resolver {
 				resolveExpr(obj);
 			case Set(obj, name, value):
 				resolveExpr(value);
-				resolveExpr(obj);
+                resolveExpr(obj);
+
+                switch obj {
+                    case Variable(objName):
+                        var variable = findInScopes(objName);
+                        if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign properties on non-mutable struct.');
+                    case _: throw 'this is unexpected';
+                }
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
 			case Super(kw, method):

@@ -9,6 +9,7 @@ enum VariableType {
     Instance;
     Function(paramTypes:Array<VariableType>, returnType:VariableType);
     Array(type:VariableType);
+    Struct(variables:Map<String, VariableType>);
 }
 
 class Typer {
@@ -44,18 +45,8 @@ class Typer {
 		switch stmt {
 			case Block(statements): typeStmts(statements);
 			case Class(name, superclass, methods): typeStmts(methods);
-			case Var(name, type, init): 
-                var initType = (init != null ? typeExpr(init) : Unknown);
-                if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
-                if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
-                var computedType = (!type.match(Unknown) ? type : initType);
-                variableTypes.set(name.lexeme, computedType);
-            case Mut(name, type, init):
-                var initType = (init != null ? typeExpr(init) : Unknown);
-                if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
-                if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
-                var computedType = (!type.match(Unknown) ? type : initType);
-                variableTypes.set(name.lexeme, computedType);
+			case Var(name, type, init): typeVar(name, type, init);
+            case Mut(name, type, init): typeVar(name, type, init);
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
@@ -92,9 +83,27 @@ class Typer {
                 } else {
                     inferredReturnType = Void;
                 }
-            case Struct(name, declarations): typeStmts(declarations);
+            case Struct(name, declarations):
+                var decls :Map<String, VariableType> = new Map();
+                for (decl in declarations) {
+                    switch decl {
+                        case Var(name, type, init): decls.set(name.lexeme, typeVar(name, type, init));
+                        case Mut(name, type, init): decls.set(name.lexeme, typeVar(name, type, init));
+                        case _: throw 'structs can only have var and mut'; // should never happen
+                    }
+                }
+                variableTypes.set(name.lexeme, Struct(decls));
 		}
-	}
+    }
+    
+    function typeVar(name: Token, type: VariableType, init: Expr) :VariableType {
+        var initType = (init != null ? typeExpr(init) : Unknown);
+        if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
+        if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
+        var computedType = (!type.match(Unknown) ? type : initType);
+        variableTypes.set(name.lexeme, computedType);
+        return computedType;
+    }
 	
 	function typeExpr(expr:Expr) :VariableType {
 		var ret = switch expr {
@@ -165,10 +174,24 @@ class Typer {
                             case 'get': Function([Number], t);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
+                        // case Struct(_): Struct;
                     case _: Unknown;
                     // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
-			case Set(obj, name, value): Unknown; // TODO: Implement
+			case Set(obj, name, value):
+                // TODO: Check for mutability!
+
+                // trace('Set $obj, $name, $value');
+                var objType = typeExpr(obj);
+                // trace('objType: $objType');
+                switch objType {
+                    case Struct(v):
+                        var valueType = typeExpr(value);
+                        var structDeclType = v[name.lexeme];
+                        if (!matchType(valueType, structDeclType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
+                    case _:
+                }
+                Unknown;
 			case Grouping(e) | Unary(_, e): typeExpr(e);
 			case Super(kw, method): Instance;
 			case This(kw): Instance;
@@ -221,6 +244,12 @@ class Typer {
                 }
                 matchType(v1, v2);
             case [Array(t1), Array(t2)]: matchType(t1, t2);
+            case [Struct(v1), Struct(v2)]:
+                // if (v1.size() != v2.size()) return false;
+                for (key => value in v1) {
+                    if (!v2.exists(key) || v2[key] != value) return false;
+                }
+                return true;
             case _: to == from;
         }
     }
@@ -239,6 +268,9 @@ class Typer {
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
+            case Struct(decls): 
+                var declsStr = [ for (name => type in decls) '$name ${formatType(type)}' ];
+                'Struct { ${declsStr.join(", ")} }';
             case _: '$type';
         }
     }
