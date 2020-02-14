@@ -12,6 +12,7 @@ enum Expr {
 	Set(obj:Expr, name:Token, value:Expr);
 	This(keyword:Token);
 	Super(keyword:Token, method:Token);
+	StructInit(name:Token, decls:Array<Expr>);
 	Unary(op:Token, right:Expr);
 	Variable(name:Token);
 	AnonFunction(params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType);

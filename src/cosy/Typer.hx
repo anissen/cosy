@@ -193,7 +193,8 @@ class Typer {
                 }
                 Unknown;
 			case Grouping(e) | Unary(_, e): typeExpr(e);
-			case Super(kw, method): Instance;
+            case Super(kw, method): Instance;
+            case StructInit(name, decls): Instance;
 			case This(kw): Instance;
 			case Literal(v) if (Std.is(v, Float)): Number;
 			case Literal(v) if (Std.is(v, String)): Text;

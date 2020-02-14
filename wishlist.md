@@ -75,6 +75,7 @@ fun x() { print "hej" }
 - [x] Change `fun` to `fn`
 - [x] Change `"` to `'`
 - [ ] Consider integrations
+- [ ] Merge `Var` and `Mut` (?)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

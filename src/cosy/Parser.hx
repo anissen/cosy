@@ -375,8 +375,8 @@ class Parser {
 			return Super(keyword, method);
 		}
 		if (match([This])) return This(previous());
-		if (match([Identifier])) return Variable(previous());
 		if (match([Fn])) return funcBody("function");
+		if (match([Identifier])) return identifier();
 		if (match([LeftParen])) {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');
@@ -399,6 +399,18 @@ class Parser {
         }
         consume(RightBracket, 'Expect "]" after array literal.');
         return ArrayLiteral(keyword, exprs);
+    }
+
+    function identifier(): Expr {
+        var variable = previous();
+        if (!match([LeftBrace])) return Variable(variable);
+
+        var decls = [];
+        while (!match([RightBrace]) && !isAtEnd()) {
+            decls.push(assignment());
+            if (!check(RightBrace)) consume(Comma, 'Expect "," between variable initializers.');
+        }
+        return StructInit(variable, decls);
     }
 	
 	function consume(type:TokenType, message:String):Token {

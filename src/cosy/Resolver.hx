@@ -7,6 +7,7 @@ typedef Variable = {
     var member:Bool;
 }
 
+// TODO: Make a map of structs with their decls and access modifiers
 class Resolver {
 	final interpreter:Interpreter;
 	
@@ -182,7 +183,9 @@ class Resolver {
 					case Class: Cosy.error(kw, 'Cannot use "super" in a class with no superclass.');
 					case Subclass: // ok
 				}
-				resolveLocal(expr, kw, true);
+                resolveLocal(expr, kw, true);
+            case StructInit(name, decls):
+                // TODO: Implement
 			case This(kw):
 				if (currentClass == None) Cosy.error(kw, 'Cannot use "this" outside of a class.');
 				else resolveLocal(expr, kw, true);

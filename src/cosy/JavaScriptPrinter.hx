@@ -74,7 +74,8 @@ class JavaScriptPrinter {
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): 'this';
-			case Super(keyword, method): 'super.${method.lexeme}';
+            case Super(keyword, method): 'super.${method.lexeme}';
+            case StructInit(name, decls): '[STRUCT INIT]'; // TODO: Implement
 			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body, returnType):

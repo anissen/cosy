@@ -230,6 +230,16 @@ class Interpreter {
                 var method = superclass.findMethod(meth.lexeme);
                 if (method == null) throw new RuntimeError(meth, 'Undefined property "${meth.lexeme}".');
                 method.bind(obj);
+            case StructInit(name, decls):
+                var structObj :StructInstance = globals.get(name);
+                if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
+                for (decl in decls) {
+                    switch decl {
+                        case Assign(variableName, value): structObj.set(variableName, evaluate(value));
+                        case _: // unreachable
+                    }
+                }
+                structObj;
             case AnonFunction(params, body, returnType):
                 new Function(null, params, body, environment, false);
         }
