@@ -2,6 +2,7 @@ package cosy;
 
 class Parser {
 	final tokens: Array<Token>;
+	var structNames = new Array<String>();
 	var current = 0;
 	
 	public function new(tokens: Array<Token>) {
@@ -175,6 +176,8 @@ class Parser {
                 break;
             }
         }
+
+        structNames.push(name.lexeme);
         
 		consume(RightBrace, 'Expect "}" after struct body.');
 		return Struct(name, declarations);
@@ -403,14 +406,19 @@ class Parser {
 
     function identifier(): Expr {
         var variable = previous();
-        if (!match([LeftBrace])) return Variable(variable);
-
-        var decls = [];
-        while (!match([RightBrace]) && !isAtEnd()) {
-            decls.push(assignment());
-            if (!check(RightBrace)) consume(Comma, 'Expect "," between variable initializers.');
+        if (check(LeftBrace) && structNames.indexOf(variable.lexeme) != -1) {
+            consume(LeftBrace, 'Expect "{" after struct name.');
+            // trace('variable: $variable, ${variable.line}');
+            var decls = [];
+            while (!match([RightBrace]) && !isAtEnd()) {
+                decls.push(assignment());
+                if (!check(RightBrace)) consume(Comma, 'Expect "," between variable initializers.');
+            }
+            // trace('done');
+            return StructInit(variable, decls);
+        } else {
+            return Variable(variable);
         }
-        return StructInit(variable, decls);
     }
 	
 	function consume(type:TokenType, message:String):Token {

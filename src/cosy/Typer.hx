@@ -194,7 +194,7 @@ class Typer {
                 Unknown;
 			case Grouping(e) | Unary(_, e): typeExpr(e);
             case Super(kw, method): Instance;
-            case StructInit(name, decls): Instance;
+            case StructInit(name, decls): variableTypes.get(name.lexeme);
 			case This(kw): Instance;
 			case Literal(v) if (Std.is(v, Float)): Number;
 			case Literal(v) if (Std.is(v, String)): Text;

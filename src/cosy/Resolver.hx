@@ -132,13 +132,13 @@ class Resolver {
 					resolveExpr(val);
                 }
             case Struct(name, declarations):
-                declare(name); // TODO: Remove this?
-                define(name); // TODO: Remove this?
                 currentStruct = Struct;
                 beginScope();
                 resolveStmts(declarations);
                 endScope();
                 currentStruct = None;
+                
+                // TODO: Check for struct being unused
 		}
 	}
 	
