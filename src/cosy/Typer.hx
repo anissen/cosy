@@ -194,7 +194,33 @@ class Typer {
                 Unknown;
 			case Grouping(e) | Unary(_, e): typeExpr(e);
             case Super(kw, method): Instance;
-            case StructInit(name, decls): variableTypes.get(name.lexeme);
+            case StructInit(structName, decls):
+                var structType = variableTypes.get(structName.lexeme);
+                var assignedMembers = [];
+                var structMembers = switch structType {
+                    case Struct(variables): variables;
+                    case _: throw 'unexpected';
+                }
+                
+                for (decl in decls) {
+                    switch decl {
+                        case Assign(name, value):
+                            // TODO: These tests should be done in Resolver instead
+                            if (!structMembers.exists(name.lexeme)) {
+                                Cosy.error(name, 'No member named "${name.lexeme}" in struct ${structName.lexeme}');
+                                break;
+                            } else if (assignedMembers.indexOf(name.lexeme) != -1) {
+                                Cosy.error(name, 'Member already assigned in initializer.');
+                                break;
+                            }
+                            var valueType = typeExpr(value);
+                            var memberType = structMembers[name.lexeme];
+                            assignedMembers.push(name.lexeme);
+                            if (!matchType(memberType, valueType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
+                        case _: throw 'unexpected';
+                    }
+                }
+                structType;
 			case This(kw): Instance;
 			case Literal(v) if (Std.is(v, Float)): Number;
 			case Literal(v) if (Std.is(v, String)): Text;
@@ -246,9 +272,11 @@ class Typer {
                 matchType(v1, v2);
             case [Array(t1), Array(t2)]: matchType(t1, t2);
             case [Struct(v1), Struct(v2)]:
-                // if (v1.size() != v2.size()) return false;
                 for (key => value in v1) {
                     if (!v2.exists(key) || v2[key] != value) return false;
+                }
+                for (key => value in v2) {
+                    if (!v1.exists(key) || v1[key] != value) return false;
                 }
                 return true;
             case _: to == from;
