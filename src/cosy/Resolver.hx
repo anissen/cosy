@@ -186,6 +186,7 @@ class Resolver {
                 resolveLocal(expr, kw, true);
             case StructInit(name, decls):
                 // TODO: Implement
+                // TODO: Check that all members are initialized either in struct decl or in struct initializer 
 			case This(kw):
 				if (currentClass == None) Cosy.error(kw, 'Cannot use "this" outside of a class.');
 				else resolveLocal(expr, kw, true);

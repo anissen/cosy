@@ -180,7 +180,7 @@ class Parser {
         structNames.push(name.lexeme);
         
 		consume(RightBrace, 'Expect "}" after struct body.');
-		return Struct(name, declarations);
+		return Struct(name, declarations); //TODO: Add struct definitions type as arg
 	}
 
 	function func(kind:String):Stmt {
