@@ -1,5 +1,0 @@
-[line 19] Error at "x": Member already assigned in initializer.
-[line 31] Error at "y": Member is not mutable.
-[line 32] Error at "z": No member named "z" in struct of type Struct { y Num, x +Num, a Array(Num) }
-[line 33] Error at "w": No member named "w" in struct of type Struct { y Num, x +Num, a Array(Num) }
-[line 42] Error at "p": Cannot assign Struct { x +Num, a +Str } to Struct { y Num, x +Num, a Array(Num) }

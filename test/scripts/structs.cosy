@@ -28,7 +28,7 @@ struct Fake {
 {
     mut point = Point {} // ok
     point.x = 555
-    point.y = 7 // TODO: Should fail because y is not mut
+    point.y = 7 // fails
     point.z = 8 // fails
     point.w = fn() { // fails
     	print 'hello'
@@ -38,8 +38,9 @@ struct Fake {
 }
 
 {
-    var p = Point {}
+    mut p = Point {}
     p = Fake {} // fails
+    print p
 }
 
 {

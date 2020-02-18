@@ -309,6 +309,11 @@ class Typer {
             case Mutable(t): 'Mut(${formatType(t)})';
             case Struct(decls): 
                 var declsStr = [ for (name => type in decls) '$name ${formatType(type)}' ];
+                declsStr.sort(function (a, b) {
+                    if (a < b) return -1;
+                    if (b < a) return 1;
+                    return 0;
+                });
                 'Struct { ${declsStr.join(", ")} }';
             case _: '$type';
         }
