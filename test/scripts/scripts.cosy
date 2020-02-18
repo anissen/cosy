@@ -38,9 +38,8 @@ struct Fake {
 }
 
 {
-    mut p = Point {}
+    var p = Point {}
     p = Fake {} // fails
-    print p
 }
 
 {

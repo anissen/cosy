@@ -186,9 +186,13 @@ class Typer {
                 // trace('objType: $objType');
                 switch objType {
                     case Struct(v):
-                        var valueType = typeExpr(value);
-                        var structDeclType = v[name.lexeme];
-                        if (!matchType(valueType, structDeclType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
+                        if (v.exists(name.lexeme)) {
+                            var valueType = typeExpr(value);
+                            var structDeclType = v[name.lexeme];
+                            if (!matchType(valueType, structDeclType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
+                        } else {
+                            Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType)}');
+                        }
                     case _:
                 }
                 Unknown;

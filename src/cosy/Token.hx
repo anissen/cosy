@@ -14,6 +14,6 @@ class Token {
 	}
 	
 	public function toString() {
-		return '$type $lexeme $literal';
+        return 'Token { type: $type, lexeme: "$lexeme"' + (literal != null ? ', literal: $literal' : '') + ' }';
 	}
 }

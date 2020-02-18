@@ -173,7 +173,8 @@ class Resolver {
                     case Variable(objName):
                         var variable = findInScopes(objName);
                         if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign properties on non-mutable struct.');
-                    case _: throw 'this is unexpected';
+                    case This(keyword): // ignore
+                    case _: trace(obj); throw 'this is unexpected';
                 }
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
