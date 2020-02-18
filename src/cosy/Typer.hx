@@ -10,6 +10,7 @@ enum VariableType {
     Function(paramTypes:Array<VariableType>, returnType:VariableType);
     Array(type:VariableType);
     Struct(variables:Map<String, VariableType>);
+    Mutable(type:VariableType); // TODO: Stupid idea?
 }
 
 class Typer {
@@ -88,7 +89,7 @@ class Typer {
                 for (decl in declarations) {
                     switch decl {
                         case Var(name, type, init): decls.set(name.lexeme, typeVar(name, type, init));
-                        case Mut(name, type, init): decls.set(name.lexeme, typeVar(name, type, init));
+                        case Mut(name, type, init): decls.set(name.lexeme, Mutable(typeVar(name, type, init)));
                         case _: throw 'structs can only have var and mut'; // should never happen
                     }
                 }
@@ -189,7 +190,8 @@ class Typer {
                         if (v.exists(name.lexeme)) {
                             var valueType = typeExpr(value);
                             var structDeclType = v[name.lexeme];
-                            if (!matchType(valueType, structDeclType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
+                            if (!structDeclType.match(Mutable(_))) Cosy.error(name, 'Member is not mutable.');
+                            else if (!matchType(structDeclType, valueType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
                         } else {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType)}');
                         }
@@ -220,7 +222,7 @@ class Typer {
                             var valueType = typeExpr(value);
                             var memberType = structMembers[name.lexeme];
                             assignedMembers.push(name.lexeme);
-                            if (!matchType(memberType, valueType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
+                            if (!matchType(valueType, memberType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
                         case _: throw 'unexpected';
                     }
                 }
@@ -265,6 +267,8 @@ class Typer {
 
     function matchType(to :VariableType, from :VariableType) :Bool {
         return switch [to, from] {
+            case [Mutable(t1), t2]: matchType(t1, t2);
+            case [t1, Mutable(t2)]: matchType(t1, t2);
             case [_, Unknown]: true;
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
@@ -274,6 +278,7 @@ class Typer {
                     }
                 }
                 matchType(v1, v2);
+            case [Array(Unknown), Array(_)]: true; // handle case where e.g. var a Array Num = []
             case [Array(t1), Array(t2)]: matchType(t1, t2);
             case [Struct(v1), Struct(v2)]:
                 for (key => value in v1) {
@@ -301,6 +306,7 @@ class Typer {
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
+            case Mutable(t): 'Mut(${formatType(t)})';
             case Struct(decls): 
                 var declsStr = [ for (name => type in decls) '$name ${formatType(type)}' ];
                 'Struct { ${declsStr.join(", ")} }';
