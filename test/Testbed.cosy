@@ -5,56 +5,7 @@ struct Point {
     var a Array Num
 }
 
-struct Fake {
-	mut x Num = 2
-    mut a = '4'
-}
-
 {
     mut point = Point { x = 5, y = 13, a = [] } // ok
     print point
-}
-
-{
-    mut point = Point { x = 5, y = 13, x = 3 } // fails
-    print point
-}
-
-// {
-//     mut point = Point { x = 5, y = 13 } // TODO: Should fail
-//     print point
-// }
-
-{
-    mut point = Point {} // ok
-    point.x = 555
-    point.y = 7 // fails
-    point.z = 8 // fails
-    point.w = fn() { // fails
-    	print 'hello'
-    }
-    print point
-    print point.x + ', ' + point.y
-}
-
-{
-    mut p = Point {}
-    p = Fake {} // fails
-    print p
-}
-
-{
-    fn struct_as_arg(s) {
-        print s
-    }
-    struct_as_arg(Point { x = 3, y = 4 })
-}
-
-{
-    struct Test {
-        var a // TODO: Should be var a Point
-        var b Str
-    }
-
-    print Test { a = Point { x = 666, y = 777 }, b = 'hej' }
 }

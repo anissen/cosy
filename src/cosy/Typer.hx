@@ -59,7 +59,7 @@ class Typer {
                     case Number:
                     case _: Cosy.error(keyword, '"To" clause must evaluate to a number');
                 }
-                if (name != null) variableTypes.set(name.lexeme, Number); // TODO: This may change when arrays are introduced
+                if (name != null) variableTypes.set(name.lexeme, Number);
                 typeStmts(body);
             case ForArray(name, array, body):
                 var arrayType = typeExpr(array);
@@ -180,11 +180,7 @@ class Typer {
                     // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
 			case Set(obj, name, value):
-                // TODO: Check for mutability!
-
-                // trace('Set $obj, $name, $value');
                 var objType = typeExpr(obj);
-                // trace('objType: $objType');
                 switch objType {
                     case Struct(v):
                         if (v.exists(name.lexeme)) {
