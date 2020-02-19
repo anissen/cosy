@@ -10,6 +10,7 @@ enum VariableType {
     Function(paramTypes:Array<VariableType>, returnType:VariableType);
     Array(type:VariableType);
     Struct(variables:Map<String, VariableType>);
+    NamedStruct(name:String);
     Mutable(type:VariableType);
 }
 
@@ -297,6 +298,7 @@ class Typer {
                 matchType(v1, v2);
             case [Array(Unknown), Array(_)]: true; // handle case where e.g. var a Array Num = []
             case [Array(t1), Array(t2)]: matchType(t1, t2);
+            case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
             case [Struct(v1), Struct(v2)]:
                 for (key => value in v1) {
                     if (!v2.exists(key) || v2[key] != value) return false;
