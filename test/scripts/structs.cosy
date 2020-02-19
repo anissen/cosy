@@ -16,21 +16,21 @@ struct Fake {
 }
 
 {
-    mut point = Point { x = 5, y = 13, x = 3 } // fails
+    mut point = Point { x = 5, y = 13, a = [], x = 3 } // fails (x initialized twice)
     print point
 }
 
-// {
-//     mut point = Point { x = 5, y = 13 } // TODO: Should fail
-//     print point
-// }
+{
+    mut point = Point { x = 5, y = 13 } // fails (a is not initialized)
+    print point
+}
 
 {
-    mut point = Point {} // ok
+    mut point = Point { a = [] } // ok
     point.x = 555
-    point.y = 7 // fails
-    point.z = 8 // fails
-    point.w = fn() { // fails
+    point.y = 7 // fails (y is not mut)
+    point.z = 8 // fails (z is not a member)
+    point.w = fn() { // fails (w is not a member)
     	print 'hello'
     }
     print point
@@ -38,8 +38,8 @@ struct Fake {
 }
 
 {
-    mut p = Point {}
-    p = Fake {} // fails
+    mut p = Point { a = [] }
+    p = Fake {} // fails (Point type != Fake type)
     print p
 }
 
@@ -47,7 +47,7 @@ struct Fake {
     fn struct_as_arg(s) {
         print s
     }
-    struct_as_arg(Point { x = 3, y = 4 })
+    struct_as_arg(Point { x = 3, y = 4, a = [] })
 }
 
 {
@@ -56,5 +56,5 @@ struct Fake {
         var b Str
     }
 
-    print Test { a = Point { x = 666, y = 777 }, b = 'hej' }
+    print Test { a = Point { x = 666, y = 777, a = [] }, b = 'hej' }
 }

@@ -10,10 +10,20 @@ enum VariableType {
     Function(paramTypes:Array<VariableType>, returnType:VariableType);
     Array(type:VariableType);
     Struct(variables:Map<String, VariableType>);
-    Mutable(type:VariableType); // TODO: Stupid idea?
+    Mutable(type:VariableType);
+}
+
+typedef VariableMeta = {
+    var mutable: Bool;
+    var initialized: Bool;
+}
+
+typedef StructMeta = {
+    var members: Map<String, VariableMeta>;
 }
 
 class Typer {
+    var structsMeta :Map<String, StructMeta> = new Map();
     var variableTypes :Map<String, VariableType> = new Map();
     var typedReturnType :VariableType = Unknown;
     var inferredReturnType :VariableType = Void;
@@ -85,14 +95,20 @@ class Typer {
                     inferredReturnType = Void;
                 }
             case Struct(name, declarations):
+                var structMeta :StructMeta = { members: new Map() };
                 var decls :Map<String, VariableType> = new Map();
                 for (decl in declarations) {
                     switch decl {
-                        case Var(name, type, init): decls.set(name.lexeme, typeVar(name, type, init));
-                        case Mut(name, type, init): decls.set(name.lexeme, Mutable(typeVar(name, type, init)));
+                        case Var(name, type, init): 
+                            structMeta.members.set(name.lexeme, { mutable: false, initialized: (init != null) });
+                            decls.set(name.lexeme, typeVar(name, type, init));
+                        case Mut(name, type, init):
+                            structMeta.members.set(name.lexeme, { mutable: true, initialized: (init != null) });
+                            decls.set(name.lexeme, Mutable(typeVar(name, type, init)));
                         case _: throw 'structs can only have var and mut'; // should never happen
                     }
                 }
+                structsMeta.set(name.lexeme, structMeta);
                 variableTypes.set(name.lexeme, Struct(decls));
 		}
     }
@@ -220,6 +236,11 @@ class Typer {
                             assignedMembers.push(name.lexeme);
                             if (!matchType(valueType, memberType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
                         case _: throw 'unexpected';
+                    }
+                }
+                for (memberName => memberMeta in structsMeta[structName.lexeme].members) {
+                    if (!memberMeta.mutable && !memberMeta.initialized) {
+                        if (assignedMembers.indexOf(memberName) == -1) Cosy.error(structName, 'Non-mutable member "$memberName" not initialized.');
                     }
                 }
                 structType;
