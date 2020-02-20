@@ -52,7 +52,7 @@ struct Fake {
 
 {
     struct Test {
-        var a // TODO: Should be var a Point
+        var a Point
         var b Str
     }
 

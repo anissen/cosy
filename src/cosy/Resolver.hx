@@ -7,7 +7,6 @@ typedef Variable = {
     var member:Bool;
 }
 
-// TODO: Make a map of structs with their decls and access modifiers
 class Resolver {
 	final interpreter:Interpreter;
 	
@@ -33,7 +32,7 @@ class Resolver {
                 case Return(kw, _): returnToken = kw;
                 case _:
                     if (returnToken != null) {
-                        // TODO: We cannot report the correct token so we simply report the return token
+                        // We cannot report the correct token so we simply report the return token
                         Cosy.error(returnToken, 'Unreachable code after return statement.');
                         returnToken = null;
                     }

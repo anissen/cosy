@@ -76,7 +76,7 @@ class Typer {
                 var arrayType = typeExpr(array);
                 switch arrayType {
                     case Array(t): variableTypes.set(name.lexeme, t);
-                    case Unknown: // TODO: Error in struct.
+                    case Unknown: variableTypes.set(name.lexeme, Unknown);
                     case _: Cosy.error(name, 'Can only loop over value of type array.');
                 }
                 typeStmts(body);

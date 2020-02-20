@@ -164,7 +164,7 @@ class Parser {
 	}
     
     function structDeclaration(): Stmt {
-		var name = consume(Identifier, 'Expect class name');
+        var name = consume(Identifier, 'Expect class name');
         consume(LeftBrace, 'Expect "{" before struct body.');
 
         var declarations = [];
@@ -180,7 +180,7 @@ class Parser {
         structNames.push(name.lexeme);
         
 		consume(RightBrace, 'Expect "}" after struct body.');
-		return Struct(name, declarations); //TODO: Add struct definitions type as arg
+		return Struct(name, declarations);
 	}
 
 	function func(kind:String):Stmt {
@@ -215,7 +215,8 @@ class Parser {
         } else if (match([Identifier])) {
             var identifier = previous();
             if (structNames.indexOf(identifier.lexeme) == -1) {
-                throw error(identifier, 'Expected type annotation to be a struct name.');
+                //throw error(identifier, 'Expected type annotation to be a struct name.');
+                return Unknown; // this can happen in e.g. `mut b\nb = '2'`
             }
             NamedStruct(identifier.lexeme);
         } else {
