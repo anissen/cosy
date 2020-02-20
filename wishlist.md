@@ -76,6 +76,7 @@ fun x() { print "hej" }
 - [x] Change `"` to `'`
 - [ ] Consider integrations
 - [ ] Merge `Var` and `Mut` (?)
+- [ ] Need to take line breaks into account to avoid cases where parsing fails because it "continues" on the next line, e.g. `mut b\nb = '2'`
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

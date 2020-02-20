@@ -17,6 +17,13 @@ class AstPrinter {
         return '{\n$s\n${indent()}}';
     }
 
+    function printExprBlock(exprs:Array<Expr>):String {
+        indentAmount++;
+        var s = [ for (expr in exprs) indent() + printExpr(expr) ].join('\n');
+        indentAmount--;
+        return '{\n$s\n${indent()}}';
+    }
+
 	public function printStmt(statement:Stmt):String {
 		return switch statement {
 			case Block(statements): printBlock(statements);
@@ -57,8 +64,8 @@ class AstPrinter {
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): 'this';
             case Super(keyword, method): 'super.${method.lexeme}';
-            case StructInit(name, decls): '[STRUCT INIT]'; // TODO: Implement
-			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
+            case StructInit(name, decls): printExprBlock(decls);
+            case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body, returnType):
 				var parameters = [ for (param in params) formatParam(param) ].join(',');

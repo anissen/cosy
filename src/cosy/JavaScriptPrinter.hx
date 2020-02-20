@@ -52,7 +52,7 @@ class JavaScriptPrinter {
 				'$declaration($parameters) $block';
 			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
             case Print(e): 'console.log(${printExpr(e)});';
-            case Struct(name, declarations): 'class ${name.lexeme} ${printBlock(declarations)}'; // TODO: This does not work.
+            case Struct(name, declarations): '// ${name.lexeme} struct';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
 			case Var(name, type, init): 'const ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 			case Mut(name, type, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
@@ -61,13 +61,13 @@ class JavaScriptPrinter {
 	
 	public function printExpr(expr:Expr):String {
 		return switch expr {
-            case ArrayLiteral(keyword, exprs): '[' + [ for (expr in exprs) ${printExpr(expr)} ].join(',') + ']';
+            case ArrayLiteral(keyword, exprs): '[' + exprs.map(printExpr).join(', ') + ']';
 			case Assign(name, value): '${name.lexeme} = ${printExpr(value)}';
 			case Binary(left, op, right): '${printExpr(left)} ${op.type.match(EqualEqual) ? '===' : op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): 
                 var calleeName = printExpr(callee);
                 var isClassName = (classNames.indexOf(calleeName) != -1);
-                (isClassName ? 'new ' : '') + '$calleeName(${[ for (arg in arguments) printExpr(arg) ].join(',')})';
+                (isClassName ? 'new ' : '') + '$calleeName(${arguments.map(printExpr).join(',')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
 			case Literal(v): if (v == null) { 'null'; } else if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
@@ -75,11 +75,13 @@ class JavaScriptPrinter {
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): 'this';
             case Super(keyword, method): 'super.${method.lexeme}';
-            case StructInit(name, decls): '[STRUCT INIT]'; // TODO: Implement
+            case StructInit(name, decls): 
+                var init = [ for (decl in decls) StringTools.replace(printExpr(decl), ' = ', ': ') ];
+                '{ ${init.join(", ")} }';
 			case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body, returnType):
-				var parameters = [ for (token in params) token.name.lexeme ].join(',');
+				var parameters = [ for (token in params) token.name.lexeme ].join(', ');
 				var block = printStmt(Block(body));
 				'function ($parameters) $block';
 		}
