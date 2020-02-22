@@ -27,7 +27,11 @@ fun x() { print "hej" }
 - [ ] Class functions cannot override other functions (must be uniquely named)
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
-- [ ] Replace classes with structs, interfaces, traits and member-functions
+- [ ] Replace classes with 
+  - [x] structs
+  - [ ] interfaces
+  - [ ] traits 
+  - [ ] member-functions
 - [ ] Modules
 - [ ] Experiment with bytecode
 - [ ] Support for arrays
@@ -77,6 +81,7 @@ fun x() { print "hej" }
 - [ ] Consider integrations
 - [ ] Merge `Var` and `Mut` (?)
 - [ ] Need to take line breaks into account to avoid cases where parsing fails because it "continues" on the next line, e.g. `mut b\nb = '2'`
+- [ ] Remove unused testing code (Cosy.hx + tests/)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
