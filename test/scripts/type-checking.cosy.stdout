@@ -1,3 +1,4 @@
+[line 247] Error at "s": Cannot reassign properties on non-mutable struct.
 [line 4] Error at "i": Cannot assign Num to Str
 [line 14] Error at "i": Cannot assign Str to Num
 [line 26] Error at "i": Cannot assign Str to Num

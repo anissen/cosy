@@ -131,13 +131,13 @@ class Resolver {
 					resolveExpr(val);
                 }
             case Struct(name, declarations):
+                declare(name);
+                define(name);
                 currentStruct = Struct;
                 beginScope();
                 resolveStmts(declarations);
                 endScope();
                 currentStruct = None;
-                
-                // TODO: Check for struct being unused
 		}
 	}
 	
@@ -185,8 +185,7 @@ class Resolver {
 				}
                 resolveLocal(expr, kw, true);
             case StructInit(name, decls):
-                // TODO: Implement
-                // TODO: Check that all members are initialized either in struct decl or in struct initializer 
+                resolveLocal(expr, name, true);
 			case This(kw):
 				if (currentClass == None) Cosy.error(kw, 'Cannot use "this" outside of a class.');
 				else resolveLocal(expr, kw, true);

@@ -231,7 +231,7 @@ class Interpreter {
                 if (method == null) throw new RuntimeError(meth, 'Undefined property "${meth.lexeme}".');
                 method.bind(obj);
             case StructInit(name, decls):
-                var structObj :StructInstance = globals.get(name);
+                var structObj :StructInstance = lookUpVariable(name, expr);
                 if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
                 for (decl in decls) {
                     switch decl {

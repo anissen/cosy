@@ -238,3 +238,13 @@
     print param
     f(5)
 }
+
+// -----------
+
+{
+    struct S { mut s Num }
+    fn mutate_struct(s) {
+        s.s = 666
+    }
+    mutate_struct(S { s = 3 })
+}
