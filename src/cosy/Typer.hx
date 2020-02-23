@@ -240,8 +240,8 @@ class Typer {
                     }
                 }
                 for (memberName => memberMeta in structsMeta[structName.lexeme].members) {
-                    if (!memberMeta.mutable && !memberMeta.initialized) {
-                        if (assignedMembers.indexOf(memberName) == -1) Cosy.error(structName, 'Non-mutable member "$memberName" not initialized.');
+                    if (!memberMeta.initialized) {
+                        if (assignedMembers.indexOf(memberName) == -1) Cosy.error(structName, 'Member "$memberName" not initialized.');
                     }
                 }
                 structType;
