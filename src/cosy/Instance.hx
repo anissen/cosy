@@ -19,7 +19,7 @@ class Instance {
 		fields.set(name.lexeme, value);
 	}
 	
-	public function toString() {
+	public function toString() :String {
 		return klass.name + ' instance';
 	}
 }

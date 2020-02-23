@@ -39,5 +39,5 @@ class Function implements Callable {
 		return new Function(name, params, body, env, isInitializer);
 	}
 	
-	public function toString() return (name != null ? '<fn ${name.lexeme}>' : '<fn>');
+	public function toString() :String return (name != null ? '<fn ${name.lexeme}>' : '<fn>');
 }

@@ -13,7 +13,7 @@ class Token {
 		this.line = line;
 	}
 	
-	public function toString() {
+	public function toString() :String {
         return 'Token { type: $type, lexeme: "$lexeme"' + (literal != null ? ', literal: $literal' : '') + ' }';
 	}
 }
