@@ -47,6 +47,8 @@ print S
   - [x] Support for push
   - [x] Support for getting value at index
   - [ ] Support for array indexing?
+  - [ ] Support for map function
+  - [ ] Support for filter function
 - [ ] Support for maps
 - [ ] String interpolation
 - [x] +=, -=, *=, /= operators
@@ -88,6 +90,7 @@ print S
 - [ ] Merge `Var` and `Mut` (?)
 - [ ] Need to take line breaks into account to avoid cases where parsing fails because it "continues" on the next line, e.g. `mut b\nb = '2'`
 - [ ] Remove unused testing code (Cosy.hx + tests/)
+- [ ] Make array concat be simply `+`
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
