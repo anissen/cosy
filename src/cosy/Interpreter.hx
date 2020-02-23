@@ -294,7 +294,7 @@ class Interpreter {
 
     function stringify(v: Any) :String {
         if (v == null) return 'nil';
-        return Std.string(v);
+        return '$v';
     }
 }
 
