@@ -411,6 +411,8 @@ cosy.Interpreter = class cosy_Interpreter {
 			var _g14 = statement.declarations;
 			var _g13 = statement.name;
 			this.environment.define(_g13.lexeme,null);
+			var previousEnv = this.environment;
+			this.environment = new cosy.Environment(this.environment);
 			var fields = new haxe.ds.StringMap();
 			var _g7 = 0;
 			while(_g7 < _g14.length) {
@@ -440,6 +442,7 @@ cosy.Interpreter = class cosy_Interpreter {
 				default:
 				}
 			}
+			this.environment = previousEnv;
 			this.environment.assign(_g13,new cosy.StructInstance(_g13,fields));
 			break;
 		case 12:
@@ -741,7 +744,7 @@ cosy.Interpreter = class cosy_Interpreter {
 		if(v == null) {
 			return "nil";
 		}
-		return Std.string(v);
+		return "" + Std.string(v);
 	}
 }
 cosy.Interpreter.__name__ = true;
@@ -2142,7 +2145,17 @@ cosy.Resolver = class cosy_Resolver {
 			this.resolveLocal(expr,_g23,true);
 			break;
 		case 11:
-			this.resolveLocal(expr,expr.name,true);
+			var _g10 = expr.decls;
+			var _g9 = expr.name;
+			var _g3 = 0;
+			while(_g3 < _g10.length) {
+				var decl = _g10[_g3];
+				++_g3;
+				if(decl._hx_index == 1) {
+					this.resolveExpr(decl.value);
+				}
+			}
+			this.resolveLocal(expr,_g9,true);
 			break;
 		case 12:
 			this.resolveExpr(expr.right);
@@ -2615,6 +2628,15 @@ cosy.StructInstance = class cosy_StructInstance {
 		} else {
 			_this1.h[key1] = value;
 		}
+	}
+	toString() {
+		var _g = [];
+		var _g1 = new haxe.iterators.MapKeyValueIterator(this.fields);
+		while(_g1.hasNext()) {
+			var _g2 = _g1.next();
+			_g.push("" + _g2.key + " = " + Std.string(_g2.value));
+		}
+		return "" + this.structName.lexeme + " instance { " + _g.join(", ") + " }";
 	}
 }
 cosy.StructInstance.__name__ = true;
