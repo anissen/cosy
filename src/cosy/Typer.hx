@@ -57,6 +57,7 @@ class Typer {
 		switch stmt {
 			case Block(statements): typeStmts(statements);
 			case Break(keyword):
+			case Continue(keyword):
 			case Class(name, superclass, methods): typeStmts(methods);
 			case Var(name, type, init): typeVar(name, type, init);
             case Mut(name, type, init): typeVar(name, type, init);

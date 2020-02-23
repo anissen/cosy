@@ -3,6 +3,7 @@ package cosy;
 enum Stmt {
 	Block(statements:Array<Stmt>);
 	Break(keyword:Token);
+	Continue(keyword:Token);
 	Class(name:Token, superclass:Expr, methods:Array<Stmt>);
 	Expression(e:Expr);
 	For(keyword:Token, name:Token, from:Expr, to:Expr, body:Array<Stmt>);

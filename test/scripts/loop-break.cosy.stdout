@@ -1,3 +1,4 @@
+for min..max
 0
 still 0
 1
@@ -5,8 +6,15 @@ still 1
 2
 still 2
 3
+for array
+3
 still 3
 4
-still 4
-5
-all done!
+for
+0
+still 0
+1
+still 1
+2
+still 2
+3

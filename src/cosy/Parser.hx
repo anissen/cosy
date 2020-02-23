@@ -41,6 +41,7 @@ class Parser {
 		if (match([Print])) return printStatement();
 		if (match([Return])) return returnStatement();
 		if (match([Break])) return Break(previous());
+		if (match([Continue])) return Continue(previous());
 		if (match([LeftBrace])) return Block(block());
 		return expressionStatement();
 	}

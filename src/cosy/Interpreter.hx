@@ -30,6 +30,7 @@ class Interpreter {
             case Block(statements):
                 executeBlock(statements, new Environment(environment));
             case Break(keyword): throw new Break();
+            case Continue(keyword): throw new Continue();
             case Class(name, superclass, meths):
                 var superclass:Klass =
                     if(superclass != null) {
@@ -66,21 +67,31 @@ class Interpreter {
                 try {
                     for (counter in (fromVal :Int)...(toVal :Int)) {
                         if (name != null) env.define(name.lexeme, counter);
-                        executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                        try {
+                            executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                        } catch (err: Continue) {}
                     }
-                } catch(err: Break) {
-
-                }
+                } catch(err: Break) {}
             case ForArray(name, array, body):
                 var arr :Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
                 var env = new Environment(environment);
-                for (elem in arr) {
-                    env.define(name.lexeme, elem);
-                    executeBlock(body, env);
-                }
+                try {
+                    for (elem in arr) {
+                        env.define(name.lexeme, elem);
+                        try {
+                            executeBlock(body, env);
+                        } catch (err: Continue) {}
+                    }
+                } catch (err: Break) {}
             case ForCondition(cond, body):
                 var env = new Environment(environment);
-                while(cond != null ? isTruthy(evaluate(cond)) : true) executeBlock(body, env);
+                try {
+                    while(cond != null ? isTruthy(evaluate(cond)) : true) {
+                        try {
+                            executeBlock(body, env);
+                        } catch (err: Continue) {}
+                    }
+                } catch (err: Break) {}
             case Function(name, params, body, returnType):
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):

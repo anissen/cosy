@@ -1,0 +1,14 @@
+for min..max
+0
+1
+skip #2
+3
+for array
+3
+skip value 4
+5
+for
+1
+skip #2
+3
+4

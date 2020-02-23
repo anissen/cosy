@@ -48,6 +48,7 @@ class Resolver {
 				resolveStmts(statements);
 				endScope();
             case Break(keyword):
+            case Continue(keyword):
 			case Class(name, superclass, methods):
 				var enclosingClass = currentClass;
 				currentClass = Class;
