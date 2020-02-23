@@ -1,39 +1,29 @@
-fn f() {
-	for 0..2 {
-		print 'loop'
-	}
+for 0..2 {
+    print 'loop'
 }
 
-fn f1() {
-    for j in 0..2 {
-        print 'loop #' + j
-    }
-    var from = 2
-    var to = 4
-    for j in from..to {
-        print 'loop #' + j
-    }
+
+for j in 0..2 {
+    print 'loop #' + j
+}
+var from = 2
+var to = 4
+for j in from..to {
+    print 'loop #' + j
 }
 
-fn f2() {
-    mut i = 0
-    for i < 5 {
-        print 'conditional loop #' + i
-        i = i + 1
-        if (i >= 3) return _
-    }
+
+mut i = 0
+for i < 5 {
+    print 'conditional loop #' + i
+    i = i + 1
+    if (i >= 3) break
 }
 
-fn f3() {
-    mut j = 0
-    for {
-        print 'infinite loop #' + j
-        j = j + 1
-        if (j >= 3) return _
-    }
-}
 
-f()
-f1()
-f2()
-f3()
+mut j = 0
+for {
+    print 'infinite loop #' + j
+    j = j + 1
+    if (j >= 3) break
+}

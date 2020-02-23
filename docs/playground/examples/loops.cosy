@@ -8,13 +8,9 @@ for i < 3 {
     i = i + 1
 }
 
-fn f() {
-    mut j = 0
-    for {
-        print 'infinite loop #' + j
-        j = j + 1
-        if (j >= 3) return _
-    }
+mut j = 0
+for {
+    print 'infinite loop #' + j
+    j = j + 1
+    if (j >= 3) break
 }
-
-f()
