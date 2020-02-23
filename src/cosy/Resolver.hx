@@ -29,6 +29,8 @@ class Resolver {
         var returnToken = null;
         for (stmt in stmts) {
             switch stmt {
+                case Break(kw): returnToken = kw;
+                case Continue(kw): returnToken = kw;
                 case Return(kw, _): returnToken = kw;
                 case _:
                     if (returnToken != null) {

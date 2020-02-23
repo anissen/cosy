@@ -1,2 +1,3 @@
 [line 5] Error at "return": Unreachable code after return statement.
-[line 14] Error at "return": Unreachable code after return statement.
+[line 13] Error at "break": Unreachable code after return statement.
+[line 19] Error at "continue": Unreachable code after return statement.

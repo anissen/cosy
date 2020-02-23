@@ -8,12 +8,14 @@ fn f() {
 
 f()
 
-fn f2() {
-    for (true) {
-        print 'while: before return'
-        return _
-        print 'while: after return'
-    }
+for true {
+    print 'before break'
+    break
+    print 'after break'
 }
 
-f2()
+for 0..3 {
+    print 'before continue'
+    continue
+    print 'after continue'
+}
