@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/anissen/cosy">
-    <img src="./cosy-logo.svg" height="50%" width="50%">
+    <img src="./cosy-logo.svg" height="40%" width="40%">
   </a>
 
   <p align="center">
