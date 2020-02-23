@@ -88,12 +88,15 @@ class Interpreter {
                 throw new Return(value);
             case Struct(name, declarations):
                 environment.define(name.lexeme, null);
+                var previousEnv = environment;
+                environment = new Environment(environment);
                 var fields:Map<String, Any> = new Map();
                 for (decl in declarations) switch decl {
                     case Var(name, type, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
                     case Mut(name, type, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
                     case _: // should never happen
                 }
+                environment = previousEnv;
                 var struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
             case Var(name, type, init):

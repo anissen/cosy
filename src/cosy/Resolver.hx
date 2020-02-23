@@ -185,6 +185,12 @@ class Resolver {
 				}
                 resolveLocal(expr, kw, true);
             case StructInit(name, decls):
+                for (decl in decls) {
+                    switch decl {
+                        case Assign(name, value): resolveExpr(value);
+                        case _:
+                    }
+                }
                 resolveLocal(expr, name, true);
 			case This(kw):
 				if (currentClass == None) Cosy.error(kw, 'Cannot use "this" outside of a class.');

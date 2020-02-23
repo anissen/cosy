@@ -6,7 +6,7 @@ struct Point {
 
 struct Test {
     var a Array Num
-    var p Point
+    var p = Point { x = 4, y = 12 }
 }
 
 {
@@ -22,4 +22,12 @@ struct Test {
 
     var test = Test2 { a = [3, 4, 5] }
     print test
+}
+
+{
+    struct First {}
+    struct Second {
+        var value = First {}
+    }
+    print Second {}
 }
