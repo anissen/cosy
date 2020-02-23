@@ -62,7 +62,7 @@ class JavaScriptPrinter {
 	public function printExpr(expr:Expr):String {
 		return switch expr {
             case ArrayLiteral(keyword, exprs): '[' + exprs.map(printExpr).join(', ') + ']';
-			case Assign(name, value): '${name.lexeme} = ${printExpr(value)}';
+			case Assign(name, op, value): '${name.lexeme} ${op.lexeme} ${printExpr(value)}';
 			case Binary(left, op, right): '${printExpr(left)} ${op.type.match(EqualEqual) ? '===' : op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): 
                 var calleeName = printExpr(callee);

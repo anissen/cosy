@@ -250,12 +250,12 @@ class Parser {
 	function assignment():Expr {
 		var expr = or();
 		
-		if (match([Equal])) {
+		if (match([Equal, PlusEqual, MinusEqual, SlashEqual, StarEqual])) {
 			var equals = previous();
 			var value = assignment();
 			
 			switch expr {
-				case Variable(name): return Assign(name, value);
+				case Variable(name): return Assign(name, equals, value);
 				case Get(obj, name): return Set(obj, name, value);
 				case _:
 			}

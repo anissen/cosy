@@ -58,10 +58,9 @@ class Scanner {
 			case '['.code: addToken(LeftBracket);
 			case ']'.code: addToken(RightBracket);
 			case ','.code: addToken(Comma);
-			// case ':'.code: addToken(Colon);
-			case '-'.code: addToken(Minus);
-			case '+'.code: addToken(Plus);
-			case '*'.code: addToken(Star);
+			case '-'.code: addToken(match('='.code) ? MinusEqual : Minus);
+			case '+'.code: addToken(match('='.code) ? PlusEqual : Plus);
+			case '*'.code: addToken(match('='.code) ? StarEqual : Star);
 			case '_'.code if (!isAlpha(peek())): addToken(Underscore);
 			case '.'.code: addToken(match('.'.code) ? DotDot : Dot);
 			case '!'.code: addToken(match('='.code) ? BangEqual : Bang);
@@ -72,7 +71,7 @@ class Scanner {
 				if(match('/'.code)) {
 					while(peek() != '\n'.code && !isAtEnd()) advance();
 				} else {
-					addToken(Slash);
+					addToken(match('='.code) ? SlashEqual : Slash);
 				}
 			case ' '.code | '\r'.code | '\t'.code: // Ignore whitespace.
 			case '\n'.code: line++;

@@ -138,7 +138,7 @@ class Typer {
                     }
                 }
                 return Array(arrayType);
-			case Assign(name, value):
+			case Assign(name, op, value):
                 var assigningType = typeExpr(value);
                 var varType = variableTypes.get(name.lexeme);
                 if (varType.match(Unknown)) {
@@ -223,7 +223,7 @@ class Typer {
                 
                 for (decl in decls) {
                     switch decl {
-                        case Assign(name, value):
+                        case Assign(name, op, value):
                             // TODO: These tests should be done in Resolver instead
                             if (!structMembers.exists(name.lexeme)) {
                                 Cosy.error(name, 'No member named "${name.lexeme}" in struct ${structName.lexeme}');

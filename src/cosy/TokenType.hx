@@ -2,7 +2,15 @@ package cosy;
 
 enum TokenType {
 	LeftParen; RightParen; LeftBrace; RightBrace; LeftBracket; RightBracket;
-	Comma; /* Colon; */ Dot; DotDot; Minus; Plus; Slash; Star; Underscore;
+    
+    Comma; Dot; DotDot;
+
+    Underscore;
+    
+    Minus; MinusEqual;
+    Plus; PlusEqual;
+    Slash; SlashEqual;
+    Star; StarEqual;
 	
 	Bang; BangEqual;
 	Equal; EqualEqual;

@@ -54,7 +54,7 @@ class AstPrinter {
 	public function printExpr(expr:Expr):String {
 		return switch expr {
             case ArrayLiteral(keyword, exprs): '[' + [ for (expr in exprs) ${printExpr(expr)} ].join(',') + ']';
-			case Assign(name, value): '${name.lexeme} = ${printExpr(value)}';
+			case Assign(name, op, value): '${name.lexeme} ${op.lexeme} ${printExpr(value)}';
 			case Binary(left, op, right): '${printExpr(left)} ${op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): '${printExpr(callee)}(${[ for (arg in arguments) printExpr(arg) ].join(', ')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';

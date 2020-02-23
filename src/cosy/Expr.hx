@@ -2,7 +2,7 @@ package cosy;
 
 enum Expr {
 	ArrayLiteral(keyword:Token, exprs:Array<Expr>);
-    Assign(name:Token, value:Expr);
+    Assign(name:Token, op:Token, value:Expr);
 	Binary(left:Expr, op:Token, right:Expr);
 	Call(callee:Expr, paren:Token, arguments:Array<Expr>);
 	Get(obj:Expr, name:Token);

@@ -131,8 +131,38 @@ class Interpreter {
         return switch expr {
             case ArrayLiteral(keyword, exprs):
                 [ for (expr in exprs) evaluate(expr) ];
-            case Assign(name, value):
-                var value = evaluate(value);
+            case Assign(name, op, value):
+                var value: Any = switch op.type {
+                    case Equal: evaluate(value);
+                    case PlusEqual:
+                        var left = lookUpVariable(name, expr);
+                        var right = evaluate(value);
+                        if (Std.is(left, Float) && Std.is(right, Float))
+                            (left:Float) + (right:Float);
+                        else if (Std.is(left, Float) && Std.is(right, String))
+                            (left:Float) + (right:String);
+                        else if (Std.is(left, String) && Std.is(right, Float))
+                            (left:String) + (right:Float);
+                        else if (Std.is(left, String) && Std.is(right, String))
+                            (left:String) + (right:String);
+                        else throw new RuntimeError(op, 'Operands cannot be concatinated.');
+                    case MinusEqual:
+                        var left = lookUpVariable(name, expr);
+                        var right = evaluate(value);
+                        checkNumberOperands(op, left, right);
+                        (left: Float) - (right: Float);
+                    case SlashEqual:
+                        var left = lookUpVariable(name, expr);
+                        var right = evaluate(value);
+                        checkNumberOperands(op, left, right);
+                        (left: Float) / (right: Float);
+                    case StarEqual:
+                        var left = lookUpVariable(name, expr);
+                        var right = evaluate(value);
+                        checkNumberOperands(op, left, right);
+                        (left: Float) * (right: Float);
+                    case _: throw 'error';
+                }
                 switch locals.get(expr) {
                     case null: globals.assign(name, value);
                     case distance: environment.assignAt(distance, name, value);
@@ -238,7 +268,7 @@ class Interpreter {
                 if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
                 for (decl in decls) {
                     switch decl {
-                        case Assign(variableName, value): structObj.set(variableName, evaluate(value));
+                        case Assign(variableName, op, value): structObj.set(variableName, evaluate(value));
                         case _: // unreachable
                     }
                 }

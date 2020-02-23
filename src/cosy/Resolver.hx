@@ -145,7 +145,7 @@ class Resolver {
 		switch expr {
             case ArrayLiteral(keyword, exprs):
                 for (expr in exprs) resolveExpr(expr);
-			case Assign(name, value):
+			case Assign(name, op, value):
                 var variable = findInScopes(name);
                 if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign non-mutable variable.');
 				resolveExpr(value);
@@ -187,7 +187,7 @@ class Resolver {
             case StructInit(name, decls):
                 for (decl in decls) {
                     switch decl {
-                        case Assign(name, value): resolveExpr(value);
+                        case Assign(name, op, value): resolveExpr(value);
                         case _:
                     }
                 }
