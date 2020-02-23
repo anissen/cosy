@@ -18,8 +18,8 @@ class StructInstance {
         if (!fields.exists(name.lexeme)) return Cosy.error(name, '${name.lexeme} is not a property of ${name.lexeme}');
 		fields.set(name.lexeme, value);
 	}
-	
-	public function toString() {
+    
+    @:keep public function toString() :String {
         var fieldsArray = [ for (key => value in fields) '$key = $value' ];
 		return '${structName.lexeme} instance { ${fieldsArray.join(', ')} }';
 	}
