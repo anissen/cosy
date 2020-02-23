@@ -8,6 +8,7 @@ class Scanner {
 	
 	static final keywords = [
 		'and' => And,
+		'break' => Break,
 		'class' => Class, // TODO: remove
 		'else' => Else,
 		'false' => False,

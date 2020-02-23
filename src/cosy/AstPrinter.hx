@@ -26,7 +26,8 @@ class AstPrinter {
 
 	public function printStmt(statement:Stmt):String {
 		return switch statement {
-			case Block(statements): printBlock(statements);
+            case Block(statements): printBlock(statements);
+            case Break(keyword): keyword.lexeme;
 			case Class(name, superclass, methods):
 				var declaration = 'class ${name.lexeme}' + (superclass != null ? ' < ${printExpr(superclass)}' : '');
 				isInClass = true;

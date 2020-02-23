@@ -54,7 +54,7 @@ print S
 - [x] Optimization phase
 - [ ] Improve readme/documentation
 - [x] Compile-time error if a variable is marked as `mut` but is not reassigned
-- [ ] `break` keyword
+- [x] `break` keyword
 - [ ] `continue` keyword
 - [ ] A more convient way to handle a standard library
 - [ ] Replace `return _` with `return`. Look at how semicolons are handling in the original implementation.

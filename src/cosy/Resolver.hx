@@ -44,9 +44,10 @@ class Resolver {
 	function resolveStmt(stmt:Stmt) {
 		switch stmt {
 			case Block(statements):
-				beginScope();
+                beginScope();
 				resolveStmts(statements);
 				endScope();
+            case Break(keyword):
 			case Class(name, superclass, methods):
 				var enclosingClass = currentClass;
 				currentClass = Class;

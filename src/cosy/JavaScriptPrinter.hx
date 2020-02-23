@@ -30,7 +30,8 @@ class JavaScriptPrinter {
 
 	public function printStmt(statement:Stmt):String {
 		return switch statement {
-			case Block(statements): printBlock(statements);
+            case Block(statements): printBlock(statements);
+            case Break(keyword): 'break;';
 			case Class(name, superclass, methods):
                 var className = name.lexeme;
                 classNames.push(className);

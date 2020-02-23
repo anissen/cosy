@@ -56,6 +56,7 @@ class Typer {
 	function typeStmt(stmt:Stmt) {
 		switch stmt {
 			case Block(statements): typeStmts(statements);
+			case Break(keyword):
 			case Class(name, superclass, methods): typeStmts(methods);
 			case Var(name, type, init): typeVar(name, type, init);
             case Mut(name, type, init): typeVar(name, type, init);

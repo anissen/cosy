@@ -29,6 +29,7 @@ class Interpreter {
         switch statement {
             case Block(statements):
                 executeBlock(statements, new Environment(environment));
+            case Break(keyword): throw new Break();
             case Class(name, superclass, meths):
                 var superclass:Klass =
                     if(superclass != null) {
@@ -62,9 +63,13 @@ class Interpreter {
                 var toVal = evaluate(to);
                 if (!Std.is(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
-                for (counter in (fromVal :Int)...(toVal :Int)) {
-                    if (name != null) env.define(name.lexeme, counter);
-                    executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                try {
+                    for (counter in (fromVal :Int)...(toVal :Int)) {
+                        if (name != null) env.define(name.lexeme, counter);
+                        executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                    }
+                } catch(err: Break) {
+
                 }
             case ForArray(name, array, body):
                 var arr :Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
