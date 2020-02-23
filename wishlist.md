@@ -32,7 +32,6 @@ print S
     - [ ] Useless expressions, e.g. `'hello world'`
     - [ ] Function and variable names uses snake_case
     - [ ] Struct names uses PascalCase
-- [ ] Class functions cannot override other functions (must be uniquely named)
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
 - [ ] Replace classes with 
@@ -50,8 +49,7 @@ print S
   - [ ] Support for array indexing?
 - [ ] Support for maps
 - [ ] String interpolation
-- [ ] ++/-- operators
-- [ ] +=/-=/*=//= operators
+- [x] +=, -=, *=, /= operators
 - [x] Typing phase
 - [x] Optimization phase
 - [ ] Improve readme/documentation
@@ -77,7 +75,7 @@ print S
 - [ ] Make semicolons trigger a warning instead of an error?
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
-- [ ] Pure functions as default (cannot modify variables outside scope)
+- [ ] Pure functions as default (cannot modify variables outside scope, must be deterministic, can only call other pure functions)
 - [ ] "Transform" functions that promote data-oriented design; must be pure, must not include `if` + called functions must satify the same constraints. Could be done with annotations, e.g. `[transform] fn trans() { ... }`
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
