@@ -32,8 +32,8 @@ print 'hello world'
 * Lambda functions (anonymous functions).
 * Gradural typing.
 * Small and concise.
-  * Cosy is made with fewer than 2100 lines of source code.
-  * Only 19 keywords (`and`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `struct`, `true`, `var`, `Bool`, `Num`, `Str`, `Array` and `Fn`).
+  * Cosy is made with fewer than 2200 lines of source code.
+  * Few keywords (`and`, `break`, `continue`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `struct`, `true`, `var`, `Bool`, `Num`, `Str`, `Array` and `Fn`).
 * Safety.
   * Variable are immutable by default.
   * No `null` or `nil`.
