@@ -7,7 +7,11 @@ class StructInstance {
 	public function new(name: Token, fields: Map<String, Any>) {
 		this.structName = name;
 		this.fields = fields;
-	}
+    }
+    
+    public function newInstance() {
+        return new StructInstance(structName, fields.copy());
+    }
 	
 	public function get(name:Token):Any {
 		if (fields.exists(name.lexeme)) return fields.get(name.lexeme);

@@ -282,6 +282,7 @@ class Interpreter {
             case StructInit(name, decls):
                 var structObj :StructInstance = lookUpVariable(name, expr);
                 if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
+                structObj = structObj.newInstance();
                 for (decl in decls) {
                     switch decl {
                         case Assign(variableName, op, value): structObj.set(variableName, evaluate(value));

@@ -1,0 +1,8 @@
+[line 19] Error at "x": Member already assigned in initializer.
+[line 24] Error at "Point": Member "a" not initialized.
+[line 31] Error at "y": Member is not mutable.
+[line 32] Error at "z": No member named "z" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
+[line 33] Error at "w": No member named "w" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
+[line 42] Error at "p": Cannot assign Struct { a Mut(Str), x Mut(Num) } to Struct { a Array(Num), x Mut(Num), y Num }
+[line 49] Error at "Point": Member "a" not initialized.
+[line 52] Error at "Point": Member "a" not initialized.

@@ -7,14 +7,6 @@ fun x() { print "hej" }
 ```
 - [ ] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
 - [ ] Array method calls is not checked for immutability
-- [ ] Printing a struct name (`print Struct`) should fail
-- [ ] The following changes the `S` permanently (the fix is probably to have both a Struct and a StructInstance):
-```js
-struct S { var x = 4 }
-print S
-print S { x = 6 }
-print S
-```
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)

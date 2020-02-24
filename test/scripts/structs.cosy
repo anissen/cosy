@@ -1,3 +1,13 @@
+{
+    struct S { mut x = 4 }
+    print S
+    print S { x = 6 }
+    print S
+    mut s = S {}
+    print s
+    s.x = 1
+    print s
+}
 
 struct Point {
 	mut x Num = 2
@@ -5,49 +15,9 @@ struct Point {
     var a Array Num
 }
 
-struct Fake {
-	mut x Num = 2
-    mut a = '4'
-}
-
 {
     mut point = Point { x = 5, y = 13, a = [] } // ok
     print point
-}
-
-{
-    mut point = Point { x = 5, y = 13, a = [], x = 3 } // fails (x initialized twice)
-    print point
-}
-
-{
-    mut point = Point { x = 5, y = 13 } // fails (a is not initialized)
-    print point
-}
-
-{
-    mut point = Point { a = [] } // ok
-    point.x = 555
-    point.y = 7 // fails (y is not mut)
-    point.z = 8 // fails (z is not a member)
-    point.w = fn() { // fails (w is not a member)
-    	print 'hello'
-    }
-    print point
-    print point.x + ', ' + point.y
-}
-
-{
-    mut p = Point { a = [] }
-    p = Fake {} // fails (Point type != Fake type)
-    print p
-}
-
-{
-    fn struct_as_arg(s) {
-        print s
-    }
-    struct_as_arg(Point { x = 3, y = 4, a = [] })
 }
 
 {
@@ -57,4 +27,21 @@ struct Fake {
     }
 
     print Test { a = Point { x = 666, y = 777, a = [] }, b = 'hej' }
+}
+
+{
+    struct Test2 {
+        var a Array Num
+        var p Point = Point { x = 4, y = 12, a = [] }
+    }
+
+    var test = Test2 { a = [3, 4, 5] }
+    print test
+}
+
+{
+    fn struct_as_arg(s) {
+        print s
+    }
+    struct_as_arg(Point { x = 3, y = 4, a = [] })
 }
