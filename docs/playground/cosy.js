@@ -744,6 +744,7 @@ cosy.Interpreter = class cosy_Interpreter {
 			if(!((structObj) instanceof cosy.StructInstance)) {
 				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g10,"Struct initializer on non-struct object."));
 			}
+			structObj = structObj.newInstance();
 			var _g3 = 0;
 			while(_g3 < _g111.length) {
 				var decl = _g111[_g3];
@@ -2738,6 +2739,9 @@ cosy.StructInstance = class cosy_StructInstance {
 		this.structName = name;
 		this.fields = fields;
 	}
+	newInstance() {
+		return new cosy.StructInstance(this.structName,this.fields.copy());
+	}
 	get(name) {
 		var key = name.lexeme;
 		var _this = this.fields;
@@ -3558,6 +3562,20 @@ haxe.ds.StringMap = class haxe_ds_StringMap {
 			}
 		}
 		return out;
+	}
+	copy() {
+		var copied = new haxe.ds.StringMap();
+		var key = this.keys();
+		while(key.hasNext()) {
+			var key1 = key.next();
+			var value = __map_reserved[key1] != null ? this.getReserved(key1) : this.h[key1];
+			if(__map_reserved[key1] != null) {
+				copied.setReserved(key1,value);
+			} else {
+				copied.h[key1] = value;
+			}
+		}
+		return copied;
 	}
 }
 haxe.ds.StringMap.__name__ = true;
