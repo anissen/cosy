@@ -1769,7 +1769,16 @@ cosy.Parser = class cosy_Parser {
 				if(params.length >= 255) {
 					this.error(this.peek(),"Cannot have more than 255 parameters.");
 				}
-				params.push({ name : this.consume(cosy.TokenType.Identifier,"Expect parameter name."), type : this.paramType()});
+				var mutable = this.match([cosy.TokenType.Mut]);
+				var name = this.consume(cosy.TokenType.Identifier,"Expect parameter name.");
+				var type = this.paramType();
+				if(mutable) {
+					if(type._hx_index != 9 && type._hx_index != 0) {
+						this.error(name,"Only struct parameters can be marked as `mut`.");
+					}
+					type = cosy.VariableType.Mutable(type);
+				}
+				params.push({ name : name, type : type});
 				if(!this.match([cosy.TokenType.Comma])) {
 					break;
 				}
@@ -2326,8 +2335,9 @@ cosy.Resolver = class cosy_Resolver {
 		while(_g < params.length) {
 			var param = params[_g];
 			++_g;
-			this.declare(param.name);
-			this.define(param.name);
+			var mutable = param.type._hx_index == 10;
+			this.declare(param.name,mutable);
+			this.define(param.name,mutable);
 		}
 		this.resolveStmts(body);
 		this.endScope();
@@ -2772,11 +2782,18 @@ cosy.StructInstance = class cosy_StructInstance {
 		}
 	}
 	toString() {
+		var formatValue = function(value) {
+			if(typeof(value) == "string") {
+				return "\"" + Std.string(value) + "\"";
+			} else {
+				return "" + Std.string(value);
+			}
+		};
 		var _g = [];
 		var _g1 = new haxe.iterators.MapKeyValueIterator(this.fields);
 		while(_g1.hasNext()) {
 			var _g2 = _g1.next();
-			_g.push("" + _g2.key + " = " + Std.string(_g2.value));
+			_g.push("" + _g2.key + " = " + formatValue(_g2.value));
 		}
 		return "" + this.structName.lexeme + " instance { " + _g.join(", ") + " }";
 	}
@@ -2953,7 +2970,16 @@ cosy.Typer = class cosy_Typer {
 			}
 			break;
 		case 10:
-			this.typeVar(stmt.name,stmt.type,stmt.init);
+			var _g3 = stmt.name;
+			var this1 = this.variableTypes;
+			var key3 = _g3.lexeme;
+			var value2 = cosy.VariableType.Mutable(this.typeVar(_g3,stmt.type,stmt.init));
+			var _this3 = this1;
+			if(__map_reserved[key3] != null) {
+				_this3.setReserved(key3,value2);
+			} else {
+				_this3.h[key3] = value2;
+			}
 			break;
 		case 11:
 			this.typeExpr(stmt.e);
@@ -2981,64 +3007,73 @@ cosy.Typer = class cosy_Typer {
 				switch(decl._hx_index) {
 				case 10:
 					var _g2 = decl.init;
-					var _g3 = decl.name;
-					var key3 = _g3.lexeme;
-					var _this3 = structMeta.members;
-					var value2 = { mutable : true, initialized : _g2 != null};
-					if(__map_reserved[key3] != null) {
-						_this3.setReserved(key3,value2);
-					} else {
-						_this3.h[key3] = value2;
-					}
-					var key4 = _g3.lexeme;
-					var value3 = cosy.VariableType.Mutable(this.typeVar(_g3,decl.type,_g2));
+					var _g4 = decl.name;
+					var key4 = _g4.lexeme;
+					var _this4 = structMeta.members;
+					var value3 = { mutable : true, initialized : _g2 != null};
 					if(__map_reserved[key4] != null) {
-						decls.setReserved(key4,value3);
+						_this4.setReserved(key4,value3);
 					} else {
-						decls.h[key4] = value3;
+						_this4.h[key4] = value3;
+					}
+					var key5 = _g4.lexeme;
+					var value4 = cosy.VariableType.Mutable(this.typeVar(_g4,decl.type,_g2));
+					if(__map_reserved[key5] != null) {
+						decls.setReserved(key5,value4);
+					} else {
+						decls.h[key5] = value4;
 					}
 					break;
 				case 14:
 					var _g5 = decl.init;
 					var _g31 = decl.name;
-					var key5 = _g31.lexeme;
-					var _this4 = structMeta.members;
-					var value4 = { mutable : false, initialized : _g5 != null};
-					if(__map_reserved[key5] != null) {
-						_this4.setReserved(key5,value4);
-					} else {
-						_this4.h[key5] = value4;
-					}
 					var key6 = _g31.lexeme;
-					var value5 = this.typeVar(_g31,decl.type,_g5);
+					var _this5 = structMeta.members;
+					var value5 = { mutable : false, initialized : _g5 != null};
 					if(__map_reserved[key6] != null) {
-						decls.setReserved(key6,value5);
+						_this5.setReserved(key6,value5);
 					} else {
-						decls.h[key6] = value5;
+						_this5.h[key6] = value5;
+					}
+					var key7 = _g31.lexeme;
+					var value6 = this.typeVar(_g31,decl.type,_g5);
+					if(__map_reserved[key7] != null) {
+						decls.setReserved(key7,value6);
+					} else {
+						decls.h[key7] = value6;
 					}
 					break;
 				default:
 					throw new js._Boot.HaxeError("structs can only have var and mut");
 				}
 			}
-			var key7 = _g15.lexeme;
-			var _this5 = this.structsMeta;
-			if(__map_reserved[key7] != null) {
-				_this5.setReserved(key7,structMeta);
-			} else {
-				_this5.h[key7] = structMeta;
-			}
 			var key8 = _g15.lexeme;
-			var value6 = cosy.VariableType.Struct(decls);
-			var _this6 = this.variableTypes;
+			var _this6 = this.structsMeta;
 			if(__map_reserved[key8] != null) {
-				_this6.setReserved(key8,value6);
+				_this6.setReserved(key8,structMeta);
 			} else {
-				_this6.h[key8] = value6;
+				_this6.h[key8] = structMeta;
+			}
+			var key9 = _g15.lexeme;
+			var value7 = cosy.VariableType.Struct(decls);
+			var _this7 = this.variableTypes;
+			if(__map_reserved[key9] != null) {
+				_this7.setReserved(key9,value7);
+			} else {
+				_this7.h[key9] = value7;
 			}
 			break;
 		case 14:
-			this.typeVar(stmt.name,stmt.type,stmt.init);
+			var _g17 = stmt.name;
+			var this2 = this.variableTypes;
+			var key10 = _g17.lexeme;
+			var value8 = this.typeVar(_g17,stmt.type,stmt.init);
+			var _this8 = this2;
+			if(__map_reserved[key10] != null) {
+				_this8.setReserved(key10,value8);
+			} else {
+				_this8.h[key10] = value8;
+			}
 			break;
 		}
 	}
@@ -3050,15 +3085,11 @@ cosy.Typer = class cosy_Typer {
 		if(init != null && !this.matchType(initType,type)) {
 			cosy.Cosy.error(cosy.ErrorDataType.Token(name),"Expected variable to have type " + this.formatType(type) + " but got " + this.formatType(initType) + ".");
 		}
-		var computedType = type._hx_index != 0 ? type : initType;
-		var key = name.lexeme;
-		var _this = this.variableTypes;
-		if(__map_reserved[key] != null) {
-			_this.setReserved(key,computedType);
+		if(type._hx_index != 0) {
+			return type;
 		} else {
-			_this.h[key] = computedType;
+			return initType;
 		}
-		return computedType;
 	}
 	typeExpr(expr) {
 		var ret;
@@ -3087,7 +3118,7 @@ cosy.Typer = class cosy_Typer {
 			var key = _g5.lexeme;
 			var _this = this.variableTypes;
 			var varType = __map_reserved[key] != null ? _this.getReserved(key) : _this.h[key];
-			if(varType == null ? false : varType._hx_index == 0) {
+			if((varType == null ? false : varType._hx_index == 0) || (varType == null ? false : varType._hx_index == 10 && varType.type._hx_index == 0)) {
 				var key1 = _g5.lexeme;
 				var _this1 = this.variableTypes;
 				if(__map_reserved[key1] != null) {
@@ -3096,7 +3127,7 @@ cosy.Typer = class cosy_Typer {
 					_this1.h[key1] = assigningType;
 				}
 			} else if(!this.matchType(varType,assigningType)) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"Cannot assign " + this.formatType(assigningType) + " to " + this.formatType(varType));
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"Cannot assign " + this.formatType(assigningType) + " to " + this.formatType(varType,false));
 			}
 			return assigningType;
 		case 2:
@@ -3113,28 +3144,37 @@ cosy.Typer = class cosy_Typer {
 			var _g15 = expr.$arguments;
 			var _g14 = expr.paren;
 			var calleeType = this.typeExpr(expr.callee);
+			calleeType = calleeType._hx_index == 10 ? calleeType.type : calleeType;
 			var type = cosy.VariableType.Unknown;
-			if(calleeType._hx_index == 6) {
-				var _g2 = calleeType.paramTypes;
+			switch(calleeType._hx_index) {
+			case 0:
+				break;
+			case 5:
+				break;
+			case 6:
+				var _g11 = calleeType.paramTypes;
 				type = calleeType.returnType;
-				var _g6 = [];
-				var _g11 = 0;
-				while(_g11 < _g15.length) _g6.push(this.typeExpr(_g15[_g11++]));
-				if(_g15.length != _g2.length) {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g14),"Expected " + _g2.length + " argument(s) but got " + _g15.length + ".");
+				var _g12 = [];
+				var _g2 = 0;
+				while(_g2 < _g15.length) _g12.push(this.typeExpr(_g15[_g2++]));
+				if(_g15.length != _g11.length) {
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g14),"Expected " + _g11.length + " argument(s) but got " + _g15.length + ".");
 				} else {
-					var _g21 = 0;
-					var _g31 = _g2.length;
-					while(_g21 < _g31) {
-						var i1 = _g21++;
-						if(_g6[i1]._hx_index == 0) {
+					var _g31 = 0;
+					var _g41 = _g11.length;
+					while(_g31 < _g41) {
+						var i1 = _g31++;
+						if(_g12[i1]._hx_index == 0) {
 							cosy.Cosy.warning(cosy.ErrorDataType.Token(_g14),"Argument " + (i1 + 1) + " has type Unknown.");
 						}
-						if(!this.matchType(_g6[i1],_g2[i1])) {
-							cosy.Cosy.error(cosy.ErrorDataType.Token(_g14),"Expected argument " + (i1 + 1) + " to be " + this.formatType(_g2[i1]) + " but got " + this.formatType(_g6[i1]) + ".");
+						if(!this.matchType(_g12[i1],_g11[i1])) {
+							cosy.Cosy.error(cosy.ErrorDataType.Token(_g14),"Expected argument " + (i1 + 1) + " to be " + this.formatType(_g11[i1]) + " but got " + this.formatType(_g12[i1]) + ".");
 						}
 					}
 				}
+				break;
+			default:
+				throw new js._Boot.HaxeError("unexpected");
 			}
 			ret = type;
 			break;
@@ -3142,18 +3182,18 @@ cosy.Typer = class cosy_Typer {
 			var _g17 = expr.name;
 			var objType = this.typeExpr(expr.obj);
 			if(objType._hx_index == 7) {
-				var _g7 = objType.type;
+				var _g6 = objType.type;
 				switch(_g17.lexeme) {
 				case "concat":
-					return cosy.VariableType.Function([cosy.VariableType.Array(_g7)],cosy.VariableType.Void);
+					return cosy.VariableType.Function([cosy.VariableType.Array(_g6)],cosy.VariableType.Void);
 				case "get":
-					return cosy.VariableType.Function([cosy.VariableType.Number],_g7);
+					return cosy.VariableType.Function([cosy.VariableType.Number],_g6);
 				case "length":
 					return cosy.VariableType.Number;
 				case "pop":
-					return cosy.VariableType.Function([],_g7);
+					return cosy.VariableType.Function([],_g6);
 				case "push":
-					return cosy.VariableType.Function([_g7],cosy.VariableType.Void);
+					return cosy.VariableType.Function([_g6],cosy.VariableType.Void);
 				default:
 					cosy.Cosy.error(cosy.ErrorDataType.Token(_g17),"Unknown array property or function.");
 					return cosy.VariableType.Void;
@@ -3173,23 +3213,46 @@ cosy.Typer = class cosy_Typer {
 			ret = cosy.VariableType.Boolean;
 			break;
 		case 8:
+			var _g23 = expr.value;
 			var _g22 = expr.name;
 			var objType1 = this.typeExpr(expr.obj);
-			if(objType1._hx_index == 8) {
-				var _g9 = objType1.variables;
+			switch(objType1._hx_index) {
+			case 8:
+				var _g7 = objType1.variables;
 				var key2 = _g22.lexeme;
-				if(__map_reserved[key2] != null ? _g9.existsReserved(key2) : _g9.h.hasOwnProperty(key2)) {
-					var valueType = this.typeExpr(expr.value);
+				if(__map_reserved[key2] != null ? _g7.existsReserved(key2) : _g7.h.hasOwnProperty(key2)) {
+					var valueType = this.typeExpr(_g23);
 					var key3 = _g22.lexeme;
-					var structDeclType = __map_reserved[key3] != null ? _g9.getReserved(key3) : _g9.h[key3];
+					var structDeclType = __map_reserved[key3] != null ? _g7.getReserved(key3) : _g7.h[key3];
 					if(!(structDeclType == null ? false : structDeclType._hx_index == 10)) {
 						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Member is not mutable.");
 					} else if(!this.matchType(structDeclType,valueType)) {
 						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Expected value of type " + this.formatType(structDeclType) + " but got " + this.formatType(valueType));
 					}
 				} else {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1));
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1,false));
 				}
+				break;
+			case 10:
+				var _g13 = objType1.type;
+				if(_g13._hx_index == 8) {
+					var _g21 = _g13.variables;
+					var key4 = _g22.lexeme;
+					if(__map_reserved[key4] != null ? _g21.existsReserved(key4) : _g21.h.hasOwnProperty(key4)) {
+						var valueType1 = this.typeExpr(_g23);
+						var key5 = _g22.lexeme;
+						var structDeclType1 = __map_reserved[key5] != null ? _g21.getReserved(key5) : _g21.h[key5];
+						if(!(structDeclType1 == null ? false : structDeclType1._hx_index == 10)) {
+							cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Member is not mutable.");
+						} else if(!this.matchType(structDeclType1,valueType1)) {
+							cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Expected value of type " + this.formatType(structDeclType1) + " but got " + this.formatType(valueType1));
+						}
+					} else {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1,false));
+					}
+				}
+				break;
+			default:
 			}
 			ret = cosy.VariableType.Unknown;
 			break;
@@ -3202,9 +3265,9 @@ cosy.Typer = class cosy_Typer {
 		case 11:
 			var _g111 = expr.decls;
 			var _g10 = expr.name;
-			var key4 = _g10.lexeme;
+			var key6 = _g10.lexeme;
 			var _this2 = this.variableTypes;
-			var structType = __map_reserved[key4] != null ? _this2.getReserved(key4) : _this2.h[key4];
+			var structType = __map_reserved[key6] != null ? _this2.getReserved(key6) : _this2.h[key6];
 			var assignedMembers = [];
 			var structMembers;
 			if(structType == null) {
@@ -3214,36 +3277,36 @@ cosy.Typer = class cosy_Typer {
 			} else {
 				throw new js._Boot.HaxeError("unexpected");
 			}
-			var _g12 = 0;
-			while(_g12 < _g111.length) {
-				var decl = _g111[_g12];
-				++_g12;
+			var _g16 = 0;
+			while(_g16 < _g111.length) {
+				var decl = _g111[_g16];
+				++_g16;
 				if(decl._hx_index == 1) {
-					var _g13 = decl.name;
-					var key5 = _g13.lexeme;
-					if(!(__map_reserved[key5] != null ? structMembers.existsReserved(key5) : structMembers.h.hasOwnProperty(key5))) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g13),"No member named \"" + _g13.lexeme + "\" in struct " + _g10.lexeme);
+					var _g18 = decl.name;
+					var key7 = _g18.lexeme;
+					if(!(__map_reserved[key7] != null ? structMembers.existsReserved(key7) : structMembers.h.hasOwnProperty(key7))) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"No member named \"" + _g18.lexeme + "\" in struct " + _g10.lexeme);
 						break;
-					} else if(assignedMembers.indexOf(_g13.lexeme) != -1) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g13),"Member already assigned in initializer.");
+					} else if(assignedMembers.indexOf(_g18.lexeme) != -1) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Member already assigned in initializer.");
 						break;
 					}
-					var valueType1 = this.typeExpr(decl.value);
-					var key6 = _g13.lexeme;
-					var memberType = __map_reserved[key6] != null ? structMembers.getReserved(key6) : structMembers.h[key6];
-					assignedMembers.push(_g13.lexeme);
-					if(!this.matchType(valueType1,memberType)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g13),"Expected value to be of type " + this.formatType(memberType) + " but got " + this.formatType(valueType1));
+					var valueType2 = this.typeExpr(decl.value);
+					var key8 = _g18.lexeme;
+					var memberType = __map_reserved[key8] != null ? structMembers.getReserved(key8) : structMembers.h[key8];
+					assignedMembers.push(_g18.lexeme);
+					if(!this.matchType(valueType2,memberType)) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Expected value to be of type " + this.formatType(memberType) + " but got " + this.formatType(valueType2));
 					}
 				} else {
 					throw new js._Boot.HaxeError("unexpected");
 				}
 			}
-			var key7 = _g10.lexeme;
+			var key9 = _g10.lexeme;
 			var _this3 = this.structsMeta;
-			var _g23 = new haxe.iterators.MapKeyValueIterator((__map_reserved[key7] != null ? _this3.getReserved(key7) : _this3.h[key7]).members);
-			while(_g23.hasNext()) {
-				var _g32 = _g23.next();
+			var _g24 = new haxe.iterators.MapKeyValueIterator((__map_reserved[key9] != null ? _this3.getReserved(key9) : _this3.h[key9]).members);
+			while(_g24.hasNext()) {
+				var _g32 = _g24.next();
 				var memberName = _g32.key;
 				if(!_g32.value.initialized) {
 					if(assignedMembers.indexOf(memberName) == -1) {
@@ -3257,16 +3320,16 @@ cosy.Typer = class cosy_Typer {
 			ret = this.typeExpr(expr.right);
 			break;
 		case 13:
-			var _g91 = expr.name;
-			var key8 = _g91.lexeme;
+			var _g9 = expr.name;
+			var key10 = _g9.lexeme;
 			var _this4 = this.variableTypes;
-			if(__map_reserved[key8] != null ? _this4.existsReserved(key8) : _this4.h.hasOwnProperty(key8)) {
-				var key9 = _g91.lexeme;
+			if(__map_reserved[key10] != null ? _this4.existsReserved(key10) : _this4.h.hasOwnProperty(key10)) {
+				var key11 = _g9.lexeme;
 				var _this5 = this.variableTypes;
-				if(__map_reserved[key9] != null) {
-					return _this5.getReserved(key9);
+				if(__map_reserved[key11] != null) {
+					return _this5.getReserved(key11);
 				} else {
-					return _this5.h[key9];
+					return _this5.h[key11];
 				}
 			} else {
 				return cosy.VariableType.Unknown;
@@ -3419,7 +3482,10 @@ cosy.Typer = class cosy_Typer {
 			}
 		}
 	}
-	formatType(type) {
+	formatType(type,showMutable) {
+		if(showMutable == null) {
+			showMutable = true;
+		}
 		switch(type._hx_index) {
 		case 2:
 			return "Bool";
@@ -3466,8 +3532,18 @@ cosy.Typer = class cosy_Typer {
 				return 0;
 			});
 			return "Struct { " + _g4.join(", ") + " }";
+		case 9:
+			var _g5 = type.name;
+			var _this = this.variableTypes;
+			return this.formatType(__map_reserved[_g5] != null ? _this.getReserved(_g5) : _this.h[_g5]);
 		case 10:
-			return "Mut(" + this.formatType(type.type) + ")";
+			var _g41 = type.type;
+			if(showMutable) {
+				return "Mut(" + this.formatType(_g41) + ")";
+			} else {
+				return this.formatType(_g41);
+			}
+			break;
 		default:
 			return "" + Std.string(type);
 		}
