@@ -4,6 +4,6 @@ S instance { x = 4 }
 S instance { x = 4 }
 S instance { x = 1 }
 Point instance { x = 5, y = 13, a = [] }
-Test instance { b = hej, a = Point instance { x = 666, y = 777, a = [] } }
+Test instance { b = "hej", a = Point instance { x = 666, y = 777, a = [] } }
 Test2 instance { p = Point instance { x = 4, y = 12, a = [] }, a = [3,4,5] }
 Point instance { x = 3, y = 4, a = [] }
