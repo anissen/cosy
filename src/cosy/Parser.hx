@@ -228,12 +228,20 @@ class Parser {
 	
 	function funcBody(kind:String):Expr {
 		consume(LeftParen, 'Expect "(" after $kind name.');
-		var params = [];
+		var params :Array<Param> = [];
 		if (!check(RightParen)) {
 			do {
-				if (params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
+                if (params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
+                var mutable = match([Mut]);
                 var name = consume(Identifier, 'Expect parameter name.');
-                params.push({ name: name, type: paramType() });
+                var type = paramType();
+                if (mutable) {
+                    if (!type.match(NamedStruct(_)) && !type.match(Unknown)) {
+                        error(name, 'Only struct parameters can be marked as `mut`.');
+                    }
+                    type = Mutable(type);
+                }
+                params.push({ name: name, type: type });
 			} while (match([Comma]));
 		}
 		
@@ -367,7 +375,8 @@ class Parser {
 		var args = [];
 		if (!check(RightParen)) {
 			do {
-				if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
+                if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
+                // mut variable
 				args.push(expression());
 			} while (match([Comma]));
 		}

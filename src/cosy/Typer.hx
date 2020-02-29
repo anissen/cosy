@@ -59,8 +59,8 @@ class Typer {
 			case Break(keyword):
 			case Continue(keyword):
 			case Class(name, superclass, methods): typeStmts(methods);
-			case Var(name, type, init): typeVar(name, type, init);
-            case Mut(name, type, init): typeVar(name, type, init);
+			case Var(name, type, init): variableTypes.set(name.lexeme, typeVar(name, type, init));
+            case Mut(name, type, init): variableTypes.set(name.lexeme, Mutable(typeVar(name, type, init)));
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
@@ -120,9 +120,7 @@ class Typer {
         var initType = (init != null ? typeExpr(init) : Unknown);
         if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
         if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
-        var computedType = (!type.match(Unknown) ? type : initType);
-        variableTypes.set(name.lexeme, computedType);
-        return computedType;
+        return (!type.match(Unknown) ? type : initType);
     }
 	
 	function typeExpr(expr:Expr) :VariableType {
@@ -143,10 +141,10 @@ class Typer {
 			case Assign(name, op, value):
                 var assigningType = typeExpr(value);
                 var varType = variableTypes.get(name.lexeme);
-                if (varType.match(Unknown)) {
+                if (varType.match(Unknown) || varType.match(Mutable(Unknown))) {
                     variableTypes.set(name.lexeme, assigningType);
                 } else if (!matchType(varType, assigningType)) {
-                    Cosy.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType)}');
+                    Cosy.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType, false)}');
                 }
                 return assigningType;
 			case Variable(name):
@@ -164,6 +162,10 @@ class Typer {
             case Logical(left, _, right): Boolean;
 			case Call(callee, paren, arguments):
                 var calleeType = typeExpr(callee);
+                calleeType = switch (calleeType) {
+                    case Mutable(f): f;
+                    case _: calleeType;
+                }
                 var type = Unknown;
                 switch calleeType {
                     case Function(paramTypes, returnType):
@@ -179,7 +181,9 @@ class Typer {
                                 }
                             }
                         }
-                    case _:
+                    case Unknown: // TODO: should error in strict
+                    case Instance: // TODO: remove
+                    case _: throw 'unexpected';
                 }
                 type;
 			case Get(obj, name):
@@ -201,18 +205,18 @@ class Typer {
 			case Set(obj, name, value):
                 var objType = typeExpr(obj);
                 switch objType {
-                    case Struct(v):
+                    case Mutable(Struct(v)) | Struct(v):
                         if (v.exists(name.lexeme)) {
                             var valueType = typeExpr(value);
                             var structDeclType = v[name.lexeme];
                             if (!structDeclType.match(Mutable(_))) Cosy.error(name, 'Member is not mutable.');
                             else if (!matchType(structDeclType, valueType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
                         } else {
-                            Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType)}');
+                            Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                         }
                     case _:
                 }
-                Unknown;
+                Unknown; // TODO: What should Set return?
 			case Grouping(e) | Unary(_, e): typeExpr(e);
             case Super(kw, method): Instance;
             case StructInit(structName, decls):
@@ -313,7 +317,7 @@ class Typer {
         }
     }
 
-    function formatType(type :VariableType) :String {
+    function formatType(type: VariableType, showMutable: Bool = true) :String {
         return switch type {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
@@ -327,7 +331,8 @@ class Typer {
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
-            case Mutable(t): 'Mut(${formatType(t)})';
+            case Mutable(t): showMutable ? 'Mut(${formatType(t)})' : formatType(t);
+            case NamedStruct(name): formatType(variableTypes.get(name));
             case Struct(decls): 
                 var declsStr = [ for (name => type in decls) '$name ${formatType(type)}' ];
                 declsStr.sort(function (a, b) {

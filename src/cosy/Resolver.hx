@@ -211,8 +211,9 @@ class Resolver {
 		currentFunction = type;
 		beginScope();
 		for (param in params) {
-			declare(param.name);
-			define(param.name);
+            var mutable = param.type.match(Mutable(_));
+			declare(param.name, mutable);
+			define(param.name, mutable);
 		}
         resolveStmts(body);
 		endScope();
