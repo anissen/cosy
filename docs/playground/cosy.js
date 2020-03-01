@@ -3226,13 +3226,36 @@ cosy.Typer = class cosy_Typer {
 			var _g22 = expr.name;
 			var objType1 = this.typeExpr(expr.obj);
 			switch(objType1._hx_index) {
-			case 8:
-				var _g7 = objType1.variables;
+			case 9:
+				var _g32 = objType1.name;
+				var _this2 = this.variableTypes;
+				objType1 = __map_reserved[_g32] != null ? _this2.getReserved(_g32) : _this2.h[_g32];
+				break;
+			case 10:
+				var _g7 = objType1.type;
+				switch(_g7._hx_index) {
+				case 8:
+					objType1 = cosy.VariableType.Struct(_g7.variables);
+					break;
+				case 9:
+					var _g21 = _g7.name;
+					var _this3 = this.variableTypes;
+					objType1 = __map_reserved[_g21] != null ? _this3.getReserved(_g21) : _this3.h[_g21];
+					break;
+				default:
+					objType1 = objType1;
+				}
+				break;
+			default:
+				objType1 = objType1;
+			}
+			if(objType1._hx_index == 8) {
+				var _g42 = objType1.variables;
 				var key2 = _g22.lexeme;
-				if(__map_reserved[key2] != null ? _g7.existsReserved(key2) : _g7.h.hasOwnProperty(key2)) {
+				if(__map_reserved[key2] != null ? _g42.existsReserved(key2) : _g42.h.hasOwnProperty(key2)) {
 					var valueType = this.typeExpr(_g23);
 					var key3 = _g22.lexeme;
-					var structDeclType = __map_reserved[key3] != null ? _g7.getReserved(key3) : _g7.h[key3];
+					var structDeclType = __map_reserved[key3] != null ? _g42.getReserved(key3) : _g42.h[key3];
 					if(!(structDeclType == null ? false : structDeclType._hx_index == 10)) {
 						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Member is not mutable.");
 					} else if(!this.matchType(structDeclType,valueType)) {
@@ -3241,27 +3264,6 @@ cosy.Typer = class cosy_Typer {
 				} else {
 					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1,false));
 				}
-				break;
-			case 10:
-				var _g13 = objType1.type;
-				if(_g13._hx_index == 8) {
-					var _g21 = _g13.variables;
-					var key4 = _g22.lexeme;
-					if(__map_reserved[key4] != null ? _g21.existsReserved(key4) : _g21.h.hasOwnProperty(key4)) {
-						var valueType1 = this.typeExpr(_g23);
-						var key5 = _g22.lexeme;
-						var structDeclType1 = __map_reserved[key5] != null ? _g21.getReserved(key5) : _g21.h[key5];
-						if(!(structDeclType1 == null ? false : structDeclType1._hx_index == 10)) {
-							cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Member is not mutable.");
-						} else if(!this.matchType(structDeclType1,valueType1)) {
-							cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Expected value of type " + this.formatType(structDeclType1) + " but got " + this.formatType(valueType1));
-						}
-					} else {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1,false));
-					}
-				}
-				break;
-			default:
 			}
 			ret = cosy.VariableType.Unknown;
 			break;
@@ -3274,9 +3276,9 @@ cosy.Typer = class cosy_Typer {
 		case 11:
 			var _g111 = expr.decls;
 			var _g10 = expr.name;
-			var key6 = _g10.lexeme;
-			var _this2 = this.variableTypes;
-			var structType = __map_reserved[key6] != null ? _this2.getReserved(key6) : _this2.h[key6];
+			var key4 = _g10.lexeme;
+			var _this4 = this.variableTypes;
+			var structType = __map_reserved[key4] != null ? _this4.getReserved(key4) : _this4.h[key4];
 			var assignedMembers = [];
 			var structMembers;
 			if(structType == null) {
@@ -3286,39 +3288,39 @@ cosy.Typer = class cosy_Typer {
 			} else {
 				throw new js._Boot.HaxeError("unexpected");
 			}
-			var _g16 = 0;
-			while(_g16 < _g111.length) {
-				var decl = _g111[_g16];
-				++_g16;
+			var _g13 = 0;
+			while(_g13 < _g111.length) {
+				var decl = _g111[_g13];
+				++_g13;
 				if(decl._hx_index == 1) {
-					var _g18 = decl.name;
-					var key7 = _g18.lexeme;
-					if(!(__map_reserved[key7] != null ? structMembers.existsReserved(key7) : structMembers.h.hasOwnProperty(key7))) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"No member named \"" + _g18.lexeme + "\" in struct " + _g10.lexeme);
+					var _g16 = decl.name;
+					var key5 = _g16.lexeme;
+					if(!(__map_reserved[key5] != null ? structMembers.existsReserved(key5) : structMembers.h.hasOwnProperty(key5))) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"No member named \"" + _g16.lexeme + "\" in struct " + _g10.lexeme);
 						break;
-					} else if(assignedMembers.indexOf(_g18.lexeme) != -1) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Member already assigned in initializer.");
+					} else if(assignedMembers.indexOf(_g16.lexeme) != -1) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Member already assigned in initializer.");
 						break;
 					}
-					var valueType2 = this.typeExpr(decl.value);
-					var key8 = _g18.lexeme;
-					var _g19 = __map_reserved[key8] != null ? structMembers.getReserved(key8) : structMembers.h[key8];
-					var memberType = _g19 == null ? _g19 : _g19._hx_index == 10 ? _g19.type : _g19;
-					assignedMembers.push(_g18.lexeme);
-					if(!this.matchType(valueType2,memberType)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Expected value to be of type " + this.formatType(memberType) + " but got " + this.formatType(valueType2));
+					var valueType1 = this.typeExpr(decl.value);
+					var key6 = _g16.lexeme;
+					var _g18 = __map_reserved[key6] != null ? structMembers.getReserved(key6) : structMembers.h[key6];
+					var memberType = _g18 == null ? _g18 : _g18._hx_index == 10 ? _g18.type : _g18;
+					assignedMembers.push(_g16.lexeme);
+					if(!this.matchType(valueType1,memberType)) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Expected value to be of type " + this.formatType(memberType) + " but got " + this.formatType(valueType1));
 					}
 				} else {
 					throw new js._Boot.HaxeError("unexpected");
 				}
 			}
-			var key9 = _g10.lexeme;
-			var _this3 = this.structsMeta;
-			var _g24 = new haxe.iterators.MapKeyValueIterator((__map_reserved[key9] != null ? _this3.getReserved(key9) : _this3.h[key9]).members);
+			var key7 = _g10.lexeme;
+			var _this5 = this.structsMeta;
+			var _g24 = new haxe.iterators.MapKeyValueIterator((__map_reserved[key7] != null ? _this5.getReserved(key7) : _this5.h[key7]).members);
 			while(_g24.hasNext()) {
-				var _g32 = _g24.next();
-				var memberName = _g32.key;
-				if(!_g32.value.initialized) {
+				var _g33 = _g24.next();
+				var memberName = _g33.key;
+				if(!_g33.value.initialized) {
 					if(assignedMembers.indexOf(memberName) == -1) {
 						cosy.Cosy.error(cosy.ErrorDataType.Token(_g10),"Member \"" + memberName + "\" not initialized.");
 					}
@@ -3331,15 +3333,15 @@ cosy.Typer = class cosy_Typer {
 			break;
 		case 13:
 			var _g9 = expr.name;
-			var key10 = _g9.lexeme;
-			var _this4 = this.variableTypes;
-			if(__map_reserved[key10] != null ? _this4.existsReserved(key10) : _this4.h.hasOwnProperty(key10)) {
-				var key11 = _g9.lexeme;
-				var _this5 = this.variableTypes;
-				if(__map_reserved[key11] != null) {
-					return _this5.getReserved(key11);
+			var key8 = _g9.lexeme;
+			var _this6 = this.variableTypes;
+			if(__map_reserved[key8] != null ? _this6.existsReserved(key8) : _this6.h.hasOwnProperty(key8)) {
+				var key9 = _g9.lexeme;
+				var _this7 = this.variableTypes;
+				if(__map_reserved[key9] != null) {
+					return _this7.getReserved(key9);
 				} else {
-					return _this5.h[key11];
+					return _this7.h[key9];
 				}
 			} else {
 				return cosy.VariableType.Unknown;
