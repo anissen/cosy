@@ -3256,10 +3256,11 @@ cosy.Typer = class cosy_Typer {
 					var valueType = this.typeExpr(_g23);
 					var key3 = _g22.lexeme;
 					var structDeclType = __map_reserved[key3] != null ? _g42.getReserved(key3) : _g42.h[key3];
+					var nonMutableStructDeclType = structDeclType == null ? structDeclType : structDeclType._hx_index == 10 ? structDeclType.type : structDeclType;
 					if(!(structDeclType == null ? false : structDeclType._hx_index == 10)) {
 						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Member is not mutable.");
-					} else if(!this.matchType(structDeclType,valueType)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Expected value of type " + this.formatType(structDeclType) + " but got " + this.formatType(valueType));
+					} else if(!this.matchType(valueType,nonMutableStructDeclType)) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Expected value of type " + this.formatType(nonMutableStructDeclType) + " but got " + this.formatType(valueType));
 					}
 				} else {
 					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1,false));
@@ -3386,114 +3387,103 @@ cosy.Typer = class cosy_Typer {
 		}
 		return cosy.VariableType.Function(_g,computedReturnType);
 	}
-	matchType(to,from) {
-		switch(to._hx_index) {
+	matchType(valueType,expectedType) {
+		switch(expectedType._hx_index) {
+		case 0:
+			return true;
 		case 6:
-			var _g10 = to.returnType;
-			var _g9 = to.paramTypes;
-			switch(from._hx_index) {
-			case 0:
-				return true;
+			var _g9 = expectedType.returnType;
+			var _g8 = expectedType.paramTypes;
+			switch(valueType._hx_index) {
 			case 6:
-				var _g12 = from.returnType;
-				var _g11 = from.paramTypes;
-				if(_g9.length != _g11.length) {
+				var _g12 = valueType.returnType;
+				var _g11 = valueType.paramTypes;
+				if(_g11.length != _g8.length) {
 					return false;
 				}
 				var _g = 0;
-				while(_g < _g9.length) {
-					var param1 = _g9[_g++];
+				while(_g < _g11.length) {
+					var param1 = _g11[_g++];
 					var _g1 = 0;
-					while(_g1 < _g11.length) if(!this.matchType(param1,_g11[_g1++])) {
+					while(_g1 < _g8.length) if(!this.matchType(param1,_g8[_g1++])) {
 						return false;
 					}
 				}
-				return this.matchType(_g10,_g12);
-			case 9:
-				var _g13 = from.name;
-				var _this = this.variableTypes;
-				return this.matchType(to,__map_reserved[_g13] != null ? _this.getReserved(_g13) : _this.h[_g13]);
+				return this.matchType(_g12,_g9);
+			case 10:
+				return this.matchType(valueType.type,expectedType);
 			default:
-				return to == from;
+				return valueType == expectedType;
 			}
 			break;
 		case 7:
-			var _g3 = to.type;
-			switch(from._hx_index) {
-			case 0:
-				return true;
+			var _g3 = expectedType.type;
+			switch(valueType._hx_index) {
 			case 7:
-				if(_g3._hx_index == 0) {
+				var _g4 = valueType.type;
+				if(_g4._hx_index == 0) {
 					return true;
 				} else {
-					return this.matchType(_g3,from.type);
+					return this.matchType(_g4,_g3);
 				}
 				break;
-			case 9:
-				var _g5 = from.name;
-				var _this1 = this.variableTypes;
-				return this.matchType(to,__map_reserved[_g5] != null ? _this1.getReserved(_g5) : _this1.h[_g5]);
+			case 10:
+				return this.matchType(valueType.type,expectedType);
 			default:
-				return to == from;
+				return valueType == expectedType;
 			}
 			break;
 		case 8:
-			var _g2 = to.variables;
-			switch(from._hx_index) {
-			case 0:
-				return true;
+			var _g2 = expectedType.variables;
+			switch(valueType._hx_index) {
 			case 8:
-				var _g14 = from.variables;
-				var _g4 = new haxe.iterators.MapKeyValueIterator(_g2);
-				while(_g4.hasNext()) {
-					var _g15 = _g4.next();
-					var key = _g15.key;
-					var value = _g15.value;
-					if(!(__map_reserved[key] != null ? _g14.existsReserved(key) : _g14.h.hasOwnProperty(key)) || (__map_reserved[key] != null ? _g14.getReserved(key) : _g14.h[key]) != value) {
+				var _g13 = valueType.variables;
+				var _g5 = new haxe.iterators.MapKeyValueIterator(_g13);
+				while(_g5.hasNext()) {
+					var _g14 = _g5.next();
+					var key = _g14.key;
+					var value = _g14.value;
+					if(!(__map_reserved[key] != null ? _g2.existsReserved(key) : _g2.h.hasOwnProperty(key)) || (__map_reserved[key] != null ? _g2.getReserved(key) : _g2.h[key]) != value) {
 						return false;
 					}
 				}
-				var _g6 = new haxe.iterators.MapKeyValueIterator(_g14);
+				var _g6 = new haxe.iterators.MapKeyValueIterator(_g2);
 				while(_g6.hasNext()) {
-					var _g16 = _g6.next();
-					var key1 = _g16.key;
-					var value1 = _g16.value;
-					if(!(__map_reserved[key1] != null ? _g2.existsReserved(key1) : _g2.h.hasOwnProperty(key1)) || (__map_reserved[key1] != null ? _g2.getReserved(key1) : _g2.h[key1]) != value1) {
+					var _g15 = _g6.next();
+					var key1 = _g15.key;
+					var value1 = _g15.value;
+					if(!(__map_reserved[key1] != null ? _g13.existsReserved(key1) : _g13.h.hasOwnProperty(key1)) || (__map_reserved[key1] != null ? _g13.getReserved(key1) : _g13.h[key1]) != value1) {
 						return false;
 					}
 				}
 				return true;
-			case 9:
-				var _g21 = from.name;
-				var _this2 = this.variableTypes;
-				return this.matchType(to,__map_reserved[_g21] != null ? _this2.getReserved(_g21) : _this2.h[_g21]);
+			case 10:
+				return this.matchType(valueType.type,expectedType);
 			default:
-				return to == from;
+				return valueType == expectedType;
+			}
+			break;
+		case 9:
+			var _g131 = expectedType.name;
+			if(valueType._hx_index == 10) {
+				return this.matchType(valueType.type,expectedType);
+			} else {
+				var _this = this.variableTypes;
+				return this.matchType(valueType,__map_reserved[_g131] != null ? _this.getReserved(_g131) : _this.h[_g131]);
 			}
 			break;
 		case 10:
-			var _g61 = to.type;
-			switch(from._hx_index) {
-			case 0:
-				return this.matchType(_g61,from);
-			case 9:
-				return this.matchType(_g61,from);
-			case 10:
-				return this.matchType(_g61,from.type);
-			default:
-				return this.matchType(_g61,from);
+			if(valueType._hx_index == 10) {
+				return this.matchType(valueType.type,expectedType.type);
+			} else {
+				return valueType == expectedType;
 			}
 			break;
 		default:
-			switch(from._hx_index) {
-			case 0:
-				return true;
-			case 9:
-				var _g141 = from.name;
-				var _this3 = this.variableTypes;
-				return this.matchType(to,__map_reserved[_g141] != null ? _this3.getReserved(_g141) : _this3.h[_g141]);
-			default:
-				return to == from;
+			if(valueType._hx_index == 10) {
+				return this.matchType(valueType.type,expectedType);
+			} else {
+				return valueType == expectedType;
 			}
 		}
 	}

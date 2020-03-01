@@ -214,8 +214,12 @@ class Typer {
                         if (v.exists(name.lexeme)) {
                             var valueType = typeExpr(value);
                             var structDeclType = v[name.lexeme];
+                            var nonMutableStructDeclType = switch structDeclType {
+                                case Mutable(t): t;
+                                case t: t;
+                            }
                             if (!structDeclType.match(Mutable(_))) Cosy.error(name, 'Member is not mutable.');
-                            else if (!matchType(structDeclType, valueType)) Cosy.error(name, 'Expected value of type ${formatType(structDeclType)} but got ${formatType(valueType)}');
+                            else if (!matchType(valueType, nonMutableStructDeclType)) Cosy.error(name, 'Expected value of type ${formatType(nonMutableStructDeclType)} but got ${formatType(valueType)}');
                         } else {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                         }
@@ -297,12 +301,12 @@ class Typer {
         return Function(types, computedReturnType);
     }
 
-    function matchType(to :VariableType, from :VariableType) :Bool {
-        return switch [to, from] {
+    function matchType(valueType :VariableType, expectedType :VariableType) :Bool {
+        return switch [valueType, expectedType] {
+            case [_, Unknown]: true;
             case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
             case [Mutable(t1), t2]: matchType(t1, t2);
             case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
-            case [_, Unknown]: true;
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
                 for (param1 in params1) {
@@ -321,7 +325,7 @@ class Typer {
                     if (!v1.exists(key) || v1[key] != value) return false;
                 }
                 return true;
-            case _: to == from;
+            case _: valueType == expectedType;
         }
     }
 
