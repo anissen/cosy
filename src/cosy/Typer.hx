@@ -239,7 +239,10 @@ class Typer {
                                 break;
                             }
                             var valueType = typeExpr(value);
-                            var memberType = structMembers[name.lexeme];
+                            var memberType = switch structMembers[name.lexeme] { // get the non-mutable type version of the struct member (for comparison reasons)
+                                case Mutable(t): t;
+                                case t: t;
+                            }
                             assignedMembers.push(name.lexeme);
                             if (!matchType(valueType, memberType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
                         case _: throw 'unexpected';
@@ -291,8 +294,9 @@ class Typer {
 
     function matchType(to :VariableType, from :VariableType) :Bool {
         return switch [to, from] {
+            case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
             case [Mutable(t1), t2]: matchType(t1, t2);
-            case [t1, Mutable(t2)]: matchType(t1, t2);
+            case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
             case [_, Unknown]: true;
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
@@ -304,7 +308,6 @@ class Typer {
                 matchType(v1, v2);
             case [Array(Unknown), Array(_)]: true; // handle case where e.g. var a Array Num = []
             case [Array(t1), Array(t2)]: matchType(t1, t2);
-            case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
             case [Struct(v1), Struct(v2)]:
                 for (key => value in v1) {
                     if (!v2.exists(key) || v2[key] != value) return false;
