@@ -2,6 +2,7 @@
 
 struct S {
     mut x = 0
+    var y = 1
 }
 // print S {}
 
@@ -11,11 +12,12 @@ struct S {
 // print S2 {}
 
 // var s = S { x = 1 }
-var s = S {}
+mut s = S { x = 2, y = 3 }
 print s
 
 fn mutable_param(mut p S) {
-    p.x = 2
+    p.x = 4
+    p.y = 5
     print p
 }
 mutable_param(s)

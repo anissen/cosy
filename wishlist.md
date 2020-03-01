@@ -84,6 +84,7 @@ fun x() { print "hej" }
 - [ ] Remove unused testing code (Cosy.hx + tests/)
 - [ ] Make array concat be simply `+`
 - [ ] Perserve ordering of members when printing a struct
+- [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

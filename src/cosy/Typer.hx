@@ -204,8 +204,13 @@ class Typer {
                 }
 			case Set(obj, name, value):
                 var objType = typeExpr(obj);
+                objType = switch objType {
+                    case Mutable(NamedStruct(n)) | NamedStruct(n): variableTypes.get(n);
+                    case Mutable(Struct(v)): Struct(v);
+                    case _: objType; // TODO: throw 'unexpected';
+                }
                 switch objType {
-                    case Mutable(Struct(v)) | Struct(v):
+                    case Struct(v):
                         if (v.exists(name.lexeme)) {
                             var valueType = typeExpr(value);
                             var structDeclType = v[name.lexeme];
@@ -214,7 +219,7 @@ class Typer {
                         } else {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                         }
-                    case _:
+                    case _: // TODO: throw 'unexpected';
                 }
                 Unknown; // TODO: What should Set return?
 			case Grouping(e) | Unary(_, e): typeExpr(e);
