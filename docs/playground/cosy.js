@@ -2795,6 +2795,15 @@ cosy.StructInstance = class cosy_StructInstance {
 			var _g2 = _g1.next();
 			_g.push("" + _g2.key + " = " + formatValue(_g2.value));
 		}
+		_g.sort(function(a,b) {
+			if(a < b) {
+				return -1;
+			}
+			if(b < a) {
+				return 1;
+			}
+			return 0;
+		});
 		return "" + this.structName.lexeme + " instance { " + _g.join(", ") + " }";
 	}
 }

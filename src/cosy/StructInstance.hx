@@ -26,6 +26,11 @@ class StructInstance {
     @:keep public function toString() :String {
         var formatValue = (value: Any) -> (Std.is(value, String) ? '"$value"' : '$value');
         var fieldsArray = [ for (key => value in fields) '$key = ${formatValue(value)}' ];
+        fieldsArray.sort(function (a, b) {
+            if (a < b) return -1;
+            if (b < a) return 1;
+            return 0;
+        });
 		return '${structName.lexeme} instance { ${fieldsArray.join(', ')} }';
 	}
 }
