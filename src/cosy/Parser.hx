@@ -494,7 +494,7 @@ class Parser {
 		advance();
 		while (!isAtEnd()) {
 			switch peek().type {
-				case Class | Fn | Var | For | If | Print | Return: return;
+				case Break | Class | Continue | Fn | Var | Mut | For | If | Print | Return | Struct: return;
 				case _: advance();
 			}
 		}
