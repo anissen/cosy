@@ -182,6 +182,7 @@ class Typer {
                             }
                         }
                     case Unknown: // TODO: should error in strict
+                    case Void: // TODO: what?
                     case Instance: // TODO: remove
                     case _: throw 'unexpected';
                 }
@@ -189,12 +190,21 @@ class Typer {
 			case Get(obj, name):
                 var objType = typeExpr(obj);
                 return switch objType {
-                    case Array(t):
+                    case Mutable(Array(t)):
                         return switch name.lexeme {
                             case 'length': Number;
                             case 'push': Function([t], Void);
                             case 'concat': Function([Array(t)], Void);
                             case 'pop': Function([], t);
+                            case 'get': Function([Number], t);
+                            case _: Cosy.error(name, 'Unknown array property or function.'); Void;
+                        }
+                    case Array(t):
+                        return switch name.lexeme {
+                            case 'length': Number;
+                            case 'push': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
+                            case 'concat': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
+                            case 'pop': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'get': Function([Number], t);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
@@ -237,7 +247,7 @@ class Typer {
                         } else {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                         }
-                    case _: // TODO: throw 'unexpected';
+                    case _: //trace(objType); TODO: throw 'unexpected';
                 }
                 Unknown; // TODO: What should Set return?
 			case Grouping(e) | Unary(_, e): typeExpr(e);

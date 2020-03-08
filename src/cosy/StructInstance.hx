@@ -9,8 +9,13 @@ class StructInstance {
 		this.fields = fields;
     }
     
-    public function newInstance() {
-        return new StructInstance(structName, fields.copy());
+    public function clone() { // Make a deep copy of fields
+        var clonedFields = new Map();
+        for (key => value in fields) {
+            if (Std.is(value, StructInstance)) clonedFields[key] = (value: StructInstance).clone();
+            else clonedFields[key] = value;
+        }
+        return new StructInstance(structName, clonedFields);
     }
 	
 	public function get(name:Token):Any {

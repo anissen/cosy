@@ -1,0 +1,11 @@
+{
+	var arr = ['5','6','7']
+	arr.push('8') // fails because arr is not mut
+
+	fn array_push(a Array Str) {
+        a.push('9') // fails because a is not mut
+        print a
+	}
+	array_push(arr)
+	print arr
+}

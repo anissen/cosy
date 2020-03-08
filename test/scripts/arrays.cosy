@@ -58,7 +58,7 @@
 
 {
 	var arr = ['5','6','7']
-	// arr.push('8') // TODO: Should fail
+	// arr.push('8') // TODO: Should fail and it does!
 
 	fn array_push(a Array Str) {
         // a.push('9') // TODO: Should fail

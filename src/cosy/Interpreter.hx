@@ -118,10 +118,16 @@ class Interpreter {
             case Var(name, type, init):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
+                if (Std.is(value, StructInstance)) {
+                    value = (value: StructInstance).clone();
+                }
                 environment.define(name.lexeme, value);
             case Mut(name, type, init):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
+                if (Std.is(value, StructInstance)) {
+                    value = (value: StructInstance).clone();
+                }
                 environment.define(name.lexeme, value);
         }
     }
@@ -262,6 +268,7 @@ class Interpreter {
                 else if (Std.is(obj, Instance)) return (obj: Instance).get(name);
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
+                // TODO: Should also handle assignment operators: +=, -=, /=, *=
                 var obj = evaluate(obj);
                 var value = evaluate(value);
                 if (Std.is(obj, Instance)) (obj: Instance).set(name, value);
@@ -284,7 +291,7 @@ class Interpreter {
             case StructInit(name, decls):
                 var structObj :StructInstance = lookUpVariable(name, expr);
                 if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
-                structObj = structObj.newInstance();
+                structObj = structObj.clone();
                 for (decl in decls) {
                     switch decl {
                         case Assign(variableName, op, value): structObj.set(variableName, evaluate(value));
