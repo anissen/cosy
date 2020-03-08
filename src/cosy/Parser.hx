@@ -277,22 +277,26 @@ class Parser {
     }
 
 	function or():Expr {
-		var expr = and();
+        var expr = and();
+        
 		while (match([Or])) {
 			var op = previous();
 			var right = and();
 			expr = Logical(expr, op, right);
-		}
+        }
+        
 		return expr;
 	}
 	
 	function and():Expr {
-		var expr = equality();
+        var expr = equality();
+        
 		while (match([And])) {
 			var op = previous();
 			var right = equality();
 			expr = Logical(expr, op, right);
-		}
+        }
+        
 		return expr;
 	}
 	
@@ -500,10 +504,3 @@ class Parser {
 }
 
 private class ParseError extends Error {}
-
-enum LoopType {
-    Unknown;
-    ForMinMax;
-    ForArray;
-    ForCondition;
-}

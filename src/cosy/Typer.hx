@@ -184,7 +184,7 @@ class Typer {
                     case Unknown: // TODO: should error in strict
                     case Void: // TODO: what?
                     case Instance: // TODO: remove
-                    case _: throw 'unexpected';
+                    case _: // TODO: maybe throw 'unexpected';
                 }
                 type;
 			case Get(obj, name):

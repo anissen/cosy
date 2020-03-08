@@ -48,7 +48,7 @@ fn has_won() {
 }
 
 fn hangman() {
-    print 'You need to guess '' + get_display_word() + ''!'
+    print 'You need to guess "' + get_display_word() + '"!'
     print 'Wrong guesses remaining: ' + wrong_guesses_remaining
     print '-------------------------'
     print 'Guess: '

@@ -86,6 +86,7 @@ fun x() { print "hej" }
 - [ ] Make array concat be simply `+`
 - [ ] Perserve ordering of members when printing a struct
 - [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
+- [ ] Make a new and improved Hangman example with properly typed code, structs and arrays
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
