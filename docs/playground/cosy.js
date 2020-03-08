@@ -178,55 +178,57 @@ cosy.AstPrinter = class cosy_AstPrinter {
 	printExpr(expr) {
 		switch(expr._hx_index) {
 		case 0:
-			var _g4 = expr.exprs;
+			var _g8 = expr.exprs;
 			var _g = [];
 			var _g1 = 0;
-			while(_g1 < _g4.length) _g.push(this.printExpr(_g4[_g1++]));
+			while(_g1 < _g8.length) _g.push(this.printExpr(_g8[_g1++]));
 			return "[" + _g.join(",") + "]";
 		case 1:
 			return "" + expr.name.lexeme + " " + expr.op.lexeme + " " + this.printExpr(expr.value);
 		case 2:
 			return "" + this.printExpr(expr.left) + " " + expr.op.lexeme + " " + this.printExpr(expr.right);
 		case 3:
-			var _g15 = expr.$arguments;
+			var _g21 = expr.$arguments;
 			var tmp = "" + this.printExpr(expr.callee) + "(";
 			var _g2 = [];
 			var _g11 = 0;
-			while(_g11 < _g15.length) _g2.push(this.printExpr(_g15[_g11++]));
+			while(_g11 < _g21.length) _g2.push(this.printExpr(_g21[_g11++]));
 			return tmp + _g2.join(", ") + ")";
 		case 4:
 			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme;
 		case 5:
 			return "(" + this.printExpr(expr.e) + ")";
 		case 6:
-			var _g8 = expr.v;
-			if(typeof(_g8) == "string") {
-				return "'" + Std.string(_g8) + "'";
+			var _g15 = expr.v;
+			if(typeof(_g15) == "string") {
+				return "'" + Std.string(_g15) + "'";
 			} else {
-				return "" + Std.string(_g8);
+				return "" + Std.string(_g15);
 			}
 			break;
 		case 7:
 			return "" + this.printExpr(expr.left) + " " + (expr.op.type._hx_index == 40 ? "or" : "and") + " " + this.printExpr(expr.right);
 		case 8:
-			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme + " = " + this.printExpr(expr.value);
+			return "mut " + expr.name.lexeme;
 		case 9:
-			return expr.keyword.lexeme;
+			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme + " = " + this.printExpr(expr.value);
 		case 10:
-			return "" + expr.keyword.lexeme + "." + expr.method.lexeme;
+			return expr.keyword.lexeme;
 		case 11:
-			return this.printExprBlock(expr.decls);
+			return "" + expr.keyword.lexeme + "." + expr.method.lexeme;
 		case 12:
-			return "" + expr.op.lexeme + this.printExpr(expr.right);
+			return this.printExprBlock(expr.decls);
 		case 13:
-			return expr.name.lexeme;
+			return "" + expr.op.lexeme + this.printExpr(expr.right);
 		case 14:
-			var _g27 = expr.body;
-			var _g26 = expr.params;
+			return expr.name.lexeme;
+		case 15:
+			var _g28 = expr.body;
+			var _g27 = expr.params;
 			var _g3 = [];
 			var _g12 = 0;
-			while(_g12 < _g26.length) _g3.push(this.formatParam(_g26[_g12++]));
-			return "fn (" + _g3.join(",") + ") " + this.printStmt(cosy.Stmt.Block(_g27));
+			while(_g12 < _g27.length) _g3.push(this.formatParam(_g27[_g12++]));
+			return "fn (" + _g3.join(",") + ") " + this.printStmt(cosy.Stmt.Block(_g28));
 		}
 	}
 	formatType(type) {
@@ -337,7 +339,7 @@ cosy.Interpreter = class cosy_Interpreter {
 				var sc = this.evaluate(_g13);
 				if(!((sc) instanceof cosy.Klass)) {
 					var this1;
-					if(_g13._hx_index == 13) {
+					if(_g13._hx_index == 14) {
 						this1 = _g13.name;
 					} else {
 						throw new js._Boot.HaxeError("unreachable");
@@ -472,6 +474,9 @@ cosy.Interpreter = class cosy_Interpreter {
 			if(_g5 != null) {
 				value = this.evaluate(_g5);
 			}
+			if(((value) instanceof cosy.StructInstance)) {
+				value = value.clone();
+			}
 			this.environment.define(statement.name.lexeme,value);
 			break;
 		case 11:
@@ -524,6 +529,9 @@ cosy.Interpreter = class cosy_Interpreter {
 			if(_g19 != null) {
 				value3 = this.evaluate(_g19);
 			}
+			if(((value3) instanceof cosy.StructInstance)) {
+				value3 = value3.clone();
+			}
 			this.environment.define(statement.name.lexeme,value3);
 			break;
 		}
@@ -547,26 +555,26 @@ cosy.Interpreter = class cosy_Interpreter {
 	evaluate(expr) {
 		switch(expr._hx_index) {
 		case 0:
-			var _g4 = expr.exprs;
+			var _g8 = expr.exprs;
 			var _g = [];
 			var _g1 = 0;
-			while(_g1 < _g4.length) _g.push(this.evaluate(_g4[_g1++]));
+			while(_g1 < _g8.length) _g.push(this.evaluate(_g8[_g1++]));
 			return _g;
 		case 1:
-			var _g7 = expr.value;
-			var _g6 = expr.op;
-			var _g5 = expr.name;
+			var _g14 = expr.value;
+			var _g13 = expr.op;
+			var _g12 = expr.name;
 			var value;
-			switch(_g6.type._hx_index) {
+			switch(_g13.type._hx_index) {
 			case 11:
-				var left = this.lookUpVariable(_g5,expr);
-				var right = this.evaluate(_g7);
-				this.checkNumberOperands(_g6,left,right);
+				var left = this.lookUpVariable(_g12,expr);
+				var right = this.evaluate(_g14);
+				this.checkNumberOperands(_g13,left,right);
 				value = left - right;
 				break;
 			case 13:
-				var left1 = this.lookUpVariable(_g5,expr);
-				var right1 = this.evaluate(_g7);
+				var left1 = this.lookUpVariable(_g12,expr);
+				var right1 = this.evaluate(_g14);
 				if(typeof(left1) == "number" && typeof(right1) == "number") {
 					value = left1 + right1;
 				} else if(typeof(left1) == "number" && typeof(right1) == "string") {
@@ -576,41 +584,41 @@ cosy.Interpreter = class cosy_Interpreter {
 				} else if(typeof(left1) == "string" && typeof(right1) == "string") {
 					value = left1 + right1;
 				} else {
-					throw new js._Boot.HaxeError(new cosy.RuntimeError(_g6,"Operands cannot be concatinated."));
+					throw new js._Boot.HaxeError(new cosy.RuntimeError(_g13,"Operands cannot be concatinated."));
 				}
 				break;
 			case 15:
-				var left2 = this.lookUpVariable(_g5,expr);
-				var right2 = this.evaluate(_g7);
-				this.checkNumberOperands(_g6,left2,right2);
+				var left2 = this.lookUpVariable(_g12,expr);
+				var right2 = this.evaluate(_g14);
+				this.checkNumberOperands(_g13,left2,right2);
 				value = left2 / right2;
 				break;
 			case 17:
-				var left3 = this.lookUpVariable(_g5,expr);
-				var right3 = this.evaluate(_g7);
-				this.checkNumberOperands(_g6,left3,right3);
+				var left3 = this.lookUpVariable(_g12,expr);
+				var right3 = this.evaluate(_g14);
+				this.checkNumberOperands(_g13,left3,right3);
 				value = left3 * right3;
 				break;
 			case 20:
-				value = this.evaluate(_g7);
+				value = this.evaluate(_g14);
 				break;
 			default:
 				throw new js._Boot.HaxeError("error");
 			}
 			var _g11 = this.locals.h[expr.__id__];
 			if(_g11 == null) {
-				this.globals.assign(_g5,value);
+				this.globals.assign(_g12,value);
 			} else {
-				this.environment.assignAt(_g11,_g5,value);
+				this.environment.assignAt(_g11,_g12,value);
 			}
 			return value;
 		case 2:
-			var _g19 = expr.op;
+			var _g25 = expr.op;
 			var left4 = this.evaluate(expr.left);
 			var right4 = this.evaluate(expr.right);
-			switch(_g19.type._hx_index) {
+			switch(_g25.type._hx_index) {
 			case 10:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 - right4;
 			case 12:
 				if(typeof(left4) == "number" && typeof(right4) == "number") {
@@ -622,69 +630,69 @@ cosy.Interpreter = class cosy_Interpreter {
 				} else if(typeof(left4) == "string" && typeof(right4) == "string") {
 					return left4 + right4;
 				} else {
-					throw new js._Boot.HaxeError(new cosy.RuntimeError(_g19,"Operands cannot be concatinated."));
+					throw new js._Boot.HaxeError(new cosy.RuntimeError(_g25,"Operands cannot be concatinated."));
 				}
 				break;
 			case 14:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 / right4;
 			case 16:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 * right4;
 			case 19:
 				return !this.isEqual(left4,right4);
 			case 21:
 				return this.isEqual(left4,right4);
 			case 22:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 > right4;
 			case 23:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 >= right4;
 			case 24:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 < right4;
 			case 25:
-				this.checkNumberOperands(_g19,left4,right4);
+				this.checkNumberOperands(_g25,left4,right4);
 				return left4 <= right4;
 			default:
 				return null;
 			}
 			break;
 		case 3:
-			var _g15 = expr.$arguments;
-			var _g14 = expr.paren;
+			var _g21 = expr.$arguments;
+			var _g20 = expr.paren;
 			var callee = this.evaluate(expr.callee);
 			var f = $bind(this,this.evaluate);
-			var result = new Array(_g15.length);
+			var result = new Array(_g21.length);
 			var _g2 = 0;
-			var _g12 = _g15.length;
-			while(_g2 < _g12) {
+			var _g15 = _g21.length;
+			while(_g2 < _g15) {
 				var i = _g2++;
-				result[i] = f(_g15[i]);
+				result[i] = f(_g21[i]);
 			}
 			if(!js.Boot.__implements(callee,cosy.Callable)) {
-				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g14,"Can only call functions and classes"));
+				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g20,"Can only call functions and classes"));
 			} else {
 				var func = callee;
 				var arity = func.arity();
 				if(result.length != arity) {
-					throw new js._Boot.HaxeError(new cosy.RuntimeError(_g14,"Expected " + arity + " argument(s) but got " + result.length + "."));
+					throw new js._Boot.HaxeError(new cosy.RuntimeError(_g20,"Expected " + arity + " argument(s) but got " + result.length + "."));
 				}
 				return func.call(this,result);
 			}
 			break;
 		case 4:
-			var _g17 = expr.name;
+			var _g23 = expr.name;
 			var obj = this.evaluate(expr.obj);
 			if(((obj) instanceof Array)) {
-				return this.arrayGet(obj,_g17);
+				return this.arrayGet(obj,_g23);
 			} else if(((obj) instanceof cosy.StructInstance)) {
-				return obj.get(_g17);
+				return obj.get(_g23);
 			} else if(((obj) instanceof cosy.Instance)) {
-				return obj.get(_g17);
+				return obj.get(_g23);
 			} else {
-				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g17,"Only instances have properties"));
+				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g23,"Only instances have properties"));
 			}
 			break;
 		case 5:
@@ -692,74 +700,76 @@ cosy.Interpreter = class cosy_Interpreter {
 		case 6:
 			return expr.v;
 		case 7:
-			var _g31 = expr.right;
+			var _g33 = expr.right;
 			var left5 = this.evaluate(expr.left);
 			switch(expr.op.type._hx_index) {
 			case 29:
 				if(!this.isTruthy(left5)) {
 					return left5;
 				} else {
-					return this.evaluate(_g31);
+					return this.evaluate(_g33);
 				}
 				break;
 			case 40:
 				if(this.isTruthy(left5)) {
 					return left5;
 				} else {
-					return this.evaluate(_g31);
+					return this.evaluate(_g33);
 				}
 				break;
 			default:
-				return this.evaluate(_g31);
+				return this.evaluate(_g33);
 			}
 			break;
 		case 8:
-			var _g22 = expr.name;
+			return this.lookUpVariable(expr.name,expr);
+		case 9:
+			var _g3 = expr.name;
 			var obj1 = this.evaluate(expr.obj);
 			var value1 = this.evaluate(expr.value);
 			if(((obj1) instanceof cosy.Instance)) {
-				obj1.set(_g22,value1);
+				obj1.set(_g3,value1);
 			} else if(((obj1) instanceof cosy.StructInstance)) {
-				obj1.set(_g22,value1);
+				obj1.set(_g3,value1);
 			} else {
-				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g22,"Only instances have fields"));
+				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g3,"Only instances have fields"));
 			}
 			return value1;
-		case 9:
-			return this.lookUpVariable(expr.keyword,expr);
 		case 10:
-			var _g25 = expr.method;
+			return this.lookUpVariable(expr.keyword,expr);
+		case 11:
+			var _g18 = expr.method;
 			var distance = this.locals.h[expr.__id__];
 			var superclass = this.environment.getAt(distance,"super");
 			var obj2 = this.environment.getAt(distance - 1,"this");
-			var method = superclass.findMethod(_g25.lexeme);
+			var method = superclass.findMethod(_g18.lexeme);
 			if(method == null) {
-				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g25,"Undefined property \"" + _g25.lexeme + "\"."));
+				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g18,"Undefined property \"" + _g18.lexeme + "\"."));
 			}
 			return method.bind(obj2);
-		case 11:
-			var _g111 = expr.decls;
-			var _g10 = expr.name;
-			var structObj = this.lookUpVariable(_g10,expr);
+		case 12:
+			var _g6 = expr.decls;
+			var _g5 = expr.name;
+			var structObj = this.lookUpVariable(_g5,expr);
 			if(!((structObj) instanceof cosy.StructInstance)) {
-				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g10,"Struct initializer on non-struct object."));
+				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g5,"Struct initializer on non-struct object."));
 			}
-			structObj = structObj.newInstance();
-			var _g3 = 0;
-			while(_g3 < _g111.length) {
-				var decl = _g111[_g3];
-				++_g3;
+			structObj = structObj.clone();
+			var _g4 = 0;
+			while(_g4 < _g6.length) {
+				var decl = _g6[_g4];
+				++_g4;
 				if(decl._hx_index == 1) {
 					structObj.set(decl.name,this.evaluate(decl.value));
 				}
 			}
 			return structObj;
-		case 12:
-			var _g13 = expr.op;
+		case 13:
+			var _g9 = expr.op;
 			var right5 = this.evaluate(expr.right);
-			switch(_g13.type._hx_index) {
+			switch(_g9.type._hx_index) {
 			case 10:
-				this.checkNumberOperand(_g13,right5);
+				this.checkNumberOperand(_g9,right5);
 				return -right5;
 			case 18:
 				return !this.isTruthy(right5);
@@ -767,9 +777,9 @@ cosy.Interpreter = class cosy_Interpreter {
 				return null;
 			}
 			break;
-		case 13:
-			return this.lookUpVariable(expr.name,expr);
 		case 14:
+			return this.lookUpVariable(expr.name,expr);
+		case 15:
 			return new cosy.Function(null,expr.params,expr.body,this.environment,false);
 		}
 	}
@@ -1141,7 +1151,7 @@ cosy.ErrorDataType = $hxEnums["cosy.ErrorDataType"] = { __ename__ : true, __cons
 	,Line: ($_=function(v) { return {_hx_index:0,v:v,__enum__:"cosy.ErrorDataType",toString:$estr}; },$_.__params__ = ["v"],$_)
 	,Token: ($_=function(v) { return {_hx_index:1,v:v,__enum__:"cosy.ErrorDataType",toString:$estr}; },$_.__params__ = ["v"],$_)
 };
-cosy.Expr = $hxEnums["cosy.Expr"] = { __ename__ : true, __constructs__ : ["ArrayLiteral","Assign","Binary","Call","Get","Grouping","Literal","Logical","Set","This","Super","StructInit","Unary","Variable","AnonFunction"]
+cosy.Expr = $hxEnums["cosy.Expr"] = { __ename__ : true, __constructs__ : ["ArrayLiteral","Assign","Binary","Call","Get","Grouping","Literal","Logical","MutArgument","Set","This","Super","StructInit","Unary","Variable","AnonFunction"]
 	,ArrayLiteral: ($_=function(keyword,exprs) { return {_hx_index:0,keyword:keyword,exprs:exprs,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword","exprs"],$_)
 	,Assign: ($_=function(name,op,value) { return {_hx_index:1,name:name,op:op,value:value,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["name","op","value"],$_)
 	,Binary: ($_=function(left,op,right) { return {_hx_index:2,left:left,op:op,right:right,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["left","op","right"],$_)
@@ -1150,13 +1160,14 @@ cosy.Expr = $hxEnums["cosy.Expr"] = { __ename__ : true, __constructs__ : ["Array
 	,Grouping: ($_=function(e) { return {_hx_index:5,e:e,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["e"],$_)
 	,Literal: ($_=function(v) { return {_hx_index:6,v:v,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["v"],$_)
 	,Logical: ($_=function(left,op,right) { return {_hx_index:7,left:left,op:op,right:right,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["left","op","right"],$_)
-	,Set: ($_=function(obj,name,value) { return {_hx_index:8,obj:obj,name:name,value:value,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["obj","name","value"],$_)
-	,This: ($_=function(keyword) { return {_hx_index:9,keyword:keyword,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword"],$_)
-	,Super: ($_=function(keyword,method) { return {_hx_index:10,keyword:keyword,method:method,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword","method"],$_)
-	,StructInit: ($_=function(name,decls) { return {_hx_index:11,name:name,decls:decls,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["name","decls"],$_)
-	,Unary: ($_=function(op,right) { return {_hx_index:12,op:op,right:right,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["op","right"],$_)
-	,Variable: ($_=function(name) { return {_hx_index:13,name:name,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["name"],$_)
-	,AnonFunction: ($_=function(params,body,returnType) { return {_hx_index:14,params:params,body:body,returnType:returnType,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["params","body","returnType"],$_)
+	,MutArgument: ($_=function(keyword,name) { return {_hx_index:8,keyword:keyword,name:name,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword","name"],$_)
+	,Set: ($_=function(obj,name,value) { return {_hx_index:9,obj:obj,name:name,value:value,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["obj","name","value"],$_)
+	,This: ($_=function(keyword) { return {_hx_index:10,keyword:keyword,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword"],$_)
+	,Super: ($_=function(keyword,method) { return {_hx_index:11,keyword:keyword,method:method,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword","method"],$_)
+	,StructInit: ($_=function(name,decls) { return {_hx_index:12,name:name,decls:decls,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["name","decls"],$_)
+	,Unary: ($_=function(op,right) { return {_hx_index:13,op:op,right:right,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["op","right"],$_)
+	,Variable: ($_=function(name) { return {_hx_index:14,name:name,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["name"],$_)
+	,AnonFunction: ($_=function(params,body,returnType) { return {_hx_index:15,params:params,body:body,returnType:returnType,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["params","body","returnType"],$_)
 };
 cosy.Function = class cosy_Function {
 	constructor(name,params,body,closure,isInitializer) {
@@ -1355,33 +1366,33 @@ cosy.JavaScriptPrinter = class cosy_JavaScriptPrinter {
 	printExpr(expr) {
 		switch(expr._hx_index) {
 		case 0:
-			var _g4 = expr.exprs;
+			var _g8 = expr.exprs;
 			var f = $bind(this,this.printExpr);
-			var result = new Array(_g4.length);
+			var result = new Array(_g8.length);
 			var _g = 0;
-			var _g1 = _g4.length;
+			var _g1 = _g8.length;
 			while(_g < _g1) {
 				var i = _g++;
-				result[i] = f(_g4[i]);
+				result[i] = f(_g8[i]);
 			}
 			return "[" + result.join(", ") + "]";
 		case 1:
 			return "" + expr.name.lexeme + " " + expr.op.lexeme + " " + this.printExpr(expr.value);
 		case 2:
-			var _g19 = expr.op;
-			return "" + this.printExpr(expr.left) + " " + (_g19.type._hx_index == 21 ? "===" : _g19.lexeme) + " " + this.printExpr(expr.right);
+			var _g25 = expr.op;
+			return "" + this.printExpr(expr.left) + " " + (_g25.type._hx_index == 21 ? "===" : _g25.lexeme) + " " + this.printExpr(expr.right);
 		case 3:
-			var _g15 = expr.$arguments;
+			var _g21 = expr.$arguments;
 			var calleeName = this.printExpr(expr.callee);
 			var tmp = this.classNames.indexOf(calleeName) != -1 ? "new " : "";
 			var tmp1 = "" + calleeName + "(";
 			var f1 = $bind(this,this.printExpr);
-			var result1 = new Array(_g15.length);
+			var result1 = new Array(_g21.length);
 			var _g2 = 0;
-			var _g11 = _g15.length;
+			var _g11 = _g21.length;
 			while(_g2 < _g11) {
 				var i1 = _g2++;
-				result1[i1] = f1(_g15[i1]);
+				result1[i1] = f1(_g21[i1]);
 			}
 			return tmp + (tmp1 + result1.join(",") + ")");
 		case 4:
@@ -1389,40 +1400,42 @@ cosy.JavaScriptPrinter = class cosy_JavaScriptPrinter {
 		case 5:
 			return "(" + this.printExpr(expr.e) + ")";
 		case 6:
-			var _g8 = expr.v;
-			if(_g8 == null) {
+			var _g15 = expr.v;
+			if(_g15 == null) {
 				return "null";
-			} else if(typeof(_g8) == "string") {
-				return "\"" + Std.string(_g8) + "\"";
+			} else if(typeof(_g15) == "string") {
+				return "\"" + Std.string(_g15) + "\"";
 			} else {
-				return "" + Std.string(_g8);
+				return "" + Std.string(_g15);
 			}
 			break;
 		case 7:
 			return "" + this.printExpr(expr.left) + " " + (expr.op.type._hx_index == 40 ? "||" : "&&") + " " + this.printExpr(expr.right);
 		case 8:
-			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme + " = " + this.printExpr(expr.value);
+			return expr.name.lexeme;
 		case 9:
-			return "this";
+			return "" + this.printExpr(expr.obj) + "." + expr.name.lexeme + " = " + this.printExpr(expr.value);
 		case 10:
-			return "super." + expr.method.lexeme;
+			return "this";
 		case 11:
-			var _g10 = expr.decls;
+			return "super." + expr.method.lexeme;
+		case 12:
+			var _g6 = expr.decls;
 			var _g3 = [];
 			var _g12 = 0;
-			while(_g12 < _g10.length) _g3.push(StringTools.replace(this.printExpr(_g10[_g12++])," = ",": "));
+			while(_g12 < _g6.length) _g3.push(StringTools.replace(this.printExpr(_g6[_g12++])," = ",": "));
 			return "{ " + _g3.join(", ") + " }";
-		case 12:
-			return "" + expr.op.lexeme + this.printExpr(expr.right);
 		case 13:
-			return expr.name.lexeme;
+			return "" + expr.op.lexeme + this.printExpr(expr.right);
 		case 14:
-			var _g27 = expr.body;
-			var _g26 = expr.params;
-			var _g5 = [];
+			return expr.name.lexeme;
+		case 15:
+			var _g28 = expr.body;
+			var _g27 = expr.params;
+			var _g4 = [];
 			var _g13 = 0;
-			while(_g13 < _g26.length) _g5.push(_g26[_g13++].name.lexeme);
-			return "function (" + _g5.join(", ") + ") " + this.printStmt(cosy.Stmt.Block(_g27));
+			while(_g13 < _g27.length) _g4.push(_g27[_g13++].name.lexeme);
+			return "function (" + _g4.join(", ") + ") " + this.printStmt(cosy.Stmt.Block(_g28));
 		}
 	}
 }
@@ -1721,7 +1734,7 @@ cosy.Parser = class cosy_Parser {
 	func(kind) {
 		var name = this.consume(cosy.TokenType.Identifier,"Expect " + kind + " name.");
 		var functionExpr = this.funcBody(kind);
-		if(functionExpr._hx_index == 14) {
+		if(functionExpr._hx_index == 15) {
 			return cosy.Stmt.Function(name,functionExpr.params,functionExpr.body,functionExpr.returnType);
 		} else {
 			throw new js._Boot.HaxeError(new cosy.RuntimeError(name,"Invalid function declaration."));
@@ -1797,7 +1810,7 @@ cosy.Parser = class cosy_Parser {
 			switch(expr._hx_index) {
 			case 4:
 				return cosy.Expr.Set(expr.obj,expr.name,value);
-			case 13:
+			case 14:
 				return cosy.Expr.Assign(expr.name,equals,value);
 			default:
 			}
@@ -1892,6 +1905,9 @@ cosy.Parser = class cosy_Parser {
 		if(this.match([cosy.TokenType.Identifier])) {
 			return this.identifier();
 		}
+		if(this.match([cosy.TokenType.Mut])) {
+			return cosy.Expr.MutArgument(this.previous(),this.consume(cosy.TokenType.Identifier,"Expect variable name after \"mut\"."));
+		}
 		if(this.match([cosy.TokenType.LeftParen])) {
 			var expr = this.expression();
 			this.consume(cosy.TokenType.RightParen,"Expect \")\" after expression.");
@@ -1985,7 +2001,7 @@ cosy.Parser = class cosy_Parser {
 	synchronize() {
 		this.advance();
 		while(!this.isAtEnd()) switch(this.peek().type._hx_index) {
-		case 32:case 35:case 36:case 38:case 41:case 42:case 47:
+		case 30:case 31:case 32:case 35:case 36:case 38:case 39:case 41:case 42:case 43:case 47:
 			return;
 		default:
 			this.advance();
@@ -2060,7 +2076,7 @@ cosy.Resolver = class cosy_Resolver {
 			this.declare(_g12);
 			this.define(_g12);
 			if(_g13 != null) {
-				if(_g13._hx_index == 13) {
+				if(_g13._hx_index == 14) {
 					var _g = _g13.name;
 					if(_g12.lexeme == _g.lexeme) {
 						cosy.Cosy.error(cosy.ErrorDataType.Token(_g),"A class cannot inherit from itself");
@@ -2208,28 +2224,28 @@ cosy.Resolver = class cosy_Resolver {
 	resolveExpr(expr) {
 		switch(expr._hx_index) {
 		case 0:
-			var _g4 = expr.exprs;
+			var _g8 = expr.exprs;
 			var _g = 0;
-			while(_g < _g4.length) this.resolveExpr(_g4[_g++]);
+			while(_g < _g8.length) this.resolveExpr(_g8[_g++]);
 			break;
 		case 1:
-			var _g5 = expr.name;
-			var variable = this.findInScopes(_g5);
+			var _g12 = expr.name;
+			var variable = this.findInScopes(_g12);
 			if(variable != null && !variable.mutable) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"Cannot reassign non-mutable variable.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g12),"Cannot reassign non-mutable variable.");
 			}
 			this.resolveExpr(expr.value);
-			this.resolveLocal(expr,_g5,false);
+			this.resolveLocal(expr,_g12,false);
 			break;
 		case 2:
 			this.resolveExpr(expr.left);
 			this.resolveExpr(expr.right);
 			break;
 		case 3:
-			var _g15 = expr.$arguments;
+			var _g21 = expr.$arguments;
 			this.resolveExpr(expr.callee);
 			var _g1 = 0;
-			while(_g1 < _g15.length) this.resolveExpr(_g15[_g1++]);
+			while(_g1 < _g21.length) this.resolveExpr(_g21[_g1++]);
 			break;
 		case 4:
 			this.resolveExpr(expr.obj);
@@ -2244,85 +2260,90 @@ cosy.Resolver = class cosy_Resolver {
 			this.resolveExpr(expr.right);
 			break;
 		case 8:
-			var _g22 = expr.name;
-			var _g21 = expr.obj;
+			this.resolveLocal(expr,expr.name,true);
+			break;
+		case 9:
+			var _g3 = expr.name;
+			var _g2 = expr.obj;
 			this.resolveExpr(expr.value);
-			this.resolveExpr(_g21);
-			switch(_g21._hx_index) {
-			case 9:
+			this.resolveExpr(_g2);
+			switch(_g2._hx_index) {
+			case 4:
 				break;
-			case 13:
-				var variable1 = this.findInScopes(_g21.name);
+			case 10:
+				break;
+			case 14:
+				var variable1 = this.findInScopes(_g2.name);
 				if(variable1 != null && !variable1.mutable) {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Cannot reassign properties on non-mutable struct.");
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g3),"Cannot reassign properties on non-mutable struct.");
 				}
 				break;
 			default:
-				console.log("src/cosy/Resolver.hx:180:",_g21);
+				console.log("src/cosy/Resolver.hx:183:",_g2);
 				throw new js._Boot.HaxeError("this is unexpected");
 			}
 			break;
-		case 9:
-			var _g2 = expr.keyword;
+		case 10:
+			var _g11 = expr.keyword;
 			if(this.currentClass == cosy._Resolver.ClassType.None) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g2),"Cannot use \"this\" outside of a class.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g11),"Cannot use \"this\" outside of a class.");
 			} else {
-				this.resolveLocal(expr,_g2,true);
+				this.resolveLocal(expr,_g11,true);
 			}
 			break;
-		case 10:
-			var _g24 = expr.keyword;
+		case 11:
+			var _g17 = expr.keyword;
 			switch(this.currentClass._hx_index) {
 			case 0:
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g24),"Cannot use \"super\" outside of a class.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g17),"Cannot use \"super\" outside of a class.");
 				break;
 			case 1:
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g24),"Cannot use \"super\" in a class with no superclass.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g17),"Cannot use \"super\" in a class with no superclass.");
 				break;
 			case 2:
 				break;
 			}
-			this.resolveLocal(expr,_g24,true);
+			this.resolveLocal(expr,_g17,true);
 			break;
-		case 11:
-			var _g11 = expr.decls;
-			var _g10 = expr.name;
-			var _g3 = 0;
-			while(_g3 < _g11.length) {
-				var decl = _g11[_g3];
-				++_g3;
+		case 12:
+			var _g6 = expr.decls;
+			var _g5 = expr.name;
+			var _g4 = 0;
+			while(_g4 < _g6.length) {
+				var decl = _g6[_g4];
+				++_g4;
 				if(decl._hx_index == 1) {
 					this.resolveExpr(decl.value);
 				}
 			}
-			this.resolveLocal(expr,_g10,true);
-			break;
-		case 12:
-			this.resolveExpr(expr.right);
+			this.resolveLocal(expr,_g5,true);
 			break;
 		case 13:
-			var _g9 = expr.name;
+			this.resolveExpr(expr.right);
+			break;
+		case 14:
+			var _g30 = expr.name;
 			var tmp;
 			var this1 = this.scopes;
-			var key = _g9.lexeme;
+			var key = _g30.lexeme;
 			var _this = this1[this1.length - 1];
 			if(__map_reserved[key] != null ? _this.existsReserved(key) : _this.h.hasOwnProperty(key)) {
 				var this2 = this.scopes;
-				var key1 = _g9.lexeme;
+				var key1 = _g30.lexeme;
 				var _this1 = this2[this2.length - 1];
 				tmp = (__map_reserved[key1] != null ? _this1.getReserved(key1) : _this1.h[key1]).state._hx_index == 0;
 			} else {
 				tmp = false;
 			}
 			if(tmp) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g9),"Cannot read local variable in its own initializer");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g30),"Cannot read local variable in its own initializer");
 			}
-			if(StringTools.startsWith(_g9.lexeme,"_")) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g9),"Variables starting with _ are considered unused.");
+			if(StringTools.startsWith(_g30.lexeme,"_")) {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g30),"Variables starting with _ are considered unused.");
 			}
-			this.resolveLocal(expr,_g9,true);
+			this.resolveLocal(expr,_g30,true);
 			break;
-		case 14:
+		case 15:
 			this.resolveFunction(null,expr.params,expr.body,cosy._Resolver.FunctionType.Function);
 			break;
 		}
@@ -2749,8 +2770,27 @@ cosy.StructInstance = class cosy_StructInstance {
 		this.structName = name;
 		this.fields = fields;
 	}
-	newInstance() {
-		return new cosy.StructInstance(this.structName,this.fields.copy());
+	clone() {
+		var clonedFields = new haxe.ds.StringMap();
+		var _g = new haxe.iterators.MapKeyValueIterator(this.fields);
+		while(_g.hasNext()) {
+			var _g1 = _g.next();
+			var key = _g1.key;
+			var value = _g1.value;
+			if(((value) instanceof cosy.StructInstance)) {
+				var v = value.clone();
+				if(__map_reserved[key] != null) {
+					clonedFields.setReserved(key,v);
+				} else {
+					clonedFields.h[key] = v;
+				}
+			} else if(__map_reserved[key] != null) {
+				clonedFields.setReserved(key,value);
+			} else {
+				clonedFields.h[key] = value;
+			}
+		}
+		return new cosy.StructInstance(this.structName,clonedFields);
 	}
 	get(name) {
 		var key = name.lexeme;
@@ -3104,31 +3144,31 @@ cosy.Typer = class cosy_Typer {
 		var ret;
 		switch(expr._hx_index) {
 		case 0:
-			var _g4 = expr.exprs;
-			var _g3 = expr.keyword;
+			var _g8 = expr.exprs;
+			var _g7 = expr.keyword;
 			var arrayType = cosy.VariableType.Unknown;
 			var _g = 0;
-			var _g1 = _g4.length;
+			var _g1 = _g8.length;
 			while(_g < _g1) {
 				var i = _g++;
-				var elemType = this.typeExpr(_g4[i]);
+				var elemType = this.typeExpr(_g8[i]);
 				if(elemType._hx_index != 0) {
 					if(arrayType._hx_index == 0) {
 						arrayType = elemType;
 					} else if(!this.matchType(elemType,arrayType)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g3),"Array values expected to be " + this.formatType(arrayType) + " but got " + this.formatType(elemType) + " at index " + i + ".");
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g7),"Array values expected to be " + this.formatType(arrayType) + " but got " + this.formatType(elemType) + " at index " + i + ".");
 					}
 				}
 			}
 			return cosy.VariableType.Array(arrayType);
 		case 1:
-			var _g5 = expr.name;
+			var _g12 = expr.name;
 			var assigningType = this.typeExpr(expr.value);
-			var key = _g5.lexeme;
+			var key = _g12.lexeme;
 			var _this = this.variableTypes;
 			var varType = __map_reserved[key] != null ? _this.getReserved(key) : _this.h[key];
 			if((varType == null ? false : varType._hx_index == 0) || (varType == null ? false : varType._hx_index == 10 && varType.type._hx_index == 0)) {
-				var key1 = _g5.lexeme;
+				var key1 = _g12.lexeme;
 				var _this1 = this.variableTypes;
 				if(__map_reserved[key1] != null) {
 					_this1.setReserved(key1,assigningType);
@@ -3136,7 +3176,7 @@ cosy.Typer = class cosy_Typer {
 					_this1.h[key1] = assigningType;
 				}
 			} else if(!this.matchType(varType,assigningType)) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"Cannot assign " + this.formatType(assigningType) + " to " + this.formatType(varType,false));
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g12),"Cannot assign " + this.formatType(assigningType) + " to " + this.formatType(varType,false));
 			}
 			return assigningType;
 		case 2:
@@ -3150,34 +3190,36 @@ cosy.Typer = class cosy_Typer {
 			}
 			return cosy.VariableType.Unknown;
 		case 3:
-			var _g15 = expr.$arguments;
-			var _g14 = expr.paren;
+			var _g21 = expr.$arguments;
+			var _g20 = expr.paren;
 			var calleeType = this.typeExpr(expr.callee);
 			calleeType = calleeType._hx_index == 10 ? calleeType.type : calleeType;
 			var type = cosy.VariableType.Unknown;
 			switch(calleeType._hx_index) {
 			case 0:
 				break;
+			case 1:
+				break;
 			case 5:
 				break;
 			case 6:
 				var _g11 = calleeType.paramTypes;
 				type = calleeType.returnType;
-				var _g12 = [];
+				var _g13 = [];
 				var _g2 = 0;
-				while(_g2 < _g15.length) _g12.push(this.typeExpr(_g15[_g2++]));
-				if(_g15.length != _g11.length) {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g14),"Expected " + _g11.length + " argument(s) but got " + _g15.length + ".");
+				while(_g2 < _g21.length) _g13.push(this.typeExpr(_g21[_g2++]));
+				if(_g21.length != _g11.length) {
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g20),"Expected " + _g11.length + " argument(s) but got " + _g21.length + ".");
 				} else {
-					var _g31 = 0;
-					var _g41 = _g11.length;
-					while(_g31 < _g41) {
-						var i1 = _g31++;
-						if(_g12[i1]._hx_index == 0) {
-							cosy.Cosy.warning(cosy.ErrorDataType.Token(_g14),"Argument " + (i1 + 1) + " has type Unknown.");
+					var _g3 = 0;
+					var _g4 = _g11.length;
+					while(_g3 < _g4) {
+						var i1 = _g3++;
+						if(_g13[i1]._hx_index == 0) {
+							cosy.Cosy.warning(cosy.ErrorDataType.Token(_g20),"Argument " + (i1 + 1) + " has type Unknown.");
 						}
-						if(!this.matchType(_g12[i1],_g11[i1])) {
-							cosy.Cosy.error(cosy.ErrorDataType.Token(_g14),"Expected argument " + (i1 + 1) + " to be " + this.formatType(_g11[i1]) + " but got " + this.formatType(_g12[i1]) + ".");
+						if(!this.matchType(_g13[i1],_g11[i1])) {
+							cosy.Cosy.error(cosy.ErrorDataType.Token(_g20),"Expected argument " + (i1 + 1) + " to be " + this.formatType(_g11[i1]) + " but got " + this.formatType(_g13[i1]) + ".");
 						}
 					}
 				}
@@ -3188,26 +3230,78 @@ cosy.Typer = class cosy_Typer {
 			ret = type;
 			break;
 		case 4:
-			var _g17 = expr.name;
+			var _g23 = expr.name;
 			var objType = this.typeExpr(expr.obj);
-			if(objType._hx_index == 7) {
-				var _g6 = objType.type;
-				switch(_g17.lexeme) {
+			switch(objType._hx_index) {
+			case 7:
+				var _g14 = objType.type;
+				switch(_g23.lexeme) {
 				case "concat":
-					return cosy.VariableType.Function([cosy.VariableType.Array(_g6)],cosy.VariableType.Void);
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Cannot call mutating method on immutable array.");
+					return cosy.VariableType.Void;
 				case "get":
-					return cosy.VariableType.Function([cosy.VariableType.Number],_g6);
+					return cosy.VariableType.Function([cosy.VariableType.Number],_g14);
 				case "length":
 					return cosy.VariableType.Number;
 				case "pop":
-					return cosy.VariableType.Function([],_g6);
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Cannot call mutating method on immutable array.");
+					return cosy.VariableType.Void;
 				case "push":
-					return cosy.VariableType.Function([_g6],cosy.VariableType.Void);
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Cannot call mutating method on immutable array.");
+					return cosy.VariableType.Void;
 				default:
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g17),"Unknown array property or function.");
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Unknown array property or function.");
 					return cosy.VariableType.Void;
 				}
-			} else {
+				break;
+			case 8:
+				var _g5 = objType.variables;
+				var key2 = _g23.lexeme;
+				if(__map_reserved[key2] != null ? _g5.existsReserved(key2) : _g5.h.hasOwnProperty(key2)) {
+					var key3 = _g23.lexeme;
+					return __map_reserved[key3] != null ? _g5.getReserved(key3) : _g5.h[key3];
+				} else {
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"No member named \"" + _g23.lexeme + "\" in struct of type " + this.formatType(objType,false));
+					return cosy.VariableType.Unknown;
+				}
+				break;
+			case 10:
+				var _g22 = objType.type;
+				switch(_g22._hx_index) {
+				case 7:
+					var _g41 = _g22.type;
+					switch(_g23.lexeme) {
+					case "concat":
+						return cosy.VariableType.Function([cosy.VariableType.Array(_g41)],cosy.VariableType.Void);
+					case "get":
+						return cosy.VariableType.Function([cosy.VariableType.Number],_g41);
+					case "length":
+						return cosy.VariableType.Number;
+					case "pop":
+						return cosy.VariableType.Function([],_g41);
+					case "push":
+						return cosy.VariableType.Function([_g41],cosy.VariableType.Void);
+					default:
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Unknown array property or function.");
+						return cosy.VariableType.Void;
+					}
+					break;
+				case 8:
+					var _g31 = _g22.variables;
+					var key4 = _g23.lexeme;
+					if(__map_reserved[key4] != null ? _g31.existsReserved(key4) : _g31.h.hasOwnProperty(key4)) {
+						var key5 = _g23.lexeme;
+						return __map_reserved[key5] != null ? _g31.getReserved(key5) : _g31.h[key5];
+					} else {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"No member named \"" + _g23.lexeme + "\" in struct of type " + this.formatType(objType,false));
+						return cosy.VariableType.Unknown;
+					}
+					break;
+				default:
+					return cosy.VariableType.Unknown;
+				}
+				break;
+			default:
 				return cosy.VariableType.Unknown;
 			}
 			break;
@@ -3215,32 +3309,57 @@ cosy.Typer = class cosy_Typer {
 			ret = this.typeExpr(expr.e);
 			break;
 		case 6:
-			var _g8 = expr.v;
-			ret = typeof(_g8) == "number" ? cosy.VariableType.Number : typeof(_g8) == "string" ? cosy.VariableType.Text : typeof(_g8) == "boolean" ? cosy.VariableType.Boolean : cosy.VariableType.Unknown;
+			var _g15 = expr.v;
+			ret = typeof(_g15) == "number" ? cosy.VariableType.Number : typeof(_g15) == "string" ? cosy.VariableType.Text : typeof(_g15) == "boolean" ? cosy.VariableType.Boolean : cosy.VariableType.Unknown;
 			break;
 		case 7:
 			ret = cosy.VariableType.Boolean;
 			break;
 		case 8:
-			var _g23 = expr.value;
-			var _g22 = expr.name;
+			var _g16 = expr.name;
+			var key6 = _g16.lexeme;
+			var _this2 = this.variableTypes;
+			var type1 = __map_reserved[key6] != null ? _this2.getReserved(key6) : _this2.h[key6];
+			if(type1 == null) {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Only mutable structs can be passed as \"mut\". You passed " + this.formatType(type1,false) + ".");
+			} else if(type1._hx_index == 10) {
+				var _g6 = type1.type;
+				switch(_g6._hx_index) {
+				case 8:
+					break;
+				case 10:
+					if(_g6.type._hx_index != 8) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Only mutable structs can be passed as \"mut\". You passed " + this.formatType(type1,false) + ".");
+					}
+					break;
+				default:
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Only mutable structs can be passed as \"mut\". You passed " + this.formatType(type1,false) + ".");
+				}
+			} else {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Only mutable structs can be passed as \"mut\". You passed " + this.formatType(type1,false) + ".");
+			}
+			ret = type1;
+			break;
+		case 9:
+			var _g42 = expr.value;
+			var _g32 = expr.name;
 			var objType1 = this.typeExpr(expr.obj);
 			switch(objType1._hx_index) {
 			case 9:
-				var _g32 = objType1.name;
-				var _this2 = this.variableTypes;
-				objType1 = __map_reserved[_g32] != null ? _this2.getReserved(_g32) : _this2.h[_g32];
+				var _g33 = objType1.name;
+				var _this3 = this.variableTypes;
+				objType1 = __map_reserved[_g33] != null ? _this3.getReserved(_g33) : _this3.h[_g33];
 				break;
 			case 10:
-				var _g7 = objType1.type;
-				switch(_g7._hx_index) {
+				var _g9 = objType1.type;
+				switch(_g9._hx_index) {
 				case 8:
-					objType1 = cosy.VariableType.Struct(_g7.variables);
+					objType1 = cosy.VariableType.Struct(_g9.variables);
 					break;
 				case 9:
-					var _g21 = _g7.name;
-					var _this3 = this.variableTypes;
-					objType1 = __map_reserved[_g21] != null ? _this3.getReserved(_g21) : _this3.h[_g21];
+					var _g24 = _g9.name;
+					var _this4 = this.variableTypes;
+					objType1 = __map_reserved[_g24] != null ? _this4.getReserved(_g24) : _this4.h[_g24];
 					break;
 				default:
 					objType1 = objType1;
@@ -3250,36 +3369,36 @@ cosy.Typer = class cosy_Typer {
 				objType1 = objType1;
 			}
 			if(objType1._hx_index == 8) {
-				var _g42 = objType1.variables;
-				var key2 = _g22.lexeme;
-				if(__map_reserved[key2] != null ? _g42.existsReserved(key2) : _g42.h.hasOwnProperty(key2)) {
-					var valueType = this.typeExpr(_g23);
-					var key3 = _g22.lexeme;
-					var structDeclType = __map_reserved[key3] != null ? _g42.getReserved(key3) : _g42.h[key3];
+				var _g43 = objType1.variables;
+				var key7 = _g32.lexeme;
+				if(__map_reserved[key7] != null ? _g43.existsReserved(key7) : _g43.h.hasOwnProperty(key7)) {
+					var valueType = this.typeExpr(_g42);
+					var key8 = _g32.lexeme;
+					var structDeclType = __map_reserved[key8] != null ? _g43.getReserved(key8) : _g43.h[key8];
 					var nonMutableStructDeclType = structDeclType == null ? structDeclType : structDeclType._hx_index == 10 ? structDeclType.type : structDeclType;
 					if(!(structDeclType == null ? false : structDeclType._hx_index == 10)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Member is not mutable.");
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g32),"Member is not mutable.");
 					} else if(!this.matchType(valueType,nonMutableStructDeclType)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Expected value of type " + this.formatType(nonMutableStructDeclType) + " but got " + this.formatType(valueType));
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g32),"Expected value of type " + this.formatType(nonMutableStructDeclType) + " but got " + this.formatType(valueType));
 					}
 				} else {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"No member named \"" + _g22.lexeme + "\" in struct of type " + this.formatType(objType1,false));
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g32),"No member named \"" + _g32.lexeme + "\" in struct of type " + this.formatType(objType1,false));
 				}
 			}
 			ret = cosy.VariableType.Unknown;
-			break;
-		case 9:
-			ret = cosy.VariableType.Instance;
 			break;
 		case 10:
 			ret = cosy.VariableType.Instance;
 			break;
 		case 11:
-			var _g111 = expr.decls;
-			var _g10 = expr.name;
-			var key4 = _g10.lexeme;
-			var _this4 = this.variableTypes;
-			var structType = __map_reserved[key4] != null ? _this4.getReserved(key4) : _this4.h[key4];
+			ret = cosy.VariableType.Instance;
+			break;
+		case 12:
+			var _g61 = expr.decls;
+			var _g51 = expr.name;
+			var key9 = _g51.lexeme;
+			var _this5 = this.variableTypes;
+			var structType = __map_reserved[key9] != null ? _this5.getReserved(key9) : _this5.h[key9];
 			var assignedMembers = [];
 			var structMembers;
 			if(structType == null) {
@@ -3289,66 +3408,66 @@ cosy.Typer = class cosy_Typer {
 			} else {
 				throw new js._Boot.HaxeError("unexpected");
 			}
-			var _g13 = 0;
-			while(_g13 < _g111.length) {
-				var decl = _g111[_g13];
-				++_g13;
+			var _g17 = 0;
+			while(_g17 < _g61.length) {
+				var decl = _g61[_g17];
+				++_g17;
 				if(decl._hx_index == 1) {
-					var _g16 = decl.name;
-					var key5 = _g16.lexeme;
-					if(!(__map_reserved[key5] != null ? structMembers.existsReserved(key5) : structMembers.h.hasOwnProperty(key5))) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"No member named \"" + _g16.lexeme + "\" in struct " + _g10.lexeme);
+					var _g18 = decl.name;
+					var key10 = _g18.lexeme;
+					if(!(__map_reserved[key10] != null ? structMembers.existsReserved(key10) : structMembers.h.hasOwnProperty(key10))) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"No member named \"" + _g18.lexeme + "\" in struct " + _g51.lexeme);
 						break;
-					} else if(assignedMembers.indexOf(_g16.lexeme) != -1) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Member already assigned in initializer.");
+					} else if(assignedMembers.indexOf(_g18.lexeme) != -1) {
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Member already assigned in initializer.");
 						break;
 					}
 					var valueType1 = this.typeExpr(decl.value);
-					var key6 = _g16.lexeme;
-					var _g18 = __map_reserved[key6] != null ? structMembers.getReserved(key6) : structMembers.h[key6];
-					var memberType = _g18 == null ? _g18 : _g18._hx_index == 10 ? _g18.type : _g18;
-					assignedMembers.push(_g16.lexeme);
+					var key11 = _g18.lexeme;
+					var _g19 = __map_reserved[key11] != null ? structMembers.getReserved(key11) : structMembers.h[key11];
+					var memberType = _g19 == null ? _g19 : _g19._hx_index == 10 ? _g19.type : _g19;
+					assignedMembers.push(_g18.lexeme);
 					if(!this.matchType(valueType1,memberType)) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g16),"Expected value to be of type " + this.formatType(memberType) + " but got " + this.formatType(valueType1));
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Expected value to be of type " + this.formatType(memberType) + " but got " + this.formatType(valueType1));
 					}
 				} else {
 					throw new js._Boot.HaxeError("unexpected");
 				}
 			}
-			var key7 = _g10.lexeme;
-			var _this5 = this.structsMeta;
-			var _g24 = new haxe.iterators.MapKeyValueIterator((__map_reserved[key7] != null ? _this5.getReserved(key7) : _this5.h[key7]).members);
-			while(_g24.hasNext()) {
-				var _g33 = _g24.next();
-				var memberName = _g33.key;
-				if(!_g33.value.initialized) {
+			var key12 = _g51.lexeme;
+			var _this6 = this.structsMeta;
+			var _g25 = new haxe.iterators.MapKeyValueIterator((__map_reserved[key12] != null ? _this6.getReserved(key12) : _this6.h[key12]).members);
+			while(_g25.hasNext()) {
+				var _g34 = _g25.next();
+				var memberName = _g34.key;
+				if(!_g34.value.initialized) {
 					if(assignedMembers.indexOf(memberName) == -1) {
-						cosy.Cosy.error(cosy.ErrorDataType.Token(_g10),"Member \"" + memberName + "\" not initialized.");
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g51),"Member \"" + memberName + "\" not initialized.");
 					}
 				}
 			}
 			ret = structType;
 			break;
-		case 12:
+		case 13:
 			ret = this.typeExpr(expr.right);
 			break;
-		case 13:
-			var _g9 = expr.name;
-			var key8 = _g9.lexeme;
-			var _this6 = this.variableTypes;
-			if(__map_reserved[key8] != null ? _this6.existsReserved(key8) : _this6.h.hasOwnProperty(key8)) {
-				var key9 = _g9.lexeme;
-				var _this7 = this.variableTypes;
-				if(__map_reserved[key9] != null) {
-					return _this7.getReserved(key9);
+		case 14:
+			var _g30 = expr.name;
+			var key13 = _g30.lexeme;
+			var _this7 = this.variableTypes;
+			if(__map_reserved[key13] != null ? _this7.existsReserved(key13) : _this7.h.hasOwnProperty(key13)) {
+				var key14 = _g30.lexeme;
+				var _this8 = this.variableTypes;
+				if(__map_reserved[key14] != null) {
+					return _this8.getReserved(key14);
 				} else {
-					return _this7.h[key9];
+					return _this8.h[key14];
 				}
 			} else {
 				return cosy.VariableType.Unknown;
 			}
 			break;
-		case 14:
+		case 15:
 			ret = this.handleFunc(null,expr.params,expr.body,expr.returnType);
 			break;
 		}
@@ -3643,20 +3762,6 @@ haxe.ds.StringMap = class haxe_ds_StringMap {
 			}
 		}
 		return out;
-	}
-	copy() {
-		var copied = new haxe.ds.StringMap();
-		var key = this.keys();
-		while(key.hasNext()) {
-			var key1 = key.next();
-			var value = __map_reserved[key1] != null ? this.getReserved(key1) : this.h[key1];
-			if(__map_reserved[key1] != null) {
-				copied.setReserved(key1,value);
-			} else {
-				copied.h[key1] = value;
-			}
-		}
-		return copied;
 	}
 }
 haxe.ds.StringMap.__name__ = true;
