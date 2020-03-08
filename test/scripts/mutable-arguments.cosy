@@ -1,0 +1,47 @@
+
+{
+    struct S {
+        mut x = 0
+        var y = 1
+    }
+    // print S {}
+
+    // struct S2 {
+    //     mut y = 0
+    // }
+    // print S2 {}
+
+    // var s = S { x = 1 }
+    mut s = S { x = 2, y = 3 }
+    mut s2
+    s2 = s
+    print s
+
+    fn mutable_param(mut p S) {
+        p.x = 4
+        // p.y = 5
+        print p
+    }
+    // mutable_param(s)
+    mutable_param(mut s2)
+    print s
+}
+
+{
+    struct Point {   // Struct
+        mut x
+        var y // TODO: What to do about struct members of unknown type?
+        var text = 'default value'
+    }
+    // instantiate struct
+    mut point = Point { x = 3, y = 4 }
+    // mut point = Point { x = '3', y = 4 }
+    print point
+
+    fn mutf(mut p Point) {
+        p.x = 5
+    }
+    print point
+    mutf(point)
+    print point
+}

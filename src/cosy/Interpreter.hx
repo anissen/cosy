@@ -270,6 +270,8 @@ class Interpreter {
                 value;
             case Grouping(e):
                 evaluate(e);
+            case MutArgument(keyword, name):
+                lookUpVariable(name, expr);
             case Variable(name) | This(name):
                 lookUpVariable(name, expr);
             case Super(kw, meth):

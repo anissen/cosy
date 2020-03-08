@@ -372,12 +372,11 @@ class Parser {
 	}
 	
 	function finishCall(callee:Expr):Expr {
-		var args = [];
+		var args :Array<Expr> = [];
 		if (!check(RightParen)) {
 			do {
                 if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
-                // mut variable
-				args.push(expression());
+                args.push(expression());
 			} while (match([Comma]));
 		}
 		
@@ -398,6 +397,7 @@ class Parser {
 		if (match([This])) return This(previous());
 		if (match([Fn])) return funcBody("function");
 		if (match([Identifier])) return identifier();
+		if (match([Mut])) return MutArgument(previous(), consume(Identifier, 'Expect variable name after "mut".'));
 		if (match([LeftParen])) {
 			var expr = expression();
 			consume(RightParen, 'Expect ")" after expression.');
@@ -426,13 +426,11 @@ class Parser {
         var variable = previous();
         if (check(LeftBrace) && structNames.indexOf(variable.lexeme) != -1) {
             consume(LeftBrace, 'Expect "{" after struct name.');
-            // trace('variable: $variable, ${variable.line}');
             var decls = [];
             while (!match([RightBrace]) && !isAtEnd()) {
                 decls.push(assignment());
                 if (!check(RightBrace)) consume(Comma, 'Expect "," between variable initializers.');
             }
-            // trace('done');
             return StructInit(variable, decls);
         } else {
             return Variable(variable);
@@ -440,7 +438,7 @@ class Parser {
     }
 	
 	function consume(type:TokenType, message:String):Token {
-		if (check(type)) return advance();
+        if (check(type)) return advance();
 		throw error(peek(), message);
 	}
 	

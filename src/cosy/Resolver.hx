@@ -167,7 +167,9 @@ class Resolver {
 				resolveExpr(callee);
 				for (arg in arguments) resolveExpr(arg);
 			case Get(obj, name):
-				resolveExpr(obj);
+                resolveExpr(obj);
+            case MutArgument(keyword, name):
+                resolveLocal(expr, name, true);
 			case Set(obj, name, value):
 				resolveExpr(value);
                 resolveExpr(obj);

@@ -1,0 +1,10 @@
+
+{
+    mut sss = 12
+    fn mutable_param2(mut s2 Num) {
+        s2 = 666
+        print s2
+    }
+    mutable_param2(mut sss)
+    print sss
+}

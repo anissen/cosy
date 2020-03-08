@@ -8,7 +8,8 @@ enum Expr {
 	Get(obj:Expr, name:Token);
 	Grouping(e:Expr);
 	Literal(v:Any);
-	Logical(left:Expr, op:Token, right:Expr);
+    Logical(left:Expr, op:Token, right:Expr);
+    MutArgument(keyword:Token, name:Token);
 	Set(obj:Expr, name:Token, value:Expr);
 	This(keyword:Token);
 	Super(keyword:Token, method:Token);

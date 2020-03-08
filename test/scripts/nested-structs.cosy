@@ -1,0 +1,32 @@
+{
+    struct Sizes {
+        mut shoeSize Num
+        mut height Num
+    }
+
+    struct Person {
+        var age Num
+        mut name Str
+        var sizes Sizes // TODO: This is immutable and should be const!
+    }
+
+    var john = Person {
+        age = 42,
+        name = 'John',
+        sizes = Sizes {
+            shoeSize = 33,
+            height = 186
+        }
+    }
+    print john // height: 186
+    // john.sizes.height += 10 // TODO: This should work
+    john.sizes.height = john.sizes.height + 10 // TODO: This should fail
+    print john // height: 196
+
+    mut peter = john
+    peter.name = 'Peter'
+    peter.sizes.height = peter.sizes.height + 10
+    print peter // height: 206
+    
+    print john  // height: 196
+}

@@ -1,0 +1,6 @@
+S instance { x = 2, y = 3 }
+S instance { x = 4, y = 3 }
+S instance { x = 2, y = 3 }
+Point instance { text = "default value", x = 3, y = 4 }
+Point instance { text = "default value", x = 3, y = 4 }
+Point instance { text = "default value", x = 5, y = 4 }

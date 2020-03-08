@@ -198,10 +198,24 @@ class Typer {
                             case 'get': Function([Number], t);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
-                        // case Struct(_): Struct;
-                    case _: Unknown;
+                    case Struct(v) | Mutable(Struct(v)):
+                        if (v.exists(name.lexeme)) {
+                            return v[name.lexeme];
+                        } else {
+                            Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
+                            return Unknown;
+                        }
+                    case _: Unknown; // TODO when classes are removed; throw exception
                     // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
+            case MutArgument(keyword, name):
+                var type = variableTypes.get(name.lexeme);
+                switch type {
+                    case Mutable(Struct(_)):
+                    case Mutable(Mutable(Struct(_))):
+                    case _: Cosy.error(name, 'Only mutable structs can be passed as "mut". You passed ${formatType(type, false)}.');
+                }
+                type;
 			case Set(obj, name, value):
                 var objType = typeExpr(obj);
                 objType = switch objType {

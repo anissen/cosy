@@ -62,7 +62,8 @@ class AstPrinter {
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
 			case Literal(v): if (Std.is(v, String)) { '\'$v\''; } else { '$v'; };
-			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
+            case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
+            case MutArgument(keyword, name): 'mut ${name.lexeme}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
 			case This(keyword): keyword.lexeme;
             case Super(keyword, method): '${keyword.lexeme}.${method.lexeme}';

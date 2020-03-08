@@ -45,3 +45,17 @@ struct Point {
     }
     struct_as_arg(Point { x = 3, y = 4, a = [] })
 }
+
+{
+    struct Entity {
+        var x Num
+        var y Num
+        var text = 'default value'
+        mut arr Array Num = []
+    }
+
+    // instantiate struct
+    mut entity = Entity { x = 3, y = 5 }
+    entity.arr = [5, 6, 7]
+    print entity
+}
