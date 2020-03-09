@@ -1,5 +1,7 @@
 package cosy;
 
+import haxe.io.Eof;
+
 class Function implements Callable {
 	final name:Token;
 	final params:Array<Param>;
@@ -28,7 +30,9 @@ class Function implements Callable {
 			interpreter.executeBlock(body, environment);
 		} catch(ret:Return) {
 			if (!isInitializer) return ret.value;
-		}
+		} catch(eof:Eof) {
+            // program is quit while waiting for user text input
+        }
 		
         return (isInitializer ? closure.getAt(0, 'this') : null);
 	}
