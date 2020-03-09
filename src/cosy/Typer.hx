@@ -30,11 +30,11 @@ class Typer {
     var inferredReturnType :VariableType = Void;
 	
 	public function new() {
-        variableTypes.set('clock', Number);
-        variableTypes.set('random', Number);
-        variableTypes.set('str_length', Number);
-        variableTypes.set('str_charAt', Text);
-        variableTypes.set('input', Text);
+        variableTypes.set('clock', Function([], Number));
+        variableTypes.set('random', Function([], Number));
+        variableTypes.set('str_length', Function([Text], Number));
+        variableTypes.set('str_charAt', Function([Text, Number], Text));
+        variableTypes.set('input', Function([], Text));
 	}
 	
 	public inline function type(stmts:Array<Stmt>) {
