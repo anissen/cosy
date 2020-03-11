@@ -115,8 +115,10 @@ class Scanner {
 		// The closing '
 		advance();
 		
-		var value = source.substring(start + 1, current - 1);
-		addToken(String, StringTools.replace(value, '\\\'', '\''));
+        var value = source.substring(start + 1, current - 1);
+        value = StringTools.replace(value, '\\n', '\n');
+        value = StringTools.replace(value, '\\\'', '\'');
+		addToken(String, value);
 	}
 	
 	function number() {
