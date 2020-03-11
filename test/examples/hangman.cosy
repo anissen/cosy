@@ -10,10 +10,10 @@ fn get_secret_word() {
 
 var secret_word = get_secret_word()
 var word_to_guess = secret_word.split('')
-mut letters_guessed = []
+mut letters_guessed Array Str = []
 mut wrong_guesses_remaining = 5
 
-fn contains(arr, element) {
+fn contains(arr Array, element) {
     for a in arr {
         if a == element {
             return true
