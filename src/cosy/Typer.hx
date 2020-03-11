@@ -77,7 +77,7 @@ class Typer {
             case ForArray(name, array, body):
                 var arrayType = typeExpr(array);
                 switch arrayType {
-                    case Array(t): variableTypes.set(name.lexeme, t);
+                    case Array(t) | Mutable(Array(t)): variableTypes.set(name.lexeme, t);
                     case Unknown: variableTypes.set(name.lexeme, Unknown);
                     case _: Cosy.error(name, 'Can only loop over value of type array.');
                 }
@@ -206,6 +206,13 @@ class Typer {
                             case 'concat': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'pop': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'get': Function([Number], t);
+                            case _: Cosy.error(name, 'Unknown array property or function.'); Void;
+                        }
+                    case Text | Mutable(Text):
+                        return switch name.lexeme {
+                            case 'length': Number;
+                            case 'split': Array(Text);
+                            case 'charAt': Text;
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case Struct(v) | Mutable(Struct(v)):

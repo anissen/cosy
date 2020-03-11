@@ -268,6 +268,7 @@ class Interpreter {
                 if (Std.is(obj, Array)) return arrayGet(obj, name);
                 else if (Std.is(obj, StructInstance)) (obj :StructInstance).get(name);
                 else if (Std.is(obj, Instance)) return (obj: Instance).get(name);
+                else if (Std.is(obj, String)) return stringGet(obj, name);
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 // TODO: Should also handle assignment operators: +=, -=, /=, *=
@@ -311,10 +312,19 @@ class Interpreter {
         // TODO: Argument types must match! Change arity to array of types, e.g. 'get' has Number
         return switch name.lexeme {
             case 'length': array.length;
-            case 'get': new ArrayCallable(1, (args -> array[(args[0] :Int)]));
-            case 'push': new ArrayCallable(1, (args -> args.map(array.push)));
-            case 'concat': new ArrayCallable(1, (args -> (args[0] :Array<Any>).map(array.push)));
-            case 'pop': new ArrayCallable(0, (_ -> (array.length == 0 ? throw new RuntimeError(name, 'Cannot pop from empty array.') : array.pop())));
+            case 'get': new CustomCallable(1, (args -> array[(args[0] :Int)]));
+            case 'push': new CustomCallable(1, (args -> args.map(array.push)));
+            case 'concat': new CustomCallable(1, (args -> (args[0] :Array<Any>).map(array.push)));
+            case 'pop': new CustomCallable(0, (_ -> (array.length == 0 ? throw new RuntimeError(name, 'Cannot pop from empty array.') : array.pop())));
+            case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
+        }
+    }
+
+    function stringGet(string: String, name: Token) :Any {
+        return switch name.lexeme {
+            case 'length': string.length;
+            case 'split': new CustomCallable(1, (args -> string.split(args[0])));
+            case 'charAt': new CustomCallable(1, (args -> string.charAt(args[0])));
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }
@@ -397,7 +407,7 @@ private class InputCallable implements Callable {
     public function toString() :String return '<native fn>';
 }
 
-private class ArrayCallable implements Callable {
+private class CustomCallable implements Callable {
     final arityValue: Int;
     final method: (args: Array<Any>) -> Any;
     public function new(arityValue: Int, method: (args: Array<Any>) -> Any) {
