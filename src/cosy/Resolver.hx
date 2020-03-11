@@ -265,7 +265,7 @@ class Resolver {
 			}
 			i--;
 		}
-        if (name.lexeme == 'clock' || name.lexeme == 'random' || name.lexeme == 'str_length' || name.lexeme == 'str_charAt' || name.lexeme == 'input') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
+        if (name.lexeme == 'clock' || name.lexeme == 'random' || name.lexeme == 'input') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
         Cosy.error(name, 'Variable not declared in this scope.');
 	}
 

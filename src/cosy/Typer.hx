@@ -32,8 +32,6 @@ class Typer {
 	public function new() {
         variableTypes.set('clock', Function([], Number));
         variableTypes.set('random', Function([], Number));
-        variableTypes.set('str_length', Function([Text], Number));
-        variableTypes.set('str_charAt', Function([Text, Number], Text));
         variableTypes.set('input', Function([], Text));
 	}
 	
