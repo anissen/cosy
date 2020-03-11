@@ -316,7 +316,7 @@ cosy.Interpreter = class cosy_Interpreter {
 			var e1 = ((e) instanceof js._Boot.HaxeError) ? e.val : e;
 			if(((e1) instanceof cosy.RuntimeError)) {
 				cosy.Cosy.runtimeError(e1);
-			} else {
+			} else if(!((e1) instanceof haxe.io.Eof)) {
 				throw e;
 			}
 		}
@@ -691,6 +691,8 @@ cosy.Interpreter = class cosy_Interpreter {
 				return obj.get(_g23);
 			} else if(((obj) instanceof cosy.Instance)) {
 				return obj.get(_g23);
+			} else if(typeof(obj) == "string") {
+				return this.stringGet(obj,_g23);
 			} else {
 				throw new js._Boot.HaxeError(new cosy.RuntimeError(_g23,"Only instances have properties"));
 			}
@@ -786,7 +788,7 @@ cosy.Interpreter = class cosy_Interpreter {
 	arrayGet(array,name) {
 		switch(name.lexeme) {
 		case "concat":
-			return new cosy._Interpreter.ArrayCallable(1,function(args) {
+			return new cosy._Interpreter.CustomCallable(1,function(args) {
 				var _this = args[0];
 				var f = $bind(array,$arrayPush);
 				var result = new Array(_this.length);
@@ -799,13 +801,13 @@ cosy.Interpreter = class cosy_Interpreter {
 				return result;
 			});
 		case "get":
-			return new cosy._Interpreter.ArrayCallable(1,function(args1) {
+			return new cosy._Interpreter.CustomCallable(1,function(args1) {
 				return array[args1[0]];
 			});
 		case "length":
 			return array.length;
 		case "pop":
-			return new cosy._Interpreter.ArrayCallable(0,function(_) {
+			return new cosy._Interpreter.CustomCallable(0,function(_) {
 				if(array.length == 0) {
 					throw new js._Boot.HaxeError(new cosy.RuntimeError(name,"Cannot pop from empty array."));
 				} else {
@@ -813,7 +815,7 @@ cosy.Interpreter = class cosy_Interpreter {
 				}
 			});
 		case "push":
-			return new cosy._Interpreter.ArrayCallable(1,function(args2) {
+			return new cosy._Interpreter.CustomCallable(1,function(args2) {
 				var f1 = $bind(array,$arrayPush);
 				var result1 = new Array(args2.length);
 				var _g2 = 0;
@@ -823,6 +825,22 @@ cosy.Interpreter = class cosy_Interpreter {
 					result1[i1] = f1(args2[i1]);
 				}
 				return result1;
+			});
+		default:
+			throw new js._Boot.HaxeError(new cosy.RuntimeError(name,"Undefined method \"" + name.lexeme + "\"."));
+		}
+	}
+	stringGet(string,name) {
+		switch(name.lexeme) {
+		case "charAt":
+			return new cosy._Interpreter.CustomCallable(1,function(args) {
+				return string.charAt(args[0]);
+			});
+		case "length":
+			return string.length;
+		case "split":
+			return new cosy._Interpreter.CustomCallable(1,function(args1) {
+				return string.split(args1[0]);
 			});
 		default:
 			throw new js._Boot.HaxeError(new cosy.RuntimeError(name,"Undefined method \"" + name.lexeme + "\"."));
@@ -1261,7 +1279,7 @@ cosy.Instance.__name__ = true;
 Object.assign(cosy.Instance.prototype, {
 	__class__: cosy.Instance
 });
-cosy._Interpreter.ArrayCallable = class cosy__$Interpreter_ArrayCallable {
+cosy._Interpreter.CustomCallable = class cosy__$Interpreter_CustomCallable {
 	constructor(arityValue,method) {
 		this.arityValue = arityValue;
 		this.method = method;
@@ -1276,10 +1294,10 @@ cosy._Interpreter.ArrayCallable = class cosy__$Interpreter_ArrayCallable {
 		return "<native fn>";
 	}
 }
-cosy._Interpreter.ArrayCallable.__name__ = true;
-cosy._Interpreter.ArrayCallable.__interfaces__ = [cosy.Callable];
-Object.assign(cosy._Interpreter.ArrayCallable.prototype, {
-	__class__: cosy._Interpreter.ArrayCallable
+cosy._Interpreter.CustomCallable.__name__ = true;
+cosy._Interpreter.CustomCallable.__interfaces__ = [cosy.Callable];
+Object.assign(cosy._Interpreter.CustomCallable.prototype, {
+	__class__: cosy._Interpreter.CustomCallable
 });
 cosy.JavaScriptPrinter = class cosy_JavaScriptPrinter {
 	constructor() {
@@ -2674,7 +2692,10 @@ cosy.Scanner = class cosy_Scanner {
 			return;
 		}
 		this.advance();
-		this.addToken(cosy.TokenType.String,StringTools.replace(this.source.substring(this.start + 1,this.current - 1),"\\'","'"));
+		var value = this.source.substring(this.start + 1,this.current - 1);
+		value = StringTools.replace(value,"\\n","\n");
+		value = StringTools.replace(value,"\\'","'");
+		this.addToken(cosy.TokenType.String,value);
 	}
 	number() {
 		while(this.isDigit(this.peek())) this.advance();
@@ -2885,36 +2906,36 @@ cosy.Typer = class cosy_Typer {
 		this.typedReturnType = cosy.VariableType.Unknown;
 		this.variableTypes = new haxe.ds.StringMap();
 		this.structsMeta = new haxe.ds.StringMap();
+		var value = cosy.VariableType.Function([],cosy.VariableType.Number);
 		var _this = this.variableTypes;
-		var value = cosy.VariableType.Number;
 		if(__map_reserved["clock"] != null) {
 			_this.setReserved("clock",value);
 		} else {
 			_this.h["clock"] = value;
 		}
+		var value1 = cosy.VariableType.Function([],cosy.VariableType.Number);
 		var _this1 = this.variableTypes;
-		var value1 = cosy.VariableType.Number;
 		if(__map_reserved["random"] != null) {
 			_this1.setReserved("random",value1);
 		} else {
 			_this1.h["random"] = value1;
 		}
+		var value2 = cosy.VariableType.Function([cosy.VariableType.Text],cosy.VariableType.Number);
 		var _this2 = this.variableTypes;
-		var value2 = cosy.VariableType.Number;
 		if(__map_reserved["str_length"] != null) {
 			_this2.setReserved("str_length",value2);
 		} else {
 			_this2.h["str_length"] = value2;
 		}
+		var value3 = cosy.VariableType.Function([cosy.VariableType.Text,cosy.VariableType.Number],cosy.VariableType.Text);
 		var _this3 = this.variableTypes;
-		var value3 = cosy.VariableType.Text;
 		if(__map_reserved["str_charAt"] != null) {
 			_this3.setReserved("str_charAt",value3);
 		} else {
 			_this3.h["str_charAt"] = value3;
 		}
+		var value4 = cosy.VariableType.Function([],cosy.VariableType.Text);
 		var _this4 = this.variableTypes;
-		var value4 = cosy.VariableType.Text;
 		if(__map_reserved["input"] != null) {
 			_this4.setReserved("input",value4);
 		} else {
@@ -3000,6 +3021,21 @@ cosy.Typer = class cosy_Typer {
 					_this2.h[key2] = _g;
 				}
 				break;
+			case 10:
+				var _g1 = arrayType.type;
+				if(_g1._hx_index == 7) {
+					var _g2 = _g1.type;
+					var key3 = _g20.lexeme;
+					var _this3 = this.variableTypes;
+					if(__map_reserved[key3] != null) {
+						_this3.setReserved(key3,_g2);
+					} else {
+						_this3.h[key3] = _g2;
+					}
+				} else {
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g20),"Can only loop over value of type array.");
+				}
+				break;
 			default:
 				cosy.Cosy.error(cosy.ErrorDataType.Token(_g20),"Can only loop over value of type array.");
 			}
@@ -3021,13 +3057,13 @@ cosy.Typer = class cosy_Typer {
 		case 10:
 			var _g3 = stmt.name;
 			var this1 = this.variableTypes;
-			var key3 = _g3.lexeme;
+			var key4 = _g3.lexeme;
 			var value2 = cosy.VariableType.Mutable(this.typeVar(_g3,stmt.type,stmt.init));
-			var _this3 = this1;
-			if(__map_reserved[key3] != null) {
-				_this3.setReserved(key3,value2);
+			var _this4 = this1;
+			if(__map_reserved[key4] != null) {
+				_this4.setReserved(key4,value2);
 			} else {
-				_this3.h[key3] = value2;
+				_this4.h[key4] = value2;
 			}
 			break;
 		case 11:
@@ -3049,79 +3085,79 @@ cosy.Typer = class cosy_Typer {
 			var _g15 = stmt.name;
 			var structMeta = { members : new haxe.ds.StringMap()};
 			var decls = new haxe.ds.StringMap();
-			var _g1 = 0;
-			while(_g1 < _g16.length) {
-				var decl = _g16[_g1];
-				++_g1;
+			var _g4 = 0;
+			while(_g4 < _g16.length) {
+				var decl = _g16[_g4];
+				++_g4;
 				switch(decl._hx_index) {
 				case 10:
-					var _g2 = decl.init;
-					var _g4 = decl.name;
-					var key4 = _g4.lexeme;
-					var _this4 = structMeta.members;
-					var value3 = { mutable : true, initialized : _g2 != null};
-					if(__map_reserved[key4] != null) {
-						_this4.setReserved(key4,value3);
-					} else {
-						_this4.h[key4] = value3;
-					}
-					var key5 = _g4.lexeme;
-					var value4 = cosy.VariableType.Mutable(this.typeVar(_g4,decl.type,_g2));
+					var _g21 = decl.init;
+					var _g5 = decl.name;
+					var key5 = _g5.lexeme;
+					var _this5 = structMeta.members;
+					var value3 = { mutable : true, initialized : _g21 != null};
 					if(__map_reserved[key5] != null) {
-						decls.setReserved(key5,value4);
+						_this5.setReserved(key5,value3);
 					} else {
-						decls.h[key5] = value4;
+						_this5.h[key5] = value3;
+					}
+					var key6 = _g5.lexeme;
+					var value4 = cosy.VariableType.Mutable(this.typeVar(_g5,decl.type,_g21));
+					if(__map_reserved[key6] != null) {
+						decls.setReserved(key6,value4);
+					} else {
+						decls.h[key6] = value4;
 					}
 					break;
 				case 14:
-					var _g5 = decl.init;
+					var _g51 = decl.init;
 					var _g31 = decl.name;
-					var key6 = _g31.lexeme;
-					var _this5 = structMeta.members;
-					var value5 = { mutable : false, initialized : _g5 != null};
-					if(__map_reserved[key6] != null) {
-						_this5.setReserved(key6,value5);
-					} else {
-						_this5.h[key6] = value5;
-					}
 					var key7 = _g31.lexeme;
-					var value6 = this.typeVar(_g31,decl.type,_g5);
+					var _this6 = structMeta.members;
+					var value5 = { mutable : false, initialized : _g51 != null};
 					if(__map_reserved[key7] != null) {
-						decls.setReserved(key7,value6);
+						_this6.setReserved(key7,value5);
 					} else {
-						decls.h[key7] = value6;
+						_this6.h[key7] = value5;
+					}
+					var key8 = _g31.lexeme;
+					var value6 = this.typeVar(_g31,decl.type,_g51);
+					if(__map_reserved[key8] != null) {
+						decls.setReserved(key8,value6);
+					} else {
+						decls.h[key8] = value6;
 					}
 					break;
 				default:
 					throw new js._Boot.HaxeError("structs can only have var and mut");
 				}
 			}
-			var key8 = _g15.lexeme;
-			var _this6 = this.structsMeta;
-			if(__map_reserved[key8] != null) {
-				_this6.setReserved(key8,structMeta);
-			} else {
-				_this6.h[key8] = structMeta;
-			}
 			var key9 = _g15.lexeme;
-			var value7 = cosy.VariableType.Struct(decls);
-			var _this7 = this.variableTypes;
+			var _this7 = this.structsMeta;
 			if(__map_reserved[key9] != null) {
-				_this7.setReserved(key9,value7);
+				_this7.setReserved(key9,structMeta);
 			} else {
-				_this7.h[key9] = value7;
+				_this7.h[key9] = structMeta;
+			}
+			var key10 = _g15.lexeme;
+			var value7 = cosy.VariableType.Struct(decls);
+			var _this8 = this.variableTypes;
+			if(__map_reserved[key10] != null) {
+				_this8.setReserved(key10,value7);
+			} else {
+				_this8.h[key10] = value7;
 			}
 			break;
 		case 14:
 			var _g17 = stmt.name;
 			var this2 = this.variableTypes;
-			var key10 = _g17.lexeme;
+			var key11 = _g17.lexeme;
 			var value8 = this.typeVar(_g17,stmt.type,stmt.init);
-			var _this8 = this2;
-			if(__map_reserved[key10] != null) {
-				_this8.setReserved(key10,value8);
+			var _this9 = this2;
+			if(__map_reserved[key11] != null) {
+				_this9.setReserved(key11,value8);
 			} else {
-				_this8.h[key10] = value8;
+				_this9.h[key11] = value8;
 			}
 			break;
 		}
@@ -3225,7 +3261,6 @@ cosy.Typer = class cosy_Typer {
 				}
 				break;
 			default:
-				throw new js._Boot.HaxeError("unexpected");
 			}
 			ret = type;
 			break;
@@ -3233,6 +3268,19 @@ cosy.Typer = class cosy_Typer {
 			var _g23 = expr.name;
 			var objType = this.typeExpr(expr.obj);
 			switch(objType._hx_index) {
+			case 4:
+				switch(_g23.lexeme) {
+				case "charAt":
+					return cosy.VariableType.Text;
+				case "length":
+					return cosy.VariableType.Number;
+				case "split":
+					return cosy.VariableType.Array(cosy.VariableType.Text);
+				default:
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Unknown array property or function.");
+					return cosy.VariableType.Void;
+				}
+				break;
 			case 7:
 				var _g14 = objType.type;
 				switch(_g23.lexeme) {
@@ -3268,6 +3316,19 @@ cosy.Typer = class cosy_Typer {
 			case 10:
 				var _g22 = objType.type;
 				switch(_g22._hx_index) {
+				case 4:
+					switch(_g23.lexeme) {
+					case "charAt":
+						return cosy.VariableType.Text;
+					case "length":
+						return cosy.VariableType.Number;
+					case "split":
+						return cosy.VariableType.Array(cosy.VariableType.Text);
+					default:
+						cosy.Cosy.error(cosy.ErrorDataType.Token(_g23),"Unknown array property or function.");
+						return cosy.VariableType.Void;
+					}
+					break;
 				case 7:
 					var _g41 = _g22.type;
 					switch(_g23.lexeme) {
@@ -3768,6 +3829,18 @@ haxe.ds.StringMap.__name__ = true;
 haxe.ds.StringMap.__interfaces__ = [haxe.IMap];
 Object.assign(haxe.ds.StringMap.prototype, {
 	__class__: haxe.ds.StringMap
+});
+haxe.io = {};
+haxe.io.Eof = class haxe_io_Eof {
+	constructor() {
+	}
+	toString() {
+		return "Eof";
+	}
+}
+haxe.io.Eof.__name__ = true;
+Object.assign(haxe.io.Eof.prototype, {
+	__class__: haxe.io.Eof
 });
 haxe.iterators = {};
 haxe.iterators.MapKeyValueIterator = class haxe_iterators_MapKeyValueIterator {
