@@ -16,6 +16,14 @@ class Interpreter {
     }
 
     public function interpret(statements:Array<Stmt>) {
+        // TODO: Putting this here is a hack! It will not work when 'interpret' is called multiple times.
+        for (foreignFunc in Cosy.foreignFunctions) {
+            globals.define(foreignFunc.name(), foreignFunc);
+        }
+        for (name => variable in Cosy.foreignVariables) {
+            globals.define(name, variable);
+        }
+
         try {
             for (statement in statements) execute(statement);
         } catch (e:RuntimeError) {

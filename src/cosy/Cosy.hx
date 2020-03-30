@@ -15,6 +15,9 @@ class Cosy {
     static var testOutput = '';
 
     static function main() {
+        Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); }, [Number], Number);
+        Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ }, [Text], Number);
+
         #if sys
         if (Sys.args().length == 0) {
             return runPrompt();
@@ -104,8 +107,21 @@ class Cosy {
         if (hadError) return;
     }
 
+    
+    public static var foreignFunctions :Array<ForeignFunction> = [];
     @:expose
-    static function run(source:String) {
+    public static function addFunction(name: String, func: Array<Any> -> Any, argumentTypes: Array<Typer.VariableType>, returnType: Typer.VariableType) {
+        foreignFunctions.push(new ForeignFunction(name, argumentTypes.length, func));
+    }
+    
+    public static var foreignVariables :Map<String, Any> = new Map();
+    @:expose
+    public static function setVariable(variable: Any, name: String) {
+        foreignVariables[name] = variable;
+    }
+
+    @:expose
+    public static function run(source:String) {
         hadError = false;
 
         var scanner = new Scanner(source);
@@ -185,4 +201,19 @@ enum ErrorDataType {
 abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
     @:from static inline function line(v:Int):ErrorData return Line(v);
     @:from static inline function token(v:Token):ErrorData return Token(v);
+}
+
+private class ForeignFunction implements Callable {
+    final nameValue: String;
+    final arityValue: Int;
+    final method: (args: Array<Any>) -> Any;
+    public function new(name: String, arityValue: Int, method: (args: Array<Any>) -> Any) {
+        this.nameValue = name;
+        this.arityValue = arityValue;
+        this.method = method;
+    }
+    public function name() :String return nameValue;
+    public function arity() :Int return arityValue;
+    public function call(interpreter :Interpreter, args :Array<Any>) :Any return method(args);
+    public function toString() :String return '<native fn>';
 }
