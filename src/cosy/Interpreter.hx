@@ -321,6 +321,7 @@ class Interpreter {
             case 'get': new CustomCallable(1, (args -> array[(args[0] :Int)]));
             case 'push': new CustomCallable(1, (args -> args.map(array.push)));
             case 'concat': new CustomCallable(1, (args -> (args[0] :Array<Any>).map(array.push)));
+            case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
             case 'pop': new CustomCallable(0, (_ -> (array.length == 0 ? throw new RuntimeError(name, 'Cannot pop from empty array.') : array.pop())));
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }

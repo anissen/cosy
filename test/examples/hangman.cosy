@@ -1,5 +1,5 @@
 fn get_secret_word() {
-    var words = ['WOBNIAR','EMOSEWA','SESSALGNUS','TUCREPAP','TOLIPEFAS','DLEIFRAG','ELCYCIB','RETUPMOC','NOLEMRETAW','HTOLCELBAT']
+    var words = ['WOBNIAR','EMOSEWA','SESSALGNUS','TUCREPAP','ENIHSNUS','DLEIFRAG','ELCYCIB','RETUPMOC','NOLEMRETAW','HTOLCELBAT']
     var secret = words.get(words.length * random())
     mut r = ''
     for c in secret.split('') {
@@ -13,19 +13,10 @@ var word_to_guess = secret_word.split('')
 mut letters_guessed Array Str = []
 mut wrong_guesses_remaining = 5
 
-fn contains(arr Array, element) {
-    for a in arr {
-        if a == element {
-            return true
-        }
-    }
-    return false
-}
-
 fn get_display_word() {
     mut word_display = ''
     for l in word_to_guess {
-        if contains(letters_guessed, l) {
+        if letters_guessed.contains(l) {
             word_display += l
         } else {
             word_display += '_'
@@ -37,7 +28,7 @@ fn get_display_word() {
 
 fn has_won() {
     for l in word_to_guess {
-        if !contains(letters_guessed, l) {
+        if !letters_guessed.contains(l) {
             return false
         }
     }
@@ -57,12 +48,12 @@ fn hangman() {
         print 'Guess: '
         var letter = input()
 
-        if letter.length != 1 or !contains(['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'], letter) {
+        if letter.length != 1 or !['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].contains(letter) {
             print 'Input must be an uppercased letter between A and Z!\n'
             continue
         }
 
-        if contains(letters_guessed, letter) {
+        if letters_guessed.contains(letter) {
             print 'You already guessed that!\n'
             wrong_guesses_remaining -= 1
             continue
@@ -70,7 +61,7 @@ fn hangman() {
 
         letters_guessed.push(letter)
 
-        if contains(word_to_guess, letter) {
+        if word_to_guess.contains(letter) {
             print 'Correct!\n'
             if has_won() {
                 print 'The correct word is ' + secret_word + '\nGame over: You won!'

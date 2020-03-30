@@ -836,9 +836,13 @@ cosy.Interpreter = class cosy_Interpreter {
 				}
 				return result;
 			});
-		case "get":
+		case "contains":
 			return new cosy._Interpreter.CustomCallable(1,function(args1) {
-				return array[args1[0]];
+				return array.indexOf(args1[0]) != -1;
+			});
+		case "get":
+			return new cosy._Interpreter.CustomCallable(1,function(args2) {
+				return array[args2[0]];
 			});
 		case "length":
 			return array.length;
@@ -851,14 +855,14 @@ cosy.Interpreter = class cosy_Interpreter {
 				}
 			});
 		case "push":
-			return new cosy._Interpreter.CustomCallable(1,function(args2) {
+			return new cosy._Interpreter.CustomCallable(1,function(args3) {
 				var f1 = $bind(array,$arrayPush);
-				var result1 = new Array(args2.length);
+				var result1 = new Array(args3.length);
 				var _g2 = 0;
-				var _g11 = args2.length;
+				var _g11 = args3.length;
 				while(_g2 < _g11) {
 					var i1 = _g2++;
-					result1[i1] = f1(args2[i1]);
+					result1[i1] = f1(args3[i1]);
 				}
 				return result1;
 			});

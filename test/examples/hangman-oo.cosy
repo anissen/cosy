@@ -5,7 +5,7 @@ fn random_word() {
     else if (rnd < 0.2) return 'EMOSEWA';
     else if (rnd < 0.3) return 'SESSALGNUS';
     else if (rnd < 0.4) return 'TUCREPAP';
-    else if (rnd < 0.5) return 'TOLIPEFAS';
+    else if (rnd < 0.5) return 'ENIHSNUS';
     else if (rnd < 0.6) return 'DLEIFRAG';
     else if (rnd < 0.7) return 'ELCYCIB';
     else if (rnd < 0.8) return 'RETUPMOC';
