@@ -1,0 +1,16 @@
+print 'More-or-Less game! Guess a number between 0 and 100.'
+var number = randomInt(100)
+mut guesses = 0
+for {
+    print 'Input a numeric value: '
+    var guess = stringToNumber(input())
+    guesses += 1
+    if guess < number {
+        print 'More!'
+    } else if guess > number {
+        print 'Less!'
+    } else {
+        print 'Bingo! You won in ' + guesses + ' tries.'
+        break
+    }
+}
