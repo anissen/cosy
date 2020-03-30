@@ -37,6 +37,32 @@ class Std {
 	static string(s) {
 		return js.Boot.__string_rec(s,"");
 	}
+	static parseInt(x) {
+		if(x != null) {
+			var _g = 0;
+			var _g1 = x.length;
+			while(_g < _g1) {
+				var i = _g++;
+				var c = x.charCodeAt(i);
+				if(c <= 8 || c >= 14 && c != 32 && c != 45) {
+					var v = parseInt(x, (x[(i + 1)]=="x" || x[(i + 1)]=="X") ? 16 : 10);
+					if(isNaN(v)) {
+						return null;
+					} else {
+						return v;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	static random(x) {
+		if(x <= 0) {
+			return 0;
+		} else {
+			return Math.floor(Math.random() * x);
+		}
+	}
 }
 Std.__name__ = true;
 class StringTools {
@@ -207,7 +233,7 @@ cosy.AstPrinter = class cosy_AstPrinter {
 			}
 			break;
 		case 7:
-			return "" + this.printExpr(expr.left) + " " + (expr.op.type._hx_index == 40 ? "or" : "and") + " " + this.printExpr(expr.right);
+			return "" + this.printExpr(expr.left) + " " + (expr.op.type._hx_index == 41 ? "or" : "and") + " " + this.printExpr(expr.right);
 		case 8:
 			return "mut " + expr.name.lexeme;
 		case 9:
@@ -303,15 +329,25 @@ cosy.Interpreter = class cosy_Interpreter {
 		this.globals = new cosy.Environment();
 		this.globals.define("clock",new cosy._Interpreter.ClockCallable());
 		this.globals.define("random",new cosy._Interpreter.RandomCallable());
-		this.globals.define("str_length",new cosy._Interpreter.StringLengthCallable());
-		this.globals.define("str_charAt",new cosy._Interpreter.StringCharAtCallable());
 		this.globals.define("input",new cosy._Interpreter.InputCallable());
 		this.environment = this.globals;
 	}
 	interpret(statements) {
+		var _g = 0;
+		var _g1 = cosy.Cosy.foreignFunctions;
+		while(_g < _g1.length) {
+			var foreignFunc = _g1[_g];
+			++_g;
+			this.globals.define(foreignFunc.name(),foreignFunc);
+		}
+		var _g2 = new haxe.iterators.MapKeyValueIterator(cosy.Cosy.foreignVariables);
+		while(_g2.hasNext()) {
+			var _g3 = _g2.next();
+			this.globals.define(_g3.key,_g3.value);
+		}
 		try {
-			var _g = 0;
-			while(_g < statements.length) this.execute(statements[_g++]);
+			var _g21 = 0;
+			while(_g21 < statements.length) this.execute(statements[_g21++]);
 		} catch( e ) {
 			var e1 = ((e) instanceof js._Boot.HaxeError) ? e.val : e;
 			if(((e1) instanceof cosy.RuntimeError)) {
@@ -712,7 +748,7 @@ cosy.Interpreter = class cosy_Interpreter {
 					return this.evaluate(_g33);
 				}
 				break;
-			case 40:
+			case 41:
 				if(this.isTruthy(left5)) {
 					return left5;
 				} else {
@@ -1011,42 +1047,6 @@ cosy._Interpreter.RandomCallable.__interfaces__ = [cosy.Callable];
 Object.assign(cosy._Interpreter.RandomCallable.prototype, {
 	__class__: cosy._Interpreter.RandomCallable
 });
-cosy._Interpreter.StringLengthCallable = class cosy__$Interpreter_StringLengthCallable {
-	constructor() {
-	}
-	arity() {
-		return 1;
-	}
-	call(interpreter,args) {
-		return args[0].length;
-	}
-	toString() {
-		return "<native fn>";
-	}
-}
-cosy._Interpreter.StringLengthCallable.__name__ = true;
-cosy._Interpreter.StringLengthCallable.__interfaces__ = [cosy.Callable];
-Object.assign(cosy._Interpreter.StringLengthCallable.prototype, {
-	__class__: cosy._Interpreter.StringLengthCallable
-});
-cosy._Interpreter.StringCharAtCallable = class cosy__$Interpreter_StringCharAtCallable {
-	constructor() {
-	}
-	arity() {
-		return 2;
-	}
-	call(interpreter,args) {
-		return args[0].charAt(args[1]);
-	}
-	toString() {
-		return "<native fn>";
-	}
-}
-cosy._Interpreter.StringCharAtCallable.__name__ = true;
-cosy._Interpreter.StringCharAtCallable.__interfaces__ = [cosy.Callable];
-Object.assign(cosy._Interpreter.StringCharAtCallable.prototype, {
-	__class__: cosy._Interpreter.StringCharAtCallable
-});
 cosy._Interpreter.InputCallable = class cosy__$Interpreter_InputCallable {
 	constructor() {
 	}
@@ -1067,6 +1067,12 @@ Object.assign(cosy._Interpreter.InputCallable.prototype, {
 });
 cosy.Cosy = class cosy_Cosy {
 	static main() {
+		cosy.Cosy.addFunction("randomInt",function(args) {
+			return Std.random(args[0]);
+		},[cosy.VariableType.Number],cosy.VariableType.Number);
+		cosy.Cosy.addFunction("stringToNumber",function(args1) {
+			return Std.parseInt(args1[0]);
+		},[cosy.VariableType.Text],cosy.VariableType.Number);
 	}
 	static println(v) {
 		if(cosy.Cosy.testing) {
@@ -1088,6 +1094,17 @@ cosy.Cosy = class cosy_Cosy {
 		new cosy.Typer().typeStmts(statements);
 		if(cosy.Cosy.hadError) {
 			return;
+		}
+	}
+	static addFunction(name,func,argumentTypes,returnType) {
+		cosy.Cosy.foreignFunctions.push(new cosy._Cosy.ForeignFunction(name,argumentTypes.length,func));
+	}
+	static setVariable(variable,name) {
+		var _this = cosy.Cosy.foreignVariables;
+		if(__map_reserved[name] != null) {
+			_this.setReserved(name,variable);
+		} else {
+			_this.h[name] = variable;
 		}
 	}
 	static run(source) {
@@ -1163,12 +1180,39 @@ cosy.Cosy = class cosy_Cosy {
 	}
 }
 $hx_exports["cosy"]["Cosy"]["run"] = cosy.Cosy.run;
+$hx_exports["cosy"]["Cosy"]["setVariable"] = cosy.Cosy.setVariable;
+$hx_exports["cosy"]["Cosy"]["addFunction"] = cosy.Cosy.addFunction;
 $hx_exports["cosy"]["Cosy"]["validate"] = cosy.Cosy.validate;
 cosy.Cosy.__name__ = true;
 cosy.ErrorDataType = $hxEnums["cosy.ErrorDataType"] = { __ename__ : true, __constructs__ : ["Line","Token"]
 	,Line: ($_=function(v) { return {_hx_index:0,v:v,__enum__:"cosy.ErrorDataType",toString:$estr}; },$_.__params__ = ["v"],$_)
 	,Token: ($_=function(v) { return {_hx_index:1,v:v,__enum__:"cosy.ErrorDataType",toString:$estr}; },$_.__params__ = ["v"],$_)
 };
+cosy._Cosy = {};
+cosy._Cosy.ForeignFunction = class cosy__$Cosy_ForeignFunction {
+	constructor(name,arityValue,method) {
+		this.nameValue = name;
+		this.arityValue = arityValue;
+		this.method = method;
+	}
+	name() {
+		return this.nameValue;
+	}
+	arity() {
+		return this.arityValue;
+	}
+	call(interpreter,args) {
+		return this.method(args);
+	}
+	toString() {
+		return "<native fn>";
+	}
+}
+cosy._Cosy.ForeignFunction.__name__ = true;
+cosy._Cosy.ForeignFunction.__interfaces__ = [cosy.Callable];
+Object.assign(cosy._Cosy.ForeignFunction.prototype, {
+	__class__: cosy._Cosy.ForeignFunction
+});
 cosy.Expr = $hxEnums["cosy.Expr"] = { __ename__ : true, __constructs__ : ["ArrayLiteral","Assign","Binary","Call","Get","Grouping","Literal","Logical","MutArgument","Set","This","Super","StructInit","Unary","Variable","AnonFunction"]
 	,ArrayLiteral: ($_=function(keyword,exprs) { return {_hx_index:0,keyword:keyword,exprs:exprs,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["keyword","exprs"],$_)
 	,Assign: ($_=function(name,op,value) { return {_hx_index:1,name:name,op:op,value:value,__enum__:"cosy.Expr",toString:$estr}; },$_.__params__ = ["name","op","value"],$_)
@@ -1428,7 +1472,7 @@ cosy.JavaScriptPrinter = class cosy_JavaScriptPrinter {
 			}
 			break;
 		case 7:
-			return "" + this.printExpr(expr.left) + " " + (expr.op.type._hx_index == 40 ? "||" : "&&") + " " + this.printExpr(expr.right);
+			return "" + this.printExpr(expr.left) + " " + (expr.op.type._hx_index == 41 ? "||" : "&&") + " " + this.printExpr(expr.right);
 		case 8:
 			return expr.name.lexeme;
 		case 9:
@@ -1611,8 +1655,9 @@ cosy.Parser = class cosy_Parser {
 			if(this.match([cosy.TokenType.Struct])) {
 				return this.structDeclaration();
 			}
+			var isForeign = this.match([cosy.TokenType.Foreign]);
 			if(this.match([cosy.TokenType.Fn])) {
-				return this.func("function");
+				return this.func("function",isForeign);
 			}
 			if(this.match([cosy.TokenType.Var])) {
 				return this.varDeclaration();
@@ -1729,7 +1774,7 @@ cosy.Parser = class cosy_Parser {
 		}
 		this.consume(cosy.TokenType.LeftBrace,"Expect \"{\" before class body.");
 		var methods = [];
-		while(!this.check(cosy.TokenType.RightBrace) && !this.isAtEnd()) methods.push(this.func("method"));
+		while(!this.check(cosy.TokenType.RightBrace) && !this.isAtEnd()) methods.push(this.func("method",false));
 		this.consume(cosy.TokenType.RightBrace,"Expect \"}\" after class body.");
 		return cosy.Stmt.Class(name,superclass,methods);
 	}
@@ -1749,9 +1794,9 @@ cosy.Parser = class cosy_Parser {
 		this.consume(cosy.TokenType.RightBrace,"Expect \"}\" after struct body.");
 		return cosy.Stmt.Struct(name,declarations);
 	}
-	func(kind) {
+	func(kind,foreign) {
 		var name = this.consume(cosy.TokenType.Identifier,"Expect " + kind + " name.");
-		var functionExpr = this.funcBody(kind);
+		var functionExpr = this.funcBody(kind,foreign);
 		if(functionExpr._hx_index == 15) {
 			return cosy.Stmt.Function(name,functionExpr.params,functionExpr.body,functionExpr.returnType);
 		} else {
@@ -1792,7 +1837,7 @@ cosy.Parser = class cosy_Parser {
 			return cosy.VariableType.Unknown;
 		}
 	}
-	funcBody(kind) {
+	funcBody(kind,isForeign) {
 		this.consume(cosy.TokenType.LeftParen,"Expect \"(\" after " + kind + " name.");
 		var params = [];
 		if(!this.check(cosy.TokenType.RightParen)) {
@@ -1817,6 +1862,9 @@ cosy.Parser = class cosy_Parser {
 		}
 		this.consume(cosy.TokenType.RightParen,"Expect \")\" after parameters.");
 		var returnType = this.paramType();
+		if(isForeign) {
+			return cosy.Expr.AnonFunction(params,[],returnType);
+		}
 		this.consume(cosy.TokenType.LeftBrace,"Expect \"{\" before " + kind + " body");
 		return cosy.Expr.AnonFunction(params,this.block(),returnType);
 	}
@@ -1918,7 +1966,7 @@ cosy.Parser = class cosy_Parser {
 			return cosy.Expr.This(this.previous());
 		}
 		if(this.match([cosy.TokenType.Fn])) {
-			return this.funcBody("function");
+			return this.funcBody("function",false);
 		}
 		if(this.match([cosy.TokenType.Identifier])) {
 			return this.identifier();
@@ -2019,7 +2067,7 @@ cosy.Parser = class cosy_Parser {
 	synchronize() {
 		this.advance();
 		while(!this.isAtEnd()) switch(this.peek().type._hx_index) {
-		case 30:case 31:case 32:case 35:case 36:case 38:case 39:case 41:case 42:case 43:case 47:
+		case 30:case 31:case 32:case 35:case 36:case 39:case 40:case 42:case 43:case 44:case 48:
 			return;
 		default:
 			this.advance();
@@ -2452,8 +2500,20 @@ cosy.Resolver = class cosy_Resolver {
 			}
 			--i;
 		}
-		if(name.lexeme == "clock" || name.lexeme == "random" || name.lexeme == "str_length" || name.lexeme == "str_charAt" || name.lexeme == "input") {
+		if(name.lexeme == "clock" || name.lexeme == "random" || name.lexeme == "input") {
 			return;
+		}
+		var _g = 0;
+		var _g1 = cosy.Cosy.foreignFunctions;
+		while(_g < _g1.length) if(name.lexeme == _g1[_g++].name()) {
+			return;
+		}
+		var _g2 = new haxe.iterators.MapKeyValueIterator(cosy.Cosy.foreignVariables);
+		while(_g2.hasNext()) {
+			var varName = _g2.next().key;
+			if(name.lexeme == varName) {
+				return;
+			}
 		}
 		cosy.Cosy.error(cosy.ErrorDataType.Token(name),"Variable not declared in this scope.");
 	}
@@ -2517,7 +2577,7 @@ cosy.RuntimeError.__super__ = cosy.Error;
 Object.assign(cosy.RuntimeError.prototype, {
 	__class__: cosy.RuntimeError
 });
-cosy.TokenType = $hxEnums["cosy.TokenType"] = { __ename__ : true, __constructs__ : ["LeftParen","RightParen","LeftBrace","RightBrace","LeftBracket","RightBracket","Comma","Dot","DotDot","Underscore","Minus","MinusEqual","Plus","PlusEqual","Slash","SlashEqual","Star","StarEqual","Bang","BangEqual","Equal","EqualEqual","Greater","GreaterEqual","Less","LessEqual","Identifier","String","Number","And","Break","Continue","Class","Else","False","Fn","For","In","If","Mut","Or","Print","Return","Struct","Super","This","True","Var","BooleanType","NumberType","StringType","FunctionType","ArrayType","Eof"]
+cosy.TokenType = $hxEnums["cosy.TokenType"] = { __ename__ : true, __constructs__ : ["LeftParen","RightParen","LeftBrace","RightBrace","LeftBracket","RightBracket","Comma","Dot","DotDot","Underscore","Minus","MinusEqual","Plus","PlusEqual","Slash","SlashEqual","Star","StarEqual","Bang","BangEqual","Equal","EqualEqual","Greater","GreaterEqual","Less","LessEqual","Identifier","String","Number","And","Break","Continue","Class","Else","False","Fn","For","Foreign","In","If","Mut","Or","Print","Return","Struct","Super","This","True","Var","BooleanType","NumberType","StringType","FunctionType","ArrayType","Eof"]
 	,LeftParen: {_hx_index:0,__enum__:"cosy.TokenType",toString:$estr}
 	,RightParen: {_hx_index:1,__enum__:"cosy.TokenType",toString:$estr}
 	,LeftBrace: {_hx_index:2,__enum__:"cosy.TokenType",toString:$estr}
@@ -2555,23 +2615,24 @@ cosy.TokenType = $hxEnums["cosy.TokenType"] = { __ename__ : true, __constructs__
 	,False: {_hx_index:34,__enum__:"cosy.TokenType",toString:$estr}
 	,Fn: {_hx_index:35,__enum__:"cosy.TokenType",toString:$estr}
 	,For: {_hx_index:36,__enum__:"cosy.TokenType",toString:$estr}
-	,In: {_hx_index:37,__enum__:"cosy.TokenType",toString:$estr}
-	,If: {_hx_index:38,__enum__:"cosy.TokenType",toString:$estr}
-	,Mut: {_hx_index:39,__enum__:"cosy.TokenType",toString:$estr}
-	,Or: {_hx_index:40,__enum__:"cosy.TokenType",toString:$estr}
-	,Print: {_hx_index:41,__enum__:"cosy.TokenType",toString:$estr}
-	,Return: {_hx_index:42,__enum__:"cosy.TokenType",toString:$estr}
-	,Struct: {_hx_index:43,__enum__:"cosy.TokenType",toString:$estr}
-	,Super: {_hx_index:44,__enum__:"cosy.TokenType",toString:$estr}
-	,This: {_hx_index:45,__enum__:"cosy.TokenType",toString:$estr}
-	,True: {_hx_index:46,__enum__:"cosy.TokenType",toString:$estr}
-	,Var: {_hx_index:47,__enum__:"cosy.TokenType",toString:$estr}
-	,BooleanType: {_hx_index:48,__enum__:"cosy.TokenType",toString:$estr}
-	,NumberType: {_hx_index:49,__enum__:"cosy.TokenType",toString:$estr}
-	,StringType: {_hx_index:50,__enum__:"cosy.TokenType",toString:$estr}
-	,FunctionType: {_hx_index:51,__enum__:"cosy.TokenType",toString:$estr}
-	,ArrayType: {_hx_index:52,__enum__:"cosy.TokenType",toString:$estr}
-	,Eof: {_hx_index:53,__enum__:"cosy.TokenType",toString:$estr}
+	,Foreign: {_hx_index:37,__enum__:"cosy.TokenType",toString:$estr}
+	,In: {_hx_index:38,__enum__:"cosy.TokenType",toString:$estr}
+	,If: {_hx_index:39,__enum__:"cosy.TokenType",toString:$estr}
+	,Mut: {_hx_index:40,__enum__:"cosy.TokenType",toString:$estr}
+	,Or: {_hx_index:41,__enum__:"cosy.TokenType",toString:$estr}
+	,Print: {_hx_index:42,__enum__:"cosy.TokenType",toString:$estr}
+	,Return: {_hx_index:43,__enum__:"cosy.TokenType",toString:$estr}
+	,Struct: {_hx_index:44,__enum__:"cosy.TokenType",toString:$estr}
+	,Super: {_hx_index:45,__enum__:"cosy.TokenType",toString:$estr}
+	,This: {_hx_index:46,__enum__:"cosy.TokenType",toString:$estr}
+	,True: {_hx_index:47,__enum__:"cosy.TokenType",toString:$estr}
+	,Var: {_hx_index:48,__enum__:"cosy.TokenType",toString:$estr}
+	,BooleanType: {_hx_index:49,__enum__:"cosy.TokenType",toString:$estr}
+	,NumberType: {_hx_index:50,__enum__:"cosy.TokenType",toString:$estr}
+	,StringType: {_hx_index:51,__enum__:"cosy.TokenType",toString:$estr}
+	,FunctionType: {_hx_index:52,__enum__:"cosy.TokenType",toString:$estr}
+	,ArrayType: {_hx_index:53,__enum__:"cosy.TokenType",toString:$estr}
+	,Eof: {_hx_index:54,__enum__:"cosy.TokenType",toString:$estr}
 };
 cosy.Scanner = class cosy_Scanner {
 	constructor(source) {
@@ -2920,26 +2981,12 @@ cosy.Typer = class cosy_Typer {
 		} else {
 			_this1.h["random"] = value1;
 		}
-		var value2 = cosy.VariableType.Function([cosy.VariableType.Text],cosy.VariableType.Number);
+		var value2 = cosy.VariableType.Function([],cosy.VariableType.Text);
 		var _this2 = this.variableTypes;
-		if(__map_reserved["str_length"] != null) {
-			_this2.setReserved("str_length",value2);
-		} else {
-			_this2.h["str_length"] = value2;
-		}
-		var value3 = cosy.VariableType.Function([cosy.VariableType.Text,cosy.VariableType.Number],cosy.VariableType.Text);
-		var _this3 = this.variableTypes;
-		if(__map_reserved["str_charAt"] != null) {
-			_this3.setReserved("str_charAt",value3);
-		} else {
-			_this3.h["str_charAt"] = value3;
-		}
-		var value4 = cosy.VariableType.Function([],cosy.VariableType.Text);
-		var _this4 = this.variableTypes;
 		if(__map_reserved["input"] != null) {
-			_this4.setReserved("input",value4);
+			_this2.setReserved("input",value2);
 		} else {
-			_this4.h["input"] = value4;
+			_this2.h["input"] = value2;
 		}
 	}
 	typeStmts(stmts) {
@@ -4051,6 +4098,8 @@ cosy.Cosy.prettyPrint = false;
 cosy.Cosy.javascript = false;
 cosy.Cosy.testing = false;
 cosy.Cosy.testOutput = "";
+cosy.Cosy.foreignFunctions = [];
+cosy.Cosy.foreignVariables = new haxe.ds.StringMap();
 cosy.Scanner.keywords = (function($this) {
 	var $r;
 	var _g = new haxe.ds.StringMap();
@@ -4111,139 +4160,147 @@ cosy.Scanner.keywords = (function($this) {
 		}
 	}
 	{
-		var value7 = cosy.TokenType.Fn;
+		var value7 = cosy.TokenType.Foreign;
+		if(__map_reserved["foreign"] != null) {
+			_g.setReserved("foreign",value7);
+		} else {
+			_g.h["foreign"] = value7;
+		}
+	}
+	{
+		var value8 = cosy.TokenType.Fn;
 		if(__map_reserved["fn"] != null) {
-			_g.setReserved("fn",value7);
+			_g.setReserved("fn",value8);
 		} else {
-			_g.h["fn"] = value7;
+			_g.h["fn"] = value8;
 		}
 	}
 	{
-		var value8 = cosy.TokenType.In;
+		var value9 = cosy.TokenType.In;
 		if(__map_reserved["in"] != null) {
-			_g.setReserved("in",value8);
+			_g.setReserved("in",value9);
 		} else {
-			_g.h["in"] = value8;
+			_g.h["in"] = value9;
 		}
 	}
 	{
-		var value9 = cosy.TokenType.If;
+		var value10 = cosy.TokenType.If;
 		if(__map_reserved["if"] != null) {
-			_g.setReserved("if",value9);
+			_g.setReserved("if",value10);
 		} else {
-			_g.h["if"] = value9;
+			_g.h["if"] = value10;
 		}
 	}
 	{
-		var value10 = cosy.TokenType.Mut;
+		var value11 = cosy.TokenType.Mut;
 		if(__map_reserved["mut"] != null) {
-			_g.setReserved("mut",value10);
+			_g.setReserved("mut",value11);
 		} else {
-			_g.h["mut"] = value10;
+			_g.h["mut"] = value11;
 		}
 	}
 	{
-		var value11 = cosy.TokenType.Or;
+		var value12 = cosy.TokenType.Or;
 		if(__map_reserved["or"] != null) {
-			_g.setReserved("or",value11);
+			_g.setReserved("or",value12);
 		} else {
-			_g.h["or"] = value11;
+			_g.h["or"] = value12;
 		}
 	}
 	{
-		var value12 = cosy.TokenType.Print;
+		var value13 = cosy.TokenType.Print;
 		if(__map_reserved["print"] != null) {
-			_g.setReserved("print",value12);
+			_g.setReserved("print",value13);
 		} else {
-			_g.h["print"] = value12;
+			_g.h["print"] = value13;
 		}
 	}
 	{
-		var value13 = cosy.TokenType.Return;
+		var value14 = cosy.TokenType.Return;
 		if(__map_reserved["return"] != null) {
-			_g.setReserved("return",value13);
+			_g.setReserved("return",value14);
 		} else {
-			_g.h["return"] = value13;
+			_g.h["return"] = value14;
 		}
 	}
 	{
-		var value14 = cosy.TokenType.Struct;
+		var value15 = cosy.TokenType.Struct;
 		if(__map_reserved["struct"] != null) {
-			_g.setReserved("struct",value14);
+			_g.setReserved("struct",value15);
 		} else {
-			_g.h["struct"] = value14;
+			_g.h["struct"] = value15;
 		}
 	}
 	{
-		var value15 = cosy.TokenType.Super;
+		var value16 = cosy.TokenType.Super;
 		if(__map_reserved["super"] != null) {
-			_g.setReserved("super",value15);
+			_g.setReserved("super",value16);
 		} else {
-			_g.h["super"] = value15;
+			_g.h["super"] = value16;
 		}
 	}
 	{
-		var value16 = cosy.TokenType.This;
+		var value17 = cosy.TokenType.This;
 		if(__map_reserved["this"] != null) {
-			_g.setReserved("this",value16);
+			_g.setReserved("this",value17);
 		} else {
-			_g.h["this"] = value16;
+			_g.h["this"] = value17;
 		}
 	}
 	{
-		var value17 = cosy.TokenType.True;
+		var value18 = cosy.TokenType.True;
 		if(__map_reserved["true"] != null) {
-			_g.setReserved("true",value17);
+			_g.setReserved("true",value18);
 		} else {
-			_g.h["true"] = value17;
+			_g.h["true"] = value18;
 		}
 	}
 	{
-		var value18 = cosy.TokenType.Var;
+		var value19 = cosy.TokenType.Var;
 		if(__map_reserved["var"] != null) {
-			_g.setReserved("var",value18);
+			_g.setReserved("var",value19);
 		} else {
-			_g.h["var"] = value18;
+			_g.h["var"] = value19;
 		}
 	}
 	{
-		var value19 = cosy.TokenType.BooleanType;
+		var value20 = cosy.TokenType.BooleanType;
 		if(__map_reserved["Bool"] != null) {
-			_g.setReserved("Bool",value19);
+			_g.setReserved("Bool",value20);
 		} else {
-			_g.h["Bool"] = value19;
+			_g.h["Bool"] = value20;
 		}
 	}
 	{
-		var value20 = cosy.TokenType.NumberType;
+		var value21 = cosy.TokenType.NumberType;
 		if(__map_reserved["Num"] != null) {
-			_g.setReserved("Num",value20);
+			_g.setReserved("Num",value21);
 		} else {
-			_g.h["Num"] = value20;
+			_g.h["Num"] = value21;
 		}
 	}
 	{
-		var value21 = cosy.TokenType.StringType;
+		var value22 = cosy.TokenType.StringType;
 		if(__map_reserved["Str"] != null) {
-			_g.setReserved("Str",value21);
+			_g.setReserved("Str",value22);
 		} else {
-			_g.h["Str"] = value21;
+			_g.h["Str"] = value22;
 		}
 	}
 	{
-		var value22 = cosy.TokenType.FunctionType;
+		var value23 = cosy.TokenType.FunctionType;
 		if(__map_reserved["Fn"] != null) {
-			_g.setReserved("Fn",value22);
+			_g.setReserved("Fn",value23);
 		} else {
-			_g.h["Fn"] = value22;
+			_g.h["Fn"] = value23;
 		}
 	}
 	{
-		var value23 = cosy.TokenType.ArrayType;
+		var value24 = cosy.TokenType.ArrayType;
 		if(__map_reserved["Array"] != null) {
-			_g.setReserved("Array",value23);
+			_g.setReserved("Array",value24);
 		} else {
-			_g.h["Array"] = value23;
+			_g.h["Array"] = value24;
 		}
 	}
 	$r = _g;
