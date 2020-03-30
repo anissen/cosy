@@ -75,7 +75,7 @@ fun x() { print "hej" }
 - [ ] Better error position reporting with character from-to indexes
 - [ ] A target that outputs code + documentation as markdown
 - [x] `for 0..10` syntax, instead of `for _i in 0..10`
-- [ ] Make a `strict` mode that requires specifying type information for function parameters and return values
+- [ ] Make a `strict` mode that requires specifying type information for function parameters and return values. It also requires functions to only access argument variables and local variables and non-mutable variables of outer scopes. I.e. it is not allowed to access mutable outer variables.
 - [x] Rename files from `.lox` to `.cosy`
 - [x] Change `fun` to `fn`
 - [x] Change `"` to `'`
@@ -87,6 +87,7 @@ fun x() { print "hej" }
 - [ ] Perserve ordering of members when printing a struct
 - [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
 - [ ] Make a new and improved Hangman example with properly typed code, structs and arrays
+- [ ] Update Cosy basics example with structs, functions taking mut struct, string functions
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
