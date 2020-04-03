@@ -83,13 +83,13 @@ class Resolver {
 				
 				currentClass = enclosingClass;
 			case Var(name, type, init, foreign):
-                // TODO: Check that foreign has had a function set
+                if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 var member = currentStruct.match(Struct);
 				declare(name, false, member);
 				if(init != null) resolveExpr(init);
 				define(name, false, member);
             case Mut(name, type, init, foreign):
-                // TODO: Check that foreign has had a function set
+                if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 var member = currentStruct.match(Struct);
 				declare(name, true, member);
 				if(init != null) resolveExpr(init);
@@ -121,6 +121,16 @@ class Resolver {
 				resolveStmts(body);
                 endScope();
 			case Function(name, params, body, returnType, foreign):
+                if (foreign) {
+                    var found = false;
+                    for (foreignFunc in Cosy.foreignFunctions) {
+                        if (foreignFunc.name() == name.lexeme) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) Cosy.error(name, 'Foreign function not set.');
+                }
 				declare(name);
 				define(name);
 				resolveFunction(name, params, body, Function);
