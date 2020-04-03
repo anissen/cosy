@@ -132,7 +132,7 @@ class Parser {
         var type = paramType();
 		
 		var initializer = null;
-		if (match([Equal])) initializer = expression();
+		if (!foreign && match([Equal])) initializer = expression();
 		
 		return Var(name, type, initializer, foreign);
 	}
@@ -142,7 +142,7 @@ class Parser {
         var type = paramType();
 		
 		var initializer = null;
-		if (match([Equal])) initializer = expression();
+		if (!foreign && match([Equal])) initializer = expression();
 		
 		return Mut(name, type, initializer, foreign);
 	}
