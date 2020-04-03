@@ -107,11 +107,10 @@ class Interpreter {
                         } catch (err: Continue) {}
                     }
                 } catch (err: Break) {}
-            // case ForeignFunction(name, params, returnType):
             case Function(name, params, body, returnType, foreign):
-                if (!foreign) {
-                    environment.define(name.lexeme, new Function(name, params, body, environment, false));
-                }
+                if (foreign) return;
+
+                environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):
                 if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
@@ -134,15 +133,17 @@ class Interpreter {
                 var struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
             case Var(name, type, init, foreign):
-                if (globals.getAt(0, name.lexeme) == null) {
-                    var value:Any = uninitialized;
-                    if (init != null) value = evaluate(init);
-                    if (Std.is(value, StructInstance)) {
-                        value = (value: StructInstance).clone();
-                    }
-                    environment.define(name.lexeme, value);
+                if (foreign) return;
+                
+                var value:Any = uninitialized;
+                if (init != null) value = evaluate(init);
+                if (Std.is(value, StructInstance)) {
+                    value = (value: StructInstance).clone();
                 }
+                environment.define(name.lexeme, value);
             case Mut(name, type, init, foreign):
+                if (foreign) return;
+            
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
                 if (Std.is(value, StructInstance)) {
@@ -275,8 +276,10 @@ class Interpreter {
                     throw new RuntimeError(paren, 'Can only call functions and classes');
                 } else {
                     var func:Callable = callee;
-                    var arity = func.arity();
-                    if (args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
+                    if (!Std.is(func, Cosy.ForeignFunction)) {
+                        var arity = func.arity();
+                        if (args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
+                    }
                     func.call(this, args);
                 }
             case Get(obj, name):

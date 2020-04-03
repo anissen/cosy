@@ -17,11 +17,11 @@ class Cosy {
     static function main() {
         // Cosy.setVariable(56, 'x');
         // Cosy.addFunction('yo', (_) -> { trace('yoyoyo!'); return 0; }, [], Void);
-        Cosy.addFunction('yo', (args) -> { trace('yoyoyo!'); return 6; }, [Number], Number);
+        Cosy.addFunction('yo', (args) -> { trace('yoyoyo!'); return 0; });
         Cosy.setVariable('xyz', 'i\'m a foreign variable!');
 
-        Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); }, [Number], Number);
-        Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ }, [Text], Number);
+        // Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); }, [Number], Number);
+        // Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ }, [Text], Number);
 
         #if sys
         if (Sys.args().length == 0) {
@@ -115,9 +115,8 @@ class Cosy {
     
     public static var foreignFunctions :Array<ForeignFunction> = [];
     @:expose
-    public static function addFunction(name: String, func: Array<Any> -> Any, argumentTypes: Array<Typer.VariableType>, returnType: Typer.VariableType) {
-        foreignFunctions.push(new ForeignFunction(name, argumentTypes.length, func));
-        // foreignFunctions.push(new ForeignFunction(name, 0, func));
+    public static function addFunction(name: String, func: Array<Any> -> Any) {
+        foreignFunctions.push(new ForeignFunction(name, func));
     }
     
     public static var foreignVariables :Map<String, Any> = new Map();
@@ -209,17 +208,15 @@ abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
     @:from static inline function token(v:Token):ErrorData return Token(v);
 }
 
-private class ForeignFunction implements Callable {
+class ForeignFunction implements Callable {
     final nameValue: String;
-    final arityValue: Int;
     final method: (args: Array<Any>) -> Any;
-    public function new(name: String, arityValue: Int, method: (args: Array<Any>) -> Any) {
+    public function new(name: String, method: (args: Array<Any>) -> Any) {
         this.nameValue = name;
-        this.arityValue = arityValue;
         this.method = method;
     }
     public function name() :String return nameValue;
-    public function arity() :Int return arityValue;
+    public function arity() :Int return 0; // never called
     public function call(interpreter :Interpreter, args :Array<Any>) :Any return method(args);
     public function toString() :String return '<foreign fn>';
 }
