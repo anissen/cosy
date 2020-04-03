@@ -278,12 +278,6 @@ class Resolver {
 			i--;
 		}
         if (name.lexeme == 'clock' || name.lexeme == 'random' || name.lexeme == 'input') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
-        for (foreignFunction in Cosy.foreignFunctions) {
-            if (name.lexeme == foreignFunction.name()) return;
-        }
-        for (varName => variable in Cosy.foreignVariables) {
-            if (name.lexeme == varName) return;
-        }
         Cosy.error(name, 'Variable not declared in this scope.');
 	}
 

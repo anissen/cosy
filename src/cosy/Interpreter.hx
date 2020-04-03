@@ -24,12 +24,16 @@ class Interpreter {
 
     public function interpret(statements:Array<Stmt>) {
         // TODO: Putting this here is a hack! It will not work when 'interpret' is called multiple times.
-        for (foreignFunc in Cosy.foreignFunctions) {
-            globals.define(foreignFunc.name(), foreignFunc);
-        }
-        for (name => variable in Cosy.foreignVariables) {
-            globals.define(name, variable);
-        }
+        // for (foreignFunc in Cosy.foreignFunctions) {
+        //     // TODO: Should be a compile-time error!
+        //     if (globals.getAt(0, foreignFunc.name()) == null) throw 'Foreign function "${foreignFunc.name()}" not declared in the script';
+        //     globals.define(foreignFunc.name(), foreignFunc);
+        // }
+        // for (name => variable in Cosy.foreignVariables) {
+        //     // TODO: Should be a compile-time error!
+        //     if (globals.getAt(0, name) == null) throw 'Foreign variable "$name" not declared in the script';
+        //     globals.define(name, variable);
+        // }
 
         try {
             for (statement in statements) execute(statement);
@@ -108,8 +112,16 @@ class Interpreter {
                     }
                 } catch (err: Break) {}
             case Function(name, params, body, returnType, foreign):
-                if (foreign) return;
-
+                if (foreign) {
+                    for (foreignFunc in Cosy.foreignFunctions) {
+                        if (foreignFunc.name() == name.lexeme) {
+                            environment.define(name.lexeme, foreignFunc);
+                            return;
+                        }
+                    }
+                    throw 'should never happen';
+                }
+                
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(cond, then, el):
                 if (isTruthy(evaluate(cond))) execute(then);
@@ -133,7 +145,10 @@ class Interpreter {
                 var struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
             case Var(name, type, init, foreign):
-                if (foreign) return;
+                if (foreign) {
+                    environment.define(name.lexeme, Cosy.foreignVariables[name.lexeme]);
+                    return;
+                }
                 
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
@@ -142,7 +157,10 @@ class Interpreter {
                 }
                 environment.define(name.lexeme, value);
             case Mut(name, type, init, foreign):
-                if (foreign) return;
+                if (foreign) {
+                    environment.define(name.lexeme, Cosy.foreignVariables[name.lexeme]);
+                    return;
+                }
             
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
