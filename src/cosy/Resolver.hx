@@ -133,7 +133,7 @@ class Resolver {
                 }
 				declare(name);
 				define(name);
-				resolveFunction(name, params, body, Function);
+                if (!foreign) resolveFunction(name, params, body, Function);
 			case Expression(e) | Print(e):
 				resolveExpr(e);
 			case If(cond, then, el):
