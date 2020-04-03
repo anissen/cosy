@@ -12,8 +12,15 @@ class Interpreter {
         globals.define('clock', new ClockCallable());
         globals.define('random', new RandomCallable());
         globals.define('input', new InputCallable());
+        // for (foreignFunc in Cosy.foreignFunctions) {
+        //     globals.define(foreignFunc.name(), foreignFunc);
+        // }
         environment = globals;
     }
+
+    // public function addForeignFunction(name: String, func: Callable) {
+    //     globals.define(name, func);
+    // }
 
     public function interpret(statements:Array<Stmt>) {
         // TODO: Putting this here is a hack! It will not work when 'interpret' is called multiple times.
@@ -56,7 +63,7 @@ class Interpreter {
                 }
                 var methods = new Map();
                 for(method in meths) switch method {
-                    case Function(name, params, body, returnType):
+                    case Function(name, params, body, returnType, foreign):
                         var func = new Function(name, params, body, environment, name.lexeme == 'init');
                         methods.set(name.lexeme, func);
                     case _: // unreachable
@@ -100,8 +107,11 @@ class Interpreter {
                         } catch (err: Continue) {}
                     }
                 } catch (err: Break) {}
-            case Function(name, params, body, returnType):
-                environment.define(name.lexeme, new Function(name, params, body, environment, false));
+            // case ForeignFunction(name, params, returnType):
+            case Function(name, params, body, returnType, foreign):
+                if (!foreign) {
+                    environment.define(name.lexeme, new Function(name, params, body, environment, false));
+                }
             case If(cond, then, el):
                 if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
@@ -116,21 +126,23 @@ class Interpreter {
                 environment = new Environment(environment);
                 var fields:Map<String, Any> = new Map();
                 for (decl in declarations) switch decl {
-                    case Var(name, type, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
-                    case Mut(name, type, init): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case Var(name, type, init, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case Mut(name, type, init, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
                     case _: // should never happen
                 }
                 environment = previousEnv;
                 var struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
-            case Var(name, type, init):
-                var value:Any = uninitialized;
-                if (init != null) value = evaluate(init);
-                if (Std.is(value, StructInstance)) {
-                    value = (value: StructInstance).clone();
+            case Var(name, type, init, foreign):
+                if (globals.getAt(0, name.lexeme) == null) {
+                    var value:Any = uninitialized;
+                    if (init != null) value = evaluate(init);
+                    if (Std.is(value, StructInstance)) {
+                        value = (value: StructInstance).clone();
+                    }
+                    environment.define(name.lexeme, value);
                 }
-                environment.define(name.lexeme, value);
-            case Mut(name, type, init):
+            case Mut(name, type, init, foreign):
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
                 if (Std.is(value, StructInstance)) {
@@ -259,7 +271,6 @@ class Interpreter {
             case Call(callee, paren, args):
                 var callee = evaluate(callee);
                 var args = args.map(evaluate);
-
                 if (!Std.is(callee, Callable)) {
                     throw new RuntimeError(paren, 'Can only call functions and classes');
                 } else {

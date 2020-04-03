@@ -23,10 +23,11 @@ class Parser {
 	function declaration() {
 		try {
 			if (match([Class])) return classDeclaration();
-			if (match([Struct])) return structDeclaration();
-			if (match([Fn])) return func('function');
-			if (match([Var])) return varDeclaration();
-			if (match([Mut])) return mutDeclaration();
+            if (match([Struct])) return structDeclaration();
+            var foreign = match([Foreign]);
+			if (match([Fn])) return func('function', foreign);
+			if (match([Var])) return varDeclaration(foreign);
+			if (match([Mut])) return mutDeclaration(foreign);
 			return statement();
 		} catch (e :ParseError) {
 			synchronize();
@@ -126,24 +127,24 @@ class Parser {
 		return statements;
 	}
 	
-	function varDeclaration():Stmt {
+	function varDeclaration(foreign: Bool):Stmt {
         var name = consume(Identifier, 'Expect variable name.');
         var type = paramType();
 		
 		var initializer = null;
 		if (match([Equal])) initializer = expression();
 		
-		return Var(name, type, initializer);
+		return Var(name, type, initializer, foreign);
 	}
     
-    function mutDeclaration():Stmt {
+    function mutDeclaration(foreign: Bool):Stmt {
         var name = consume(Identifier, 'Expect variable name.');
         var type = paramType();
 		
 		var initializer = null;
 		if (match([Equal])) initializer = expression();
 		
-		return Mut(name, type, initializer);
+		return Mut(name, type, initializer, foreign);
 	}
 	
 	function classDeclaration():Stmt {
@@ -159,7 +160,7 @@ class Parser {
 		
 		var methods = [];
 		while (!check(RightBrace) && !isAtEnd())
-			methods.push(func('method'));
+			methods.push(func('method', false));
 			
 		consume(RightBrace, 'Expect "}" after class body.');
 		return Class(name, superclass, methods);
@@ -171,8 +172,8 @@ class Parser {
 
         var declarations = [];
         while (!check(RightBrace) && !isAtEnd()) {
-            if (match([Var])) declarations.push(varDeclaration());
-            else if (match([Mut])) declarations.push(mutDeclaration());
+            if (match([Var])) declarations.push(varDeclaration(false));
+            else if (match([Mut])) declarations.push(mutDeclaration(false));
             else {
                 Cosy.error(tokens[current], 'Structs can only contain variable definitions.');
                 break;
@@ -185,11 +186,11 @@ class Parser {
 		return Struct(name, declarations);
 	}
 
-	function func(kind:String):Stmt {
+	function func(kind: String, foreign: Bool): Stmt {
         var name = consume(Identifier, 'Expect $kind name.');
-		var functionExpr = funcBody(kind);
+		var functionExpr = funcBody(kind, foreign);
 		return switch functionExpr {
-			case AnonFunction(params, body, returnType): Function(name, params, body, returnType);
+			case AnonFunction(params, body, returnType): Function(name, params, body, returnType, foreign);
 			case _: throw new RuntimeError(name, 'Invalid function declaration.');
 		}
     }
@@ -225,8 +226,14 @@ class Parser {
             Unknown;
         }
     }
+
+    // function foreign(): Expr {
+        // if (match([Fn])) return funcBody("function");
+        // if (match([Identifier])) return identifier();
+    //     return block();
+    // }
 	
-	function funcBody(kind:String):Expr {
+	function funcBody(kind:String, foreign: Bool):Expr {
 		consume(LeftParen, 'Expect "(" after $kind name.');
 		var params :Array<Param> = [];
 		if (!check(RightParen)) {
@@ -249,6 +256,10 @@ class Parser {
         
         var returnType = paramType();
         // if (returnType.match(Unknown)) returnType = Void; // implicit Void
+
+        if (foreign) {
+            return AnonFunction(params, [], returnType);
+        }
 
 		consume(LeftBrace, 'Expect "{" before $kind body');
 
@@ -399,7 +410,7 @@ class Parser {
 			return Super(keyword, method);
 		}
 		if (match([This])) return This(previous());
-		if (match([Fn])) return funcBody("function");
+		if (match([Fn])) return funcBody("function", false);
 		if (match([Identifier])) return identifier();
 		if (match([Mut])) return MutArgument(previous(), consume(Identifier, 'Expect variable name after "mut".'));
 		if (match([LeftParen])) {

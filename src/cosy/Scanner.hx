@@ -14,6 +14,7 @@ class Scanner {
 		'else' => Else,
 		'false' => False,
 		'for' => For,
+		'foreign' => Foreign,
 		'fn' => Fn,
 		'in' => In,
 		'if' => If,

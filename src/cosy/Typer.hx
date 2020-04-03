@@ -57,8 +57,8 @@ class Typer {
 			case Break(keyword):
 			case Continue(keyword):
 			case Class(name, superclass, methods): typeStmts(methods);
-			case Var(name, type, init): variableTypes.set(name.lexeme, typeVar(name, type, init));
-            case Mut(name, type, init): variableTypes.set(name.lexeme, Mutable(typeVar(name, type, init)));
+			case Var(name, type, init, foreign): variableTypes.set(name.lexeme, typeVar(name, type, init));
+            case Mut(name, type, init, foreign): variableTypes.set(name.lexeme, Mutable(typeVar(name, type, init)));
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
@@ -81,7 +81,7 @@ class Typer {
                 }
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);
-			case Function(name, params, body, returnType): handleFunc(name, params, body, returnType);
+			case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType);
 			case Expression(e): typeExpr(e);
             case Print(e): typeExpr(e);
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
@@ -100,10 +100,10 @@ class Typer {
                 var decls :Map<String, VariableType> = new Map();
                 for (decl in declarations) {
                     switch decl {
-                        case Var(name, type, init): 
+                        case Var(name, type, init, foreign): 
                             structMeta.members.set(name.lexeme, { mutable: false, initialized: (init != null) });
                             decls.set(name.lexeme, typeVar(name, type, init));
-                        case Mut(name, type, init):
+                        case Mut(name, type, init, foreign):
                             structMeta.members.set(name.lexeme, { mutable: true, initialized: (init != null) });
                             decls.set(name.lexeme, Mutable(typeVar(name, type, init)));
                         case _: throw 'structs can only have var and mut'; // should never happen

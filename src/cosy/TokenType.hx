@@ -19,7 +19,7 @@ enum TokenType {
 	
 	Identifier; String; Number;
 	
-	And; Break; Continue; Class; Else; False; Fn; For; In; If; Mut; Or;
+	And; Break; Continue; Class; Else; False; Fn; For; Foreign; In; If; Mut; Or;
 	Print; Return; Struct; Super; This; True; Var;
 
     BooleanType; NumberType; StringType; FunctionType; ArrayType;

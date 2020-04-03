@@ -9,11 +9,11 @@ enum Stmt {
 	For(keyword:Token, name:Token, from:Expr, to:Expr, body:Array<Stmt>);
 	ForArray(name:Token, array:Expr, body:Array<Stmt>);
 	ForCondition(?cond:Expr, body:Array<Stmt>);
-	Function(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType);
+	Function(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType, foreign:Bool);
 	If(cond:Expr, then:Stmt, el:Stmt);
-	Mut(name:Token, type:Typer.VariableType, init:Expr); // TODO: Merge these two
+	Mut(name:Token, type:Typer.VariableType, init:Expr, foreign:Bool); // TODO: Merge these two
 	Print(e:Expr);
 	Return(keyword:Token, value:Expr);
 	Struct(name:Token, declarations:Array<Stmt>);
-	Var(name:Token, type:Typer.VariableType, init:Expr); // TODO: Merge these two
+	Var(name:Token, type:Typer.VariableType, init:Expr, /* mut:Bool, */ foreign:Bool); // TODO: Merge these two
 }

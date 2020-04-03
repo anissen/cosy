@@ -15,6 +15,11 @@ class Cosy {
     static var testOutput = '';
 
     static function main() {
+        // Cosy.setVariable(56, 'x');
+        // Cosy.addFunction('yo', (_) -> { trace('yoyoyo!'); return 0; }, [], Void);
+        Cosy.addFunction('yo', (args) -> { trace('yoyoyo!'); return 6; }, [Number], Number);
+        Cosy.setVariable('xyz', 'i\'m a foreign variable!');
+
         Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); }, [Number], Number);
         Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ }, [Text], Number);
 
@@ -112,11 +117,12 @@ class Cosy {
     @:expose
     public static function addFunction(name: String, func: Array<Any> -> Any, argumentTypes: Array<Typer.VariableType>, returnType: Typer.VariableType) {
         foreignFunctions.push(new ForeignFunction(name, argumentTypes.length, func));
+        // foreignFunctions.push(new ForeignFunction(name, 0, func));
     }
     
     public static var foreignVariables :Map<String, Any> = new Map();
     @:expose
-    public static function setVariable(variable: Any, name: String) {
+    public static function setVariable(name: String, variable: Any) {
         foreignVariables[name] = variable;
     }
 
@@ -215,5 +221,5 @@ private class ForeignFunction implements Callable {
     public function name() :String return nameValue;
     public function arity() :Int return arityValue;
     public function call(interpreter :Interpreter, args :Array<Any>) :Any return method(args);
-    public function toString() :String return '<native fn>';
+    public function toString() :String return '<foreign fn>';
 }

@@ -72,7 +72,7 @@ class Resolver {
 				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read, mutable: false, member: false });
 				
 				for(method in methods) switch method {
-					case Function(name, params, body, returnType):
+					case Function(name, params, body, returnType, foreign):
 						var declaration = name.lexeme == 'init' ? Initializer : Method;
 						resolveFunction(name, params, body, declaration);
 					case _: // unreachable
@@ -82,12 +82,14 @@ class Resolver {
 				if(superclass != null) endScope();
 				
 				currentClass = enclosingClass;
-			case Var(name, type, init):
+			case Var(name, type, init, foreign):
+                // TODO: Check that foreign has had a function set
                 var member = currentStruct.match(Struct);
 				declare(name, false, member);
 				if(init != null) resolveExpr(init);
 				define(name, false, member);
-            case Mut(name, type, init):
+            case Mut(name, type, init, foreign):
+                // TODO: Check that foreign has had a function set
                 var member = currentStruct.match(Struct);
 				declare(name, true, member);
 				if(init != null) resolveExpr(init);
@@ -118,7 +120,7 @@ class Resolver {
                 beginScope();
 				resolveStmts(body);
                 endScope();
-			case Function(name, params, body, returnType):
+			case Function(name, params, body, returnType, foreign):
 				declare(name);
 				define(name);
 				resolveFunction(name, params, body, Function);

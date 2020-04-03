@@ -47,7 +47,8 @@ class JavaScriptPrinter {
                 'for (var $counter = ${printExpr(from)}; $counter < ${printExpr(to)}; $counter++) ${printBlock(body)}';
 			case ForArray(name, array, body): 'for (${name.lexeme} of ${printExpr(array)}) ${printBlock(body)}';
 			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
-			case Function(name, params, body, returnType):
+			case Function(name, params, body, returnType, foreign):
+                if (foreign) return ''; // TODO: Is this correct behavior?
 				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
 				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
@@ -56,8 +57,12 @@ class JavaScriptPrinter {
             case Print(e): 'console.log(${printExpr(e)});';
             case Struct(name, declarations): '// ${name.lexeme} struct';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-			case Var(name, type, init): 'const ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
-			case Mut(name, type, init): 'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+			case Var(name, type, init, foreign):
+                if (foreign) return ''; // TODO: Is this correct behavior?
+                'const ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+			case Mut(name, type, init, foreign):
+                if (foreign) return ''; // TODO: Is this correct behavior?
+                'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}
 	
