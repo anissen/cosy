@@ -11,7 +11,6 @@ class Interpreter {
         globals = new Environment();
         globals.define('clock', new ClockCallable());
         globals.define('random', new RandomCallable());
-        globals.define('input', new InputCallable());
         // for (foreignFunc in Cosy.foreignFunctions) {
         //     globals.define(foreignFunc.name(), foreignFunc);
         // }
@@ -416,19 +415,6 @@ private class RandomCallable implements Callable {
     public function new() {}
     public function arity() :Int return 0;
     public function call(interpreter:Interpreter, args:Array<Any>):Any return Math.random();
-    public function toString() :String return '<native fn>';
-}
-
-private class InputCallable implements Callable {
-    public function new() {}
-    public function arity() :Int return 0;
-    public function call(interpreter:Interpreter, args:Array<Any>):Any {
-        #if sys
-        return Sys.stdin().readLine();
-        #else
-        throw 'Not implemented on this platform!';
-        #end
-    }
     public function toString() :String return '<native fn>';
 }
 

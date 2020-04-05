@@ -32,7 +32,6 @@ class Typer {
 	public function new() {
         variableTypes.set('clock', Function([], Number));
         variableTypes.set('random', Function([], Number));
-        variableTypes.set('input', Function([], Text));
 	}
 	
 	public inline function type(stmts:Array<Stmt>) {

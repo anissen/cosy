@@ -74,7 +74,7 @@ class Resolver {
 				for(method in methods) switch method {
 					case Function(name, params, body, returnType, foreign):
 						var declaration = name.lexeme == 'init' ? Initializer : Method;
-						resolveFunction(name, params, body, declaration);
+						resolveFunction(name, params, body, declaration, false);
 					case _: // unreachable
 				}
 				endScope();
@@ -133,7 +133,7 @@ class Resolver {
                 }
 				declare(name);
 				define(name);
-                if (!foreign) resolveFunction(name, params, body, Function);
+                resolveFunction(name, params, body, Function, foreign);
 			case Expression(e) | Print(e):
 				resolveExpr(e);
 			case If(cond, then, el):
@@ -217,18 +217,18 @@ class Resolver {
 			case Literal(_):
 				// skip
 			case AnonFunction(params, body, returnType): 
-				resolveFunction(null, params, body, Function);
+				resolveFunction(null, params, body, Function, false);
 		}
 	}
 	
-	function resolveFunction(name:Token, params:Array<Param>, body:Array<Stmt>, type:FunctionType) {
+	function resolveFunction(name:Token, params:Array<Param>, body:Array<Stmt>, type:FunctionType, foreign:Bool) {
 		var enclosingFunction = currentFunction;
 		currentFunction = type;
 		beginScope();
 		for (param in params) {
             var mutable = param.type.match(Mutable(_));
 			declare(param.name, mutable);
-			define(param.name, mutable);
+			if (!foreign) define(param.name, mutable);
 		}
         resolveStmts(body);
 		endScope();
@@ -277,7 +277,7 @@ class Resolver {
 			}
 			i--;
 		}
-        if (name.lexeme == 'clock' || name.lexeme == 'random' || name.lexeme == 'input') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
+        if (name.lexeme == 'clock' || name.lexeme == 'random') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
         Cosy.error(name, 'Variable not declared in this scope.');
 	}
 

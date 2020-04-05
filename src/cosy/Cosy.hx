@@ -20,8 +20,15 @@ class Cosy {
         Cosy.addFunction('yo', (args) -> { trace('yoyoyo!'); return 0; });
         Cosy.setVariable('xyz', 'i\'m a foreign variable!');
 
-        // Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); }, [Number], Number);
-        // Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ }, [Text], Number);
+        Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); });
+        Cosy.addFunction('readInput', (args) -> {
+            #if sys
+            return Sys.stdin().readLine();
+            #else
+            throw 'Not implemented on this platform!';
+            #end
+        });
+        Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ });
 
         #if sys
         if (Sys.args().length == 0) {

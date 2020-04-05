@@ -1,9 +1,13 @@
+foreign fn randomInt(max Num) Num
+foreign fn readInput() Str
+foreign fn stringToNumber(input Str) Num
+
 print 'More-or-Less game! Guess a number between 0 and 100.'
 var number = randomInt(100)
 mut guesses = 0
 for {
     print 'Input a numeric value: '
-    var guess = stringToNumber(input())
+    var guess = stringToNumber(readInput())
     guesses += 1
     if guess < number {
         print 'More!'
