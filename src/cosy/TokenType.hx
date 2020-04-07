@@ -22,7 +22,7 @@ enum TokenType {
 	And; Break; Continue; Class; Else; False; Fn; For; Foreign; In; If; Mut; Or;
 	Print; Return; Struct; Super; This; True; Var;
 
-    BooleanType; NumberType; StringType; FunctionType; ArrayType;
+    BooleanType; NumberType; StringType; VoidType; FunctionType; ArrayType;
 	
 	Eof;
 }

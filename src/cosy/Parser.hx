@@ -203,6 +203,8 @@ class Parser {
             Number;
         } else if (match([StringType])) {
             Text;
+        } else if (match([VoidType])) {
+            Void;
         } else if (match([FunctionType])) {
             consume(LeftParen, 'Expect "(" after Fun.');
             var funcParamTypes = [];

@@ -30,6 +30,7 @@ class Scanner {
 		'Bool' => BooleanType,
 		'Num' => NumberType,
 		'Str' => StringType,
+		'Void' => VoidType,
 		'Fn' => FunctionType,
 		'Array' => ArrayType,
 	];
