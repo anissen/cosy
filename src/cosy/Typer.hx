@@ -82,7 +82,10 @@ class Typer {
             case ForCondition(cond, body): typeStmts(body);
 			case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType);
 			case Expression(e): typeExpr(e);
-            case Print(e): typeExpr(e);
+            case Print(keyword, e): 
+                var type = typeExpr(e);
+                if (type.match(Void)) Cosy.error(keyword, 'Cannot print values of type void.');
+                type;
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
                 if (val != null) {

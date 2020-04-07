@@ -125,7 +125,7 @@ class Interpreter {
             case If(cond, then, el):
                 if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
-            case Print(e):
+            case Print(keyword, e):
                 Cosy.println(stringify(evaluate(e)));
             case Return(keyword, value):
                 var value = if(value == null) null else evaluate(value);

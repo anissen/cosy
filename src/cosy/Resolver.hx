@@ -134,7 +134,9 @@ class Resolver {
 				declare(name);
 				define(name);
                 resolveFunction(name, params, body, Function, foreign);
-			case Expression(e) | Print(e):
+            case Expression(e):
+                resolveExpr(e);
+            case Print(keyword, e):
 				resolveExpr(e);
 			case If(cond, then, el):
 				resolveExpr(cond);

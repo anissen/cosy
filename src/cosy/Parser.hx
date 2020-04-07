@@ -102,8 +102,9 @@ class Parser {
 	}
 	
 	function printStatement():Stmt {
+        var keyword = previous();
 		var value = expression();
-		return Print(value);
+		return Print(keyword, value);
 	}
 	
 	function returnStatement():Stmt {

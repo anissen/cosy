@@ -12,7 +12,7 @@ enum Stmt {
 	Function(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType, foreign:Bool);
 	If(cond:Expr, then:Stmt, el:Stmt);
 	Mut(name:Token, type:Typer.VariableType, init:Expr, foreign:Bool); // TODO: Merge these two
-	Print(e:Expr);
+	Print(keyword:Token, e:Expr);
 	Return(keyword:Token, value:Expr);
 	Struct(name:Token, declarations:Array<Stmt>);
 	Var(name:Token, type:Typer.VariableType, init:Expr, /* mut:Bool, */ foreign:Bool); // TODO: Merge these two
