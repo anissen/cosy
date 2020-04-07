@@ -215,12 +215,8 @@ class Parser {
             Function(funcParamTypes, returnType);
         } else if (match([ArrayType])) {
             Array(paramType());
-        } else if (match([Identifier])) {
-            var identifier = previous();
-            if (structNames.indexOf(identifier.lexeme) == -1) {
-                //throw error(identifier, 'Expected type annotation to be a struct name.');
-                return Unknown; // this can happen in e.g. `mut b\nb = '2'`
-            }
+        } else if (check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
+            var identifier = advance();
             NamedStruct(identifier.lexeme);
         } else {
             Unknown;
