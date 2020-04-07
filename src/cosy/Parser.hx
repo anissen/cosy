@@ -226,12 +226,6 @@ class Parser {
         }
     }
 
-    // function foreign(): Expr {
-        // if (match([Fn])) return funcBody("function");
-        // if (match([Identifier])) return identifier();
-    //     return block();
-    // }
-	
 	function funcBody(kind:String, foreign: Bool):Expr {
 		consume(LeftParen, 'Expect "(" after $kind name.');
 		var params :Array<Param> = [];
@@ -252,7 +246,6 @@ class Parser {
 		}
 		
 		consume(RightParen, 'Expect ")" after parameters.');
-        
         var returnType = paramType();
         // if (returnType.match(Unknown)) returnType = Void; // implicit Void
 
@@ -261,9 +254,7 @@ class Parser {
         }
 
 		consume(LeftBrace, 'Expect "{" before $kind body');
-
 		var body = block();
-		
 		return AnonFunction(params, body, returnType);
 	}
 	
