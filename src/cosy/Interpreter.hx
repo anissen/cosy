@@ -11,29 +11,10 @@ class Interpreter {
         globals = new Environment();
         globals.define('clock', new ClockCallable());
         globals.define('random', new RandomCallable());
-        // for (foreignFunc in Cosy.foreignFunctions) {
-        //     globals.define(foreignFunc.name(), foreignFunc);
-        // }
         environment = globals;
     }
 
-    // public function addForeignFunction(name: String, func: Callable) {
-    //     globals.define(name, func);
-    // }
-
     public function interpret(statements:Array<Stmt>) {
-        // TODO: Putting this here is a hack! It will not work when 'interpret' is called multiple times.
-        // for (foreignFunc in Cosy.foreignFunctions) {
-        //     // TODO: Should be a compile-time error!
-        //     if (globals.getAt(0, foreignFunc.name()) == null) throw 'Foreign function "${foreignFunc.name()}" not declared in the script';
-        //     globals.define(foreignFunc.name(), foreignFunc);
-        // }
-        // for (name => variable in Cosy.foreignVariables) {
-        //     // TODO: Should be a compile-time error!
-        //     if (globals.getAt(0, name) == null) throw 'Foreign variable "$name" not declared in the script';
-        //     globals.define(name, variable);
-        // }
-
         try {
             for (statement in statements) execute(statement);
         } catch (e:RuntimeError) {
@@ -112,13 +93,8 @@ class Interpreter {
                 } catch (err: Break) {}
             case Function(name, params, body, returnType, foreign):
                 if (foreign) {
-                    for (foreignFunc in Cosy.foreignFunctions) {
-                        if (foreignFunc.name() == name.lexeme) {
-                            environment.define(name.lexeme, foreignFunc);
-                            return;
-                        }
-                    }
-                    throw 'should never happen';
+                    environment.define(name.lexeme, Cosy.foreignFunctions[name.lexeme]);
+                    return;
                 }
                 
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));

@@ -6,6 +6,8 @@ import sys.io.File;
 
 class Cosy {
     static final interpreter = new Interpreter();
+    public static final foreignFunctions :Map<String, ForeignFunction> = new Map();
+    public static final foreignVariables :Map<String, Any> = new Map();
 
     static var hadError = false;
     static var hadRuntimeError = false;
@@ -15,21 +17,16 @@ class Cosy {
     static var testOutput = '';
 
     static function main() {
-        // Cosy.setVariable(56, 'x');
-        // Cosy.addFunction('yo', (_) -> { trace('yoyoyo!'); return 0; }, [], Void);
-        Cosy.addFunction('yo', (args) -> { trace('yoyoyo!'); return 0; });
-        Cosy.setVariable('xyz', 'i\'m a foreign variable!');
-
-        Cosy.addFunction('randomInt', (args) -> { return Std.random(args[0]); });
-        Cosy.addFunction('readInput', (args) -> {
+        Cosy.setFunction('randomInt', (args) -> { return Std.random(args[0]); });
+        Cosy.setFunction('readInput', (args) -> {
             #if sys
             return Sys.stdin().readLine();
             #else
             throw 'Not implemented on this platform!';
             #end
         });
-        Cosy.addFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ });
-
+        Cosy.setFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ });
+        
         #if sys
         if (Sys.args().length == 0) {
             return runPrompt();
@@ -119,14 +116,11 @@ class Cosy {
         if (hadError) return;
     }
 
-    
-    public static var foreignFunctions :Array<ForeignFunction> = [];
     @:expose
-    public static function addFunction(name: String, func: Array<Any> -> Any) {
-        foreignFunctions.push(new ForeignFunction(name, func));
+    public static function setFunction(name: String, func: Array<Any> -> Any) {
+        foreignFunctions[name] = new ForeignFunction(func);
     }
     
-    public static var foreignVariables :Map<String, Any> = new Map();
     @:expose
     public static function setVariable(name: String, variable: Any) {
         foreignVariables[name] = variable;
@@ -216,13 +210,10 @@ abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
 }
 
 class ForeignFunction implements Callable {
-    final nameValue: String;
     final method: (args: Array<Any>) -> Any;
-    public function new(name: String, method: (args: Array<Any>) -> Any) {
-        this.nameValue = name;
+    public function new(method: (args: Array<Any>) -> Any) {
         this.method = method;
     }
-    public function name() :String return nameValue;
     public function arity() :Int return 0; // never called
     public function call(interpreter :Interpreter, args :Array<Any>) :Any return method(args);
     public function toString() :String return '<foreign fn>';

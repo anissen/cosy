@@ -121,16 +121,7 @@ class Resolver {
 				resolveStmts(body);
                 endScope();
 			case Function(name, params, body, returnType, foreign):
-                if (foreign) {
-                    var found = false;
-                    for (foreignFunc in Cosy.foreignFunctions) {
-                        if (foreignFunc.name() == name.lexeme) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) Cosy.error(name, 'Foreign function not set.');
-                }
+                if (foreign && !Cosy.foreignFunctions.exists(name.lexeme)) Cosy.error(name, 'Foreign function not set.');
 				declare(name);
 				define(name);
                 resolveFunction(name, params, body, Function, foreign);
