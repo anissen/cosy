@@ -485,23 +485,14 @@ cosy.Interpreter = class cosy_Interpreter {
 			}
 			break;
 		case 8:
-			var _g31 = statement.body;
-			var _g30 = statement.params;
 			var _g29 = statement.name;
 			if(statement.foreign) {
-				var _g5 = 0;
-				var _g17 = cosy.Cosy.foreignFunctions;
-				while(_g5 < _g17.length) {
-					var foreignFunc = _g17[_g5];
-					++_g5;
-					if(foreignFunc.name() == _g29.lexeme) {
-						this.environment.define(_g29.lexeme,foreignFunc);
-						return;
-					}
-				}
-				throw new js._Boot.HaxeError("should never happen");
+				var key1 = _g29.lexeme;
+				var _this = cosy.Cosy.foreignFunctions;
+				this.environment.define(_g29.lexeme,__map_reserved[key1] != null ? _this.getReserved(key1) : _this.h[key1]);
+				return;
 			}
-			this.environment.define(_g29.lexeme,new cosy.Function(_g29,_g30,_g31,this.environment,false));
+			this.environment.define(_g29.lexeme,new cosy.Function(_g29,statement.params,statement.body,this.environment,false));
 			break;
 		case 9:
 			var _g36 = statement.el;
@@ -512,22 +503,22 @@ cosy.Interpreter = class cosy_Interpreter {
 			}
 			break;
 		case 10:
-			var _g51 = statement.init;
-			var _g32 = statement.name;
+			var _g5 = statement.init;
+			var _g31 = statement.name;
 			if(statement.foreign) {
-				var key1 = _g32.lexeme;
-				var _this = cosy.Cosy.foreignVariables;
-				this.environment.define(_g32.lexeme,__map_reserved[key1] != null ? _this.getReserved(key1) : _this.h[key1]);
+				var key2 = _g31.lexeme;
+				var _this1 = cosy.Cosy.foreignVariables;
+				this.environment.define(_g31.lexeme,__map_reserved[key2] != null ? _this1.getReserved(key2) : _this1.h[key2]);
 				return;
 			}
 			var value = cosy.Interpreter.uninitialized;
-			if(_g51 != null) {
-				value = this.evaluate(_g51);
+			if(_g5 != null) {
+				value = this.evaluate(_g5);
 			}
 			if(((value) instanceof cosy.StructInstance)) {
 				value = value.clone();
 			}
-			this.environment.define(_g32.lexeme,value);
+			this.environment.define(_g31.lexeme,value);
 			break;
 		case 11:
 			cosy.Cosy.println(this.stringify(this.evaluate(statement.e)));
@@ -536,35 +527,35 @@ cosy.Interpreter = class cosy_Interpreter {
 			var _g38 = statement.value;
 			throw new js._Boot.HaxeError(new cosy.Return(_g38 == null ? null : this.evaluate(_g38)));
 		case 13:
-			var _g171 = statement.declarations;
+			var _g17 = statement.declarations;
 			var _g161 = statement.name;
 			this.environment.define(_g161.lexeme,null);
 			var previousEnv = this.environment;
 			this.environment = new cosy.Environment(this.environment);
 			var fields = new haxe.ds.StringMap();
 			var _g6 = 0;
-			while(_g6 < _g171.length) {
-				var decl = _g171[_g6];
+			while(_g6 < _g17.length) {
+				var decl = _g17[_g6];
 				++_g6;
 				switch(decl._hx_index) {
 				case 10:
 					var _g21 = decl.init;
-					var key2 = decl.name.lexeme;
+					var key3 = decl.name.lexeme;
 					var value1 = _g21 != null ? this.evaluate(_g21) : null;
-					if(__map_reserved[key2] != null) {
-						fields.setReserved(key2,value1);
+					if(__map_reserved[key3] != null) {
+						fields.setReserved(key3,value1);
 					} else {
-						fields.h[key2] = value1;
+						fields.h[key3] = value1;
 					}
 					break;
 				case 14:
 					var _g61 = decl.init;
-					var key3 = decl.name.lexeme;
+					var key4 = decl.name.lexeme;
 					var value2 = _g61 != null ? this.evaluate(_g61) : null;
-					if(__map_reserved[key3] != null) {
-						fields.setReserved(key3,value2);
+					if(__map_reserved[key4] != null) {
+						fields.setReserved(key4,value2);
 					} else {
-						fields.h[key3] = value2;
+						fields.h[key4] = value2;
 					}
 					break;
 				default:
@@ -577,9 +568,9 @@ cosy.Interpreter = class cosy_Interpreter {
 			var _g20 = statement.init;
 			var _g18 = statement.name;
 			if(statement.foreign) {
-				var key4 = _g18.lexeme;
-				var _this1 = cosy.Cosy.foreignVariables;
-				this.environment.define(_g18.lexeme,__map_reserved[key4] != null ? _this1.getReserved(key4) : _this1.h[key4]);
+				var key5 = _g18.lexeme;
+				var _this2 = cosy.Cosy.foreignVariables;
+				this.environment.define(_g18.lexeme,__map_reserved[key5] != null ? _this2.getReserved(key5) : _this2.h[key5]);
 				return;
 			}
 			var value3 = cosy.Interpreter.uninitialized;
@@ -1076,19 +1067,14 @@ Object.assign(cosy._Interpreter.RandomCallable.prototype, {
 });
 cosy.Cosy = class cosy_Cosy {
 	static main() {
-		cosy.Cosy.addFunction("yo",function(args) {
-			console.log("src/cosy/Cosy.hx:20:","yoyoyo!");
-			return 0;
+		cosy.Cosy.setFunction("randomInt",function(args) {
+			return Std.random(args[0]);
 		});
-		cosy.Cosy.setVariable("xyz","i'm a foreign variable!");
-		cosy.Cosy.addFunction("randomInt",function(args1) {
-			return Std.random(args1[0]);
-		});
-		cosy.Cosy.addFunction("readInput",function(args2) {
+		cosy.Cosy.setFunction("readInput",function(args1) {
 			throw new js._Boot.HaxeError("Not implemented on this platform!");
 		});
-		cosy.Cosy.addFunction("stringToNumber",function(args3) {
-			return Std.parseInt(args3[0]);
+		cosy.Cosy.setFunction("stringToNumber",function(args2) {
+			return Std.parseInt(args2[0]);
 		});
 	}
 	static println(v) {
@@ -1113,8 +1099,14 @@ cosy.Cosy = class cosy_Cosy {
 			return;
 		}
 	}
-	static addFunction(name,func) {
-		cosy.Cosy.foreignFunctions.push(new cosy.ForeignFunction(name,func));
+	static setFunction(name,func) {
+		var v = new cosy.ForeignFunction(func);
+		var _this = cosy.Cosy.foreignFunctions;
+		if(__map_reserved[name] != null) {
+			_this.setReserved(name,v);
+		} else {
+			_this.h[name] = v;
+		}
 	}
 	static setVariable(name,variable) {
 		var _this = cosy.Cosy.foreignVariables;
@@ -1198,7 +1190,7 @@ cosy.Cosy = class cosy_Cosy {
 }
 $hx_exports["cosy"]["Cosy"]["run"] = cosy.Cosy.run;
 $hx_exports["cosy"]["Cosy"]["setVariable"] = cosy.Cosy.setVariable;
-$hx_exports["cosy"]["Cosy"]["addFunction"] = cosy.Cosy.addFunction;
+$hx_exports["cosy"]["Cosy"]["setFunction"] = cosy.Cosy.setFunction;
 $hx_exports["cosy"]["Cosy"]["validate"] = cosy.Cosy.validate;
 cosy.Cosy.__name__ = true;
 cosy.ErrorDataType = $hxEnums["cosy.ErrorDataType"] = { __ename__ : true, __constructs__ : ["Line","Token"]
@@ -1206,12 +1198,8 @@ cosy.ErrorDataType = $hxEnums["cosy.ErrorDataType"] = { __ename__ : true, __cons
 	,Token: ($_=function(v) { return {_hx_index:1,v:v,__enum__:"cosy.ErrorDataType",toString:$estr}; },$_.__params__ = ["v"],$_)
 };
 cosy.ForeignFunction = class cosy_ForeignFunction {
-	constructor(name,method) {
-		this.nameValue = name;
+	constructor(method) {
 		this.method = method;
-	}
-	name() {
-		return this.nameValue;
 	}
 	arity() {
 		return 0;
@@ -2249,24 +2237,21 @@ cosy.Resolver = class cosy_Resolver {
 			break;
 		case 8:
 			var _g33 = stmt.foreign;
-			var _g31 = stmt.body;
-			var _g30 = stmt.params;
 			var _g29 = stmt.name;
+			var tmp;
 			if(_g33) {
-				var found = false;
-				var _g4 = 0;
-				var _g12 = cosy.Cosy.foreignFunctions;
-				while(_g4 < _g12.length) if(_g12[_g4++].name() == _g29.lexeme) {
-					found = true;
-					break;
-				}
-				if(!found) {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g29),"Foreign function not set.");
-				}
+				var key = _g29.lexeme;
+				var _this2 = cosy.Cosy.foreignFunctions;
+				tmp = !(__map_reserved[key] != null ? _this2.existsReserved(key) : _this2.h.hasOwnProperty(key));
+			} else {
+				tmp = false;
+			}
+			if(tmp) {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g29),"Foreign function not set.");
 			}
 			this.declare(_g29);
 			this.define(_g29);
-			this.resolveFunction(_g29,_g30,_g31,cosy._Resolver.FunctionType.Function,_g33);
+			this.resolveFunction(_g29,stmt.params,stmt.body,cosy._Resolver.FunctionType.Function,_g33);
 			break;
 		case 9:
 			var _g36 = stmt.el;
@@ -2278,24 +2263,24 @@ cosy.Resolver = class cosy_Resolver {
 			break;
 		case 10:
 			var _g5 = stmt.init;
-			var _g32 = stmt.name;
-			var tmp;
+			var _g31 = stmt.name;
+			var tmp1;
 			if(stmt.foreign) {
-				var key = _g32.lexeme;
-				var _this2 = cosy.Cosy.foreignVariables;
-				tmp = !(__map_reserved[key] != null ? _this2.existsReserved(key) : _this2.h.hasOwnProperty(key));
+				var key1 = _g31.lexeme;
+				var _this3 = cosy.Cosy.foreignVariables;
+				tmp1 = !(__map_reserved[key1] != null ? _this3.existsReserved(key1) : _this3.h.hasOwnProperty(key1));
 			} else {
-				tmp = false;
+				tmp1 = false;
 			}
-			if(tmp) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g32),"Foreign variable not set.");
+			if(tmp1) {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g31),"Foreign variable not set.");
 			}
 			var member = this.currentStruct._hx_index == 1;
-			this.declare(_g32,true,member);
+			this.declare(_g31,true,member);
 			if(_g5 != null) {
 				this.resolveExpr(_g5);
 			}
-			this.define(_g32,true,member);
+			this.define(_g31,true,member);
 			break;
 		case 11:
 			this.resolveExpr(stmt.e);
@@ -2326,15 +2311,15 @@ cosy.Resolver = class cosy_Resolver {
 		case 14:
 			var _g20 = stmt.init;
 			var _g18 = stmt.name;
-			var tmp1;
+			var tmp2;
 			if(stmt.foreign) {
-				var key1 = _g18.lexeme;
-				var _this3 = cosy.Cosy.foreignVariables;
-				tmp1 = !(__map_reserved[key1] != null ? _this3.existsReserved(key1) : _this3.h.hasOwnProperty(key1));
+				var key2 = _g18.lexeme;
+				var _this4 = cosy.Cosy.foreignVariables;
+				tmp2 = !(__map_reserved[key2] != null ? _this4.existsReserved(key2) : _this4.h.hasOwnProperty(key2));
 			} else {
-				tmp1 = false;
+				tmp2 = false;
 			}
-			if(tmp1) {
+			if(tmp2) {
 				cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Foreign variable not set.");
 			}
 			var member1 = this.currentStruct._hx_index == 1;
@@ -2404,7 +2389,7 @@ cosy.Resolver = class cosy_Resolver {
 				}
 				break;
 			default:
-				console.log("src/cosy/Resolver.hx:198:",_g2);
+				console.log("src/cosy/Resolver.hx:189:",_g2);
 				throw new js._Boot.HaxeError("this is unexpected");
 			}
 			break;
@@ -4137,14 +4122,14 @@ js.Boot.__toStr = ({ }).toString;
 cosy.Interpreter.__meta__ = { fields : { evaluate : { SuppressWarnings : ["checkstyle:CyclomaticComplexity","checkstyle:NestedControlFlow","checkstyle:MethodLength"]}}};
 cosy.Interpreter.uninitialized = { };
 cosy.Cosy.interpreter = new cosy.Interpreter();
+cosy.Cosy.foreignFunctions = new haxe.ds.StringMap();
+cosy.Cosy.foreignVariables = new haxe.ds.StringMap();
 cosy.Cosy.hadError = false;
 cosy.Cosy.hadRuntimeError = false;
 cosy.Cosy.prettyPrint = false;
 cosy.Cosy.javascript = false;
 cosy.Cosy.testing = false;
 cosy.Cosy.testOutput = "";
-cosy.Cosy.foreignFunctions = [];
-cosy.Cosy.foreignVariables = new haxe.ds.StringMap();
 cosy.Scanner.keywords = (function($this) {
 	var $r;
 	var _g = new haxe.ds.StringMap();

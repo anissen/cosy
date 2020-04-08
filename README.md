@@ -33,7 +33,7 @@ print 'hello world'
 * Gradural typing.
 * Small and concise.
   * Cosy is made with fewer than 2400 lines of source code.
-  * Few keywords (`and`, `break`, `continue`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `struct`, `true`, `var`, `Bool`, `Num`, `Str`, `Array` and `Fn`).
+  * Few keywords (`and`, `break`, `continue`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `struct`, `true`, `var`, `Bool`, `Num`, `Str`, `Void`, `Array` and `Fn`).
 * Safety.
   * Variable are immutable by default.
   * No `null` or `nil`.
