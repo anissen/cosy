@@ -6,7 +6,7 @@ x()
 fun x() { print "hej" }
 ```
 - [ ] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
-- [ ] Array method calls is not checked for immutability
+- [x] Array method calls is not checked for immutability
 - [ ] Struct `Set` expression should also handle assignment operators: +=, -=, /=, *=
 
 # Wish list
@@ -55,7 +55,7 @@ fun x() { print "hej" }
 - [ ] Replace `return _` with `return`. Look at how semicolons are handling in the original implementation.
 - [ ] Simplify code now that...
   - [ ] Variable shadowing is gone
-  - [ ] nil is gone (done?)
+  - [x] nil is gone
   - [x] for-loops can be made without an identifer (underscores are not required on unused loop counters anymore)
   - [ ] Classes are gone
 - [x] Cosy playground
@@ -79,7 +79,7 @@ fun x() { print "hej" }
 - [x] Rename files from `.lox` to `.cosy`
 - [x] Change `fun` to `fn`
 - [x] Change `"` to `'`
-- [ ] Consider integrations
+- [x] Consider integrations
 - [x] Merge `Mut` into `Var`
 - [ ] Need to take line breaks into account to avoid cases where parsing fails because it "continues" on the next line, e.g. `mut b\nb = '2'`
 - [ ] Remove unused testing code (Cosy.hx + tests/)
