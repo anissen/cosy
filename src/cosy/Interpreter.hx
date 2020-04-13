@@ -112,31 +112,18 @@ class Interpreter {
                 environment = new Environment(environment);
                 var fields:Map<String, Any> = new Map();
                 for (decl in declarations) switch decl {
-                    case Var(name, type, init, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
-                    case Mut(name, type, init, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                    case Var(name, type, init, mut, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
                     case _: // should never happen
                 }
                 environment = previousEnv;
                 var struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
-            case Var(name, type, init, foreign):
+            case Var(name, type, init, mut, foreign):
                 if (foreign) {
                     environment.define(name.lexeme, Cosy.foreignVariables[name.lexeme]);
                     return;
                 }
                 
-                var value:Any = uninitialized;
-                if (init != null) value = evaluate(init);
-                if (Std.is(value, StructInstance)) {
-                    value = (value: StructInstance).clone();
-                }
-                environment.define(name.lexeme, value);
-            case Mut(name, type, init, foreign):
-                if (foreign) {
-                    environment.define(name.lexeme, Cosy.foreignVariables[name.lexeme]);
-                    return;
-                }
-            
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
                 if (Std.is(value, StructInstance)) {

@@ -56,8 +56,10 @@ class Typer {
 			case Break(keyword):
 			case Continue(keyword):
 			case Class(name, superclass, methods): typeStmts(methods);
-			case Var(name, type, init, foreign): variableTypes.set(name.lexeme, typeVar(name, type, init));
-            case Mut(name, type, init, foreign): variableTypes.set(name.lexeme, Mutable(typeVar(name, type, init)));
+			case Var(name, type, init, mut, foreign): 
+                var computedType = typeVar(name, type, init);
+                if (mut) computedType = Mutable(computedType);
+                variableTypes.set(name.lexeme, computedType);
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
@@ -102,12 +104,11 @@ class Typer {
                 var decls :Map<String, VariableType> = new Map();
                 for (decl in declarations) {
                     switch decl {
-                        case Var(name, type, init, foreign): 
-                            structMeta.members.set(name.lexeme, { mutable: false, initialized: (init != null) });
-                            decls.set(name.lexeme, typeVar(name, type, init));
-                        case Mut(name, type, init, foreign):
-                            structMeta.members.set(name.lexeme, { mutable: true, initialized: (init != null) });
-                            decls.set(name.lexeme, Mutable(typeVar(name, type, init)));
+                        case Var(name, type, init, mut, foreign): 
+                            structMeta.members.set(name.lexeme, { mutable: mut, initialized: (init != null) });
+                            var computedType = typeVar(name, type, init);
+                            if (mut) computedType = Mutable(computedType);
+                            decls.set(name.lexeme, computedType);
                         case _: throw 'structs can only have var and mut'; // should never happen
                     }
                 }

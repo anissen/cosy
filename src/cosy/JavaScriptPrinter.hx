@@ -57,12 +57,9 @@ class JavaScriptPrinter {
             case Print(keyword, e): 'console.log(${printExpr(e)});';
             case Struct(name, declarations): '// ${name.lexeme} struct';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-			case Var(name, type, init, foreign):
+			case Var(name, type, init, mut, foreign):
                 if (foreign) return ''; // TODO: Is this correct behavior?
-                'const ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
-			case Mut(name, type, init, foreign):
-                if (foreign) return ''; // TODO: Is this correct behavior?
-                'var ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+                '${mut ? "var" : "const"} ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}
 	

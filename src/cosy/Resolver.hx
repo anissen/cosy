@@ -82,18 +82,12 @@ class Resolver {
 				if(superclass != null) endScope();
 				
 				currentClass = enclosingClass;
-			case Var(name, type, init, foreign):
+			case Var(name, type, init, mut, foreign):
                 if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 var member = currentStruct.match(Struct);
-				declare(name, false, member);
+				declare(name, mut, member);
 				if(init != null) resolveExpr(init);
-				define(name, false, member);
-            case Mut(name, type, init, foreign):
-                if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
-                var member = currentStruct.match(Struct);
-				declare(name, true, member);
-				if(init != null) resolveExpr(init);
-				define(name, true, member);
+				define(name, mut, member);
             case For(keyword, name, from, to, body):
                 resolveExpr(from);
                 resolveExpr(to);

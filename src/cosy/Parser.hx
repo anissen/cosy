@@ -26,8 +26,8 @@ class Parser {
             if (match([Struct])) return structDeclaration();
             var foreign = match([Foreign]);
 			if (match([Fn])) return func('function', foreign);
-			if (match([Var])) return varDeclaration(foreign);
-			if (match([Mut])) return mutDeclaration(foreign);
+			if (match([Var])) return varDeclaration(false, foreign);
+			if (match([Mut])) return varDeclaration(true, foreign);
 			return statement();
 		} catch (e :ParseError) {
 			synchronize();
@@ -128,26 +128,16 @@ class Parser {
 		return statements;
 	}
 	
-	function varDeclaration(foreign: Bool):Stmt {
+	function varDeclaration(mut: Bool, foreign: Bool):Stmt {
         var name = consume(Identifier, 'Expect variable name.');
         var type = paramType();
 		
 		var initializer = null;
 		if (!foreign && match([Equal])) initializer = expression();
 		
-		return Var(name, type, initializer, foreign);
+		return Var(name, type, initializer, mut, foreign);
 	}
     
-    function mutDeclaration(foreign: Bool):Stmt {
-        var name = consume(Identifier, 'Expect variable name.');
-        var type = paramType();
-		
-		var initializer = null;
-		if (!foreign && match([Equal])) initializer = expression();
-		
-		return Mut(name, type, initializer, foreign);
-	}
-	
 	function classDeclaration():Stmt {
 		var name = consume(Identifier, 'Expect class name');
 		
@@ -173,8 +163,8 @@ class Parser {
 
         var declarations = [];
         while (!check(RightBrace) && !isAtEnd()) {
-            if (match([Var])) declarations.push(varDeclaration(false));
-            else if (match([Mut])) declarations.push(mutDeclaration(false));
+            if (match([Var])) declarations.push(varDeclaration(false, false));
+            else if (match([Mut])) declarations.push(varDeclaration(true, false));
             else {
                 Cosy.error(tokens[current], 'Structs can only contain variable definitions.');
                 break;
