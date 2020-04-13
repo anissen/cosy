@@ -58,12 +58,12 @@ fun x() { print "hej" }
   - [ ] nil is gone (done?)
   - [x] for-loops can be made without an identifer (underscores are not required on unused loop counters anymore)
   - [ ] Classes are gone
-- [ ] Cosy playground
+- [x] Cosy playground
   - [x] Compile for JavaScript
   - [x] Make simple Cosy playground website
   - [x] Make playground available through github pages
   - [x] Scan + parse + resolve the code on keypress or after a timeout
-  - [ ] Syntax highlighting for codemirror
+  - [-] Syntax highlighting for codemirror
 - [x] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
 - [ ] Disable some static analysis for REPL, e.g. checking for unused variables
 - [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
@@ -86,15 +86,20 @@ fun x() { print "hej" }
 - [ ] Make array concat be simply `+`
 - [ ] Perserve ordering of members when printing a struct
 - [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
-- [ ] Make a new and improved Hangman example with properly typed code, structs and arrays
+- [x] Make a new and improved Hangman example with properly typed code, structs and arrays
 - [ ] Update Cosy basics example with structs, functions taking mut struct, string functions
+- [ ] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
+- [ ] Cosy documentation using Dox (https://github.com/HaxeFoundation/dox)
+- [ ] Make Cosy FFI work for more targets (see https://community.haxe.org/t/is-there-a-way-to-expose-a-haxe-library-as-a-library-for-another-target/508)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
 - [ ] Enable null-safety feature for Haxe
 - [ ] Unit tests
-- [ ] Simple CI?
+- [ ] Simple CI using Github Actions (see https://github.com/lix-pm/lix.vscode/commit/d45e30e618aa1aea23a26ea589d23c8916e9af68)
 - [ ] VSCode tasks
+- [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe)
+- [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
@@ -102,3 +107,4 @@ fun x() { print "hej" }
 - [ ] Easy to integrate C/C++ libraries
 - [ ] Fibers á la Wren
 - [ ] Built-in threading
+- [ ] Cosy Roguelike (see https://github.com/Kode/Kha/wiki/Tutorials, https://github.com/lewislepton/kha-examples, https://github.com/RblSb/khaguide)
