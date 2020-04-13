@@ -168,42 +168,39 @@ cosy.AstPrinter = class cosy_AstPrinter {
 		case 4:
 			return "" + this.printExpr(statement.e);
 		case 5:
-			var _g8 = statement.name;
-			return "for " + (_g8 != null ? _g8.lexeme + " in" : "") + this.printExpr(statement.from) + ".." + this.printExpr(statement.to) + " " + this.printBlock(statement.body);
+			var _g6 = statement.name;
+			return "for " + (_g6 != null ? _g6.lexeme + " in" : "") + this.printExpr(statement.from) + ".." + this.printExpr(statement.to) + " " + this.printBlock(statement.body);
 		case 6:
 			return "for " + statement.name.lexeme + " in " + this.printExpr(statement.array) + " " + this.printBlock(statement.body);
 		case 7:
 			var _g = statement.cond;
 			return "for " + (_g != null ? this.printExpr(_g) : "") + " " + this.printBlock(statement.body);
 		case 8:
-			var _g33 = statement.foreign;
-			var _g31 = statement.body;
-			var _g30 = statement.params;
-			var declaration2 = "" + (this.isInClass ? "" : _g33 ? "foreign fn" : "fn") + " " + statement.name.lexeme;
+			var _g32 = statement.foreign;
+			var _g30 = statement.body;
+			var _g29 = statement.params;
+			var declaration2 = "" + (this.isInClass ? "" : _g32 ? "foreign fn" : "fn") + " " + statement.name.lexeme;
 			var _g1 = [];
 			var _g11 = 0;
-			while(_g11 < _g30.length) _g1.push(this.formatParam(_g30[_g11++]));
+			while(_g11 < _g29.length) _g1.push(this.formatParam(_g29[_g11++]));
 			var parameters = _g1.join(", ");
-			if(_g33) {
+			if(_g32) {
 				return "" + declaration2 + "(" + parameters + ")";
 			}
-			return "" + declaration2 + "(" + parameters + ") " + this.printBlock(_g31);
+			return "" + declaration2 + "(" + parameters + ") " + this.printBlock(_g30);
 		case 9:
-			var _g36 = statement.el;
-			return "if " + this.printExpr(statement.cond) + " " + this.printStmt(statement.then) + (_g36 != null ? " else " + this.printStmt(_g36) : "");
+			var _g35 = statement.el;
+			return "if " + this.printExpr(statement.cond) + " " + this.printStmt(statement.then) + (_g35 != null ? " else " + this.printStmt(_g35) : "");
 		case 10:
-			var _g5 = statement.init;
-			return "" + (statement.foreign ? "foreign " : "") + "mut " + statement.name.lexeme + (_g5 != null ? " = " + this.printExpr(_g5) : "");
-		case 11:
 			return "" + statement.keyword.lexeme + " " + this.printExpr(statement.e);
+		case 11:
+			var _g111 = statement.value;
+			return statement.keyword.lexeme + (_g111 != null ? " " + this.printExpr(_g111) : "");
 		case 12:
-			var _g38 = statement.value;
-			return statement.keyword.lexeme + (_g38 != null ? " " + this.printExpr(_g38) : "");
-		case 13:
 			return "struct " + statement.name.lexeme + " " + this.printBlock(statement.declarations);
-		case 14:
-			var _g20 = statement.init;
-			return "" + (statement.foreign ? "foreign " : "") + "var " + statement.name.lexeme + (_g20 != null ? " = " + this.printExpr(_g20) : "");
+		case 13:
+			var _g23 = statement.init;
+			return "" + (statement.foreign ? "foreign " : "") + (statement.mut ? "mut" : "var") + " " + statement.name.lexeme + (_g23 != null ? " = " + this.printExpr(_g23) : "");
 		}
 	}
 	printExpr(expr) {
@@ -409,28 +406,28 @@ cosy.Interpreter = class cosy_Interpreter {
 			this.evaluate(statement.e);
 			break;
 		case 5:
-			var _g11 = statement.body;
-			var _g8 = statement.name;
-			var _g7 = statement.keyword;
+			var _g9 = statement.body;
+			var _g6 = statement.name;
+			var _g5 = statement.keyword;
 			var fromVal = this.evaluate(statement.from);
 			if(typeof(fromVal) != "number") {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g7),"Number expected in \"from\" clause of loop.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"Number expected in \"from\" clause of loop.");
 			}
 			var toVal = this.evaluate(statement.to);
 			if(typeof(toVal) != "number") {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g7),"Number expected in \"to\" clause of loop.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"Number expected in \"to\" clause of loop.");
 			}
 			var env = new cosy.Environment(this.environment);
 			try {
 				var _g2 = fromVal;
-				var _g12 = toVal;
-				while(_g2 < _g12) {
+				var _g11 = toVal;
+				while(_g2 < _g11) {
 					var counter = _g2++;
-					if(_g8 != null) {
-						env.define(_g8.lexeme,counter);
+					if(_g6 != null) {
+						env.define(_g6.lexeme,counter);
 					}
 					try {
-						this.executeBlock(_g11,env);
+						this.executeBlock(_g9,env);
 					} catch( err ) {
 						if(!((((err) instanceof js._Boot.HaxeError) ? err.val : err) instanceof cosy.Continue)) {
 							throw err;
@@ -444,16 +441,16 @@ cosy.Interpreter = class cosy_Interpreter {
 			}
 			break;
 		case 6:
-			var _g24 = statement.body;
-			var _g22 = statement.name;
+			var _g20 = statement.body;
+			var _g18 = statement.name;
 			var arr = this.evaluate(statement.array);
 			var env1 = new cosy.Environment(this.environment);
 			try {
 				var _g3 = 0;
 				while(_g3 < arr.length) {
-					env1.define(_g22.lexeme,arr[_g3++]);
+					env1.define(_g18.lexeme,arr[_g3++]);
 					try {
-						this.executeBlock(_g24,env1);
+						this.executeBlock(_g20,env1);
 					} catch( err2 ) {
 						if(!((((err2) instanceof js._Boot.HaxeError) ? err2.val : err2) instanceof cosy.Continue)) {
 							throw err2;
@@ -467,12 +464,12 @@ cosy.Interpreter = class cosy_Interpreter {
 			}
 			break;
 		case 7:
-			var _g16 = statement.body;
+			var _g12 = statement.body;
 			var _g4 = statement.cond;
 			var env2 = new cosy.Environment(this.environment);
 			try {
 				while(_g4 != null ? this.isTruthy(this.evaluate(_g4)) : true) try {
-					this.executeBlock(_g16,env2);
+					this.executeBlock(_g12,env2);
 				} catch( err4 ) {
 					if(!((((err4) instanceof js._Boot.HaxeError) ? err4.val : err4) instanceof cosy.Continue)) {
 						throw err4;
@@ -485,102 +482,71 @@ cosy.Interpreter = class cosy_Interpreter {
 			}
 			break;
 		case 8:
-			var _g29 = statement.name;
+			var _g28 = statement.name;
 			if(statement.foreign) {
-				var key1 = _g29.lexeme;
+				var key1 = _g28.lexeme;
 				var _this = cosy.Cosy.foreignFunctions;
-				this.environment.define(_g29.lexeme,__map_reserved[key1] != null ? _this.getReserved(key1) : _this.h[key1]);
+				this.environment.define(_g28.lexeme,__map_reserved[key1] != null ? _this.getReserved(key1) : _this.h[key1]);
 				return;
 			}
-			this.environment.define(_g29.lexeme,new cosy.Function(_g29,statement.params,statement.body,this.environment,false));
+			this.environment.define(_g28.lexeme,new cosy.Function(_g28,statement.params,statement.body,this.environment,false));
 			break;
 		case 9:
-			var _g36 = statement.el;
+			var _g35 = statement.el;
 			if(this.isTruthy(this.evaluate(statement.cond))) {
 				this.execute(statement.then);
-			} else if(_g36 != null) {
-				this.execute(_g36);
+			} else if(_g35 != null) {
+				this.execute(_g35);
 			}
 			break;
 		case 10:
-			var _g5 = statement.init;
-			var _g31 = statement.name;
-			if(statement.foreign) {
-				var key2 = _g31.lexeme;
-				var _this1 = cosy.Cosy.foreignVariables;
-				this.environment.define(_g31.lexeme,__map_reserved[key2] != null ? _this1.getReserved(key2) : _this1.h[key2]);
-				return;
-			}
-			var value = cosy.Interpreter.uninitialized;
-			if(_g5 != null) {
-				value = this.evaluate(_g5);
-			}
-			if(((value) instanceof cosy.StructInstance)) {
-				value = value.clone();
-			}
-			this.environment.define(_g31.lexeme,value);
-			break;
-		case 11:
 			cosy.Cosy.println(this.stringify(this.evaluate(statement.e)));
 			break;
+		case 11:
+			var _g111 = statement.value;
+			throw new js._Boot.HaxeError(new cosy.Return(_g111 == null ? null : this.evaluate(_g111)));
 		case 12:
-			var _g38 = statement.value;
-			throw new js._Boot.HaxeError(new cosy.Return(_g38 == null ? null : this.evaluate(_g38)));
-		case 13:
-			var _g17 = statement.declarations;
-			var _g161 = statement.name;
-			this.environment.define(_g161.lexeme,null);
+			var _g41 = statement.declarations;
+			var _g31 = statement.name;
+			this.environment.define(_g31.lexeme,null);
 			var previousEnv = this.environment;
 			this.environment = new cosy.Environment(this.environment);
 			var fields = new haxe.ds.StringMap();
-			var _g6 = 0;
-			while(_g6 < _g17.length) {
-				var decl = _g17[_g6];
-				++_g6;
-				switch(decl._hx_index) {
-				case 10:
+			var _g7 = 0;
+			while(_g7 < _g41.length) {
+				var decl = _g41[_g7];
+				++_g7;
+				if(decl._hx_index == 13) {
 					var _g21 = decl.init;
-					var key3 = decl.name.lexeme;
-					var value1 = _g21 != null ? this.evaluate(_g21) : null;
-					if(__map_reserved[key3] != null) {
-						fields.setReserved(key3,value1);
+					var key2 = decl.name.lexeme;
+					var value = _g21 != null ? this.evaluate(_g21) : null;
+					if(__map_reserved[key2] != null) {
+						fields.setReserved(key2,value);
 					} else {
-						fields.h[key3] = value1;
+						fields.h[key2] = value;
 					}
-					break;
-				case 14:
-					var _g61 = decl.init;
-					var key4 = decl.name.lexeme;
-					var value2 = _g61 != null ? this.evaluate(_g61) : null;
-					if(__map_reserved[key4] != null) {
-						fields.setReserved(key4,value2);
-					} else {
-						fields.h[key4] = value2;
-					}
-					break;
-				default:
 				}
 			}
 			this.environment = previousEnv;
-			this.environment.assign(_g161,new cosy.StructInstance(_g161,fields));
+			this.environment.assign(_g31,new cosy.StructInstance(_g31,fields));
 			break;
-		case 14:
-			var _g20 = statement.init;
-			var _g18 = statement.name;
+		case 13:
+			var _g23 = statement.init;
+			var _g211 = statement.name;
 			if(statement.foreign) {
-				var key5 = _g18.lexeme;
-				var _this2 = cosy.Cosy.foreignVariables;
-				this.environment.define(_g18.lexeme,__map_reserved[key5] != null ? _this2.getReserved(key5) : _this2.h[key5]);
+				var key3 = _g211.lexeme;
+				var _this1 = cosy.Cosy.foreignVariables;
+				this.environment.define(_g211.lexeme,__map_reserved[key3] != null ? _this1.getReserved(key3) : _this1.h[key3]);
 				return;
 			}
-			var value3 = cosy.Interpreter.uninitialized;
-			if(_g20 != null) {
-				value3 = this.evaluate(_g20);
+			var value1 = cosy.Interpreter.uninitialized;
+			if(_g23 != null) {
+				value1 = this.evaluate(_g23);
 			}
-			if(((value3) instanceof cosy.StructInstance)) {
-				value3 = value3.clone();
+			if(((value1) instanceof cosy.StructInstance)) {
+				value1 = value1.clone();
 			}
-			this.environment.define(_g18.lexeme,value3);
+			this.environment.define(_g211.lexeme,value1);
 			break;
 		}
 	}
@@ -1394,8 +1360,8 @@ cosy.JavaScriptPrinter = class cosy_JavaScriptPrinter {
 		case 4:
 			return "" + this.printExpr(statement.e) + ";";
 		case 5:
-			var _g8 = statement.name;
-			var counter = _g8 != null ? _g8.lexeme : "__i";
+			var _g6 = statement.name;
+			var counter = _g6 != null ? _g6.lexeme : "__i";
 			return "for (var " + counter + " = " + this.printExpr(statement.from) + "; " + counter + " < " + this.printExpr(statement.to) + "; " + counter + "++) " + this.printBlock(statement.body);
 		case 6:
 			return "for (" + statement.name.lexeme + " of " + this.printExpr(statement.array) + ") " + this.printBlock(statement.body);
@@ -1403,38 +1369,32 @@ cosy.JavaScriptPrinter = class cosy_JavaScriptPrinter {
 			var _g = statement.cond;
 			return "while (" + (_g != null ? this.printExpr(_g) : "true") + ") " + this.printBlock(statement.body);
 		case 8:
-			var _g31 = statement.body;
-			var _g30 = statement.params;
+			var _g30 = statement.body;
+			var _g29 = statement.params;
 			if(statement.foreign) {
 				return "";
 			}
 			var declaration1 = "" + (this.isInClass ? "" : "function ") + statement.name.lexeme;
 			var _g1 = [];
 			var _g11 = 0;
-			while(_g11 < _g30.length) _g1.push(_g30[_g11++].name.lexeme);
-			return "" + declaration1 + "(" + _g1.join(",") + ") " + this.printStmt(cosy.Stmt.Block(_g31));
+			while(_g11 < _g29.length) _g1.push(_g29[_g11++].name.lexeme);
+			return "" + declaration1 + "(" + _g1.join(",") + ") " + this.printStmt(cosy.Stmt.Block(_g30));
 		case 9:
-			var _g36 = statement.el;
-			return "if (" + this.printExpr(statement.cond) + ") " + this.printStmt(statement.then) + (_g36 != null ? " else " + this.printStmt(_g36) : "");
+			var _g35 = statement.el;
+			return "if (" + this.printExpr(statement.cond) + ") " + this.printStmt(statement.then) + (_g35 != null ? " else " + this.printStmt(_g35) : "");
 		case 10:
-			var _g5 = statement.init;
-			if(statement.foreign) {
-				return "";
-			}
-			return "var " + statement.name.lexeme + (_g5 != null ? " = " + this.printExpr(_g5) : "") + ";";
-		case 11:
 			return "console.log(" + this.printExpr(statement.e) + ");";
+		case 11:
+			var _g111 = statement.value;
+			return "return" + (_g111 != null ? " " + this.printExpr(_g111) : "") + ";";
 		case 12:
-			var _g38 = statement.value;
-			return "return" + (_g38 != null ? " " + this.printExpr(_g38) : "") + ";";
-		case 13:
 			return "// " + statement.name.lexeme + " struct";
-		case 14:
-			var _g20 = statement.init;
+		case 13:
+			var _g23 = statement.init;
 			if(statement.foreign) {
 				return "";
 			}
-			return "const " + statement.name.lexeme + (_g20 != null ? " = " + this.printExpr(_g20) : "") + ";";
+			return "" + (statement.mut ? "var" : "const") + " " + statement.name.lexeme + (_g23 != null ? " = " + this.printExpr(_g23) : "") + ";";
 		}
 	}
 	printExpr(expr) {
@@ -1579,19 +1539,16 @@ cosy.Optimizer = class cosy_Optimizer {
 		case 4:
 			return cosy.Stmt.Expression(this.optimizeExpr(stmt.e));
 		case 9:
-			var _g14 = stmt.el;
-			return cosy.Stmt.If(this.optimizeExpr(stmt.cond),this.optimizeStmt(stmt.then),_g14 != null ? this.optimizeStmt(_g14) : null);
+			var _g13 = stmt.el;
+			return cosy.Stmt.If(this.optimizeExpr(stmt.cond),this.optimizeStmt(stmt.then),_g13 != null ? this.optimizeStmt(_g13) : null);
 		case 10:
-			var _g2 = stmt.init;
-			return cosy.Stmt.Mut(stmt.name,stmt.type,_g2 != null ? this.optimizeExpr(_g2) : _g2,stmt.foreign);
-		case 11:
 			return cosy.Stmt.Print(stmt.keyword,this.optimizeExpr(stmt.e));
-		case 12:
-			var _g16 = stmt.value;
-			return cosy.Stmt.Return(stmt.keyword,_g16 != null ? this.optimizeExpr(_g16) : null);
-		case 14:
+		case 11:
+			var _g1 = stmt.value;
+			return cosy.Stmt.Return(stmt.keyword,_g1 != null ? this.optimizeExpr(_g1) : null);
+		case 13:
 			var _g7 = stmt.init;
-			return cosy.Stmt.Var(stmt.name,stmt.type,_g7 != null ? this.optimizeExpr(_g7) : _g7,stmt.foreign);
+			return cosy.Stmt.Var(stmt.name,stmt.type,_g7 != null ? this.optimizeExpr(_g7) : _g7,stmt.mut,stmt.foreign);
 		default:
 			return stmt;
 		}
@@ -1672,10 +1629,10 @@ cosy.Parser = class cosy_Parser {
 				return this.func("function",foreign);
 			}
 			if(this.match([cosy.TokenType.Var])) {
-				return this.varDeclaration(foreign);
+				return this.varDeclaration(false,foreign);
 			}
 			if(this.match([cosy.TokenType.Mut])) {
-				return this.mutDeclaration(foreign);
+				return this.varDeclaration(true,foreign);
 			}
 			return this.statement();
 		} catch( e ) {
@@ -1757,23 +1714,14 @@ cosy.Parser = class cosy_Parser {
 		this.consume(cosy.TokenType.RightBrace,"Expect \"}\" after block.");
 		return statements;
 	}
-	varDeclaration(foreign) {
+	varDeclaration(mut,foreign) {
 		var name = this.consume(cosy.TokenType.Identifier,"Expect variable name.");
 		var type = this.paramType();
 		var initializer = null;
 		if(!foreign && this.match([cosy.TokenType.Equal])) {
 			initializer = this.expression();
 		}
-		return cosy.Stmt.Var(name,type,initializer,foreign);
-	}
-	mutDeclaration(foreign) {
-		var name = this.consume(cosy.TokenType.Identifier,"Expect variable name.");
-		var type = this.paramType();
-		var initializer = null;
-		if(!foreign && this.match([cosy.TokenType.Equal])) {
-			initializer = this.expression();
-		}
-		return cosy.Stmt.Mut(name,type,initializer,foreign);
+		return cosy.Stmt.Var(name,type,initializer,mut,foreign);
 	}
 	classDeclaration() {
 		var name = this.consume(cosy.TokenType.Identifier,"Expect class name");
@@ -1795,9 +1743,9 @@ cosy.Parser = class cosy_Parser {
 		this.consume(cosy.TokenType.LeftBrace,"Expect \"{\" before struct body.");
 		var declarations = [];
 		while(!this.check(cosy.TokenType.RightBrace) && !this.isAtEnd()) if(this.match([cosy.TokenType.Var])) {
-			declarations.push(this.varDeclaration(false));
+			declarations.push(this.varDeclaration(false,false));
 		} else if(this.match([cosy.TokenType.Mut])) {
-			declarations.push(this.mutDeclaration(false));
+			declarations.push(this.varDeclaration(true,false));
 		} else {
 			cosy.Cosy.error(cosy.ErrorDataType.Token(this.tokens[this.current]),"Structs can only contain variable definitions.");
 			break;
@@ -2120,7 +2068,7 @@ cosy.Resolver = class cosy_Resolver {
 			case 2:
 				returnToken = stmt.keyword;
 				break;
-			case 12:
+			case 11:
 				returnToken = stmt.keyword;
 				break;
 			default:
@@ -2198,32 +2146,32 @@ cosy.Resolver = class cosy_Resolver {
 			this.resolveExpr(stmt.e);
 			break;
 		case 5:
-			var _g11 = stmt.body;
-			var _g8 = stmt.name;
+			var _g9 = stmt.body;
+			var _g6 = stmt.name;
 			this.resolveExpr(stmt.from);
 			this.resolveExpr(stmt.to);
 			this.beginScope();
-			if(_g8 != null) {
-				this.declare(_g8);
-				this.define(_g8);
+			if(_g6 != null) {
+				this.declare(_g6);
+				this.define(_g6);
 			}
-			if(_g11.length == 0) {
+			if(_g9.length == 0) {
 				cosy.Cosy.error(cosy.ErrorDataType.Token(stmt.keyword),"Loop body is empty.");
 			}
-			this.resolveStmts(_g11);
+			this.resolveStmts(_g9);
 			this.endScope();
 			break;
 		case 6:
-			var _g24 = stmt.body;
-			var _g22 = stmt.name;
+			var _g20 = stmt.body;
+			var _g18 = stmt.name;
 			this.resolveExpr(stmt.array);
 			this.beginScope();
-			this.declare(_g22);
-			this.define(_g22);
-			if(_g24.length == 0) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Loop body is empty.");
+			this.declare(_g18);
+			this.define(_g18);
+			if(_g20.length == 0) {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Loop body is empty.");
 			}
-			this.resolveStmts(_g24);
+			this.resolveStmts(_g20);
 			this.endScope();
 			break;
 		case 7:
@@ -2236,98 +2184,78 @@ cosy.Resolver = class cosy_Resolver {
 			this.endScope();
 			break;
 		case 8:
-			var _g33 = stmt.foreign;
-			var _g29 = stmt.name;
+			var _g32 = stmt.foreign;
+			var _g28 = stmt.name;
 			var tmp;
-			if(_g33) {
-				var key = _g29.lexeme;
+			if(_g32) {
+				var key = _g28.lexeme;
 				var _this2 = cosy.Cosy.foreignFunctions;
 				tmp = !(__map_reserved[key] != null ? _this2.existsReserved(key) : _this2.h.hasOwnProperty(key));
 			} else {
 				tmp = false;
 			}
 			if(tmp) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g29),"Foreign function not set.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g28),"Foreign function not set.");
 			}
-			this.declare(_g29);
-			this.define(_g29);
-			this.resolveFunction(_g29,stmt.params,stmt.body,cosy._Resolver.FunctionType.Function,_g33);
+			this.declare(_g28);
+			this.define(_g28);
+			this.resolveFunction(_g28,stmt.params,stmt.body,cosy._Resolver.FunctionType.Function,_g32);
 			break;
 		case 9:
-			var _g36 = stmt.el;
+			var _g35 = stmt.el;
 			this.resolveExpr(stmt.cond);
 			this.resolveStmt(stmt.then);
-			if(_g36 != null) {
-				this.resolveStmt(_g36);
+			if(_g35 != null) {
+				this.resolveStmt(_g35);
 			}
 			break;
 		case 10:
-			var _g5 = stmt.init;
-			var _g31 = stmt.name;
-			var tmp1;
-			if(stmt.foreign) {
-				var key1 = _g31.lexeme;
-				var _this3 = cosy.Cosy.foreignVariables;
-				tmp1 = !(__map_reserved[key1] != null ? _this3.existsReserved(key1) : _this3.h.hasOwnProperty(key1));
-			} else {
-				tmp1 = false;
-			}
-			if(tmp1) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g31),"Foreign variable not set.");
-			}
-			var member = this.currentStruct._hx_index == 1;
-			this.declare(_g31,true,member);
-			if(_g5 != null) {
-				this.resolveExpr(_g5);
-			}
-			this.define(_g31,true,member);
-			break;
-		case 11:
 			this.resolveExpr(stmt.e);
 			break;
-		case 12:
-			var _g38 = stmt.value;
-			var _g37 = stmt.keyword;
+		case 11:
+			var _g11 = stmt.value;
+			var _g10 = stmt.keyword;
 			if(this.currentFunction == cosy._Resolver.FunctionType.None) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g37),"Cannot return from top-level code.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g10),"Cannot return from top-level code.");
 			}
-			if(_g38 != null) {
+			if(_g11 != null) {
 				if(this.currentFunction == cosy._Resolver.FunctionType.Initializer) {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g37),"Cannot return value from an initializer.");
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g10),"Cannot return value from an initializer.");
 				}
-				this.resolveExpr(_g38);
+				this.resolveExpr(_g11);
 			}
 			break;
-		case 13:
-			var _g16 = stmt.name;
-			this.declare(_g16);
-			this.define(_g16);
+		case 12:
+			var _g31 = stmt.name;
+			this.declare(_g31);
+			this.define(_g31);
 			this.currentStruct = cosy._Resolver.StructType.Struct;
 			this.beginScope();
 			this.resolveStmts(stmt.declarations);
 			this.endScope();
 			this.currentStruct = cosy._Resolver.StructType.None;
 			break;
-		case 14:
-			var _g20 = stmt.init;
-			var _g18 = stmt.name;
-			var tmp2;
+		case 13:
+			var _g24 = stmt.mut;
+			var _g23 = stmt.init;
+			var _g21 = stmt.name;
+			var tmp1;
 			if(stmt.foreign) {
-				var key2 = _g18.lexeme;
-				var _this4 = cosy.Cosy.foreignVariables;
-				tmp2 = !(__map_reserved[key2] != null ? _this4.existsReserved(key2) : _this4.h.hasOwnProperty(key2));
+				var key1 = _g21.lexeme;
+				var _this3 = cosy.Cosy.foreignVariables;
+				tmp1 = !(__map_reserved[key1] != null ? _this3.existsReserved(key1) : _this3.h.hasOwnProperty(key1));
 			} else {
-				tmp2 = false;
+				tmp1 = false;
 			}
-			if(tmp2) {
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Foreign variable not set.");
+			if(tmp1) {
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g21),"Foreign variable not set.");
 			}
-			var member1 = this.currentStruct._hx_index == 1;
-			this.declare(_g18,false,member1);
-			if(_g20 != null) {
-				this.resolveExpr(_g20);
+			var member = this.currentStruct._hx_index == 1;
+			this.declare(_g21,_g24,member);
+			if(_g23 != null) {
+				this.resolveExpr(_g23);
 			}
-			this.define(_g18,false,member1);
+			this.define(_g21,_g24,member);
 			break;
 		}
 	}
@@ -2389,7 +2317,7 @@ cosy.Resolver = class cosy_Resolver {
 				}
 				break;
 			default:
-				console.log("src/cosy/Resolver.hx:189:",_g2);
+				console.log("src/cosy/Resolver.hx:183:",_g2);
 				throw new js._Boot.HaxeError("this is unexpected");
 			}
 			break;
@@ -2865,7 +2793,7 @@ cosy.Scanner.__name__ = true;
 Object.assign(cosy.Scanner.prototype, {
 	__class__: cosy.Scanner
 });
-cosy.Stmt = $hxEnums["cosy.Stmt"] = { __ename__ : true, __constructs__ : ["Block","Break","Continue","Class","Expression","For","ForArray","ForCondition","Function","If","Mut","Print","Return","Struct","Var"]
+cosy.Stmt = $hxEnums["cosy.Stmt"] = { __ename__ : true, __constructs__ : ["Block","Break","Continue","Class","Expression","For","ForArray","ForCondition","Function","If","Print","Return","Struct","Var"]
 	,Block: ($_=function(statements) { return {_hx_index:0,statements:statements,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["statements"],$_)
 	,Break: ($_=function(keyword) { return {_hx_index:1,keyword:keyword,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["keyword"],$_)
 	,Continue: ($_=function(keyword) { return {_hx_index:2,keyword:keyword,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["keyword"],$_)
@@ -2876,11 +2804,10 @@ cosy.Stmt = $hxEnums["cosy.Stmt"] = { __ename__ : true, __constructs__ : ["Block
 	,ForCondition: ($_=function(cond,body) { return {_hx_index:7,cond:cond,body:body,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["cond","body"],$_)
 	,Function: ($_=function(name,params,body,returnType,foreign) { return {_hx_index:8,name:name,params:params,body:body,returnType:returnType,foreign:foreign,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["name","params","body","returnType","foreign"],$_)
 	,If: ($_=function(cond,then,el) { return {_hx_index:9,cond:cond,then:then,el:el,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["cond","then","el"],$_)
-	,Mut: ($_=function(name,type,init,foreign) { return {_hx_index:10,name:name,type:type,init:init,foreign:foreign,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["name","type","init","foreign"],$_)
-	,Print: ($_=function(keyword,e) { return {_hx_index:11,keyword:keyword,e:e,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["keyword","e"],$_)
-	,Return: ($_=function(keyword,value) { return {_hx_index:12,keyword:keyword,value:value,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["keyword","value"],$_)
-	,Struct: ($_=function(name,declarations) { return {_hx_index:13,name:name,declarations:declarations,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["name","declarations"],$_)
-	,Var: ($_=function(name,type,init,foreign) { return {_hx_index:14,name:name,type:type,init:init,foreign:foreign,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["name","type","init","foreign"],$_)
+	,Print: ($_=function(keyword,e) { return {_hx_index:10,keyword:keyword,e:e,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["keyword","e"],$_)
+	,Return: ($_=function(keyword,value) { return {_hx_index:11,keyword:keyword,value:value,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["keyword","value"],$_)
+	,Struct: ($_=function(name,declarations) { return {_hx_index:12,name:name,declarations:declarations,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["name","declarations"],$_)
+	,Var: ($_=function(name,type,init,mut,foreign) { return {_hx_index:13,name:name,type:type,init:init,mut:mut,foreign:foreign,__enum__:"cosy.Stmt",toString:$estr}; },$_.__params__ = ["name","type","init","mut","foreign"],$_)
 };
 cosy.StructInstance = class cosy_StructInstance {
 	constructor(name,fields) {
@@ -3037,30 +2964,30 @@ cosy.Typer = class cosy_Typer {
 			this.typeExpr(stmt.e);
 			break;
 		case 5:
-			var _g11 = stmt.body;
-			var _g10 = stmt.to;
-			var _g8 = stmt.name;
-			var _g7 = stmt.keyword;
+			var _g9 = stmt.body;
+			var _g8 = stmt.to;
+			var _g6 = stmt.name;
+			var _g5 = stmt.keyword;
 			switch(this.typeExpr(stmt.from)._hx_index) {
 			case 0:
-				cosy.Cosy.warning(cosy.ErrorDataType.Token(_g7),"\"From\" clause has type Unknown");
+				cosy.Cosy.warning(cosy.ErrorDataType.Token(_g5),"\"From\" clause has type Unknown");
 				break;
 			case 3:
 				break;
 			default:
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g7),"\"From\" clause must evaluate to a number");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"\"From\" clause must evaluate to a number");
 			}
-			switch(this.typeExpr(_g10)._hx_index) {
+			switch(this.typeExpr(_g8)._hx_index) {
 			case 0:
-				cosy.Cosy.warning(cosy.ErrorDataType.Token(_g7),"\"To\" clause has type Unknown");
+				cosy.Cosy.warning(cosy.ErrorDataType.Token(_g5),"\"To\" clause has type Unknown");
 				break;
 			case 3:
 				break;
 			default:
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g7),"\"To\" clause must evaluate to a number");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g5),"\"To\" clause must evaluate to a number");
 			}
-			if(_g8 != null) {
-				var key = _g8.lexeme;
+			if(_g6 != null) {
+				var key = _g6.lexeme;
 				var _this = this.variableTypes;
 				var value = cosy.VariableType.Number;
 				if(__map_reserved[key] != null) {
@@ -3069,15 +2996,15 @@ cosy.Typer = class cosy_Typer {
 					_this.h[key] = value;
 				}
 			}
-			this.typeStmts(_g11);
+			this.typeStmts(_g9);
 			break;
 		case 6:
-			var _g24 = stmt.body;
-			var _g22 = stmt.name;
+			var _g20 = stmt.body;
+			var _g18 = stmt.name;
 			var arrayType = this.typeExpr(stmt.array);
 			switch(arrayType._hx_index) {
 			case 0:
-				var key1 = _g22.lexeme;
+				var key1 = _g18.lexeme;
 				var _this1 = this.variableTypes;
 				var value1 = cosy.VariableType.Unknown;
 				if(__map_reserved[key1] != null) {
@@ -3088,7 +3015,7 @@ cosy.Typer = class cosy_Typer {
 				break;
 			case 7:
 				var _g = arrayType.type;
-				var key2 = _g22.lexeme;
+				var key2 = _g18.lexeme;
 				var _this2 = this.variableTypes;
 				if(__map_reserved[key2] != null) {
 					_this2.setReserved(key2,_g);
@@ -3100,7 +3027,7 @@ cosy.Typer = class cosy_Typer {
 				var _g1 = arrayType.type;
 				if(_g1._hx_index == 7) {
 					var _g2 = _g1.type;
-					var key3 = _g22.lexeme;
+					var key3 = _g18.lexeme;
 					var _this3 = this.variableTypes;
 					if(__map_reserved[key3] != null) {
 						_this3.setReserved(key3,_g2);
@@ -3108,13 +3035,13 @@ cosy.Typer = class cosy_Typer {
 						_this3.h[key3] = _g2;
 					}
 				} else {
-					cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Can only loop over value of type array.");
+					cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Can only loop over value of type array.");
 				}
 				break;
 			default:
-				cosy.Cosy.error(cosy.ErrorDataType.Token(_g22),"Can only loop over value of type array.");
+				cosy.Cosy.error(cosy.ErrorDataType.Token(_g18),"Can only loop over value of type array.");
 			}
-			this.typeStmts(_g24);
+			this.typeStmts(_g20);
 			break;
 		case 7:
 			this.typeStmts(stmt.body);
@@ -3123,33 +3050,21 @@ cosy.Typer = class cosy_Typer {
 			this.handleFunc(stmt.name,stmt.params,stmt.body,stmt.returnType);
 			break;
 		case 9:
-			var _g36 = stmt.el;
+			var _g35 = stmt.el;
 			this.typeStmt(stmt.then);
-			if(_g36 != null) {
-				this.typeStmt(_g36);
+			if(_g35 != null) {
+				this.typeStmt(_g35);
 			}
 			break;
 		case 10:
-			var _g3 = stmt.name;
-			var this1 = this.variableTypes;
-			var key4 = _g3.lexeme;
-			var value2 = cosy.VariableType.Mutable(this.typeVar(_g3,stmt.type,stmt.init));
-			var _this4 = this1;
-			if(__map_reserved[key4] != null) {
-				_this4.setReserved(key4,value2);
-			} else {
-				_this4.h[key4] = value2;
-			}
-			break;
-		case 11:
 			if(this.typeExpr(stmt.e)._hx_index == 1) {
 				cosy.Cosy.error(cosy.ErrorDataType.Token(stmt.keyword),"Cannot print values of type void.");
 			}
 			break;
-		case 12:
-			var _g38 = stmt.value;
-			if(_g38 != null) {
-				this.inferredReturnType = this.typeExpr(_g38);
+		case 11:
+			var _g11 = stmt.value;
+			if(_g11 != null) {
+				this.inferredReturnType = this.typeExpr(_g11);
 				if(!this.matchType(this.inferredReturnType,this.typedReturnType)) {
 					cosy.Cosy.error(cosy.ErrorDataType.Token(stmt.keyword),"Function expected to return " + this.formatType(this.typedReturnType) + " but got " + this.formatType(this.inferredReturnType));
 				}
@@ -3157,84 +3072,69 @@ cosy.Typer = class cosy_Typer {
 				this.inferredReturnType = cosy.VariableType.Void;
 			}
 			break;
-		case 13:
-			var _g17 = stmt.declarations;
-			var _g16 = stmt.name;
+		case 12:
+			var _g4 = stmt.declarations;
+			var _g3 = stmt.name;
 			var structMeta = { members : new haxe.ds.StringMap()};
 			var decls = new haxe.ds.StringMap();
-			var _g4 = 0;
-			while(_g4 < _g17.length) {
-				var decl = _g17[_g4];
-				++_g4;
-				switch(decl._hx_index) {
-				case 10:
+			var _g7 = 0;
+			while(_g7 < _g4.length) {
+				var decl = _g4[_g7];
+				++_g7;
+				if(decl._hx_index == 13) {
+					var _g31 = decl.mut;
 					var _g21 = decl.init;
-					var _g5 = decl.name;
-					var key5 = _g5.lexeme;
-					var _this5 = structMeta.members;
-					var value3 = { mutable : true, initialized : _g21 != null};
+					var _g10 = decl.name;
+					var key4 = _g10.lexeme;
+					var _this4 = structMeta.members;
+					var value2 = { mutable : _g31, initialized : _g21 != null};
+					if(__map_reserved[key4] != null) {
+						_this4.setReserved(key4,value2);
+					} else {
+						_this4.h[key4] = value2;
+					}
+					var computedType = this.typeVar(_g10,decl.type,_g21);
+					if(_g31) {
+						computedType = cosy.VariableType.Mutable(computedType);
+					}
+					var key5 = _g10.lexeme;
 					if(__map_reserved[key5] != null) {
-						_this5.setReserved(key5,value3);
+						decls.setReserved(key5,computedType);
 					} else {
-						_this5.h[key5] = value3;
+						decls.h[key5] = computedType;
 					}
-					var key6 = _g5.lexeme;
-					var value4 = cosy.VariableType.Mutable(this.typeVar(_g5,decl.type,_g21));
-					if(__map_reserved[key6] != null) {
-						decls.setReserved(key6,value4);
-					} else {
-						decls.h[key6] = value4;
-					}
-					break;
-				case 14:
-					var _g6 = decl.init;
-					var _g41 = decl.name;
-					var key7 = _g41.lexeme;
-					var _this6 = structMeta.members;
-					var value5 = { mutable : false, initialized : _g6 != null};
-					if(__map_reserved[key7] != null) {
-						_this6.setReserved(key7,value5);
-					} else {
-						_this6.h[key7] = value5;
-					}
-					var key8 = _g41.lexeme;
-					var value6 = this.typeVar(_g41,decl.type,_g6);
-					if(__map_reserved[key8] != null) {
-						decls.setReserved(key8,value6);
-					} else {
-						decls.h[key8] = value6;
-					}
-					break;
-				default:
+				} else {
 					throw new js._Boot.HaxeError("structs can only have var and mut");
 				}
 			}
-			var key9 = _g16.lexeme;
-			var _this7 = this.structsMeta;
-			if(__map_reserved[key9] != null) {
-				_this7.setReserved(key9,structMeta);
+			var key6 = _g3.lexeme;
+			var _this5 = this.structsMeta;
+			if(__map_reserved[key6] != null) {
+				_this5.setReserved(key6,structMeta);
 			} else {
-				_this7.h[key9] = structMeta;
+				_this5.h[key6] = structMeta;
 			}
-			var key10 = _g16.lexeme;
-			var value7 = cosy.VariableType.Struct(decls);
-			var _this8 = this.variableTypes;
-			if(__map_reserved[key10] != null) {
-				_this8.setReserved(key10,value7);
+			var key7 = _g3.lexeme;
+			var value3 = cosy.VariableType.Struct(decls);
+			var _this6 = this.variableTypes;
+			if(__map_reserved[key7] != null) {
+				_this6.setReserved(key7,value3);
 			} else {
-				_this8.h[key10] = value7;
+				_this6.h[key7] = value3;
 			}
 			break;
-		case 14:
-			var _g18 = stmt.name;
-			var this2 = this.variableTypes;
-			var key11 = _g18.lexeme;
-			var value8 = this.typeVar(_g18,stmt.type,stmt.init);
-			var _this9 = this2;
-			if(__map_reserved[key11] != null) {
-				_this9.setReserved(key11,value8);
+		case 13:
+			var _g211 = stmt.name;
+			var computedType1 = this.typeVar(_g211,stmt.type,stmt.init);
+			if(stmt.mut) {
+				computedType1 = cosy.VariableType.Mutable(computedType1);
+			}
+			var key8 = _g211.lexeme;
+			var _this7 = this.variableTypes;
+			if(__map_reserved[key8] != null) {
+				_this7.setReserved(key8,computedType1);
 			} else {
-				_this9.h[key11] = value8;
+				_this7.h[key8] = computedType1;
 			}
 			break;
 		}
