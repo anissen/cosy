@@ -100,6 +100,7 @@ fun x() { print "hej" }
 - [ ] VSCode tasks
 - [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe)
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
+- [ ] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
