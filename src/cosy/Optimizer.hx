@@ -42,6 +42,12 @@ class Optimizer {
                                 case Minus: (v1 :Float) - (v2 :Float);
                                 case Star:  (v1 :Float) * (v2 :Float);
                                 case Slash: (v1 :Float) / (v2 :Float);
+                                case Less:  (v1 :Float) < (v2 :Float);
+                                case LessEqual: (v1 :Float) <= (v2 :Float);
+                                case Greater: (v1 :Float) > (v2 :Float);
+                                case GreaterEqual: (v1 :Float) >= (v2 :Float);
+                                case EqualEqual: (v1 :Float) == (v2 :Float);
+                                case BangEqual: (v1 :Float) != (v2 :Float);
                                 case _: Cosy.error(op, 'Invalid operator.'); return Expr.Binary(l, op, r);
                             });
                         } else if (Std.is(v1, String) && Std.is(v2, String)) {
@@ -51,6 +57,18 @@ class Optimizer {
                         }
                     case _: Expr.Binary(l, op, r);
                 };
+            case Logical(left, op, right):
+                var l = optimizeExpr(left);
+                var r = optimizeExpr(right);
+                return switch [l, r] {
+                    case [Expr.Literal(v1), Expr.Literal(v2)] if (Std.is(v1, Bool) && Std.is(v2, Bool)):
+                        Expr.Literal(switch op.type {
+                            case And: (v1 :Bool) && (v2 :Bool);
+                            case Or: (v1 :Bool) || (v2 :Bool);
+                            case _: Cosy.error(op, 'Invalid operator.'); return Expr.Binary(l, op, r);
+                        });
+                    case _: Expr.Logical(l, op, r);
+                }
 			case _: expr;
 		}
     }
