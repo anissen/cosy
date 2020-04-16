@@ -36,7 +36,7 @@ class AstPrinter {
 				isInClass = false;
 				'$declaration $body';
 			case Expression(e): '${printExpr(e)}';
-			case For(keyword, name, from, to, body): 'for ${name != null ? name.lexeme + " in" : ""}${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
+			case For(keyword, name, from, to, body): 'for ${name != null ? name.lexeme + " in " : ""}${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
 			case ForArray(name, array, body): 'for ${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body, returnType, foreign):
