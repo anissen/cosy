@@ -154,7 +154,8 @@ class Typer {
                 } else { // can happen for recursive function calls
                     return Unknown;
                 }
-			case Binary(left, _, right): 
+			case Binary(left, op, right): 
+                if (op.type.match(Star) || op.type.match(Slash) || op.type.match(Minus)) return Number;
                 var leftType = typeExpr(left);
                 var rightType = typeExpr(right);
                 if (leftType.match(Text) || rightType.match(Text)) return Text;
