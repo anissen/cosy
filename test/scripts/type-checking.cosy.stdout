@@ -19,3 +19,4 @@
 [line 189] Error at "s": Cannot assign Str to Num
 [line 198] Error at "return": Function expected to return Str but got Num
 [line 202] Error at "return": Function expected to return Str but got Num
+[line 257] Error at "x": Cannot assign Num to Bool

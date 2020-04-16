@@ -155,12 +155,17 @@ class Typer {
                     return Unknown;
                 }
 			case Binary(left, op, right): 
-                if (op.type.match(Star) || op.type.match(Slash) || op.type.match(Minus)) return Number;
-                var leftType = typeExpr(left);
-                var rightType = typeExpr(right);
-                if (leftType.match(Text) || rightType.match(Text)) return Text;
-                if (leftType.match(Number) || rightType.match(Number)) return Number;
-                return Unknown;
+                switch op.type {
+                    case Star | Slash | Minus: Number;
+                    case Bang | BangEqual | Equal | EqualEqual | Greater | GreaterEqual | Less | LessEqual: Boolean;
+                    case Plus:
+                        var leftType = typeExpr(left);
+                        var rightType = typeExpr(right);
+                        if (leftType.match(Text) || rightType.match(Text)) return Text;
+                        if (leftType.match(Number) || rightType.match(Number)) return Number;
+                        Unknown;
+                    case _: throw 'should never happen';
+                }
             case Logical(left, _, right): Boolean;
 			case Call(callee, paren, arguments):
                 var calleeType = typeExpr(callee);
@@ -259,7 +264,13 @@ class Typer {
                     case _: //trace(objType); TODO: throw 'unexpected';
                 }
                 Unknown; // TODO: What should Set return?
-			case Grouping(e) | Unary(_, e): typeExpr(e);
+            case Grouping(e): typeExpr(e);
+            case Unary(op, e): 
+                switch op.type {
+                    case Bang: Boolean;
+                    case Minus: Number;
+                    case _: throw 'should never happen';
+                }
             case Super(kw, method): Instance;
             case StructInit(structName, decls):
                 var structType = variableTypes.get(structName.lexeme);
@@ -297,11 +308,11 @@ class Typer {
                 }
                 structType;
 			case This(kw): Instance;
+			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
 			case Literal(v) if (Std.is(v, Float)): Number;
 			case Literal(v) if (Std.is(v, String)): Text;
 			case Literal(v) if (Std.is(v, Bool)): Boolean;
 			case Literal(v): Unknown;
-			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
 		}
         // TODO: Enable as error if strict
         // if (ret.match(Unknown)) {
