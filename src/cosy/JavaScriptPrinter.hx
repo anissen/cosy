@@ -33,14 +33,6 @@ class JavaScriptPrinter {
             case Block(statements): printBlock(statements);
             case Break(keyword): 'break;';
             case Continue(keyword): 'continue;';
-			case Class(name, superclass, methods):
-                var className = name.lexeme;
-                classNames.push(className);
-				var declaration = 'class $className' + (superclass != null ? ' extends ${printExpr(superclass)}' : '');
-				isInClass = true;
-				var body = printBlock(methods);
-				isInClass = false;
-				'$declaration $body';
 			case Expression(e): '${printExpr(e)};';
 			case For(keyword, name, from, to, body):
                 var counter = (name != null ? name.lexeme : '__i');
@@ -78,8 +70,6 @@ class JavaScriptPrinter {
 			case Literal(v): if (v == null) { 'null'; } else if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
-			case This(keyword): 'this';
-            case Super(keyword, method): 'super.${method.lexeme}';
             case StructInit(name, decls): 
                 var init = [ for (decl in decls) StringTools.replace(printExpr(decl), ' = ', ': ') ];
                 '{ ${init.join(", ")} }';

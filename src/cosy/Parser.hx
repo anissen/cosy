@@ -22,7 +22,6 @@ class Parser {
 	
 	function declaration() {
 		try {
-			if (match([Class])) return classDeclaration();
             if (match([Struct])) return structDeclaration();
             var foreign = match([Foreign]);
 			if (match([Fn])) return func('function', foreign);
@@ -136,25 +135,6 @@ class Parser {
 		if (!foreign && match([Equal])) initializer = expression();
 		
 		return Var(name, type, initializer, mut, foreign);
-	}
-    
-	function classDeclaration():Stmt {
-		var name = consume(Identifier, 'Expect class name');
-		
-		var superclass:Expr = 
-			if (match([Less])) {
-				consume(Identifier, 'Expect superclass name');
-				Variable(previous());
-			} else null;
-		
-		consume(LeftBrace, 'Expect "{" before class body.');
-		
-		var methods = [];
-		while (!check(RightBrace) && !isAtEnd())
-			methods.push(func('method', false));
-			
-		consume(RightBrace, 'Expect "}" after class body.');
-		return Class(name, superclass, methods);
 	}
     
     function structDeclaration(): Stmt {
@@ -383,13 +363,6 @@ class Parser {
 		if (match([False])) return Literal(false);
 		if (match([True])) return Literal(true);
 		if (match([Number, String])) return Literal(previous().literal);
-		if (match([Super])) {
-			var keyword = previous();
-			consume(Dot, 'Expect "." after "super".');
-			var method = consume(Identifier, 'Expect superclass method name.');
-			return Super(keyword, method);
-		}
-		if (match([This])) return This(previous());
 		if (match([Fn])) return funcBody("function", false);
 		if (match([Identifier])) return identifier();
 		if (match([Mut])) return MutArgument(previous(), consume(Identifier, 'Expect variable name after "mut".'));
@@ -487,7 +460,7 @@ class Parser {
 		advance();
 		while (!isAtEnd()) {
 			switch peek().type {
-				case Break | Class | Continue | Fn | Var | Mut | For | If | Print | Return | Struct: return;
+				case Break | Continue | Fn | Var | Foreign | For | If | Print | Return | Struct: return;
 				case _: advance();
 			}
 		}

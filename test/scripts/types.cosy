@@ -18,7 +18,3 @@ var f1 = fn () {}
 print f1
 var f2 = fn (xyz) { print xyz }
 print f2
-
-class C {}
-var c = C()
-print c

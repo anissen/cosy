@@ -10,7 +10,6 @@ class Scanner {
 		'and' => And,
 		'break' => Break,
 		'continue' => Continue,
-		'class' => Class, // TODO: remove
 		'else' => Else,
 		'false' => False,
 		'for' => For,
@@ -23,8 +22,6 @@ class Scanner {
 		'print' => Print,
 		'return' => Return,
 		'struct' => Struct,
-		'super' => Super, // TODO: remove
-		'this' => This, // TODO: remove
 		'true' => True,
 		'var' => Var,
 		'Bool' => BooleanType,

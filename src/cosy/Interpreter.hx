@@ -30,31 +30,6 @@ class Interpreter {
                 executeBlock(statements, new Environment(environment));
             case Break(keyword): throw new Break();
             case Continue(keyword): throw new Continue();
-            case Class(name, superclass, meths):
-                var superclass:Klass =
-                    if(superclass != null) {
-                        var sc = evaluate(superclass);
-                        if(!Std.is(sc, Klass)) throw new RuntimeError(switch superclass {
-                            case Variable(name): name;
-                            case _: throw 'unreachable';
-                        }, 'Superclass must be a class');
-                        sc;
-                    } else null;
-                environment.define(name.lexeme, null);
-                if(superclass != null) {
-                    environment = new Environment(environment);
-                    environment.define('super', superclass);
-                }
-                var methods = new Map();
-                for(method in meths) switch method {
-                    case Function(name, params, body, returnType, foreign):
-                        var func = new Function(name, params, body, environment, name.lexeme == 'init');
-                        methods.set(name.lexeme, func);
-                    case _: // unreachable
-                }
-                var klass = new Klass(name.lexeme, superclass, methods);
-                if(superclass != null) environment = environment.enclosing;
-                environment.assign(name, klass);
             case Expression(e):
                 evaluate(e);
             case For(keyword, name, from, to, body):
@@ -267,30 +242,21 @@ class Interpreter {
                 
                 if (Std.is(obj, Array)) return arrayGet(obj, name);
                 else if (Std.is(obj, StructInstance)) (obj :StructInstance).get(name);
-                else if (Std.is(obj, Instance)) return (obj: Instance).get(name);
                 else if (Std.is(obj, String)) return stringGet(obj, name);
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 // TODO: Should also handle assignment operators: +=, -=, /=, *=
                 var obj = evaluate(obj);
                 var value = evaluate(value);
-                if (Std.is(obj, Instance)) (obj: Instance).set(name, value);
-                else if (Std.is(obj, StructInstance)) (obj :StructInstance).set(name, value);
+                if (Std.is(obj, StructInstance)) (obj :StructInstance).set(name, value);
                 else throw new RuntimeError(name, 'Only instances have fields');
                 value;
             case Grouping(e):
                 evaluate(e);
             case MutArgument(keyword, name):
                 lookUpVariable(name, expr);
-            case Variable(name) | This(name):
+            case Variable(name):
                 lookUpVariable(name, expr);
-            case Super(kw, meth):
-                var distance = locals.get(expr);
-                var superclass:Klass = environment.getAt(distance, 'super');
-                var obj:Instance = environment.getAt(distance - 1, 'this');
-                var method = superclass.findMethod(meth.lexeme);
-                if (method == null) throw new RuntimeError(meth, 'Undefined property "${meth.lexeme}".');
-                method.bind(obj);
             case StructInit(name, decls):
                 var structObj :StructInstance = lookUpVariable(name, expr);
                 if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');

@@ -55,7 +55,6 @@ class Typer {
 			case Block(statements): typeStmts(statements);
 			case Break(keyword):
 			case Continue(keyword):
-			case Class(name, superclass, methods): typeStmts(methods);
 			case Var(name, type, init, mut, foreign): 
                 var computedType = typeVar(name, type, init);
                 if (mut) computedType = Mutable(computedType);
@@ -271,7 +270,6 @@ class Typer {
                     case Minus: Number;
                     case _: throw 'should never happen';
                 }
-            case Super(kw, method): Instance;
             case StructInit(structName, decls):
                 var structType = variableTypes.get(structName.lexeme);
                 var assignedMembers = [];
@@ -307,7 +305,6 @@ class Typer {
                     }
                 }
                 structType;
-			case This(kw): Instance;
 			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
 			case Literal(v) if (Std.is(v, Float)): Number;
 			case Literal(v) if (Std.is(v, String)): Text;

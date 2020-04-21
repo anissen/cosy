@@ -29,12 +29,6 @@ class AstPrinter {
             case Block(statements): printBlock(statements);
             case Break(keyword): keyword.lexeme;
             case Continue(keyword): keyword.lexeme;
-			case Class(name, superclass, methods):
-				var declaration = 'class ${name.lexeme}' + (superclass != null ? ' < ${printExpr(superclass)}' : '');
-				isInClass = true;
-                var body = printBlock(methods);
-				isInClass = false;
-				'$declaration $body';
 			case Expression(e): '${printExpr(e)}';
 			case For(keyword, name, from, to, body): 'for ${name != null ? name.lexeme + " in " : ""}${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
 			case ForArray(name, array, body): 'for ${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
@@ -65,8 +59,6 @@ class AstPrinter {
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
             case MutArgument(keyword, name): 'mut ${name.lexeme}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
-			case This(keyword): keyword.lexeme;
-            case Super(keyword, method): '${keyword.lexeme}.${method.lexeme}';
             case StructInit(name, decls): printExprBlock(decls);
             case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;

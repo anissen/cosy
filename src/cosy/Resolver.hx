@@ -51,37 +51,6 @@ class Resolver {
 				endScope();
             case Break(keyword):
             case Continue(keyword):
-			case Class(name, superclass, methods):
-				var enclosingClass = currentClass;
-				currentClass = Class;
-				declare(name);
-				define(name);
-				
-				if(superclass != null) {
-					switch superclass {
-						case Variable(sname) if(name.lexeme == sname.lexeme): Cosy.error(sname, 'A class cannot inherit from itself');
-						case _:
-					}
-					currentClass = Subclass;
-					resolveExpr(superclass);
-					beginScope();
-					scopes.peek().set('super', { name: new Token(Super, 'super', null, name.line), state: Read, mutable: false, member: false });
-				}
-				
-				beginScope();
-				scopes.peek().set('this', { name: new Token(This, 'this', null, name.line), state: Read, mutable: false, member: false });
-				
-				for(method in methods) switch method {
-					case Function(name, params, body, returnType, foreign):
-						var declaration = name.lexeme == 'init' ? Initializer : Method;
-						resolveFunction(name, params, body, declaration, false);
-					case _: // unreachable
-				}
-				endScope();
-				
-				if(superclass != null) endScope();
-				
-				currentClass = enclosingClass;
 			case Var(name, type, init, mut, foreign):
                 if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 var member = currentStruct.match(Struct);
@@ -178,18 +147,10 @@ class Resolver {
                         var variable = findInScopes(objName);
                         if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign properties on non-mutable struct.');
                     case Get(getObj, getName): // ignore???
-                    case This(keyword): // ignore
                     case _: trace(obj); throw 'this is unexpected';
                 }
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
-			case Super(kw, method):
-				switch currentClass {
-					case None: Cosy.error(kw, 'Cannot use "super" outside of a class.');
-					case Class: Cosy.error(kw, 'Cannot use "super" in a class with no superclass.');
-					case Subclass: // ok
-				}
-                resolveLocal(expr, kw, true);
             case StructInit(name, decls):
                 for (decl in decls) {
                     switch decl {
@@ -198,9 +159,6 @@ class Resolver {
                     }
                 }
                 resolveLocal(expr, name, true);
-			case This(kw):
-				if (currentClass == None) Cosy.error(kw, 'Cannot use "this" outside of a class.');
-				else resolveLocal(expr, kw, true);
 			case Literal(_):
 				// skip
 			case AnonFunction(params, body, returnType): 

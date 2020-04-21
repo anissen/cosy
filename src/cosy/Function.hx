@@ -13,7 +13,7 @@ class Function implements Callable {
 		this.body = body;
 		this.closure = closure;
 		this.isInitializer = isInitializer;
-	}
+    }
 	
 	public function arity() return params.length;
 	
@@ -31,12 +31,6 @@ class Function implements Callable {
 		}
 		
         return (isInitializer ? closure.getAt(0, 'this') : null);
-	}
-	
-	public function bind(instance:Instance):Function {
-		var env = new Environment(closure);
-		env.define('this', instance);
-		return new Function(name, params, body, env, isInitializer);
 	}
 	
 	public function toString() :String return (name != null ? '<fn ${name.lexeme}>' : '<fn>');
