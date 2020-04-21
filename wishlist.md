@@ -98,9 +98,10 @@ fun x() { print "hej" }
 - [ ] Unit tests
 - [ ] Simple CI using Github Actions (see https://github.com/lix-pm/lix.vscode/commit/d45e30e618aa1aea23a26ea589d23c8916e9af68)
 - [ ] VSCode tasks
-- [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe)
+- [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe, https://github.com/vshaxe/vscode-extern)
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 - [ ] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
+- [ ] Use import.hx
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
