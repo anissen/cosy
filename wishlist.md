@@ -92,6 +92,10 @@ fun x() { print "hej" }
 - [ ] Cosy documentation using Dox (https://github.com/HaxeFoundation/dox)
 - [ ] Make Cosy FFI work for more targets (see https://community.haxe.org/t/is-there-a-way-to-expose-a-haxe-library-as-a-library-for-another-target/508)
 - [ ] Make a `phases` sub-package
+- [ ] Change array type annotation from e.g. `Array Num` to `Num[]`
+- [ ] Maybe: Change type annotation from e.g. `Str` to `String` and `Num` to `Number`
+- [ ] Maybe: Change type annotation from e.g. `fn F(blah Fun(String) Number) Number[]` to `fn F(blah: ((xyz: String) => Number)): Number[]`
+- [ ] Compile errors ordered by line number, regardless of compilation phase (how?)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

@@ -46,6 +46,7 @@ print 'hello world'
 * Web based [playground](http://andersnissen.com/cosy/playground/).
 * Interactive ([REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)) mode.
 * Simple code optimization.
+* No library dependencies.
 * Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/). Originally based on [Lox](http://www.craftinginterpreters.com/).
 
 
