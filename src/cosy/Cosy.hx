@@ -13,8 +13,6 @@ class Cosy {
     static var hadRuntimeError = false;
     static var prettyPrint = false;
     static var javascript = false;
-    static var testing = false;
-    static var testOutput = '';
 
     static function main() {
         Cosy.setFunction('randomInt', (args) -> { return Std.random(args[0]); });
@@ -74,26 +72,12 @@ class Cosy {
     }
     #end
 
-    static public function test(source :String, prettyprint :Bool = false) :String {
-        prettyPrint = prettyprint;
-        testing = true;
-        testOutput = '';
-        run(source);
-        testing = false;
-        prettyPrint = false;
-        return StringTools.trim(testOutput);
-    }
-
     static public function println(v :Dynamic) {
-        if (testing) {
-            testOutput += v + '\n';
-        } else {
-            #if sys
-            Sys.println(v);
-            #elseif js
-            js.Browser.console.log(v);
-            #end
-        }
+        #if sys
+        Sys.println(v);
+        #elseif js
+        js.Browser.console.log(v);
+        #end
     }
 
     @:expose // TODO: Maybe expose shallow?

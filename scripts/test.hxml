@@ -1,5 +1,0 @@
--cp test
--cp src
--lib utest
--main TestAll
---interp
