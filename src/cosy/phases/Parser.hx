@@ -1,4 +1,4 @@
-package cosy;
+package cosy.phases;
 
 class Parser {
 	final tokens: Array<Token>;

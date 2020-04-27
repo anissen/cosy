@@ -1,4 +1,4 @@
-package cosy;
+package cosy.phases;
 
 import cosy.TokenType;
 

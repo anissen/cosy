@@ -91,6 +91,7 @@ fun x() { print "hej" }
 - [ ] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
 - [ ] Cosy documentation using Dox (https://github.com/HaxeFoundation/dox)
 - [ ] Make Cosy FFI work for more targets (see https://community.haxe.org/t/is-there-a-way-to-expose-a-haxe-library-as-a-library-for-another-target/508)
+- [ ] Make a `phases` sub-package
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

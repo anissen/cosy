@@ -1,4 +1,4 @@
-package cosy;
+package cosy.phases;
 
 class AstPrinter {
 	public function new() {}

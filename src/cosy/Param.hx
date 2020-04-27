@@ -1,6 +1,6 @@
 package cosy;
 
 typedef Param = {
-    name :Token,
-    type :Typer.VariableType
+    name: Token,
+    type: cosy.phases.Typer.VariableType
 }

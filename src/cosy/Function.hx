@@ -17,7 +17,7 @@ class Function implements Callable {
 	
 	public function arity() return params.length;
 	
-	public function call(interpreter:Interpreter, args:Array<Any>):Any {
+	public function call(interpreter:cosy.phases.Interpreter, args:Array<Any>):Any {
 		var environment = new Environment(closure);
 		
 		for (i in 0...params.length) {

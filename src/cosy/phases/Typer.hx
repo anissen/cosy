@@ -1,4 +1,4 @@
-package cosy;
+package cosy.phases;
 
 enum VariableType {
     Unknown;
@@ -173,10 +173,15 @@ class Typer {
                     case _: calleeType;
                 }
                 var type = Unknown;
+                // trace(callee);
+                // trace(calleeType);
+                // trace(arguments);
                 switch calleeType {
                     case Function(paramTypes, returnType):
                         type = returnType;
                         var argumentTypes = [ for (arg in arguments) typeExpr(arg) ];
+                        // trace(paramTypes);
+                        // trace(argumentTypes);
                         if (arguments.length != paramTypes.length) {
                             Cosy.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
                         } else {
@@ -232,9 +237,9 @@ class Typer {
                     // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
             case MutArgument(keyword, name):
-                var type = variableTypes.get(name.lexeme);
+                var type = Mutable(variableTypes.get(name.lexeme));
                 switch type {
-                    case Mutable(Struct(_)):
+                    // case Mutable(Struct(_)):
                     case Mutable(Mutable(Struct(_))):
                     case _: Cosy.error(name, 'Only mutable structs can be passed as "mut". You passed ${formatType(type, false)}.');
                 }
@@ -346,8 +351,8 @@ class Typer {
         return switch [valueType, expectedType] {
             case [_, Unknown]: true;
             case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
-            case [Mutable(t1), t2]: matchType(t1, t2);
             case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
+            case [Mutable(t1), t2]: matchType(t1, t2);
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
                 for (param1 in params1) {

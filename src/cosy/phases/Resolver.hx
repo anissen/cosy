@@ -1,4 +1,4 @@
-package cosy;
+package cosy.phases;
 
 typedef Variable = {
 	var name:Token;
@@ -132,6 +132,9 @@ class Resolver {
 				resolveExpr(right);
 			case Call(callee, paren, arguments):
                 // TODO: Check if the method call can mutate its object, e.g. Array.push(x) or Struct.func()
+                // TODO: Check that the argument is defined as 'mut' if the param is 'mut'
+                // trace(arguments);
+                
 				resolveExpr(callee);
 				for (arg in arguments) resolveExpr(arg);
 			case Get(obj, name):

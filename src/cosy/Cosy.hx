@@ -1,5 +1,7 @@
 package cosy;
 
+import cosy.phases.*;
+
 #if sys
 import sys.io.File;
 #end
