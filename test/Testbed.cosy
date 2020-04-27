@@ -1,1 +1,76 @@
 
+// mut letters_guessed = ['a']
+// for l in letters_guessed {
+//     print l
+// }
+
+// mut a = [3,2,4,6]
+// print a.map(fn(x) { return x * 2 })
+// print 
+
+//fn test() Str {} // TODO: Should fail because there is no return statements
+// {
+//     foreign fn yo(value Num) Void
+//     foreign var xyz
+
+//     print 'hello\nworld'
+//     print yo(34)
+//     print xyz
+//     // test()
+//     print 'done'
+// }
+
+
+// {
+//     foreign fn readInput() Str
+//     foreign fn stringToNumber(inputx Str) Num
+
+//     // fn input() Str {
+//     //     return 's'
+//     // }
+    
+//     // fn stringToNumber(input Str) Num { // 'local' param is causing problems!
+//     //     print input
+//     //     return 55
+//     // }
+
+//     var s = readInput()
+//     var guess = stringToNumber(s)
+//     print guess
+// }
+
+// foreign fn yo() Void
+// yo()
+
+// print Cosy.Math.random()
+
+// {
+// foreign fn hi(exclaim Bool)
+// hi(true)
+// }
+
+// {
+//     struct Point {   // Struct
+//         mut x
+//         var y
+//     }
+//     // instantiate struct
+//     mut point = Point { x = 3, y = 4 }
+
+//     fn mutf(mut p Point) {
+//         p.x = 5
+//     }
+//     print point
+//     mutf(point) // TODO: Fail! Should be mut
+//     print point
+// }
+
+{
+    struct S {}
+    fn mutf(mut s S) {
+        print s
+    }
+    mut s = S {}
+    mutf(s) // TODO: Fail! Should be mut
+}
+
