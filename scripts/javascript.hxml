@@ -1,7 +1,12 @@
 -cp src
 -main cosy.Cosy
-# -D no-traces
-# -lib closure
+
+-lib closure
+-D closure_warning_level=QUIET
+-D closure_overwrite
+
+-D no_traces
+
 -dce full
 -D analyzer-optimize
 -D source-map
