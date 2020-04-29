@@ -192,7 +192,7 @@ class Typer {
                                 }
                             }
                         }
-                    case Unknown: // TODO: should error in strict
+                    case Unknown: if (Cosy.strict) Cosy.error(paren, '[strict] Undefined type.');
                     case Void: // TODO: what?
                     case Instance: // TODO: remove
                     case _: // TODO: maybe throw 'unexpected';
@@ -316,21 +316,21 @@ class Typer {
 			case Literal(v) if (Std.is(v, Bool)): Boolean;
 			case Literal(v): Unknown;
 		}
-        // TODO: Enable as error if strict
-        // if (ret.match(Unknown)) {
-        //     switch expr {
-        //         case Call(callee, paren, arguments): Cosy.warning(paren, '${expr.getName()} has type Unknown');
-        //         case _: Cosy.warning(-1, '${expr.getName()} has type Unknown');
-        //     }
-        // }
+        if (Cosy.strict && ret.match(Unknown)) {
+            switch expr {
+                case Call(callee, paren, arguments): Cosy.error(paren, '[strict] ${expr.getName()} has unknown type.');
+                case _: Cosy.warning(-1, '[strict] ${expr.getName()} has unknown type.');
+            }
+        }
         return ret;
     }
     
     function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType) :VariableType {
-        // TODO: Enable if strict.
-        // for (i in 0...params.length) {
-        //     if (params[i].type.match(Unknown)) Cosy.warning(params[i].name, 'Parameter has type Unknown');
-        // }
+        if (Cosy.strict) {
+            for (i in 0...params.length) {
+                if (params[i].type.match(Unknown)) Cosy.error(params[i].name, '[strict] Parameter has unknown type.');
+            }
+        }
         var types = [ for (param in params) param.type ];
         for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 

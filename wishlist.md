@@ -96,6 +96,7 @@ fun x() { print "hej" }
 - [ ] Maybe: Change type annotation from e.g. `Str` to `String` and `Num` to `Number`
 - [ ] Maybe: Change type annotation from e.g. `fn F(blah Fun(String) Number) Number[]` to `fn F(blah: ((xyz: String) => Number)): Number[]`
 - [ ] Compile errors ordered by line number, regardless of compilation phase (how?)
+- [ ] Introduce an `Any` type that is only allowed for foreign functions
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

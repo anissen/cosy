@@ -15,6 +15,7 @@ class Cosy {
     static var hadRuntimeError = false;
     static var prettyPrint = false;
     static var javascript = false;
+    public static var strict = false;
 
     static function main() {
         Cosy.setFunction('randomInt', (args) -> { return Std.random(args[0]); });
@@ -37,13 +38,21 @@ class Cosy {
             switch arg {
                 case '--prettyprint': prettyPrint = true;
                 case '--javascript': javascript = true;
+                case '--strict': strict = true;
                 case _: argErrors.push(arg);
             }
         }
         
         if (argErrors.length > 0) {
             Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
-            Sys.println('Usage: cosy (options) [source file]\n\nOptions:\n --prettyprint\tPrints the formatted source\n --javascript\tPrints the corresponding JavaScript code');
+            Sys.println(
+'Usage: cosy (options) [source file]
+
+Options:
+--prettyprint  Prints the formatted source.
+--javascript   Prints the corresponding JavaScript code.
+--strict       Enable strict enforcing of types.'
+            );
             Sys.exit(64);
         }
 
@@ -74,7 +83,7 @@ class Cosy {
     }
     #end
 
-    static public function println(v :Dynamic) {
+    public static function println(v :Dynamic) {
         #if sys
         Sys.println(v);
         #elseif js
