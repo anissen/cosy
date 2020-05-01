@@ -15,6 +15,7 @@ class Cosy {
     static var hadRuntimeError = false;
     static var prettyPrint = false;
     static var javascript = false;
+    static var validateOnly = false;
     public static var strict = false;
 
     static function main() {
@@ -39,6 +40,7 @@ class Cosy {
                 case '--prettyprint': prettyPrint = true;
                 case '--javascript': javascript = true;
                 case '--strict': strict = true;
+                case '--validate-only': validateOnly = true;
                 case _: argErrors.push(arg);
             }
         }
@@ -49,9 +51,10 @@ class Cosy {
 'Usage: cosy (options) [source file]
 
 Options:
---prettyprint  Prints the formatted source.
---javascript   Prints the corresponding JavaScript code.
---strict       Enable strict enforcing of types.'
+--prettyprint    Prints the formatted source.
+--javascript     Prints the corresponding JavaScript code.
+--strict         Enable strict enforcing of types.
+--validate-only  Only perform code validation.'
             );
             Sys.exit(64);
         }
@@ -139,6 +142,7 @@ Options:
         typer.type(statements);
 
         if (hadError) return;
+        if (validateOnly) return;
 
         var optimizer = new Optimizer();
         statements = optimizer.optimize(statements);
