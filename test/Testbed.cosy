@@ -65,12 +65,16 @@
 //     print point
 // }
 
-{
-    struct S {}
-    fn mutf(mut s S) {
-        print s
-    }
-    mut s = S {}
-    mutf(s) // TODO: Fail! Should be mut
-}
+// {
+//     struct S {}
+//     fn mutf(mut s S) {
+//         print s
+//     }
+//     mut s = S {}
+//     mutf(s) // TODO: Fail! Should be mut
+// }
 
+// print 2 + '3' + 2
+// print 2 + 5 + 2
+print 'hello world'
+print true

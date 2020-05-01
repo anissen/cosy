@@ -163,6 +163,15 @@ Options:
             return;
         }
 
+        var codeGenerator = new CodeGenerator();
+        var bytecode = codeGenerator.generate(statements);
+        trace('GENERATED CODE:');
+        trace('------------------\n' + bytecode.join('\n'));
+        trace('------------------');
+
+        var vm = new VM();
+        vm.run(bytecode);
+
         interpreter.interpret(statements);
     }
 
