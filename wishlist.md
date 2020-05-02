@@ -18,14 +18,16 @@ fun x() { print "hej" }
 - [x] No variable shadowing
 - [x] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
 - [x] Static analysis for
-    - [x] Simple dead code
-    - [ ] Variables written multiple times without being read
-    - [x] Using uninitialized variables (`var`)
-    - [ ] Using uninitialized variables (`mut`)
-    - [ ] `if` with constant conditional expression
-    - [ ] Useless expressions, e.g. `'hello world'`
-    - [ ] Function and variable names uses snake_case
-    - [ ] Struct names uses PascalCase
+  - [x] Simple dead code
+  - [ ] Variables written multiple times without being read
+  - [x] Using uninitialized variables (`var`)
+  - [ ] Using uninitialized variables (`mut`)
+  - [ ] `if` with constant conditional expression
+  - [ ] Useless expressions, e.g. `'hello world'`
+  - [ ] Function and variable names uses snake_case
+  - [ ] Struct names uses PascalCase
+- [ ] Optimizer
+  - [ ] Optimize usages of literals in `var`'s. They're constants in pratice.
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
 - [ ] Replace classes with 
