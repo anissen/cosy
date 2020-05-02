@@ -9,12 +9,12 @@ print b
 }
 
 fn x(arg1) {
-    var local1 // local1: unused variable
+    var local1 = 2 // local1: unused variable
     print arg1
 }
 
 fn y(arg2) { // arg2: unused variable
-    var local2
+    var local2 = 2
     print local2
 }
 
@@ -24,7 +24,7 @@ y(false)
 // ----------
 
 fn f(_x) { // no error for unused argument
-    var _y // no error for unused variable
+    var _y = 2 // no error for unused variable
     var _z = 5
     print _z // error for used variable starting with _
 }

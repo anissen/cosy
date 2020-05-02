@@ -55,7 +55,8 @@ class Resolver {
                 if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 var member = currentStruct.match(Struct);
 				declare(name, mut, member);
-				if(init != null) resolveExpr(init);
+                if (init != null) resolveExpr(init);
+                else if (!mut && !member) Cosy.error(name, 'Non-mutable variables must be initialized.');
 				define(name, mut, member);
             case For(keyword, name, from, to, body):
                 resolveExpr(from);

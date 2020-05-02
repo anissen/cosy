@@ -4,6 +4,3 @@ print a
 mut b
 b = '2'
 print b
-
-var c
-print c // runtime error: uninitialized variable
