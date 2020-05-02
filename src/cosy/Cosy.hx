@@ -172,6 +172,7 @@ Options:
         var vm = new VM();
         vm.run(bytecode);
 
+        trace('AST interpreter:');
         interpreter.interpret(statements);
     }
 

@@ -6,8 +6,6 @@ package cosy.phases;
 // }
 
 class CodeGenerator {
-    var bytecode: Array<String> = [];
-
 	public function new() {
 
 	}
@@ -35,18 +33,22 @@ class CodeGenerator {
 	function generateStmt(stmt: Stmt): Array<String> {
 		return switch stmt {
             case Print(keyword, expr): generateExpr(expr).concat(['op_print']);
-			case _: [];
+            case Var(name, type, init, mut, foreign): (init != null ? generateExpr(init).concat(['set_var', name.lexeme]) : []); // TODO: Should probably be an index instead of a key for faster lookup
+            case Expression(expr): generateExpr(expr);
+			case _: trace('Unhandled statement: $stmt'); [];
 		}
 	}
 
     // TODO: We also need line information for each bytecode
 	function generateExpr(expr: Expr): Array<String> {
 		return switch expr {
+            case Assign(name, op, value): generateExpr(value).concat(['set_var', name.lexeme]);
             case Binary(left, op, right): generateExpr(left).concat(generateExpr(right)).concat([binaryOpCode(op)]);
-            case Literal(v) if (Std.isOfType(v, Bool)): ['push', '$v'];
-            case Literal(v) if (Std.isOfType(v, Float)): ['push', '$v'];
-            case Literal(v) if (Std.isOfType(v, String)): ['push', '"$v"'];
-			case _: [];
+            case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
+            case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
+            case Literal(v) if (Std.isOfType(v, String)): ['push_str', '$v'];
+            case Variable(name): ['get_var', name.lexeme]; // TODO: Should probably be an index instead of a key for faster lookup
+			case _: trace('Unhandled expression: $expr'); [];
 		}
     }
 
@@ -56,6 +58,10 @@ class CodeGenerator {
             case Minus: 'op_sub';
             case Star: 'op_mult';
             case Slash: 'op_div';
+            case Less: 'op_less';
+            case LessEqual: 'op_less_eq';
+            case Greater: 'op_greater';
+            case GreaterEqual: 'op_greater_eq';
             case _: throw 'error';
         }
     }

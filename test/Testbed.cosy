@@ -76,5 +76,14 @@
 
 // print 2 + '3' + 2
 // print 2 + 5 + 2
-print 'hello world'
-print true
+// print 4 * 3 / 2 + 7.4
+mut i
+i = 42
+print i < 4
+print i <= 4
+print i <= 42
+print i >= 42
+print i >= 52
+print i > 52
+// print 'hello world'
+// print true

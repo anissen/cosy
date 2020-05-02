@@ -10,44 +10,59 @@ enum Type {
 class VM {
     var stack: Array<Type>;
     var index: Int;
-    var bytecode: Array<String>;
+    var bytecode: Array<String>; // TODO: Should probably be something like { code: String, line: Int, (module: String) }
+    var variables: Map<String, Type>;
 
     public function new() {
 
     }
 
-    public function run(code: Array<String>) {
-        bytecode = code;
+    public function run(program: Array<String>) {
+        bytecode = program;
         stack = [];
         index = 0;
+        variables = new Map();
         while (index < bytecode.length) {
-            switch bytecode[index++] {
-                case 'push': pushNext();
+            var oldIndex = index;
+            var code = bytecode[index++];
+            switch code {
+                case 'push_bool': push(Boolean(bytecode[index++] == 'true'));
+                case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
+                case 'push_str': push(Text(bytecode[index++]));
                 case 'op_print': opPrint();
                 case 'op_add': opAdd();
                 case 'op_sub': push(Number(popNumber() - popNumber()));
                 case 'op_mult': push(Number(popNumber() * popNumber()));
                 case 'op_div': push(Number(popNumber() / popNumber()));
+                case 'op_negate': push(Number(-popNumber()));
+                case 'op_less': push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
+                case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
+                case 'op_greater': push(Boolean(popNumber() < popNumber()));
+                case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
+                case 'set_var': variables.set(bytecode[index++], pop());
+                case 'get_var': push(variables.get(bytecode[index++]));
+                case _: trace('Unknown bytecode: "$code".');
             }
+            // trace(bytecode.slice(oldIndex, index));
+            // trace('## Stack: $stack, Vars: $variables');
         }
     }
 
-    function pushNext() {
-        var code = bytecode[index++];
-        if (code.charAt(0) == '"') push(Text(code.substr(1, code.length - 2)));
-        else if (code == 'true') push(Boolean(true));
-        else if (code == 'false') push(Boolean(true));
-        else push(Number(Std.parseFloat(code)));
-    }
+    // function pushNext() {
+    //     var code = bytecode[index++];
+    //     if (code.charAt(0) == '"') push(Text(code.substr(1, code.length - 2)));
+    //     else if (code == 'true') push(Boolean(true));
+    //     else if (code == 'false') push(Boolean(true));
+    //     else push(Number(Std.parseFloat(code)));
+    // }
 
     function opPrint() {
-        var value: Any = switch pop() {
-            case Text(s): s;
-            case Boolean(b): b;
-            case Number(n): n;
+        switch pop() {
+            case Text(s): trace(s);
+            case Boolean(b): trace(b);
+            case Number(n): trace(n);
             case _: throw 'error';
         }
-        trace(value);
     }
 
     function opAdd() {
@@ -72,6 +87,13 @@ class VM {
     function popNumber(): Float {
         return switch pop() {
             case Number(n): n;
+            case _: throw 'error';
+        }
+    }
+
+    function popText(): String {
+        return switch pop() {
+            case Text(s): s;
             case _: throw 'error';
         }
     }
