@@ -41,9 +41,16 @@ class VM {
                 case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
                 case 'set_var': variables.set(bytecode[index++], pop());
                 case 'get_var': push(variables.get(bytecode[index++]));
+                case 'jump':
+                    var jumpLength = Std.parseInt(bytecode[index++]);
+                    index += jumpLength;
+                case 'jump_if_not':
+                    var condition = popBoolean(); // TODO: Condition could be an expr!
+                    var jumpLength = Std.parseInt(bytecode[index++]);
+                    if (!condition) index += jumpLength; // skip the 'then' branch
                 case _: trace('Unknown bytecode: "$code".');
             }
-            // trace(bytecode.slice(oldIndex, index));
+            trace('  ' + bytecode.slice(oldIndex, index) + '\t\t## Stack: $stack, Vars: $variables');
             // trace('## Stack: $stack, Vars: $variables');
         }
     }
@@ -94,6 +101,13 @@ class VM {
     function popText(): String {
         return switch pop() {
             case Text(s): s;
+            case _: throw 'error';
+        }
+    }
+
+    function popBoolean(): Bool {
+        return switch pop() {
+            case Boolean(b): b;
             case _: throw 'error';
         }
     }

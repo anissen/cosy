@@ -34,6 +34,16 @@ class CodeGenerator {
 		return switch stmt {
             case Print(keyword, expr): genExpr(expr).concat(['op_print']);
             case Var(name, type, init, mut, foreign): (init != null ? genExpr(init).concat(['set_var', name.lexeme]) : []); // TODO: Should probably be an index instead of a key for faster lookup
+            // case For(keyword, name, from, to, body):
+            case Block(statements): genStmts(statements);
+            case If(cond, then, el):
+                var thenCode = genStmt(then);
+                var elseCode = (el != null ? genStmt(el) : []);
+                if (elseCode.length > 0) thenCode = thenCode.concat(['jump', '${elseCode.length}']); // make the 'then' branch jump over the 'else' branch, if it exists
+                return genExpr(cond)
+                    .concat(['jump_if_not', '${thenCode.length}'])
+                    .concat(thenCode)
+                    .concat(elseCode);
             case Expression(expr): genExpr(expr);
 			case _: trace('Unhandled statement: $stmt'); [];
 		}
@@ -47,6 +57,7 @@ class CodeGenerator {
             case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
             case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
             case Literal(v) if (Std.isOfType(v, String)): ['push_str', '$v'];
+            case Grouping(expr): genExpr(expr);
             case Variable(name): ['get_var', name.lexeme]; // TODO: Should probably be an index instead of a key for faster lookup
             case Unary(op, right): if (!op.type.match(Minus)) throw 'error'; genExpr(right).concat(['op_negate']);
 			case _: trace('Unhandled expression: $expr'); [];
