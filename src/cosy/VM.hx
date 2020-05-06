@@ -39,8 +39,8 @@ class VM {
                 case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
                 case 'op_greater': push(Boolean(popNumber() < popNumber()));
                 case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
-                case 'set_var': variables.set(bytecode[index++], pop());
-                case 'get_var': push(variables.get(bytecode[index++]));
+                case 'save_var': variables.set(bytecode[index++], pop());
+                case 'load_var': push(variables.get(bytecode[index++]));
                 case 'jump':
                     var jumpLength = Std.parseInt(bytecode[index++]);
                     index += jumpLength;

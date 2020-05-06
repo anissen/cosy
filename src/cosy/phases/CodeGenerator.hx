@@ -52,13 +52,13 @@ class CodeGenerator {
     // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr): Array<String> {
 		return switch expr {
-            case Assign(name, op, value): genExpr(value).concat(['set_var', name.lexeme]);
+            case Assign(name, op, value): genExpr(value).concat(['save_var', name.lexeme]);
             case Binary(left, op, right): genExpr(left).concat(genExpr(right)).concat([binaryOpCode(op)]);
             case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
             case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
             case Literal(v) if (Std.isOfType(v, String)): ['push_str', '$v'];
             case Grouping(expr): genExpr(expr);
-            case Variable(name): ['get_var', name.lexeme]; // TODO: Should probably be an index instead of a key for faster lookup
+            case Variable(name): ['load_var', name.lexeme]; // TODO: Should probably be an index instead of a key for faster lookup
             case Unary(op, right): if (!op.type.match(Minus)) throw 'error'; genExpr(right).concat(['op_negate']);
 			case _: trace('Unhandled expression: $expr'); [];
 		}
