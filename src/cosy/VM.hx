@@ -57,7 +57,7 @@ class VM {
                     hasJumped = true;
                 case _: trace('Unknown bytecode: "$code".');
             }
-            trace('  ' + bytecode.slice(startIndex, (hasJumped ? endIndex : index)) + '\t\t## Stack: $stack, Vars: $variables');
+            trace('  ' + bytecode.slice(startIndex, (hasJumped ? endIndex : index)) + '\t\t## Index: $index, Stack: $stack, Vars: $variables');
             // trace('## Stack: $stack, Vars: $variables');
         }
     }

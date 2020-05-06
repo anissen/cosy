@@ -33,10 +33,10 @@ class CodeGenerator {
 	function genStmt(stmt: Stmt): Array<String> {
 		return switch stmt {
             case Print(keyword, expr): genExpr(expr).concat(['op_print']);
-            case Var(name, type, init, mut, foreign): (init != null ? genExpr(init).concat(['set_var', name.lexeme]) : []); // TODO: Should probably be an index instead of a key for faster lookup
+            case Var(name, type, init, mut, foreign): (init != null ? genExpr(init).concat(['save_var', name.lexeme]) : []); // TODO: Should probably be an index instead of a key for faster lookup
             case Block(statements): genStmts(statements);
             case For(keyword, name, from, to, body):
-                // example: for i in 0..2
+                // example: for i in 0..2 {}
                 var originalBodyCode = genStmts(body);
                 var bodyCode =
                     ['load_var', name.lexeme]
@@ -49,6 +49,14 @@ class CodeGenerator {
                 return genExpr(from)
                     .concat(['save_var', name.lexeme]) // i = 0 (from)
                     .concat(bodyCode);
+            case ForCondition(cond, body):
+                // example: for {}
+                // example: for i < 2 {}
+                var bodyCode = genStmts(body);
+                var condCode = (cond != null ? genExpr(cond) : []);
+                if (condCode.length > 0) condCode = condCode.concat(['jump_if_not', '${bodyCode.length + 4}']); // jump to loop end if false
+                bodyCode = bodyCode.concat(['jump', '-${bodyCode.length + condCode.length + 2}']); // jump to condition at start of loop
+                return condCode.concat(bodyCode);
             case If(cond, then, el):
                 var thenCode = genStmt(then);
                 var elseCode = (el != null ? genStmt(el) : []);
