@@ -23,13 +23,16 @@ class VM {
         index = 0;
         variables = new Map();
         while (index < bytecode.length) {
-            var oldIndex = index;
+            var startIndex = index;
             var code = bytecode[index++];
+            var endIndex = index;
+            var hasJumped = false;
             switch code {
                 case 'push_bool': push(Boolean(bytecode[index++] == 'true'));
                 case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
                 case 'push_str': push(Text(bytecode[index++]));
                 case 'op_print': opPrint();
+                case 'op_inc': opInc();
                 case 'op_add': opAdd();
                 case 'op_sub': push(Number(popNumber() - popNumber()));
                 case 'op_mult': push(Number(popNumber() * popNumber()));
@@ -43,14 +46,18 @@ class VM {
                 case 'load_var': push(variables.get(bytecode[index++]));
                 case 'jump':
                     var jumpLength = Std.parseInt(bytecode[index++]);
+                    endIndex = index;
                     index += jumpLength;
+                    hasJumped = true;
                 case 'jump_if_not':
                     var condition = popBoolean(); // TODO: Condition could be an expr!
                     var jumpLength = Std.parseInt(bytecode[index++]);
+                    endIndex = index;
                     if (!condition) index += jumpLength; // skip the 'then' branch
+                    hasJumped = true;
                 case _: trace('Unknown bytecode: "$code".');
             }
-            trace('  ' + bytecode.slice(oldIndex, index) + '\t\t## Stack: $stack, Vars: $variables');
+            trace('  ' + bytecode.slice(startIndex, (hasJumped ? endIndex : index)) + '\t\t## Stack: $stack, Vars: $variables');
             // trace('## Stack: $stack, Vars: $variables');
         }
     }
@@ -68,6 +75,14 @@ class VM {
             case Text(s): trace(s);
             case Boolean(b): trace(b);
             case Number(n): trace(n);
+            case _: throw 'error';
+        }
+    }
+
+    function opInc() {
+        var variable = bytecode[index++];
+        switch variables.get(variable) {
+            case Number(n): variables.set(variable, Number(n + 1));
             case _: throw 'error';
         }
     }

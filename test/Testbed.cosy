@@ -91,13 +91,22 @@
 // for i in 0..3 {
 //     print i
 // }
-var i = 2
-print 'starts!'
-if (i > 3) {
-    print '1'
-} else if (i > 2) {
-    print '2'
-} else {
-    print '3'
+
+// {
+//     var i = 2
+//     print 'starts!'
+//     if (i > 3) {
+//         print '1'
+//     } else if (i > 2) {
+//         print '2'
+//     } else {
+//         print '3'
+//     }
+//     print 'done!'
+// }
+
+{
+    for i in 0..2 {
+        print 'hello #' + i
+    }
 }
-print 'done!'

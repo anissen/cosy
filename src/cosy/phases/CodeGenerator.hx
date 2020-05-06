@@ -34,8 +34,21 @@ class CodeGenerator {
 		return switch stmt {
             case Print(keyword, expr): genExpr(expr).concat(['op_print']);
             case Var(name, type, init, mut, foreign): (init != null ? genExpr(init).concat(['set_var', name.lexeme]) : []); // TODO: Should probably be an index instead of a key for faster lookup
-            // case For(keyword, name, from, to, body):
             case Block(statements): genStmts(statements);
+            case For(keyword, name, from, to, body):
+                // example: for i in 0..2
+                var originalBodyCode = genStmts(body);
+                var bodyCode =
+                    ['load_var', name.lexeme]
+                    .concat(genExpr(to))
+                    .concat(['op_less']) // i < 2 (to)
+                    .concat(['jump_if_not', '${originalBodyCode.length + 4}']) // jump to loop end if false
+                    .concat(originalBodyCode)
+                    .concat(['op_inc', name.lexeme]); // increment i
+                bodyCode = bodyCode.concat(['jump', '-${bodyCode.length + 2}']); // jump to start of loop
+                return genExpr(from)
+                    .concat(['save_var', name.lexeme]) // i = 0 (from)
+                    .concat(bodyCode);
             case If(cond, then, el):
                 var thenCode = genStmt(then);
                 var elseCode = (el != null ? genStmt(el) : []);
