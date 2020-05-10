@@ -105,16 +105,39 @@
 //     print 'done!'
 // }
 
+{
+    for i in 0..6 {
+        // if (i == 2) continue
+        if (i == 4) break
+        print 'hello #' + i
+    }
+}
+
 // {
-//     for i in 0..2 {
+//     mut i = 0
+//     for i < 2 {
 //         print 'hello #' + i
+//         i = i + 1
 //     }
 // }
 
-{
-    mut i = 0
-    for i < 2 {
-        print 'hello #' + i
-        i = i + 1
-    }
-}
+// {
+//     mut i = 0
+//     for {
+//         print 'hello!'
+//         for {
+//             print 'yo'
+//             if (i < 555) break
+//         }
+//         break
+//     }
+// }
+
+// {
+//     mut i = 0
+//     for {
+//         print 'hello #' + i
+//         i = i + 1
+//         if i > 2 break
+//     }
+// }

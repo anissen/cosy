@@ -165,8 +165,9 @@ Options:
 
         var codeGenerator = new CodeGenerator();
         var bytecode = codeGenerator.generate(statements);
+        var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
         trace('GENERATED CODE:');
-        trace('------------------\n' + bytecode.join('\n'));
+        trace('------------------\n' + formattedBytecode.join('\n'));
         trace('------------------');
 
         var vm = new VM();

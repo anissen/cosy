@@ -28,10 +28,12 @@ class VM {
             var endIndex = index;
             var hasJumped = false;
             switch code {
+                case 'label': bytecode[index++];
                 case 'push_bool': push(Boolean(bytecode[index++] == 'true'));
                 case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
                 case 'push_str': push(Text(bytecode[index++]));
                 case 'op_print': opPrint();
+                case 'op_equals': push(Boolean(popNumber() == popNumber())); // TODO: Can be other types, e.g. String or Boolean
                 case 'op_inc': opInc();
                 case 'op_add': opAdd();
                 case 'op_sub': push(Number(popNumber() - popNumber()));

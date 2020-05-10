@@ -6,13 +6,60 @@ package cosy.phases;
 // }
 
 class CodeGenerator {
+    var labelCounter: Int;
+
 	public function new() {
 
 	}
 
 	public inline function generate(stmts: Array<Stmt>): Array<String> {
-        return genStmts(stmts);
-	}
+        labelCounter = 0;
+        return patchJumpPositions(genStmts(stmts));
+    }
+
+    function patchJumpPositions(code: Array<String>): Array<String> {
+        // TODO: Make a new array with the labels not added
+
+        // label_start1
+        // jump label_end1 (break)
+        // label_end1
+        // =>
+        // -
+        // jump XYZ
+        // -
+
+        // var patchedCode = [];
+
+        var labels = new Map<String, Int>();
+        for (index => c in code) {
+            if (index == 0) continue;
+            if (index > 1 && code[index - 2] == 'push_str') continue;
+
+            var lastCode = code[index - 1];
+            if (lastCode == 'label') {
+                labels[c] = index + 1;
+            }
+        }
+        trace(labels);
+        for (index => c in code) {
+            if (index == 0) continue;
+            var lastCode = code[index - 1];
+            // TODO: Make a 'label_jump' and 'label_jump_if_not' and transform them into 'jump/jump_if_not'
+            // e.g. 'label_jump 4' => 'jump -13'
+            if (lastCode == 'jump' || lastCode == 'jump_if_not') {
+                if (c.charAt(0) == ':') { // e.g. :start_2
+                    var jumpLabel = c.substr(1); // e.g. start_2
+                    trace(jumpLabel);
+                    var jumpPosition = labels[jumpLabel];
+                    var relativeJumpPosition = jumpPosition - index - 1;
+                    code[index] = '$relativeJumpPosition';
+                }
+            }
+        }
+        trace(code);
+
+        return code;
+    }
 
 	function genStmts(stmts: Array<Stmt>) {
         var code = [];
@@ -37,25 +84,36 @@ class CodeGenerator {
             case Block(statements): genStmts(statements);
             case For(keyword, name, from, to, body):
                 // example: for i in 0..2 {}
-                var originalBodyCode = genStmts(body);
-                var bodyCode =
-                    ['load_var', name.lexeme]
-                    .concat(genExpr(to))
-                    .concat(['op_less']) // i < 2 (to)
-                    .concat(['jump_if_not', '${originalBodyCode.length + 4}']) // jump to loop end if false
-                    .concat(originalBodyCode)
-                    .concat(['op_inc', name.lexeme]); // increment i
-                bodyCode = bodyCode.concat(['jump', '-${bodyCode.length + 2}']); // jump to start of loop
+
+                labelCounter++;
+                // TODO: Continue does not work!
                 return genExpr(from)
                     .concat(['save_var', name.lexeme]) // i = 0 (from)
-                    .concat(bodyCode);
+                    .concat(['label', 'start_$labelCounter'])
+                    .concat(['load_var', name.lexeme])
+                    .concat(genExpr(to))
+                    .concat(['op_less']) // i < 2 (to)
+                    .concat(['jump_if_not', ':end_$labelCounter']) // jump to loop end if false
+                    .concat(genStmts(body))
+                    .concat(['op_inc', name.lexeme]) // increment i
+                    .concat(['jump', ':start_$labelCounter']) // jump to start of loop
+                    .concat(['label', 'end_$labelCounter']);
             case ForCondition(cond, body):
-                // example: for {}
-                // example: for i < 2 {}
+                /*
+                L1:
+                [cond]
+                jump_if_not L2
+                [body] (can e.g. contain 'break' (jump L2) or 'continue' (jump L1))
+                jump L1
+                L2:
+                */
+
+                labelCounter++;
                 var bodyCode = genStmts(body);
-                var condCode = (cond != null ? genExpr(cond) : []);
-                if (condCode.length > 0) condCode = condCode.concat(['jump_if_not', '${bodyCode.length + 4}']); // jump to loop end if false
-                bodyCode = bodyCode.concat(['jump', '-${bodyCode.length + condCode.length + 2}']); // jump to condition at start of loop
+                var condCode = ['label', 'start_$labelCounter'].concat(cond != null ? genExpr(cond).concat(['jump_if_not', ':end_$labelCounter']) : []);
+                bodyCode = bodyCode
+                    .concat(['jump', ':start_$labelCounter']) // jump to condition at start of loop
+                    .concat(['label', 'end_$labelCounter']);
                 return condCode.concat(bodyCode);
             case If(cond, then, el):
                 var thenCode = genStmt(then);
@@ -66,6 +124,8 @@ class CodeGenerator {
                     .concat(thenCode)
                     .concat(elseCode);
             case Expression(expr): genExpr(expr);
+            case Continue(keyword): ['jump', ':start_$labelCounter'];
+            case Break(keyword): ['jump', ':end_$labelCounter'];
 			case _: trace('Unhandled statement: $stmt'); [];
 		}
 	}
@@ -87,6 +147,7 @@ class CodeGenerator {
 
     function binaryOpCode(op: Token) {
         return switch op.type {
+            case EqualEqual: 'op_equals';
             case Plus: 'op_add';
             case Minus: 'op_sub';
             case Star: 'op_mult';
