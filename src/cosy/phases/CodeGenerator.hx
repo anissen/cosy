@@ -84,7 +84,7 @@ class CodeGenerator {
             case Var(name, type, init, mut, foreign): (init != null ? genExpr(init).concat(['save_var', name.lexeme]) : []); // TODO: Should probably be an index instead of a key for faster lookup
             case Block(statements): genStmts(statements);
             case For(keyword, name, from, to, body):
-                // example: for i in 0..2 {}
+                // example: for i in 1..3 {}
 
                 /*
                 [from]
@@ -115,6 +115,8 @@ class CodeGenerator {
                     .concat(['jump', ':start_$labelCounter']) // jump to start of loop
                     .concat(['label', 'end_$labelCounter']);
             case ForCondition(cond, body):
+                // example: for i < 3 {}
+
                 /*
                 L_start:
                 L_continue: // TODO: This ought to be removed
