@@ -12,6 +12,7 @@ class CodeGenerator {
 
 	}
 
+    // TODO: Use Bytes (https://api.haxe.org/haxe/io/Bytes.html) instead
 	public inline function generate(stmts: Array<Stmt>): Array<String> {
         labelCounter = 0;
         return patchJumpPositions(genStmts(stmts));
@@ -49,7 +50,7 @@ class CodeGenerator {
             if (lastCode == 'jump' || lastCode == 'jump_if_not') {
                 if (c.charAt(0) == ':') { // e.g. :start_2
                     var jumpLabel = c.substr(1); // e.g. start_2
-                    trace(jumpLabel);
+                    // trace(jumpLabel);
                     var jumpPosition = labels[jumpLabel];
                     var relativeJumpPosition = jumpPosition - index - 1;
                     code[index] = '$relativeJumpPosition';
@@ -85,8 +86,22 @@ class CodeGenerator {
             case For(keyword, name, from, to, body):
                 // example: for i in 0..2 {}
 
+                /*
+                [from]
+                save [counter]
+                L_start:
+                [load counter]
+                [to]
+                op_less  (counter < to)
+                jump_if_not L_end
+                [body]  (can e.g. contain 'break' (jump L_end) or 'continue' (jump L_start))
+                L_continue:
+                op_inc [counter]
+                jump L_start
+                L_end:
+                */
+
                 labelCounter++;
-                // TODO: Continue does not work!
                 return genExpr(from)
                     .concat(['save_var', name.lexeme]) // i = 0 (from)
                     .concat(['label', 'start_$labelCounter'])
@@ -95,17 +110,19 @@ class CodeGenerator {
                     .concat(['op_less']) // i < 2 (to)
                     .concat(['jump_if_not', ':end_$labelCounter']) // jump to loop end if false
                     .concat(genStmts(body))
+                    .concat(['label', 'continue_$labelCounter'])
                     .concat(['op_inc', name.lexeme]) // increment i
                     .concat(['jump', ':start_$labelCounter']) // jump to start of loop
                     .concat(['label', 'end_$labelCounter']);
             case ForCondition(cond, body):
                 /*
-                L1:
+                L_start:
+                L_continue: // TODO: This ought to be removed
                 [cond]
-                jump_if_not L2
-                [body] (can e.g. contain 'break' (jump L2) or 'continue' (jump L1))
-                jump L1
-                L2:
+                jump_if_not L_end
+                [body]  (can e.g. contain 'break' (jump L_end) or 'continue' (jump L_start))
+                jump L_start
+                L_end:
                 */
 
                 labelCounter++;
@@ -124,7 +141,7 @@ class CodeGenerator {
                     .concat(thenCode)
                     .concat(elseCode);
             case Expression(expr): genExpr(expr);
-            case Continue(keyword): ['jump', ':start_$labelCounter'];
+            case Continue(keyword): ['jump', ':continue_$labelCounter'];
             case Break(keyword): ['jump', ':end_$labelCounter'];
 			case _: trace('Unhandled statement: $stmt'); [];
 		}
