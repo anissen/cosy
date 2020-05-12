@@ -105,13 +105,13 @@
 //     print 'done!'
 // }
 
-{
-    for i in 0..6 {
-        if (i == 2) continue
-        if (i == 4) break
-        print 'hello #' + i
-    }
-}
+// {
+//     for i in 0..6 {
+//         if (i == 2) continue
+//         if (i == 4) break
+//         print 'hello #' + i
+//     }
+// }
 
 // {
 //     mut i = 0
@@ -141,3 +141,14 @@
 //         if i > 2 break
 //     }
 // }
+
+// {
+//     for i in [2,3,4,5,6] {
+//         // if (i == 3) continue
+//         // if (i == 5) break
+//         print 'hello #' + i
+//     }
+// }
+
+var a = [2,3,4,5,6]
+print a

@@ -4,6 +4,7 @@ enum Type {
     Text(s: String);
     Number(n: Float);
     Boolean(b: Bool);
+    Array(a: Array<Type>);
     // Op(o: String);
 }
 
@@ -32,6 +33,7 @@ class VM {
                 case 'push_bool': push(Boolean(bytecode[index++] == 'true'));
                 case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
                 case 'push_str': push(Text(bytecode[index++]));
+                case 'to_array': toArray();
                 case 'op_print': opPrint();
                 case 'op_equals': push(Boolean(popNumber() == popNumber())); // TODO: Can be other types, e.g. String or Boolean
                 case 'op_inc': opInc();
@@ -72,12 +74,28 @@ class VM {
     //     else push(Number(Std.parseFloat(code)));
     // }
 
+    function toArray() {
+        var length = Std.parseInt(bytecode[index++]);
+        var arr = [ for (i in 0...length) pop() ];
+        arr.reverse();
+        return push(Array(arr));
+    }
+
     function opPrint() {
         switch pop() {
             case Text(s): trace(s);
             case Boolean(b): trace(b);
             case Number(n): trace(n);
-            case _: throw 'error';
+            case Array(a): trace(a.map(unwrapValue));
+        }
+    }
+
+    function unwrapValue(value: Type): Any { // TODO: Evil Any!
+        return switch value {
+            case Text(s): s;
+            case Boolean(b): b;
+            case Number(n): n;
+            case Array(a): a.map(unwrapValue);
         }
     }
 

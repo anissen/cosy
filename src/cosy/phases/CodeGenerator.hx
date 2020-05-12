@@ -153,6 +153,7 @@ class CodeGenerator {
 	function genExpr(expr: Expr): Array<String> {
 		return switch expr {
             case Assign(name, op, value): genExpr(value).concat(['save_var', name.lexeme]);
+            case ArrayLiteral(keyword, exprs): genExprs(exprs).concat(['to_array', '${exprs.length}']);
             case Binary(left, op, right): genExpr(left).concat(genExpr(right)).concat([binaryOpCode(op)]);
             case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
             case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
