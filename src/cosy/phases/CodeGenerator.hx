@@ -131,6 +131,7 @@ class CodeGenerator {
                 L_end:
                 */
 
+                // labelCounter++;
                 // return genExpr(array)
                 //     .concat(['push_num', '0'])
                 //     .concat(['save_var', 'array_index'])

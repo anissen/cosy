@@ -77,8 +77,7 @@ class VM {
 
     function toArray() {
         var length = Std.parseInt(bytecode[index++]);
-        var arr = [ for (i in 0...length) pop() ];
-        arr.reverse();
+        var arr = stack.splice(-length, length);
         return push(Array(arr));
     }
 
