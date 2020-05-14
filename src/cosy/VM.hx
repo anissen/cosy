@@ -1,18 +1,18 @@
 package cosy;
 
-enum Type {
+enum Value {
     Text(s: String);
     Number(n: Float);
     Boolean(b: Bool);
-    Array(a: Array<Type>);
+    Array(a: Array<Value>);
     // Op(o: String);
 }
 
 class VM {
-    var stack: Array<Type>;
+    var stack: Array<Value>;
     var index: Int;
     var bytecode: Array<String>; // TODO: Should probably be something like { code: String, line: Int, (module: String) }
-    var variables: Map<String, Type>;
+    var variables: Map<String, Value>;
 
     public function new() {
 
@@ -90,7 +90,7 @@ class VM {
         }
     }
 
-    function unwrapValue(value: Type): Any { // TODO: Evil Any!
+    function unwrapValue(value: Value): Any { // TODO: Evil Any!
         return switch value {
             case Text(s): s;
             case Boolean(b): b;
@@ -118,11 +118,11 @@ class VM {
         return push(value);
     }
 
-    function push(type: Type) {
-        return stack.push(type);
+    function push(value: Value) {
+        return stack.push(value);
     }
 
-    function pop(): Type {
+    function pop(): Value {
         return stack.pop();
     }
 
