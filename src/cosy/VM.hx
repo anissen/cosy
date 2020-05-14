@@ -28,7 +28,7 @@ class VM {
             var code = bytecode[index++];
             var endIndex = index;
             var hasJumped = false;
-            switch code {
+            switch code { // TODO: Use bytes/ints instead of strings
                 case 'label': bytecode[index++];
                 case 'push_bool': push(Boolean(bytecode[index++] == 'true'));
                 case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
@@ -48,6 +48,7 @@ class VM {
                 case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
                 case 'save_var': variables.set(bytecode[index++], pop());
                 case 'load_var': push(variables.get(bytecode[index++]));
+                // case 'load_array_index':
                 case 'jump':
                     var jumpLength = Std.parseInt(bytecode[index++]);
                     endIndex = index;

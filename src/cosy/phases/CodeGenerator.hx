@@ -114,6 +114,35 @@ class CodeGenerator {
                     .concat(['op_inc', name.lexeme]) // increment i
                     .concat(['jump', ':start_$labelCounter']) // jump to start of loop
                     .concat(['label', 'end_$labelCounter']);
+            // case ForArray(name, array, body):
+                // example: for i in [3,4,5] {}
+
+                /*
+                push_num 0
+                save array_index
+                L_start:
+                load array_index
+                //how: array_length
+                get_from_array
+                save name
+                [body]
+                L_continue:
+                op_inc array_index
+                L_end:
+                */
+
+                // return genExpr(array)
+                //     .concat(['push_num', '0'])
+                //     .concat(['save_var', 'array_index'])
+                //     .concat(['label', 'start_$labelCounter'])
+                //     .concat(['load_var', 'array_index'])
+                //     .concat(['load_array_index'])
+                //     .concat(['save_var', '${name.lexeme}'])
+                //     .concat(genStmts(body))
+                //     .concat(['label', 'continue_$labelCounter'])
+                //     .concat(['op_inc', 'array_index'])
+                //     .concat(['label', 'end_$labelCounter']);
+
             case ForCondition(cond, body):
                 // example: for i < 3 {}
 
@@ -153,7 +182,7 @@ class CodeGenerator {
 	function genExpr(expr: Expr): Array<String> {
 		return switch expr {
             case Assign(name, op, value): genExpr(value).concat(['save_var', name.lexeme]);
-            case ArrayLiteral(keyword, exprs): genExprs(exprs).concat(['to_array', '${exprs.length}']);
+            case ArrayLiteral(keyword, exprs): genExprs(exprs).concat(['to_array', '${exprs.length}']); // TODO: This is a very näive approach!
             case Binary(left, op, right): genExpr(left).concat(genExpr(right)).concat([binaryOpCode(op)]);
             case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
             case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
