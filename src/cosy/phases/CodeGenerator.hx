@@ -7,6 +7,7 @@ package cosy.phases;
 
 class CodeGenerator {
     var labelCounter: Int;
+    var functions: Array<String>;
 
 	public function new() {
 
@@ -15,7 +16,9 @@ class CodeGenerator {
     // TODO: Use Bytes (https://api.haxe.org/haxe/io/Bytes.html) instead
 	public inline function generate(stmts: Array<Stmt>): Array<String> {
         labelCounter = 0;
-        return patchJumpPositions(genStmts(stmts));
+        functions = [];
+        var code = ['main:'].concat(genStmts(stmts));
+        return patchJumpPositions(functions.concat(code));
     }
 
     function patchJumpPositions(code: Array<String>): Array<String> {
@@ -173,6 +176,14 @@ class CodeGenerator {
                     .concat(thenCode)
                     .concat(elseCode);
             case Expression(expr): genExpr(expr);
+            case Function(name, params, body, returnType, foreign):
+                // labelCounter++;
+                var code = ['${name.lexeme}:']
+                // .concat(['label', 'fn_start_${name.lexeme}'])
+                .concat(genStmts(body))
+                .concat(['label', 'fn_end_${name.lexeme}']);
+                functions = functions.concat(code);
+                return ['push_fn', '${name.lexeme}', 'save_var', '${name.lexeme}'];
             case Continue(keyword): ['jump', ':continue_$labelCounter'];
             case Break(keyword): ['jump', ':end_$labelCounter'];
 			case _: trace('Unhandled statement: $stmt'); [];
@@ -185,6 +196,10 @@ class CodeGenerator {
             case Assign(name, op, value): genExpr(value).concat(['save_var', name.lexeme]);
             case ArrayLiteral(keyword, exprs): genExprs(exprs).concat(['to_array', '${exprs.length}']); // TODO: This is a very näive approach!
             case Binary(left, op, right): genExpr(left).concat(genExpr(right)).concat([binaryOpCode(op)]);
+            case Call(callee, paren, arguments):
+                genExpr(callee)
+                .concat(genExprs(arguments))
+                .concat(['call', '${arguments.length}']);
             case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
             case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
             case Literal(v) if (Std.isOfType(v, String)): ['push_str', '$v'];
