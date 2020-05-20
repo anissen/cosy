@@ -200,7 +200,7 @@ class CodeGenerator {
                 genExpr(callee)
                 .concat(genExprs(arguments))
                 .concat(['call', '${arguments.length}']);
-            case Literal(v) if (Std.isOfType(v, Bool)): ['push_bool', '$v'];
+            case Literal(v) if (Std.isOfType(v, Bool)): [v ? 'push_true' : 'push_false'];
             case Literal(v) if (Std.isOfType(v, Float)): ['push_num', '$v'];
             case Literal(v) if (Std.isOfType(v, String)): ['push_str', '$v'];
             case Grouping(expr): genExpr(expr);

@@ -64,7 +64,8 @@ class VM {
             */
             switch code { // TODO: Use bytes/ints instead of strings
                 case 'label': bytecode[index++];
-                case 'push_bool': push(Boolean(bytecode[index++] == 'true'));
+                case 'push_true': push(Boolean(true));
+                case 'push_false': push(Boolean(false));
                 case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
                 case 'push_str': push(Text(bytecode[index++]));
                 case 'push_fn': push(Function(bytecode[index++]));
