@@ -150,5 +150,15 @@
 //     }
 // }
 
-var a = [2,3,4,5,6]
-print a
+// var a = [2,3,4,5,6]
+// print a
+
+// fn f(x, y) {
+//     print 'hello' + x + y
+// }
+// f(5, 3)
+
+fn f() {
+    print 'hello'
+}
+f()

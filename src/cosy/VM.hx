@@ -53,9 +53,13 @@ class VM {
             /*
             TODO:
             Convert bytecode into the form of [[instruction, args...], [instruction, args..], ...]
-            and do
+            and do:
             switch (code) {
                 case ['jump', length]: ...
+            }
+            or better yet:
+            switch (code) {
+                case [OP_JUMP, length]: ...
             }
             */
             switch code { // TODO: Use bytes/ints instead of strings
