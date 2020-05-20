@@ -178,10 +178,11 @@ class CodeGenerator {
             case Expression(expr): genExpr(expr);
             case Function(name, params, body, returnType, foreign):
                 // labelCounter++;
-                var code = ['${name.lexeme}:']
+                var code = ['fn ${name.lexeme}']
                 // .concat(['label', 'fn_start_${name.lexeme}'])
                 .concat(genStmts(body))
-                .concat(['label', 'fn_end_${name.lexeme}']);
+                .concat(['label', 'fn_end_${name.lexeme}'])
+                .concat(['op_return']);
                 functions = functions.concat(code);
                 return ['push_fn', '${name.lexeme}', 'save_var', '${name.lexeme}'];
             case Continue(keyword): ['jump', ':continue_$labelCounter'];

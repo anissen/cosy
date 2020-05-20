@@ -18,6 +18,7 @@ typedef CallFrame = {
     // function: FunctionObj,
     ip: Int,
     slots: Array<Value>, // relative indexes into the values on the stack (e.g. for finding locals in functions)
+    ?returnAddress: Int,
 }
 
 class VM {
@@ -27,12 +28,18 @@ class VM {
     var bytecode: Array<String>; // TODO: Should probably be something like { code: String, line: Int, (module: String) }
     var variables: Map<String, Value>;
 
+    var functions: Map<String, CallFrame>; // TODO: Temp
+    var currentFunction: String; // TODO: Temp
+
     public function new() {
 
     }
 
     public function run(program: Array<String>) {
         // TODO: The global environment should also be treated like a function to get consistent behavior (see http://www.craftinginterpreters.com/calls-and-functions.html)
+
+        functions = new Map();
+        currentFunction = '';
 
         bytecode = program;
         stack = [];
@@ -46,7 +53,11 @@ class VM {
             var endIndex = index;
             var hasJumped = false;
             if (!foundMain) {
-                foundMain = (code == 'main:');
+                if (code == 'main:') {
+                    foundMain = true;
+                } else if (code.substr(0, 3) == 'fn ') {
+                    functions[code.substr(3)] = { ip: index, slots: [] };
+                }
                 continue;
             }
             var frame = callFrames[callFrames.length - 1];
@@ -83,6 +94,7 @@ class VM {
                 case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
                 case 'op_greater': push(Boolean(popNumber() < popNumber()));
                 case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
+                case 'op_return': index = functions[currentFunction].returnAddress;
                 case 'load_local':
                     var slot = Std.int(popNumber());
                     push(frame.slots[slot]);
@@ -127,6 +139,10 @@ class VM {
             case _: throw 'error';
         }
         trace('[call] function: $functionName');
+        var fun = functions[functionName];
+        fun.returnAddress = index;
+        index = fun.ip;
+        currentFunction = functionName;
 
         // TODO: Needs to record the index of the first local slot (to be able to reference other slots with relative indexes) (that is, the call frame)
         // TODO: Store `index` as the return address

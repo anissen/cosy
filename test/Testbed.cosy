@@ -161,4 +161,6 @@
 fn f() {
     print 'hello'
 }
+print 'before call'
 f()
+print 'after call'
