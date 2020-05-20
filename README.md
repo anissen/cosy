@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/anissen/cosy">
-    <img src="./cosy-logo.svg" height="40%" width="40%">
+    <img src="docs/images/cosy-logo.svg" height="30%" width="30%">
   </a>
 
   <p align="center">
@@ -11,9 +11,7 @@
     <br />
     <a href="http://andersnissen.com/cosy/playground">Online Playground</a>
     ·
-    <a href="https://github.com/anissen/cosy/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/anissen/cosy/issues">Request Feature</a>
+    <a href="http://andersnissen.com/cosy/api">API Documentation</a>
   </p>
 </p>
 
@@ -48,6 +46,9 @@ print 'hello world'
 * Simple code optimization.
 * No library dependencies.
 * Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/). Originally based on [Lox](http://www.craftinginterpreters.com/).
+
+## Cosy data flow
+<img src="docs/images/data-flow.png" width="100%">
 
 
 ## Code examples
@@ -230,6 +231,14 @@ Options:
   
     Prints the corresponding JavaScript code.
 
+* `--strict`
+
+    Enable strict enforcing of types.
+
+* `--validate-only`
+
+    Only perform code validation.
+
 If called without arguments, Cosy is started in REPL mode.
 
 <!--
@@ -259,13 +268,14 @@ _Coming soon_
 _Coming soon_
 -->
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-
 
 ## Roadmap
 
-See the [wishlist](https://github.com/anissen/cosy/wishlist.md) for a list of proposed features (and known issues).
+Cosy is a work-in-progress.
+
+Current focus is: :star: _Bytecode code generator and virtual machine_. Come check it out at the [bytecode](https://github.com/anissen/cosy/tree/bytecode) branch.
+
+See the [wishlist](wishlist.md) for a list of proposed features (and known issues).
 
 
 <!-- 
