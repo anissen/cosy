@@ -31,6 +31,8 @@ class VM {
     var functions: Map<String, CallFrame>; // TODO: Temp
     var currentFunction: String; // TODO: Temp
 
+    var outputText: String;
+
     public function new() {
 
     }
@@ -40,6 +42,7 @@ class VM {
 
         functions = new Map();
         currentFunction = '';
+        outputText = '';
 
         bytecode = program;
         stack = [];
@@ -121,6 +124,8 @@ class VM {
             trace('  ' + bytecode.slice(startIndex, (hasJumped ? endIndex : index)) + '\t\t## Index: $index, Stack: $stack, Vars: $variables');
             // trace('## Stack: $stack, Vars: $variables');
         }
+
+        trace('VM output: $outputText');
     }
 
     function toArray() {
@@ -150,13 +155,15 @@ class VM {
     }
 
     function opPrint() {
-        switch pop() {
+        var value = pop();
+        switch value {
             case Text(s): trace(s);
             case Boolean(b): trace(b);
             case Number(n): trace(n);
             case Array(a): trace(a.map(unwrapValue));
             case Function(f): trace('<fn $f>');
         }
+        outputText += '\n' + unwrapValue(value);
     }
 
     function opEquals() {
