@@ -40,7 +40,7 @@ class VM {
     public function run(program: Array<String>) {
         // TODO: The global environment should also be treated like a function to get consistent behavior (see http://www.craftinginterpreters.com/calls-and-functions.html)
 
-        functions = new Map();
+        functions = new Map(); // TODO: Should probably be a stack
         currentFunction = '';
         outputText = '';
 
