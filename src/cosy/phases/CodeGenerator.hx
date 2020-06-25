@@ -187,6 +187,7 @@ class CodeGenerator {
                 return ['push_fn', '${name.lexeme}', 'save_var', '${name.lexeme}'];
             case Continue(keyword): ['jump', ':continue_$labelCounter'];
             case Break(keyword): ['jump', ':end_$labelCounter'];
+            case Return(keyword, value): (value != null ? genExpr(value).concat(['op_return_value']) : ['op_return']);
 			case _: trace('Unhandled statement: $stmt'); [];
 		}
 	}

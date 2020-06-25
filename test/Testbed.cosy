@@ -158,9 +158,24 @@
 // }
 // f(5, 3)
 
-fn f() {
-    print 'hello'
-}
-print 'before call'
-f()
-print 'after call'
+// {
+// fn f() {
+//     var x = 'hello'
+//     var y = 'world'
+//     print x + ' ' + y
+// }
+// print 'before call #1'
+// f()
+// print 'after call #1'
+
+// print 'before call #2'
+// f()
+// print 'after call #2'
+// }
+
+// {
+//     fn f() {
+//         return '[return value]'
+//     }
+//     print f()
+// }

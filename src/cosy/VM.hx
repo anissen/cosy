@@ -98,6 +98,9 @@ class VM {
                 case 'op_greater': push(Boolean(popNumber() < popNumber()));
                 case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
                 case 'op_return': index = functions[currentFunction].returnAddress;
+                case 'op_return_value': 
+                    index = functions[currentFunction].returnAddress;
+                    push(pop());
                 case 'load_local':
                     var slot = Std.int(popNumber());
                     push(frame.slots[slot]);
