@@ -1,5 +1,6 @@
 package cosy;
 
+import haxe.Timer;
 import cosy.phases.*;
 
 #if sys
@@ -124,28 +125,62 @@ Options:
         foreignVariables[name] = variable;
     }
 
+    static function round2(number: Float, precision: Int): Float {
+        var num = number;
+        num = num * Math.pow(10, precision);
+        num = Math.round(num) / Math.pow(10, precision);
+        return num;
+    }
+
+    static var measureOutput = '';
+    static function measure(phase: String, func: () -> Void) {
+        var start = Timer.stamp();
+        func();
+        var end = Timer.stamp();
+        var duration = (end - start) * 1000;
+        // println('>>> $phase took ${round2(duration, 3)} ms');
+        while (phase.length < 15) phase += ' ';
+        measureOutput += '\n· $phase took\t${round2(duration, 3)} ms';
+    }
+
     @:expose
     public static function run(source:String) {
         hadError = false;
+        measureOutput = 'Benchmarks:';
 
-        var scanner = new Scanner(source);
-        var tokens = scanner.scanTokens();
-        var parser = new Parser(tokens);
-        var statements = parser.parse();
+        var start = Timer.stamp();
+
+        var tokens = [];
+        measure('Scanner', function() {
+            var scanner = new Scanner(source);
+            tokens = scanner.scanTokens();
+        });
+
+        var statements = [];
+        measure('Parser', function() {
+            var parser = new Parser(tokens);
+            statements = parser.parse();
+        });
 
         if (hadError) return;
 
-        var resolver = new Resolver(interpreter);
-        resolver.resolve(statements);
+        measure('Resolver', function() {
+            var resolver = new Resolver(interpreter);
+            resolver.resolve(statements);
+        });
 
-        var typer = new Typer();
-        typer.type(statements);
+        measure('Typer', function() {
+            var typer = new Typer();
+            typer.type(statements);
+        });
 
         if (hadError) return;
         if (validateOnly) return;
 
-        var optimizer = new Optimizer();
-        statements = optimizer.optimize(statements);
+        measure('Optimizer', function() {
+            var optimizer = new Optimizer();
+            statements = optimizer.optimize(statements);
+        });
 
         if (prettyPrint) {
             var printer = new AstPrinter();
@@ -163,18 +198,31 @@ Options:
             return;
         }
 
-        var codeGenerator = new CodeGenerator();
-        var bytecode = codeGenerator.generate(statements);
-        var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
-        trace('GENERATED CODE:');
-        trace('------------------\n' + formattedBytecode.join('\n'));
-        trace('------------------');
+        var bytecode = [];
+        measure('Code generator', function() {
+            var codeGenerator = new CodeGenerator();
+            bytecode = codeGenerator.generate(statements);
+        });
+        // var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
+        // trace('GENERATED CODE:');
+        // trace('------------------\n' + formattedBytecode.join('\n'));
+        // trace('------------------');
 
-        var vm = new VM();
-        vm.run(bytecode);
+        measure('VM interpreter', function() {
+            var vm = new VM();
+            vm.run(bytecode);
+        });
 
-        trace('AST interpreter:');
-        interpreter.interpret(statements);
+        // trace('AST interpreter');
+        measure('AST interpreter', function() {
+            interpreter.interpret(statements);
+        });
+
+        println('\n$measureOutput');
+
+        var end = Timer.stamp();
+        var totalDuration = (end - start) * 1000;
+        println('Total: ${round2(totalDuration, 3)} ms');
     }
 
     static function reportWarning(line:Int, where:String, message:String) {
