@@ -94,13 +94,13 @@ fun x() { print "hej" }
 - [ ] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
 - [ ] Cosy documentation using Dox (https://github.com/HaxeFoundation/dox)
 - [ ] Make Cosy FFI work for more targets (see https://community.haxe.org/t/is-there-a-way-to-expose-a-haxe-library-as-a-library-for-another-target/508)
-- [ ] Make a `phases` sub-package
+- [x] Make a `phases` sub-package
 - [ ] Change array type annotation from e.g. `Array Num` to `Num[]`
 - [ ] Maybe: Change type annotation from e.g. `Str` to `String` and `Num` to `Number`
 - [ ] Maybe: Change type annotation from e.g. `fn F(blah Fun(String) Number) Number[]` to `fn F(blah: ((xyz: String) => Number)): Number[]`
 - [ ] Compile errors ordered by line number, regardless of compilation phase (how?)
 - [ ] Introduce an `Any` type that is only allowed for foreign functions
-- [ ] Add `--benchmark` option
+- [x] Add `--benchmark` option
 - [ ] Ensure that global variables are defined before used
 - [ ] Find a way to be able to parse mutually recursive functions that are not "late bound"
 - [ ] Just for fun: Make a version of "generative grammar" that can spit out Cosy code and format that code using `--prettyprint`

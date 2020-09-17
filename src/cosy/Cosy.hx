@@ -18,6 +18,7 @@ class Cosy {
     static var outputBytecode = false;
     static var outputJavaScript = false;
     static var validateOnly = false;
+    static var outputTimes = true; // TODO: Set to true for testing purposes, should be false by default
     public static var strict = false;
 
     static function main() {
@@ -44,6 +45,7 @@ class Cosy {
                 case '--javascript': outputJavaScript = true;
                 case '--strict': strict = true;
                 case '--validate-only': validateOnly = true;
+                case '--times': outputTimes = true;
                 case _: argErrors.push(arg);
             }
         }
@@ -58,7 +60,8 @@ Options:
 --bytecode       Prints the compiled Cosy bytecode.
 --javascript     Prints the corresponding JavaScript code.
 --strict         Enable strict enforcing of types.
---validate-only  Only perform code validation.'
+--validate-only  Only perform code validation.
+--times          Output time spent in each phase.'
             );
             Sys.exit(64);
         }
@@ -154,10 +157,12 @@ Options:
     static var measureOutput = '';
     
     static function startMeasure(phase: String) {
+        if (!outputTimes) return;
         measureStarts[phase] = Timer.stamp();
     }
 
     static function endMeasure(phase: String) {
+        if (!outputTimes) return;
         if (!measureStarts.exists(phase)) throw 'Measurement for $phase has not been started';
         var end = Timer.stamp();
         var duration = (end - measureStarts[phase]) * 1000;
@@ -178,7 +183,7 @@ Options:
     @:expose
     public static function run(source:String) {
         hadError = false;
-        measureOutput = 'Benchmarks:';
+        measureOutput = 'Times:';
 
         var start = Timer.stamp();
 
@@ -238,10 +243,10 @@ Options:
             printlines(bytecode);
             return;
         }
-        // var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
-        // trace('GENERATED CODE:');
-        // trace('------------------\n' + formattedBytecode.join('\n'));
-        // trace('------------------');
+        var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
+        trace('GENERATED CODE:');
+        trace('------------------\n' + formattedBytecode.join('\n'));
+        trace('------------------');
 
         startMeasure('VM interpreter');
         var vm = new VM();
@@ -253,12 +258,13 @@ Options:
         interpreter.interpret(statements);
         endMeasure('AST interpreter');
 
-        println('\n$measureOutput');
+        if (outputTimes) {
+            println('\n$measureOutput');
 
-
-        var end = Timer.stamp();
-        var totalDuration = (end - start) * 1000;
-        println('Total: ${round2(totalDuration, 3)} ms');
+            var end = Timer.stamp();
+            var totalDuration = (end - start) * 1000;
+            println('Total: ${round2(totalDuration, 3)} ms');
+        }
     }
 
     static function reportWarning(line:Int, where:String, message:String) {
