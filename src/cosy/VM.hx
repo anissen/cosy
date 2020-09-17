@@ -68,13 +68,19 @@ class VM {
             TODO:
             Convert bytecode into the form of [[instruction, args...], [instruction, args..], ...]
             and do:
-            switch (code) {
-                case ['jump', length]: ...
-            }
+                switch (code) {
+                    case ['jump', length]: ...
+                }
             or better yet:
-            switch (code) {
-                case [OP_JUMP, length]: ...
-            }
+                switch (code) {
+                    case [OP_JUMP, length]: ...
+                }
+            or (maybe) even better:
+                var opcodes = new Map();
+                opcodes[OP_JUMP] = jump;
+                ...
+                var operation = opcodes[code]
+                operation(argumentArray)
             */
             switch code { // TODO: Use bytes/ints instead of strings. // TODO: Use a HashMap instead of a switch
                 case 'label': bytecode[index++];
