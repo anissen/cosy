@@ -1,7 +1,7 @@
 package cosy;
 
-import haxe.Timer;
 import cosy.phases.*;
+import haxe.Timer;
 
 #if sys
 import sys.io.File;
@@ -14,8 +14,9 @@ class Cosy {
 
     static var hadError = false;
     static var hadRuntimeError = false;
-    static var prettyPrint = false;
-    static var javascript = false;
+    static var outputPrettyPrint = false;
+    static var outputBytecode = false;
+    static var outputJavaScript = false;
     static var validateOnly = false;
     public static var strict = false;
 
@@ -38,8 +39,9 @@ class Cosy {
         for (i in 0...Sys.args().length - 1) {
             var arg = Sys.args()[i];
             switch arg {
-                case '--prettyprint': prettyPrint = true;
-                case '--javascript': javascript = true;
+                case '--prettyprint': outputPrettyPrint = true;
+                case '--bytecode': outputBytecode = true;
+                case '--javascript': outputJavaScript = true;
                 case '--strict': strict = true;
                 case '--validate-only': validateOnly = true;
                 case _: argErrors.push(arg);
@@ -53,10 +55,20 @@ class Cosy {
 
 Options:
 --prettyprint    Prints the formatted source.
+--bytecode       Prints the compiled Cosy bytecode.
 --javascript     Prints the corresponding JavaScript code.
 --strict         Enable strict enforcing of types.
 --validate-only  Only perform code validation.'
             );
+            Sys.exit(64);
+        }
+        
+        var printCount = 0;
+        if (outputPrettyPrint) printCount++;
+        if (outputBytecode) printCount++;
+        if (outputJavaScript) printCount++;
+        if (printCount > 1) {
+            Sys.println('Only pass one of --prettyprint/--bytecode/--javascript\n');
             Sys.exit(64);
         }
 
@@ -86,6 +98,10 @@ Options:
         }
     }
     #end
+
+    public static function printlines(a :Array<Dynamic>) {
+        for (e in a) println(e);
+    }
 
     public static function println(v :Dynamic) {
         #if sys
@@ -132,16 +148,32 @@ Options:
         return num;
     }
 
+    // static var measurePhase :String;
+    static var measureStarts :Map<String, Float> = new Map();
+    // static var measureStart :Float;
     static var measureOutput = '';
-    static function measure(phase: String, func: () -> Void) {
-        var start = Timer.stamp();
-        func();
+    
+    static function startMeasure(phase: String) {
+        measureStarts[phase] = Timer.stamp();
+    }
+
+    static function endMeasure(phase: String) {
+        if (!measureStarts.exists(phase)) throw 'Measurement for $phase has not been started';
         var end = Timer.stamp();
-        var duration = (end - start) * 1000;
-        // println('>>> $phase took ${round2(duration, 3)} ms');
+        var duration = (end - measureStarts[phase]) * 1000;
         while (phase.length < 15) phase += ' ';
         measureOutput += '\n· $phase took\t${round2(duration, 3)} ms';
     }
+    
+    // static function measure(phase: String, func: () -> Void) {
+    //     var start = Timer.stamp();
+    //     func();
+    //     var end = Timer.stamp();
+    //     var duration = (end - start) * 1000;
+    //     // println('>>> $phase took ${round2(duration, 3)} ms');
+    //     while (phase.length < 15) phase += ' ';
+    //     measureOutput += '\n· $phase took\t${round2(duration, 3)} ms';
+    // }
 
     @:expose
     public static function run(source:String) {
@@ -150,75 +182,79 @@ Options:
 
         var start = Timer.stamp();
 
-        var tokens = [];
-        measure('Scanner', function() {
-            var scanner = new Scanner(source);
-            tokens = scanner.scanTokens();
-        });
+        startMeasure('Scanner');
+        var scanner = new Scanner(source);
+        var tokens = scanner.scanTokens();
+        endMeasure('Scanner');
 
-        var statements = [];
-        measure('Parser', function() {
-            var parser = new Parser(tokens);
-            statements = parser.parse();
-        });
+        startMeasure('Parser');
+        var parser = new Parser(tokens);
+        var statements = parser.parse();
+        endMeasure('Parser');
 
         if (hadError) return;
 
-        measure('Resolver', function() {
-            var resolver = new Resolver(interpreter);
-            resolver.resolve(statements);
-        });
+        startMeasure('Resolver');
+        var resolver = new Resolver(interpreter);
+        resolver.resolve(statements);
+        endMeasure('Resolver');
 
-        measure('Typer', function() {
-            var typer = new Typer();
-            typer.type(statements);
-        });
+        startMeasure('Typer');
+        var typer = new Typer();
+        typer.type(statements);
+        endMeasure('Typer');
 
         if (hadError) return;
         if (validateOnly) return;
 
-        measure('Optimizer', function() {
-            var optimizer = new Optimizer();
-            statements = optimizer.optimize(statements);
-        });
+        startMeasure('Optimizer');
+        var optimizer = new Optimizer();
+        statements = optimizer.optimize(statements);
+        endMeasure('Optimizer');
 
-        if (prettyPrint) {
+        if (outputPrettyPrint) {
             var printer = new AstPrinter();
-            for (stmt in statements) println(printer.printStmt(stmt));
+            // for (stmt in statements) println(printer.printStmt(stmt));
+            printlines(statements.map(printer.printStmt));
             return;
         }
 
-        if (javascript) {
+        if (outputJavaScript) {
             // Hack to inject a JavaScript standard library
             var stdLib = '// standard library\nlet clock = Date.now;\n';
             println(stdLib);
 
             var printer = new JavaScriptPrinter();
-            for (stmt in statements) println(printer.printStmt(stmt));
+            // for (stmt in statements) println(printer.printStmt(stmt));
+            printlines(statements.map(printer.printStmt));
             return;
         }
 
-        var bytecode = [];
-        measure('Code generator', function() {
-            var codeGenerator = new CodeGenerator();
-            bytecode = codeGenerator.generate(statements);
-        });
+        startMeasure('Code generator');
+        var codeGenerator = new CodeGenerator();
+        var bytecode = codeGenerator.generate(statements);
+        endMeasure('Code generator');
+        if (outputBytecode) {
+            printlines(bytecode);
+            return;
+        }
         // var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
         // trace('GENERATED CODE:');
         // trace('------------------\n' + formattedBytecode.join('\n'));
         // trace('------------------');
 
-        measure('VM interpreter', function() {
-            var vm = new VM();
-            vm.run(bytecode);
-        });
+        startMeasure('VM interpreter');
+        var vm = new VM();
+        vm.run(bytecode);
+        endMeasure('VM interpreter');
 
         // trace('AST interpreter');
-        measure('AST interpreter', function() {
-            interpreter.interpret(statements);
-        });
+        startMeasure('AST interpreter');
+        interpreter.interpret(statements);
+        endMeasure('AST interpreter');
 
         println('\n$measureOutput');
+
 
         var end = Timer.stamp();
         var totalDuration = (end - start) * 1000;
