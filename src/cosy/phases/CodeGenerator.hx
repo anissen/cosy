@@ -9,6 +9,8 @@ class CodeGenerator {
     var labelCounter: Int;
     var functions: Array<String>;
 
+    var anonFunctionsCount :Int;
+
 	public function new() {
 
 	}
@@ -17,6 +19,7 @@ class CodeGenerator {
 	public inline function generate(stmts: Array<Stmt>): Array<String> {
         labelCounter = 0;
         functions = [];
+        anonFunctionsCount = 0;
         var code = ['main:'].concat(genStmts(stmts));
         return patchJumpPositions(functions.concat(code));
     }
@@ -195,6 +198,15 @@ class CodeGenerator {
     // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr): Array<String> {
 		return switch expr {
+            case AnonFunction(params, body, returnType):
+                anonFunctionsCount++;
+                var code = ['fn anon_$anonFunctionsCount']
+                // .concat(['label', 'fn_start_anon_$anonFunctionsCount'])
+                .concat(genStmts(body))
+                .concat(['label', 'fn_end_anon_$anonFunctionsCount'])
+                .concat(['op_return']);
+                functions = functions.concat(code);
+                return ['push_fn', 'anon_$anonFunctionsCount'];
             case Assign(name, op, value): genExpr(value).concat(['save_var', name.lexeme]);
             case ArrayLiteral(keyword, exprs): genExprs(exprs).concat(['to_array', '${exprs.length}']); // TODO: This is a very näive approach!
             case Binary(left, op, right): genExpr(left).concat(genExpr(right)).concat([binaryOpCode(op)]);
