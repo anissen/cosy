@@ -179,3 +179,24 @@
 //     }
 //     print f()
 // }
+
+// var f2 = fn (xyz) { print xyz }
+// // print f2
+// f2('hello')
+
+// {
+//     fn f2(xyz) { print xyz }
+//     f2('hello')
+// }
+
+// {
+//     fn fibonacci(n) {
+//         if n <= 1 return n
+//         return fibonacci(n - 2) + fibonacci(n - 1)
+//     }
+
+//     for i in 0..10 {
+//         print fibonacci(i)
+//     }
+// }
+  

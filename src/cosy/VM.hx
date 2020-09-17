@@ -76,7 +76,7 @@ class VM {
                 case [OP_JUMP, length]: ...
             }
             */
-            switch code { // TODO: Use bytes/ints instead of strings
+            switch code { // TODO: Use bytes/ints instead of strings. // TODO: Use a HashMap instead of a switch
                 case 'label': bytecode[index++];
                 case 'push_true': push(Boolean(true));
                 case 'push_false': push(Boolean(false));
@@ -142,7 +142,7 @@ class VM {
         var argumentCount = Std.parseInt(bytecode[index++]);
         var arguments = popReversed(argumentCount);
         trace('[call] arguments: $arguments');
-        var functionName = switch pop() {
+        var functionName = switch pop() { // TODO: Function can also be an anonymous function on the stack
             case Function(f): f;
             case _: throw 'error';
         }

@@ -101,6 +101,9 @@ fun x() { print "hej" }
 - [ ] Compile errors ordered by line number, regardless of compilation phase (how?)
 - [ ] Introduce an `Any` type that is only allowed for foreign functions
 - [ ] Add `--benchmark` option
+- [ ] Ensure that global variables are defined before used
+- [ ] Find a way to be able to parse mutually recursive functions that are not "late bound"
+- [ ] Just for fun: Make a version of "generative grammar" that can spit out Cosy code and format that code using `--prettyprint`
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
@@ -112,6 +115,7 @@ fun x() { print "hej" }
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 - [ ] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
 - [ ] Use import.hx
+- [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting)
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
@@ -119,4 +123,5 @@ fun x() { print "hej" }
 - [ ] Easy to integrate C/C++ libraries
 - [ ] Fibers á la Wren
 - [ ] Built-in threading
+- [ ] Make a Cosy debugger (https://www.google.com/search?q=how+to+write+a+debugger)
 - [ ] Cosy Roguelike (see https://github.com/Kode/Kha/wiki/Tutorials, https://github.com/lewislepton/kha-examples, https://github.com/RblSb/khaguide)
