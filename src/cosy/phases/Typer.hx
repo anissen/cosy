@@ -233,7 +233,7 @@ class Typer {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                             return Unknown;
                         }
-                    case _: Unknown; // TODO when classes are removed; throw exception
+                    case _: throw 'Get on unknown type ${objType}';
                     // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
             case MutArgument(keyword, name):

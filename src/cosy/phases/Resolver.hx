@@ -13,7 +13,6 @@ class Resolver {
 	final scopes = new Stack<Map<String, Variable>>();
 	var currentFunction:FunctionType = None;
 	var currentStruct:StructType = None;
-	var currentClass:ClassType = None;
 	
 	public function new(interpreter) {
 		this.interpreter = interpreter;
@@ -262,9 +261,4 @@ private enum FunctionType {
 private enum StructType {
 	None;
 	Struct;
-}
-private enum ClassType {
-	None;
-	Class;
-	Subclass;
 }

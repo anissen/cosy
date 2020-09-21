@@ -138,7 +138,7 @@ class Parser {
 	}
     
     function structDeclaration(): Stmt {
-        var name = consume(Identifier, 'Expect class name');
+        var name = consume(Identifier, 'Expect struct name');
         consume(LeftBrace, 'Expect "{" before struct body.');
 
         var declarations = [];

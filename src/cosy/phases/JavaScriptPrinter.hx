@@ -4,18 +4,12 @@ package cosy.phases;
 Features:
 - Converts "var" to "let" (reverted, as it does not work with global/local block scopes)
 - Converts "==" to "==="
-
-ISSUES:
-- "super.init(...)" isn't translated to "super(...)"
-- We keep track of classes to see if we need to translate "Foo()" to "new Foo()". However, we don't take into account that the class might be defined LATER than the usage.
 */
 
 class JavaScriptPrinter {
 	public function new() {}
 
 	var indentAmount:Int = 0;
-	var isInClass:Bool = false;
-    var classNames = new Array<String>();
 
 	function indent():String {
 		return [ for (_ in 0...indentAmount) "  " ].join("");
@@ -41,7 +35,7 @@ class JavaScriptPrinter {
 			case ForCondition(cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
 			case Function(name, params, body, returnType, foreign):
                 if (foreign) return ''; // TODO: Is this correct behavior?
-				var declaration = '${isInClass ? "" : "function "}${name.lexeme}';
+				var declaration = 'function ${name.lexeme}';
 				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
 				'$declaration($parameters) $block';
@@ -62,8 +56,7 @@ class JavaScriptPrinter {
 			case Binary(left, op, right): '${printExpr(left)} ${op.type.match(EqualEqual) ? '===' : op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): 
                 var calleeName = printExpr(callee);
-                var isClassName = (classNames.indexOf(calleeName) != -1);
-                (isClassName ? 'new ' : '') + '$calleeName(${arguments.map(printExpr).join(',')})';
+                '$calleeName(${arguments.map(printExpr).join(',')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
 			case MutArgument(keyword, name): name.lexeme;

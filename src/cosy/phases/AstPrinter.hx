@@ -4,7 +4,6 @@ class AstPrinter {
 	public function new() {}
 
 	var indentAmount:Int = 0;
-	var isInClass:Bool = false;
 
 	function indent():String {
 		return [ for (_ in 0...indentAmount) "  " ].join("");
@@ -34,7 +33,7 @@ class AstPrinter {
 			case ForArray(name, array, body): 'for ${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body, returnType, foreign):
-				var declaration = '${isInClass ? "" : (foreign ? "foreign fn" : "fn")} ${name.lexeme}';
+				var declaration = '${foreign ? "foreign fn" : "fn"} ${name.lexeme}';
                 var parameters = [ for (param in params) formatParam(param) ].join(', ');
                 if (foreign) return '$declaration($parameters)';
                 var block = printBlock(body);

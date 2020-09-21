@@ -228,7 +228,7 @@ class Interpreter {
                 var callee = evaluate(callee);
                 var args = args.map(evaluate);
                 if (!Std.is(callee, Callable)) {
-                    throw new RuntimeError(paren, 'Can only call functions and classes');
+                    throw new RuntimeError(paren, 'Can only call functions.');
                 } else {
                     var func:Callable = callee;
                     if (!Std.is(func, Cosy.ForeignFunction)) {

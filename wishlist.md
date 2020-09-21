@@ -60,7 +60,7 @@ fun x() { print "hej" }
   - [ ] Variable shadowing is gone
   - [x] nil is gone
   - [x] for-loops can be made without an identifer (underscores are not required on unused loop counters anymore)
-  - [ ] Classes are gone
+  - [x] Classes are gone
 - [x] Cosy playground
   - [x] Compile for JavaScript
   - [x] Make simple Cosy playground website
