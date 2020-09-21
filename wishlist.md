@@ -14,7 +14,7 @@ fun x() { print "hej" }
 - [x] Compile-time error to redefine variable/function
 - [x] No semi-colons
 - [ ] Change assignment to be a statement instead of an expression?
-- [ ] Everything is an expression (because it's easier), alternatively make _most_ statements into expressions
+- [ ] Change more statements into expressions
 - [x] No variable shadowing
 - [x] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
 - [x] Static analysis for
@@ -70,7 +70,6 @@ fun x() { print "hej" }
 - [x] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
 - [ ] Disable some static analysis for REPL, e.g. checking for unused variables
 - [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
-- [ ] Make semicolons trigger a warning instead of an error?
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
 - [ ] Pure functions as default (cannot modify variables outside scope, must be deterministic, can only call other pure functions)
