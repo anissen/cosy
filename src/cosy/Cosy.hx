@@ -143,9 +143,7 @@ Options:
         return num;
     }
 
-    // static var measurePhase :String;
     static var measureStarts :Map<String, Float> = new Map();
-    // static var measureStart :Float;
     static var measureOutput = '';
     
     static function startMeasure(phase: String) {
@@ -162,16 +160,6 @@ Options:
         measureOutput += '\n· $phase took\t${round2(duration, 3)} ms';
     }
     
-    // static function measure(phase: String, func: () -> Void) {
-    //     var start = Timer.stamp();
-    //     func();
-    //     var end = Timer.stamp();
-    //     var duration = (end - start) * 1000;
-    //     // println('>>> $phase took ${round2(duration, 3)} ms');
-    //     while (phase.length < 15) phase += ' ';
-    //     measureOutput += '\n· $phase took\t${round2(duration, 3)} ms';
-    // }
-
     @:expose
     public static function run(source:String) {
         hadError = false;
