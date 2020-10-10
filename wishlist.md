@@ -5,7 +5,7 @@
 x()
 fun x() { print "hej" }
 ```
-- [ ] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
+- [x] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
 - [x] Array method calls is not checked for immutability
 - [ ] Struct `Set` expression should also handle assignment operators: +=, -=, /=, *=
 
@@ -68,7 +68,7 @@ fun x() { print "hej" }
   - [x] Scan + parse + resolve the code on keypress or after a timeout
   - [-] Syntax highlighting for codemirror
 - [x] Make "Undefined variable" a compile-time error instead of a runtime error, e.g. `print "hej"\nasdf`
-- [ ] Disable some static analysis for REPL, e.g. checking for unused variables
+- [x] Disable some static analysis for REPL, e.g. checking for unused variables
 - [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
@@ -100,9 +100,10 @@ fun x() { print "hej" }
 - [ ] Compile errors ordered by line number, regardless of compilation phase (how?)
 - [ ] Introduce an `Any` type that is only allowed for foreign functions
 - [x] Add `--benchmark` option
-- [ ] Ensure that global variables are defined before used
+- [ ] Ensure that global variables are defined before used (i.e. not late bound, like local variables). In short, make global variables work just like local variables. No late binding. No redefinition. Using a slot index in the VM.
 - [ ] Find a way to be able to parse mutually recursive functions that are not "late bound"
 - [ ] Just for fun: Make a version of "generative grammar" that can spit out Cosy code and format that code using `--prettyprint`
+- [x] Drop the REPL?
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

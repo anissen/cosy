@@ -33,12 +33,10 @@ class Cosy {
         Cosy.setFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ });
         
         #if sys
-        if (Sys.args().length == 0) {
-            return runPrompt();
-        }
+        var args = Sys.args();
         var argErrors = [];
-        for (i in 0...Sys.args().length - 1) {
-            var arg = Sys.args()[i];
+        for (i in 0...args.length - 1) {
+            var arg = args[i];
             switch arg {
                 case '--prettyprint': outputPrettyPrint = true;
                 case '--bytecode': outputBytecode = true;
@@ -50,8 +48,10 @@ class Cosy {
             }
         }
         
-        if (argErrors.length > 0) {
-            Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
+        if (args.length == 0 || argErrors.length > 0) {
+            if (argErrors.length > 0) {
+                Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
+            }
             Sys.println(
 'Usage: cosy (options) [source file]
 
@@ -75,7 +75,7 @@ Options:
             Sys.exit(64);
         }
 
-        var file = Sys.args()[Sys.args().length - 1];
+        var file = args[args.length - 1];
         if (!sys.FileSystem.exists(file)) {
             Sys.println('Source file not found: "$file"');
             Sys.exit(64);
@@ -91,14 +91,6 @@ Options:
         run(content);
         if (hadError) Sys.exit(65);
         if (hadRuntimeError) Sys.exit(70);
-    }
-
-    static function runPrompt() {
-        var stdin = Sys.stdin();
-        while (true) {
-            Sys.print('> ');
-            run(stdin.readLine());
-        }
     }
     #end
 
