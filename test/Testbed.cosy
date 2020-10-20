@@ -199,4 +199,10 @@
 //         print fibonacci(i)
 //     }
 // }
+
+{
+    var a = 'asdf'
+    var b = a
+    print b
+}
   

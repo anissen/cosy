@@ -235,6 +235,7 @@ Options:
 
         // trace('AST interpreter');
         startMeasure('AST interpreter');
+        trace('AST output:');
         interpreter.interpret(statements);
         endMeasure('AST interpreter');
 
