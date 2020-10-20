@@ -60,7 +60,7 @@ class JavaScriptPrinter {
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
 			case Grouping(e): '(${printExpr(e)})';
 			case MutArgument(keyword, name): name.lexeme;
-			case Literal(v): if (v == null) { 'null'; } else if (Std.is(v, String)) { '"$v"'; } else { '$v'; };
+			case Literal(v): if (v == null) { 'null'; } else if (Std.isOfType(v, String)) { '"$v"'; } else { '$v'; };
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
             case StructInit(name, decls): 

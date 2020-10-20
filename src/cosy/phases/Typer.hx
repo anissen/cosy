@@ -311,9 +311,9 @@ class Typer {
                 }
                 structType;
 			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
-			case Literal(v) if (Std.is(v, Float)): Number;
-			case Literal(v) if (Std.is(v, String)): Text;
-			case Literal(v) if (Std.is(v, Bool)): Boolean;
+			case Literal(v) if (Std.isOfType(v, Float)): Number;
+			case Literal(v) if (Std.isOfType(v, String)): Text;
+			case Literal(v) if (Std.isOfType(v, Bool)): Boolean;
 			case Literal(v): Unknown;
 		}
         if (Cosy.strict && ret.match(Unknown)) {

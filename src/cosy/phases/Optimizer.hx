@@ -36,7 +36,7 @@ class Optimizer {
                 var r = optimizeExpr(right);
                 return switch [l, r] {
                     case [Expr.Literal(v1), Expr.Literal(v2)]:
-                        if (Std.is(v1, Float) && Std.is(v2, Float)) {
+                        if (Std.isOfType(v1, Float) && Std.isOfType(v2, Float)) {
                             Expr.Literal(switch op.type {
                                 case Plus:  (v1 :Float) + (v2 :Float);
                                 case Minus: (v1 :Float) - (v2 :Float);
@@ -50,7 +50,7 @@ class Optimizer {
                                 case BangEqual: (v1 :Float) != (v2 :Float);
                                 case _: Cosy.error(op, 'Invalid operator.'); return Expr.Binary(l, op, r);
                             });
-                        } else if (Std.is(v1, String) && Std.is(v2, String)) {
+                        } else if (Std.isOfType(v1, String) && Std.isOfType(v2, String)) {
                             Expr.Literal((v1 :String) + (v2 :String));
                         } else {
                             Expr.Binary(l, op, r);
@@ -61,7 +61,7 @@ class Optimizer {
                 var l = optimizeExpr(left);
                 var r = optimizeExpr(right);
                 return switch [l, r] {
-                    case [Expr.Literal(v1), Expr.Literal(v2)] if (Std.is(v1, Bool) && Std.is(v2, Bool)):
+                    case [Expr.Literal(v1), Expr.Literal(v2)] if (Std.isOfType(v1, Bool) && Std.isOfType(v2, Bool)):
                         Expr.Literal(switch op.type {
                             case And: (v1 :Bool) && (v2 :Bool);
                             case Or: (v1 :Bool) || (v2 :Bool);

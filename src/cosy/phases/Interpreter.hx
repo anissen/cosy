@@ -34,9 +34,9 @@ class Interpreter {
                 evaluate(e);
             case For(keyword, name, from, to, body):
                 var fromVal = evaluate(from);
-                if (!Std.is(fromVal, Float)) Cosy.error(keyword, 'Number expected in "from" clause of loop.');
+                if (!Std.isOfType(fromVal, Float)) Cosy.error(keyword, 'Number expected in "from" clause of loop.');
                 var toVal = evaluate(to);
-                if (!Std.is(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
+                if (!Std.isOfType(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 try {
                     for (counter in (fromVal :Int)...(toVal :Int)) {
@@ -101,7 +101,7 @@ class Interpreter {
                 
                 var value:Any = uninitialized;
                 if (init != null) value = evaluate(init);
-                if (Std.is(value, StructInstance)) {
+                if (Std.isOfType(value, StructInstance)) {
                     value = (value: StructInstance).clone();
                 }
                 environment.define(name.lexeme, value);
@@ -135,13 +135,13 @@ class Interpreter {
                     case PlusEqual:
                         var left = lookUpVariable(name, expr);
                         var right = evaluate(value);
-                        if (Std.is(left, Float) && Std.is(right, Float))
+                        if (Std.isOfType(left, Float) && Std.isOfType(right, Float))
                             (left:Float) + (right:Float);
-                        else if (Std.is(left, Float) && Std.is(right, String))
+                        else if (Std.isOfType(left, Float) && Std.isOfType(right, String))
                             (left:Float) + (right:String);
-                        else if (Std.is(left, String) && Std.is(right, Float))
+                        else if (Std.isOfType(left, String) && Std.isOfType(right, Float))
                             (left:String) + (right:Float);
-                        else if (Std.is(left, String) && Std.is(right, String))
+                        else if (Std.isOfType(left, String) && Std.isOfType(right, String))
                             (left:String) + (right:String);
                         else throw new RuntimeError(op, 'Operands cannot be concatinated.');
                     case MinusEqual:
@@ -199,13 +199,13 @@ class Interpreter {
                         checkNumberOperands(op, left, right);
                         (left:Float) * (right:Float);
                     case Plus:
-                        if (Std.is(left, Float) && Std.is(right, Float))
+                        if (Std.isOfType(left, Float) && Std.isOfType(right, Float))
                             (left:Float) + (right:Float);
-                        else if (Std.is(left, Float) && Std.is(right, String))
+                        else if (Std.isOfType(left, Float) && Std.isOfType(right, String))
                             (left:Float) + (right:String);
-                        else if (Std.is(left, String) && Std.is(right, Float))
+                        else if (Std.isOfType(left, String) && Std.isOfType(right, Float))
                             (left:String) + (right:Float);
-                        else if (Std.is(left, String) && Std.is(right, String))
+                        else if (Std.isOfType(left, String) && Std.isOfType(right, String))
                             (left:String) + (right:String);
                         else throw new RuntimeError(op, 'Operands cannot be concatinated.');
                     case Greater:
@@ -227,11 +227,11 @@ class Interpreter {
             case Call(callee, paren, args):
                 var callee = evaluate(callee);
                 var args = args.map(evaluate);
-                if (!Std.is(callee, Callable)) {
+                if (!Std.isOfType(callee, Callable)) {
                     throw new RuntimeError(paren, 'Can only call functions.');
                 } else {
                     var func:Callable = callee;
-                    if (!Std.is(func, Cosy.ForeignFunction)) {
+                    if (!Std.isOfType(func, Cosy.ForeignFunction)) {
                         var arity = func.arity();
                         if (args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
                     }
@@ -240,15 +240,15 @@ class Interpreter {
             case Get(obj, name):
                 var obj = evaluate(obj);
                 
-                if (Std.is(obj, Array)) return arrayGet(obj, name);
-                else if (Std.is(obj, StructInstance)) (obj :StructInstance).get(name);
-                else if (Std.is(obj, String)) return stringGet(obj, name);
+                if (Std.isOfType(obj, Array)) return arrayGet(obj, name);
+                else if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).get(name);
+                else if (Std.isOfType(obj, String)) return stringGet(obj, name);
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 // TODO: Should also handle assignment operators: +=, -=, /=, *=
                 var obj = evaluate(obj);
                 var value = evaluate(value);
-                if (Std.is(obj, StructInstance)) (obj :StructInstance).set(name, value);
+                if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).set(name, value);
                 else throw new RuntimeError(name, 'Only instances have fields');
                 value;
             case Grouping(e):
@@ -259,7 +259,7 @@ class Interpreter {
                 lookUpVariable(name, expr);
             case StructInit(name, decls):
                 var structObj :StructInstance = lookUpVariable(name, expr);
-                if (!Std.is(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
+                if (!Std.isOfType(structObj, StructInstance)) throw new RuntimeError(name, 'Struct initializer on non-struct object.');
                 structObj = structObj.clone();
                 for (decl in decls) {
                     switch decl {
@@ -307,7 +307,7 @@ class Interpreter {
 
     function isTruthy(v :Any):Bool {
         if (v == null) return false;
-        if (Std.is(v, Bool)) return v;
+        if (Std.isOfType(v, Bool)) return v;
         return true;
     }
 
@@ -318,12 +318,12 @@ class Interpreter {
     }
 
     function checkNumberOperand(op:Token, operand:Any) {
-        if (Std.is(operand, Float)) return;
+        if (Std.isOfType(operand, Float)) return;
         throw new RuntimeError(op, 'Operand must be a number');
     }
 
     function checkNumberOperands(op:Token, left:Any, right:Any) {
-        if (Std.is(left, Float) && Std.is(right, Float)) return;
+        if (Std.isOfType(left, Float) && Std.isOfType(right, Float)) return;
         throw new RuntimeError(op, 'Operand must be a number');
     }
 
