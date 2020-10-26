@@ -104,6 +104,7 @@ fun x() { print "hej" }
 - [ ] Find a way to be able to parse mutually recursive functions that are not "late bound"
 - [ ] Just for fun: Make a version of "generative grammar" that can spit out Cosy code and format that code using `--prettyprint`
 - [x] Drop the REPL?
+- [x] Suggest variables/functions when misspelling variables/functions
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

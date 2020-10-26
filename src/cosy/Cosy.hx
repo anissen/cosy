@@ -2,6 +2,7 @@ package cosy;
 
 import cosy.phases.*;
 import haxe.Timer;
+import haxe.io.Path;
 
 #if sys
 import sys.io.File;
@@ -77,7 +78,20 @@ Options:
 
         var file = args[args.length - 1];
         if (!sys.FileSystem.exists(file)) {
-            Sys.println('Source file not found: "$file"');
+            var message = 'Source file not found: "$file".';
+
+            var dir = Path.directory(file);
+            var filename = Path.withoutDirectory(file);
+            var files = sys.FileSystem.readDirectory(dir).filter(f -> !sys.FileSystem.isDirectory(Path.join([dir, f])));
+            var bestMatches = EditDistance.bestMatches(filename, files);
+            if (bestMatches.length > 0) {
+                bestMatches = bestMatches.map(m -> '"${Path.join([dir, filename])}"');
+                var lastMatch = bestMatches.pop();
+                var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
+                message += ' Did you mean $formattedMatches?';
+            }
+
+            Sys.println(message);
             Sys.exit(64);
         }
 
