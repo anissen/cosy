@@ -1,1 +1,1 @@
-Error at "a": Non-mutable variables must be initialized.
+[line 1] Error at "a": Non-mutable variables must be initialized.
