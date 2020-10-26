@@ -20,6 +20,7 @@ class Cosy {
     static var outputJavaScript = false;
     static var validateOnly = false;
     static var outputTimes = true; // TODO: Set to true for testing purposes, should be false by default
+    static var noColors = false;
     public static var strict = false;
 
     static function main() {
@@ -45,6 +46,7 @@ class Cosy {
                 case '--strict': strict = true;
                 case '--validate-only': validateOnly = true;
                 case '--times': outputTimes = true;
+                case '--no-colors': noColors = true;
                 case _: argErrors.push(arg);
             }
         }
@@ -62,7 +64,8 @@ Options:
 --javascript     Prints the corresponding JavaScript code.
 --strict         Enable strict enforcing of types.
 --validate-only  Only perform code validation.
---times          Output time spent in each phase.'
+--times          Output time spent in each phase.
+--no-colors      Disable colors in log output.'
             );
             Sys.exit(64);
         }
@@ -171,13 +174,14 @@ Options:
         var end = Timer.stamp();
         var duration = (end - measureStarts[phase]) * 1000;
         while (phase.length < 15) phase += ' ';
-        measureOutput += '\n· $phase took\t${round2(duration, 3)} ms';
+        measureOutput += '\n· ';
+        measureOutput += color('$phase took\t${round2(duration, 3)} ms', Misc);
     }
     
     @:expose
-    public static function run(source:String) {
+    public static function run(source :String) {
         hadError = false;
-        measureOutput = 'Times:';
+        measureOutput = color('Times:', Misc);
 
         var start = Timer.stamp();
 
@@ -258,12 +262,13 @@ Options:
 
             var end = Timer.stamp();
             var totalDuration = (end - start) * 1000;
-            println('Total: ${round2(totalDuration, 3)} ms');
+            println(color('Total: ${round2(totalDuration, 3)} ms', Misc));
         }
     }
 
     static function reportWarning(line:Int, where:String, message:String) {
-        println('[line $line] Warning $where: $message');
+        var msg = '[line $line] Warning $where: $message';
+        println(color(msg, Warning));
     }
 
     public static function warning(data:ErrorData, message:String) {
@@ -275,8 +280,8 @@ Options:
     }
 
     static function report(line:Int, where:String, message:String) {
-        // println('\033[1;31m[line $line] Error $where: $message\033[0m');
-        println('[line $line] Error $where: $message');
+        var msg = '[line $line] Error $where: $message';
+        println(color(msg, Error));
         hadError = true;
     }
 
@@ -289,9 +294,25 @@ Options:
     }
 
     public static function runtimeError(e:RuntimeError) {
-        println('[line ${e.token.line}] Runtime Error: ${e.message}');
+        var msg = '[[line ${e.token.line}] Runtime Error: ${e.message}';
+        println(color(msg, Error));
         hadRuntimeError = true;
     }
+
+    static function color(text :String, color :Color) {
+        if (noColors) return text;
+        return switch color {
+            case Error: '\033[1;31m$text\033[0m';
+            case Warning: '\033[0;33m$text\033[0m';
+            case Misc: '\033[0;35m$text\033[0m';
+        }
+    }
+}
+
+enum Color {
+    Error;
+    Warning;
+    Misc;
 }
 
 enum ErrorDataType {
