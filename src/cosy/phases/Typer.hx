@@ -34,17 +34,17 @@ class Typer {
         variableTypes.set('random', Function([], Number));
 	}
 	
-	public inline function type(stmts:Array<Stmt>) {
+	public inline function type(stmts:Array<Stmt>): Void {
         typeStmts(stmts);
 	}
 
-	function typeStmts(stmts:Array<Stmt>) {
+	inline function typeStmts(stmts:Array<Stmt>) {
         for (stmt in stmts) {
             typeStmt(stmt);
         }
 	}
 
-    function typeExprs(exprs:Array<Expr>) {
+    inline function typeExprs(exprs:Array<Expr>) {
         for (expr in exprs) {
             typeExpr(expr);
         }

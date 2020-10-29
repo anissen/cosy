@@ -105,6 +105,7 @@ fun x() { print "hej" }
 - [ ] Just for fun: Make a version of "generative grammar" that can spit out Cosy code and format that code using `--prettyprint`
 - [x] Drop the REPL?
 - [x] Suggest variables/functions when misspelling variables/functions
+- [ ] Use more `final` variables and `inline` functions (https://haxe.org/manual/class-field-inline.html)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

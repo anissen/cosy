@@ -1,10 +1,10 @@
 package cosy.phases;
 
 class Interpreter {
-    final globals:Environment;
+    final globals: Environment;
     final locals = new Locals();
 
-    var environment:Environment;
+    var environment: Environment;
     static final uninitialized :Any = {};
 
     public function new() {
@@ -33,9 +33,9 @@ class Interpreter {
             case Expression(e):
                 evaluate(e);
             case For(keyword, name, from, to, body):
-                var fromVal = evaluate(from);
+                final fromVal = evaluate(from);
                 if (!Std.isOfType(fromVal, Float)) Cosy.error(keyword, 'Number expected in "from" clause of loop.');
-                var toVal = evaluate(to);
+                final toVal = evaluate(to);
                 if (!Std.isOfType(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 try {
@@ -47,8 +47,8 @@ class Interpreter {
                     }
                 } catch(err: Break) {}
             case ForArray(name, array, body):
-                var arr :Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
-                var env = new Environment(environment);
+                final arr :Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
+                final env = new Environment(environment);
                 try {
                     for (elem in arr) {
                         env.define(name.lexeme, elem);
@@ -58,7 +58,7 @@ class Interpreter {
                     }
                 } catch (err: Break) {}
             case ForCondition(cond, body):
-                var env = new Environment(environment);
+                final env = new Environment(environment);
                 try {
                     while(cond != null ? isTruthy(evaluate(cond)) : true) {
                         try {
@@ -83,15 +83,15 @@ class Interpreter {
                 throw new Return(value);
             case Struct(name, declarations):
                 environment.define(name.lexeme, null);
-                var previousEnv = environment;
+                final previousEnv = environment;
                 environment = new Environment(environment);
-                var fields:Map<String, Any> = new Map();
+                final fields:Map<String, Any> = new Map();
                 for (decl in declarations) switch decl {
                     case Var(name, type, init, mut, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
                     case _: // should never happen
                 }
                 environment = previousEnv;
-                var struct = new StructInstance(name, fields);
+                final struct = new StructInstance(name, fields);
                 environment.assign(name, struct);
             case Var(name, type, init, mut, foreign):
                 if (foreign) {
@@ -112,8 +112,8 @@ class Interpreter {
         locals.set(expr, depth);
     }
 
-    public function executeBlock(statements:Array<Stmt>, environment:Environment) {
-        var previous = this.environment;
+    public function executeBlock(statements: Array<Stmt>, environment: Environment) {
+        final previous = this.environment;
         try {
             this.environment = environment;
             for(statement in statements) execute(statement);
@@ -133,8 +133,8 @@ class Interpreter {
                 var value: Any = switch op.type {
                     case Equal: evaluate(value);
                     case PlusEqual:
-                        var left = lookUpVariable(name, expr);
-                        var right = evaluate(value);
+                        final left = lookUpVariable(name, expr);
+                        final right = evaluate(value);
                         if (Std.isOfType(left, Float) && Std.isOfType(right, Float))
                             (left:Float) + (right:Float);
                         else if (Std.isOfType(left, Float) && Std.isOfType(right, String))
@@ -145,18 +145,18 @@ class Interpreter {
                             (left:String) + (right:String);
                         else throw new RuntimeError(op, 'Operands cannot be concatinated.');
                     case MinusEqual:
-                        var left = lookUpVariable(name, expr);
-                        var right = evaluate(value);
+                        final left = lookUpVariable(name, expr);
+                        final right = evaluate(value);
                         checkNumberOperands(op, left, right);
                         (left: Float) - (right: Float);
                     case SlashEqual:
-                        var left = lookUpVariable(name, expr);
-                        var right = evaluate(value);
+                        final left = lookUpVariable(name, expr);
+                        final right = evaluate(value);
                         checkNumberOperands(op, left, right);
                         (left: Float) / (right: Float);
                     case StarEqual:
-                        var left = lookUpVariable(name, expr);
-                        var right = evaluate(value);
+                        final left = lookUpVariable(name, expr);
+                        final right = evaluate(value);
                         checkNumberOperands(op, left, right);
                         (left: Float) * (right: Float);
                     case _: throw 'error';
@@ -169,14 +169,14 @@ class Interpreter {
             case Literal(v):
                 v;
             case Logical(left, op, right):
-                var left = evaluate(left);
+                final left = evaluate(left);
                 switch op.type {
                     case Or if (isTruthy(left)): left;
                     case And if (!isTruthy(left)): left;
                     case _: evaluate(right);
                 }
             case Unary(op, right):
-                var right = evaluate(right);
+                final right = evaluate(right);
                 switch op.type {
                     case Bang: !isTruthy(right);
                     case Minus:
@@ -185,8 +185,8 @@ class Interpreter {
                     case _: null; // unreachable
                 }
             case Binary(left, op, right):
-                var left:Any = evaluate(left);
-                var right:Any = evaluate(right);
+                final left:Any = evaluate(left);
+                final right:Any = evaluate(right);
 
                 switch op.type {
                     case Minus:
@@ -225,20 +225,20 @@ class Interpreter {
                     case _: null; // unreachable
                 }
             case Call(callee, paren, args):
-                var callee = evaluate(callee);
-                var args = args.map(evaluate);
+                final callee = evaluate(callee);
+                final args = args.map(evaluate);
                 if (!Std.isOfType(callee, Callable)) {
                     throw new RuntimeError(paren, 'Can only call functions.');
                 } else {
-                    var func:Callable = callee;
+                    final func:Callable = callee;
                     if (!Std.isOfType(func, Cosy.ForeignFunction)) {
-                        var arity = func.arity();
+                        final arity = func.arity();
                         if (args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
                     }
                     func.call(this, args);
                 }
             case Get(obj, name):
-                var obj = evaluate(obj);
+                final obj = evaluate(obj);
                 
                 if (Std.isOfType(obj, Array)) return arrayGet(obj, name);
                 else if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).get(name);
@@ -246,8 +246,8 @@ class Interpreter {
                 else throw new RuntimeError(name, 'Only instances have properties');
             case Set(obj, name, value):
                 // TODO: Should also handle assignment operators: +=, -=, /=, *=
-                var obj = evaluate(obj);
-                var value = evaluate(value);
+                final obj = evaluate(obj);
+                final value = evaluate(value);
                 if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).set(name, value);
                 else throw new RuntimeError(name, 'Only instances have fields');
                 value;
@@ -297,7 +297,7 @@ class Interpreter {
     }
 
     function lookUpVariable(name: Token, expr: Expr) :Any {
-        var value = switch locals.get(expr) {
+        final value = switch locals.get(expr) {
             case null: globals.get(name);
             case distance: environment.getAt(distance, name.lexeme);
         }
@@ -305,29 +305,29 @@ class Interpreter {
         return value;
     }
 
-    function isTruthy(v :Any):Bool {
+    inline function isTruthy(v :Any):Bool {
         if (v == null) return false;
         if (Std.isOfType(v, Bool)) return v;
         return true;
     }
 
-    function isEqual(a :Any, b :Any) :Bool {
+    inline function isEqual(a :Any, b :Any) :Bool {
         if (a == null && b == null) return true;
         if (a == null) return false;
         return a == b;
     }
 
-    function checkNumberOperand(op:Token, operand:Any) {
+    inline function checkNumberOperand(op:Token, operand:Any) {
         if (Std.isOfType(operand, Float)) return;
         throw new RuntimeError(op, 'Operand must be a number');
     }
 
-    function checkNumberOperands(op:Token, left:Any, right:Any) {
+    inline function checkNumberOperands(op:Token, left:Any, right:Any) {
         if (Std.isOfType(left, Float) && Std.isOfType(right, Float)) return;
         throw new RuntimeError(op, 'Operand must be a number');
     }
 
-    function stringify(v: Any) :String {
+    inline function stringify(v: Any) :String {
         if (v == null) return 'nil';
         return '$v';
     }

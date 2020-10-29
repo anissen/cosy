@@ -3,8 +3,8 @@ package cosy.phases;
 import cosy.TokenType;
 
 class Scanner {
-	final source:String;
-	final tokens:Array<Token> = [];
+	final source: String;
+	final tokens: Array<Token> = [];
 	
 	static final keywords = [
 		'and' => And,
@@ -36,12 +36,12 @@ class Scanner {
 	var current = 0;
 	var line = 1;
 	
-	public function new(source) {
+	public function new(source: String) {
 		this.source = source;
 	}
 	
 	public function scanTokens() {
-		while(!isAtEnd()) {
+		while (!isAtEnd()) {
 			start = current;
 			scanToken();
 		}
@@ -49,8 +49,8 @@ class Scanner {
 		return tokens;
 	}
 	
-	function scanToken() {
-		var c = advance();
+	inline function scanToken() {
+		final c = advance();
 		switch c {
 			case '('.code: addToken(LeftParen);
 			case ')'.code: addToken(RightParen);
@@ -91,8 +91,8 @@ class Scanner {
 	function identifier() {
 		while(isAlphaNumeric(peek())) advance();
 		
-		var text = source.substring(start, current);
-		var type = switch keywords[text] {
+        final text = source.substring(start, current);
+		final type: TokenType = switch keywords[text] {
 			case null: Identifier;
 			case v: v;
 		}
@@ -131,17 +131,17 @@ class Scanner {
 		addToken(Number, Std.parseFloat(source.substring(start, current)));
 	}
 	
-	function isDigit(c:Int) {
+	inline function isDigit(c:Int) {
 		return c >= '0'.code && c <= '9'.code;
 	}
 	
-	function isAlpha(c:Int) {
+	inline function isAlpha(c:Int) {
 		return (c >= 'a'.code && c <= 'z'.code) ||
 		       (c >= 'A'.code && c <= 'Z'.code) ||
 		        c == '_'.code;
 	}
 
-	function isAlphaNumeric(c:Int) {
+	inline function isAlphaNumeric(c:Int) {
 		return isAlpha(c) || isDigit(c);
 	}
 	
@@ -152,17 +152,17 @@ class Scanner {
 		return true;
 	}
 	
-	function peek() {
+	inline function peek() {
 		if (isAtEnd()) return 0;
 		return source.charCodeAt(current);
 	}
 	
-	function peekNext() {
+	inline function peekNext() {
 		if (current + 1 >= source.length) return 0;
 		return source.charCodeAt(current + 1);
     }
     
-    function peekPrevious() {
+    inline function peekPrevious() {
 		if (current - 1 >= source.length) return 0;
 		return source.charCodeAt(current - 1);
 	}
@@ -172,12 +172,11 @@ class Scanner {
 		return source.charCodeAt(current - 1);
 	}
 	
-	function addToken(type:TokenType, ?literal:Any) {
-		var text = source.substring(start, current);
-		tokens.push(new Token(type, text, literal, line));
+	inline function addToken(type: TokenType, ?literal: Any) {
+		tokens.push(new Token(type, source.substring(start, current), literal, line));
 	}
 	
-	function isAtEnd() {
+	inline function isAtEnd() {
 		return current >= source.length;
 	}
 }
