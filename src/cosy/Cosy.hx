@@ -235,20 +235,23 @@ Options:
 
         startMeasure('Code generator');
         var codeGenerator = new CodeGenerator();
-        var bytecode = codeGenerator.generate(statements);
+        var bytecodeOutput = codeGenerator.generate(statements);
+        var bytecode = bytecodeOutput.bytecode;
         endMeasure('Code generator');
         if (outputBytecode) {
-            printlines(bytecode);
+            // printlines(bytecode);
+            // printlines([bytecode.toString()]);
             return;
         }
-        var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
+        // var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
         trace('GENERATED CODE:');
-        trace('------------------\n' + formattedBytecode.join('\n'));
-        trace('------------------');
+        printlines([bytecode.toString()]);
+        // trace('------------------\n' + formattedBytecode.join('\n'));
+        // trace('------------------');
 
         startMeasure('VM interpreter');
         var vm = new VM();
-        vm.run(bytecode);
+        vm.run(bytecodeOutput);
         endMeasure('VM interpreter');
 
         // trace('AST interpreter');

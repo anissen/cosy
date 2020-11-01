@@ -28,6 +28,7 @@ fun x() { print "hej" }
   - [ ] Struct names uses PascalCase
 - [ ] Optimizer
   - [ ] Optimize usages of literals in `var`'s. They're constants in pratice.
+  - [ ] Optimize e.g. `x + 2 + 3 + 4 + 5 + 6` to `x + 20`
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
 - [ ] Replace classes with 

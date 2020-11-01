@@ -1,246 +1,190 @@
 package cosy;
 
+import cosy.phases.CodeGenerator.ByteCodeOpValue;
+import haxe.ds.Vector;
+
 enum Value {
     Text(s: String);
     Number(n: Float);
     Boolean(b: Bool);
-    Array(a: Array<Value>);
-    Function(f: String);
-    // Op(o: String);
-}
-
-typedef FunctionObj = {
-    name: String,
-    // ...
-}
-
-typedef CallFrame = {
-    // function: FunctionObj,
-    ip: Int,
-    slots: Array<Value>, // relative indexes into the values on the stack (e.g. for finding locals in functions)
-    ?returnAddress: Int,
 }
 
 class VM {
     var stack: Array<Value>;
-    var callFrames: Array<CallFrame>;
-    var index: Int;
-    var bytecode: Array<String>; // TODO: Should probably be something like { code: String, line: Int, (module: String) }
-    var variables: Map<String, Value>;
 
-    var functions: Map<String, CallFrame>; // TODO: Temp
-    var currentFunction: String; // TODO: Temp
-
-    var outputText: String;
+    var ip: Int;
 
     public function new() {
 
     }
 
-    public function run(program: Array<String>) {
+    public function run(bytecode: cosy.phases.CodeGenerator.Output) {
         // TODO: The global environment should also be treated like a function to get consistent behavior (see http://www.craftinginterpreters.com/calls-and-functions.html)
-
-        functions = new Map(); // TODO: Should probably be a stack
-        currentFunction = '';
-        outputText = '';
-
-        bytecode = program;
+    
+        var constantStrings = bytecode.strings;
+        var program = bytecode.bytecode;
         stack = [];
-        callFrames = [{ ip: 0, slots: [] }];
-        index = 0; // TODO: Should be `ip`
-        variables = new Map();
-        var foundMain = false;
-        while (index < bytecode.length) {
-            var startIndex = index;
-            var code = bytecode[index++];
-            var endIndex = index;
-            var hasJumped = false;
-            if (!foundMain) {
-                if (code == 'main:') {
-                    foundMain = true;
-                } else if (code.substr(0, 3) == 'fn ') {
-                    functions[code.substr(3)] = { ip: index, slots: [] };
-                }
-                continue;
-            }
-            var frame = callFrames[callFrames.length - 1];
-            /*
-            TODO:
-            Convert bytecode into the form of [[instruction, args...], [instruction, args..], ...]
-            and do:
-                switch (code) {
-                    case ['jump', length]: ...
-                }
-            or better yet:
-                switch (code) {
-                    case [OP_JUMP, length]: ...
-                }
-            or (maybe) even better:
-                var opcodes = new Map();
-                opcodes[OP_JUMP] = jump;
-                ...
-                var operation = opcodes[code]
-                operation(argumentArray)
-            */
-            switch code { // TODO: Use bytes/ints instead of strings. // TODO: Use a HashMap instead of a switch
-                case 'label': bytecode[index++];
-                case 'push_true': push(Boolean(true));
-                case 'push_false': push(Boolean(false));
-                case 'push_num': push(Number(Std.parseFloat(bytecode[index++])));
-                case 'push_str': push(Text(bytecode[index++]));
-                case 'push_fn': push(Function(bytecode[index++]));
-                case 'to_array': toArray();
-                case 'call': call();
-                case 'op_print': opPrint();
-                case 'op_equals': opEquals();
-                case 'op_inc': opInc();
-                case 'op_add': opAdd();
-                case 'op_sub': push(Number(popNumber() - popNumber()));
-                case 'op_mult': push(Number(popNumber() * popNumber()));
-                case 'op_div': push(Number(popNumber() / popNumber()));
-                case 'op_negate': push(Number(-popNumber()));
-                case 'op_less': push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
-                case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
-                case 'op_greater': push(Boolean(popNumber() < popNumber()));
-                case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
-                case 'op_return': index = functions[currentFunction].returnAddress;
-                case 'op_return_value': 
-                    index = functions[currentFunction].returnAddress;
-                    push(pop());
-                case 'load_local':
-                    var slot = Std.int(popNumber());
-                    push(frame.slots[slot]);
-                case 'save_local':
-                    var slot = Std.int(popNumber());
-                    frame.slots[slot] = peek();
-                case 'save_var': variables.set(bytecode[index++], pop());
-                case 'load_var': push(variables.get(bytecode[index++]));
-                // case 'load_array_index':
-                case 'jump':
-                    var offset = Std.parseInt(bytecode[index++]);
-                    endIndex = index;
-                    frame.ip += offset;
-                    index += offset;
-                    hasJumped = true;
-                case 'jump_if_not':
-                    var condition = popBoolean(); // TODO: Condition could be an expr!
-                    var offset = Std.parseInt(bytecode[index++]);
-                    endIndex = index;
-                    if (!condition) index += offset; // skip the 'then' branch
-                    hasJumped = true;
+        var slots = new Vector(255);
+        ip = 0;
+        final sizeFloat = 4;
+        var pos = 0;
+        while (pos < program.length) {
+            var code = program.get(pos++);
+            var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
+            switch code {
+                case ByteCodeOpValue.PushTrue: push(Boolean(true));
+                case ByteCodeOpValue.PushFalse: push(Boolean(false));
+                // case 'push_num': push(Number(Std.parseFloat(program[ip++])));
+                case ByteCodeOpValue.PushNumber: 
+                    push(Number(program.getFloat(pos)));
+                    pos += sizeFloat;
+                // case 'push_str': push(Text(program[ip++]));
+                case ByteCodeOpValue.ConstantString:
+                    var index = program.get(pos++);
+                    push(Text(constantStrings[index]));
+                case ByteCodeOpValue.Print: opPrint();
+                case ByteCodeOpValue.Pop: popMultiple(program.get(pos++));
+                case ByteCodeOpValue.GetLocal: 
+                    final slot = program.get(pos++);
+                    slots[slot] = peek();
+                    push(slots[slot]);
+                case 18: opEquals();
+                case 19: push(Number(popNumber() + popNumber()));
+                // case 'op_sub': push(Number(popNumber() - popNumber()));
+                // case 'op_mult': push(Number(popNumber() * popNumber()));
+                // case 'op_div': push(Number(popNumber() / popNumber()));
+                // case 'op_negate': push(Number(-popNumber()));
+                // case 'op_less': push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
+                // case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
+                // case 'op_greater': push(Boolean(popNumber() < popNumber()));
+                // case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
+                // case 'load_local':
+                //     var slot = Std.int(popNumber());
+                //     push(frame.slots[slot]);
+                // case 'save_local':
+                //     var slot = Std.int(popNumber());
+                //     frame.slots[slot] = peek();
+                // case 'save_var': variables.set(bytecode[index++], pop());
+                // case 'load_var': push(variables.get(bytecode[index++]));
                 case _: trace('Unknown bytecode: "$code".');
             }
-            trace('  ' + bytecode.slice(startIndex, (hasJumped ? endIndex : index)) + '\t\t## Index: $index, Stack: $stack, Vars: $variables');
-            // trace('## Stack: $stack, Vars: $variables');
+            trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
         }
 
-        trace('VM output: $outputText');
+
+        // while (ip < program.length) {
+        //     var code = program[ip++];
+        //     var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
+        //     switch code {
+        //         case 'push_true': push(Boolean(true));
+        //         case 'push_false': push(Boolean(false));
+        //         // case 'push_num': push(Number(Std.parseFloat(program[ip++])));
+        //         case 'push_num 2': push(Number(2));
+        //         case 'push_num 3': push(Number(3));
+        //         // case 'push_str': push(Text(program[ip++]));
+        //         case 'constant_str':
+        //             final str = program[ip];
+        //             // constantStrings.push(str);
+        //             push(Text(program[ip++]));
+        //         case 'op_print': opPrint();
+        //         case 'pop': pop();
+        //         case 'pop 2': popMultiple(2);
+        //         case 'get_local 0': 
+        //             final slot = 0;
+        //             slots[slot] = peek();
+        //             push(slots[slot]);
+        //         case 'get_local 1': 
+        //             final slot = 1;
+        //             slots[slot] = peek();
+        //             push(slots[slot]);
+        //         case 'op_equals': opEquals();
+        //         case 'op_add': push(Number(popNumber() + popNumber()));
+        //         case 'op_sub': push(Number(popNumber() - popNumber()));
+        //         case 'op_mult': push(Number(popNumber() * popNumber()));
+        //         case 'op_div': push(Number(popNumber() / popNumber()));
+        //         case 'op_negate': push(Number(-popNumber()));
+        //         case 'op_less': push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
+        //         case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
+        //         case 'op_greater': push(Boolean(popNumber() < popNumber()));
+        //         case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
+        //         // case 'load_local':
+        //         //     var slot = Std.int(popNumber());
+        //         //     push(frame.slots[slot]);
+        //         // case 'save_local':
+        //         //     var slot = Std.int(popNumber());
+        //         //     frame.slots[slot] = peek();
+        //         // case 'save_var': variables.set(bytecode[index++], pop());
+        //         // case 'load_var': push(variables.get(bytecode[index++]));
+        //         case _: trace('Unknown bytecode: "$code".');
+        //     }
+        //     trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
+        // }
     }
 
-    function toArray() {
-        var length = Std.parseInt(bytecode[index++]);
-        var arr = popReversed(length);
-        return push(Array(arr));
-    }
-
-    function call() {
-        // TODO: Make a frame with arguments
-        var argumentCount = Std.parseInt(bytecode[index++]);
-        var arguments = popReversed(argumentCount);
-        trace('[call] arguments: $arguments');
-        var functionName = switch pop() { // TODO: Function can also be an anonymous function on the stack
-            case Function(f): f;
-            case _: throw 'error';
-        }
-        trace('[call] function: $functionName');
-        var fun = functions[functionName];
-        fun.returnAddress = index;
-        index = fun.ip;
-        currentFunction = functionName;
-
-        // TODO: Needs to record the index of the first local slot (to be able to reference other slots with relative indexes) (that is, the call frame)
-        // TODO: Store `index` as the return address
-        return 0;
-    }
-
-    function opPrint() {
-        var value = pop();
-        switch value {
+    inline function opPrint() {
+        switch pop() {
             case Text(s): trace(s);
             case Boolean(b): trace(b);
             case Number(n): trace(n);
-            case Array(a): trace(a.map(unwrapValue));
-            case Function(f): trace('<fn $f>');
+            // case Array(a): trace(a.map(unwrapValue));
+            // case Function(f): trace('<fn $f>');
         }
-        outputText += '\n' + unwrapValue(value);
+        // outputText += '\n' + unwrapValue(value);
     }
 
-    function opEquals() {
-        var a = pop();
-        var b = pop();
-        push(Boolean(a.equals(b)));
+    inline function opEquals() {
+        push(Boolean(pop().equals(pop())));
     }
+    
+    // function opInc() {
+    //     var variable = bytecode[ip++];
+    //     switch variables.get(variable) {
+    //         case Number(n): variables.set(variable, Number(n + 1));
+    //         case _: throw 'error';
+    //     }
+    // }
 
-    function unwrapValue(value: Value): Any { // TODO: Evil Any!
-        return switch value {
-            case Text(s): s;
-            case Boolean(b): b;
-            case Number(n): n;
-            case Array(a): a.map(unwrapValue);
-            case Function(f): f;
-        }
-    }
-
-    function opInc() {
-        var variable = bytecode[index++];
-        switch variables.get(variable) {
-            case Number(n): variables.set(variable, Number(n + 1));
-            case _: throw 'error';
-        }
-    }
-
-    function opAdd() {
-        var value = switch [pop(), pop()] {
+    inline function opAdd() {
+        return push(switch [pop(), pop()] {
             case [Number(n1), Number(n2)]: Number(n1 + n2);
             case [Text(s1),   Text(s2)]:   Text(s1 + s2);
             case [Number(n1), Text(s2)]:   Text(n1 + s2);
             case [Text(s1),   Number(n2)]: Text(s1 + n2);
             case _: throw 'error';
-        }
-        return push(value);
+        });
     }
 
-    function push(value: Value) {
+    inline function push(value: Value) {
         return stack.push(value);
     }
 
-    function pop(): Value {
+    inline function pop(): Value {
         return stack.pop();
     }
+    
+    inline function popMultiple(count: Int) {
+        stack.splice(-count, count);
+    }
 
-    function peek(): Value {
+    inline function peek(): Value {
         return stack[stack.length - 1];
     }
 
-    function popReversed(count: Int): Array<Value> {
-        return stack.splice(-count, count);
-    }
-
-    function popNumber(): Float {
+    inline function popNumber(): Float {
         return switch pop() {
             case Number(n): n;
             case _: throw 'error';
         }
     }
 
-    function popText(): String {
+    inline function popText(): String {
         return switch pop() {
             case Text(s): s;
             case _: throw 'error';
         }
     }
 
-    function popBoolean(): Bool {
+    inline function popBoolean(): Bool {
         return switch pop() {
             case Boolean(b): b;
             case _: throw 'error';
