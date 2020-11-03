@@ -1,7 +1,7 @@
 package cosy;
 
 class EditDistance {
-    public static function bestMatches(word :String, otherWords :Array<String>, maxEditDistance :Int = 3) :Array<String> {
+    public static function bestMatches(word :String, otherWords :Array<String>, maxEditDistance :Int = 2) :Array<String> {
         var minEditDistance = maxEditDistance;
         var bestWords = [];
         for (other in otherWords) {
