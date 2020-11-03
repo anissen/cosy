@@ -1,0 +1,30 @@
+var push = 0
+var add = 1
+var sub = 2
+
+fn run(codes Array Num) {
+    mut stack Array Num = []
+    mut ip = 0
+    for ip < codes.length {
+        var op = codes.get(ip)
+        if op == push {
+            ip += 1
+            stack.push(codes.get(ip))
+        } else if op == add {
+            stack.push(stack.pop() + stack.pop())
+        } else if op == sub {
+            stack.push(stack.pop() - stack.pop())
+        } 
+        ip += 1
+    }
+    if stack.length > 0 print stack.pop()
+}
+
+var codes = [
+    push, 2,
+    push, 3,
+    add,
+    push, 8,
+    sub,
+]
+run(codes)
