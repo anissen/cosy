@@ -49,7 +49,10 @@ class VM {
                     slots[slot] = peek();
                     push(slots[slot]);
                 case 18: opEquals();
-                case 19: push(Number(popNumber() + popNumber()));
+                case 19: 
+                    var right = popNumber();
+                    var left  = popNumber();
+                    push(Number(left + right));
                 // case 'op_sub': push(Number(popNumber() - popNumber()));
                 // case 'op_mult': push(Number(popNumber() * popNumber()));
                 // case 'op_div': push(Number(popNumber() / popNumber()));
