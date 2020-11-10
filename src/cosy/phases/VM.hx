@@ -1,13 +1,25 @@
-package cosy;
+package cosy.phases;
 
 import cosy.phases.CodeGenerator.ByteCodeOpValue;
+import haxe.ds.GenericStack;
 import haxe.ds.Vector;
 
+using VM.ValueTools;
 enum Value {
     Text(s: String);
     Number(n: Float);
     Boolean(b: Bool);
 }
+
+class ValueTools {
+    static inline public function asNumber(value: Value) {
+        return switch (value) {
+            case Number(n): n;
+            case _: throw 'error';
+        }
+    }
+}
+
 
 class VM {
     var stack: Array<Value>;
@@ -22,15 +34,18 @@ class VM {
         // TODO: The global environment should also be treated like a function to get consistent behavior (see http://www.craftinginterpreters.com/calls-and-functions.html)
     
         var constantStrings = bytecode.strings;
+        var x :GenericStack<Int>;
         var program = bytecode.bytecode;
         stack = [];
         var slots = new Vector(255);
         ip = 0;
         final sizeFloat = 4;
         var pos = 0;
+        var output = '';
         while (pos < program.length) {
             var code = program.get(pos++);
-            var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
+            // trace('IP ${pos-1}: $code');
+            // var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
             switch code {
                 case ByteCodeOpValue.PushTrue: push(Boolean(true));
                 case ByteCodeOpValue.PushFalse: push(Boolean(false));
@@ -40,19 +55,27 @@ class VM {
                     pos += sizeFloat;
                 // case 'push_str': push(Text(program[ip++]));
                 case ByteCodeOpValue.ConstantString:
-                    var index = program.get(pos++);
+                    var index = program.get(pos);
+                    pos += 4;
                     push(Text(constantStrings[index]));
-                case ByteCodeOpValue.Print: opPrint();
+                case ByteCodeOpValue.Print: 
+                    output += asString(pop()) + '\n';
                 case ByteCodeOpValue.Pop: popMultiple(program.get(pos++));
                 case ByteCodeOpValue.GetLocal: 
                     final slot = program.get(pos++);
                     slots[slot] = peek();
                     push(slots[slot]);
-                case 18: opEquals();
-                case 19: 
-                    var right = popNumber();
-                    var left  = popNumber();
-                    push(Number(left + right));
+                case ByteCodeOpValue.JumpIfFalse:
+                    final offset = program.getInt32(pos);
+                    pos += 4;
+                    if (isFalsey(peek())) pos += offset;
+                // case 18: opEquals();
+                // case 19: 
+                //     var right = popNumber();
+                //     var left  = popNumber();
+                //     push(Number(left + right));
+                // case 31:
+                    
                 // case 'op_sub': push(Number(popNumber() - popNumber()));
                 // case 'op_mult': push(Number(popNumber() * popNumber()));
                 // case 'op_div': push(Number(popNumber() / popNumber()));
@@ -71,7 +94,10 @@ class VM {
                 // case 'load_var': push(variables.get(bytecode[index++]));
                 case _: trace('Unknown bytecode: "$code".');
             }
-            trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
+            // trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
+        }
+        if (output.length > 0) {
+            trace('\n$output');
         }
 
 
@@ -124,11 +150,11 @@ class VM {
         // }
     }
 
-    inline function opPrint() {
-        switch pop() {
-            case Text(s): trace(s);
-            case Boolean(b): trace(b);
-            case Number(n): trace(n);
+    inline function asString(value: Value): String {
+        return switch value {
+            case Text(s): s;
+            case Boolean(b): b ? 'true' : 'false';
+            case Number(n): Std.string(n);
             // case Array(a): trace(a.map(unwrapValue));
             // case Function(f): trace('<fn $f>');
         }
@@ -173,6 +199,15 @@ class VM {
         return stack[stack.length - 1];
     }
 
+    inline function isFalsey(value: Value): Bool {
+        return switch value {
+            case Number(n): n == 0;
+            case Boolean(b): !b;
+            case Text(s): false;
+        }
+    }
+
+    // TODO: Make this a static extension instead, asNumber()
     inline function popNumber(): Float {
         return switch pop() {
             case Number(n): n;

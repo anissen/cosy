@@ -249,6 +249,8 @@ Options:
         // trace('------------------\n' + formattedBytecode.join('\n'));
         // trace('------------------');
 
+        trace(Disassembler.disassemble(bytecode));
+
         startMeasure('VM interpreter');
         var vm = new VM();
         vm.run(bytecodeOutput);
