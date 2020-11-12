@@ -246,27 +246,49 @@ Information about using Cosy as stand-alone and integrated into other code as a 
 -->
 
 #### Using Haxe interpreter
-Build & run: `haxe -cp src --run cosy.Cosy [OPTIONS] [SOURCE_FILE]`.
+Run: `haxe -cp src --run cosy.Cosy [OPTIONS] [SOURCE_FILE]`.
 
 #### Using JavaScript
 Build: `haxe scripts/javascript.hxml`.
 
 Include in your HTML body: `<script src="cosy.js"></script>`.
 
-Run: `window.cosy.Cosy.run([SOURCE])`.
+Run: `window.cosy.Cosy.run("print 'hello javascript!'")`.
+
+#### Using Node
+Build: `haxe -main cosy.Cosy -cp src -js bin/node/cosy.js -lib hxnodejs`.
+
+Run: 
+```js
+const cosy = require("./bin/node/cosy.js").cosy.Cosy;
+cosy.run("print 'hello node!'");
+```
 
 #### Using Java
 Build: `haxe -cp src -main cosy.Cosy -java bin/java`.
 
 Run: `java -jar bin/java/cosy.jar [OPTIONS] [SOURCE_FILE]`.
 
-<!--
-#### Using C++
-_Coming soon_
+#### Using JVM
+Build: `haxe -cp src -main cosy.Cosy --jvm bin/jvm/Cosy.jar`.
 
-#### Using HashLink bytecode or C
-_Coming soon_
--->
+Run: `java -jar bin/jvm/Cosy.jar [OPTIONS] [SOURCE_FILE]`.
+
+#### Using C++
+Build: `haxe -main cosy.Cosy -cp src -cpp bin/cpp`
+
+Run: `./bin/cpp/Cosy [OPTIONS] [SOURCE_FILE]`.
+
+#### Using HashLink (bytecode or C)
+Build to bytecode: `haxe -main cosy.Cosy -cp src -hl bin/hl/Cosy.hl`
+
+Run from bytecode: `hl bin/hl/Cosy.hl`
+
+Build to C: `haxe -main cosy.Cosy -cp src -hl bin/hlc/build/Cosy.c`
+
+Compile: `gcc -O3 -o bin/hlc/Cosy -std=c11 -I bin/hlc/build bin/hlc/build/Cosy.c -lhl`
+
+Run: `./bin/hlc/Cosy [OPTIONS] [SOURCE_FILE]`
 
 
 ## Roadmap
