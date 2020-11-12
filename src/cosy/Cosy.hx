@@ -18,6 +18,7 @@ class Cosy {
     static var outputPrettyPrint = false;
     static var outputBytecode = false;
     static var outputJavaScript = false;
+    static var outputDisassembly = true; // TODO: Set to true for testing purposes, should be false by default
     static var validateOnly = false;
     static var outputTimes = true; // TODO: Set to true for testing purposes, should be false by default
     static var noColors = false;
@@ -42,6 +43,7 @@ class Cosy {
             switch arg {
                 case '--prettyprint': outputPrettyPrint = true;
                 case '--bytecode': outputBytecode = true;
+                case '--disassembly': outputDisassembly = true;
                 case '--javascript': outputJavaScript = true;
                 case '--strict': strict = true;
                 case '--validate-only': validateOnly = true;
@@ -61,6 +63,7 @@ class Cosy {
 Options:
 --prettyprint    Prints the formatted source.
 --bytecode       Prints the compiled Cosy bytecode.
+--disassembly    Pretty-print Cosy bytecode.
 --javascript     Prints the corresponding JavaScript code.
 --strict         Enable strict enforcing of types.
 --validate-only  Only perform code validation.
@@ -73,9 +76,10 @@ Options:
         var printCount = 0;
         if (outputPrettyPrint) printCount++;
         if (outputBytecode) printCount++;
+        if (outputDisassembly) printCount++;
         if (outputJavaScript) printCount++;
         if (printCount > 1) {
-            Sys.println('Only pass one of --prettyprint/--bytecode/--javascript\n');
+            Sys.println('Only pass one of --prettyprint/--bytecode/--disassembly/--javascript\n');
             Sys.exit(64);
         }
 
@@ -238,18 +242,13 @@ Options:
         var bytecodeOutput = codeGenerator.generate(statements);
         var bytecode = bytecodeOutput.bytecode;
         endMeasure('Code generator');
-        if (outputBytecode) {
-            // printlines(bytecode);
-            // printlines([bytecode.toString()]);
-            return;
+        
+        if (outputDisassembly) {
+            startMeasure('Disassembler');
+            var disassembly = Disassembler.disassemble(bytecode);
+            endMeasure('Disassembler');
+            printlines([disassembly]);
         }
-        // var formattedBytecode = [ for (index => code in bytecode) '$index: $code' ];
-        trace('GENERATED CODE:');
-        printlines([bytecode.toString()]);
-        // trace('------------------\n' + formattedBytecode.join('\n'));
-        // trace('------------------');
-
-        trace(Disassembler.disassemble(bytecode));
 
         startMeasure('VM interpreter');
         var vm = new VM();
