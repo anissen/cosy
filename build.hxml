@@ -4,8 +4,12 @@
 # -js bin/node/cosy.js
 # -lib hxnodejs
 
--java bin/java
+-dce full
+
+--jvm bin/jvm/Cosy.jar
+# -java bin/java
 # jvm: compilation is faster, executation is slower (at least for fibonacci)
--D jvm
+# -D jvm
 -D analyzer-optimize
 #--macro nullSafety("cosy", Loose)
+
