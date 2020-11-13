@@ -115,7 +115,8 @@ class CodeGenerator {
             case Block(statements):
                 var previousLocalsCounter = localsCounter;
                 genStmts(statements);
-                emit(Pop(localsCounter - previousLocalsCounter));
+                var pops = localsCounter - previousLocalsCounter;
+                if (pops > 0) emit(Pop(pops));
                 // for (_ in previousLocalsCounter...localsCounter) {
                 //     emit(Pop);
                 // }
