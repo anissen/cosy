@@ -7,9 +7,9 @@ class Disassembler {
         var output = '\n';
         var program = bytes;
         final sizeFloat = 4;
-        var ip = 0;
         var pos = 0;
         while (pos < program.length) {
+            var ipPos = pos;
             var code = program.get(pos++);
             var disassembly = switch code {
                 case ByteCodeOpValue.PushTrue: 'push_true';
@@ -28,11 +28,11 @@ class Disassembler {
                 case ByteCodeOpValue.JumpIfFalse:
                     final offset = program.getInt32(pos);
                     pos += 4;
-                    'jump_if_false ${offset}';
+                    final absolute = pos + offset;
+                    'jump_if_false $offset (=> $absolute)';
                 case _: '[Unknown bytecode: "$code"]';
             }
-            output += '$ip\t$disassembly\n';
-            ip++;
+            output += '$ipPos\t${pos - ipPos}B\t$disassembly\n';
         }
         return output;
     }
