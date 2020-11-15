@@ -46,6 +46,7 @@ class VM {
             var code = program.get(pos++);
             // trace('IP ${pos-1}: $code');
             // var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
+            
             switch code {
                 case ByteCodeOpValue.PushTrue: push(Boolean(true));
                 case ByteCodeOpValue.PushFalse: push(Boolean(false));
@@ -69,6 +70,9 @@ class VM {
                     final offset = program.getInt32(pos);
                     pos += 4;
                     if (isFalsey(peek())) pos += offset;
+                case ByteCodeOpValue.Jump:
+                    final offset = program.getInt32(pos);
+                    pos += 4 + offset;
                 // case 18: opEquals();
                 // case 19: 
                 //     var right = popNumber();
@@ -92,7 +96,7 @@ class VM {
                 //     frame.slots[slot] = peek();
                 // case 'save_var': variables.set(bytecode[index++], pop());
                 // case 'load_var': push(variables.get(bytecode[index++]));
-                case _: trace('Unknown bytecode: "$code".');
+                case _: throw 'Unknown bytecode: "$code".';
             }
             // trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
         }

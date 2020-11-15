@@ -218,6 +218,8 @@
     if (true) {
         print 'hej'
         print 'mere hej'
+    } else {
+        print 'else'
     }
     print 'the end'
 }

@@ -10,7 +10,6 @@ import haxe.io.BytesOutput;
 // }
 
 enum ByteCodeOp {
-    Print;
     ConstantString(str: String);
     GetLocal(index: Int);
     // SetLocal(index :Int);
@@ -21,10 +20,12 @@ enum ByteCodeOp {
     BinaryOp(type: TokenType);
 
     JumpIfFalse;
+    Jump;
+    Print;
 }
 
 class ByteCodeOpValue { // TODO: Auto-create this class by a macro?
-    static public final Print = 0x0;
+    static public final NoOp = 0x0;
     static public final ConstantString = 0x1;
     static public final GetLocal = 0x2;
     static public final Pop = 0x3;
@@ -33,6 +34,8 @@ class ByteCodeOpValue { // TODO: Auto-create this class by a macro?
     static public final PushNumber = 0x6;
     static public final BinaryOp = 0x7;
     static public final JumpIfFalse = 0x8;
+    static public final Jump = 0x9;
+    static public final Print = 0xA;
 }
 
 // enum abstract ByteCodeValue(Int) {
@@ -124,9 +127,16 @@ class CodeGenerator {
             case If(cond, then, el):
                 genExpr(cond);
                 var thenJump = emitJump(JumpIfFalse);
+                emit(Pop(1));
                 genStmt(then);
                 
+                var elseJump = emitJump(Jump);
+
                 patchJump(thenJump);
+                emit(Pop(1));
+
+                if (el != null) genStmt(el);
+                patchJump(elseJump);
 
             // case ForCondition(cond, body):
             //     var start = mark();
@@ -222,6 +232,9 @@ class CodeGenerator {
                 bytes.writeInt32(666); // placeholder for jump argument
                 // trace('the value: ${bytes.getBytes().getInt32(bytes.length - 4)}');
                 // return;
+            case Jump:
+                bytes.writeByte(ByteCodeOpValue.Jump);
+                bytes.writeInt32(666); // placeholder for jump argument
         }
         // bytesCopy = bytes;
         // trace(Disassembler.disassemble(bytesCopy.getBytes()));

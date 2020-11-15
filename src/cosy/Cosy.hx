@@ -245,7 +245,7 @@ Options:
         
         if (outputDisassembly) {
             startMeasure('Disassembler');
-            var disassembly = Disassembler.disassemble(bytecode);
+            var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
             endMeasure('Disassembler');
             printlines([disassembly]);
         }

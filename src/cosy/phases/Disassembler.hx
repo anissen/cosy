@@ -19,10 +19,10 @@ class Disassembler {
                 case Error(s): s;
             };
             return switch part {
-                case Instruction(s): '\033[1;31m$s\033[0m';
-                case Arg(d): '\033[0;33m$d\033[0m';
-                case Hint(h): '\033[0;35m$h\033[0m';
-                case Error(s): '\033[0;31m$s\033[0m';
+                case Instruction(s): '\033[1;34m$s\033[0m'; // blue
+                case Arg(d): '\033[0;33m$d\033[0m'; // orange
+                case Hint(h): '\033[0;35m$h\033[0m'; // purple
+                case Error(s): '\033[0;31m$s\033[0m'; // red
             }
         }
 
@@ -54,6 +54,11 @@ class Disassembler {
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump_if_false'), Arg(offset), Hint('($ipPos => $absolute)')];
+                case ByteCodeOpValue.Jump:
+                    final offset = program.getInt32(pos);
+                    pos += 4;
+                    final absolute = pos + offset;
+                    [Instruction('jump'), Arg(offset), Hint('($ipPos => $absolute)')];
                 case _: [Error('[Unknown bytecode: "$code"]')];
             }
 
