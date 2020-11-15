@@ -215,7 +215,7 @@
 // }
 
 {
-    if (true) {
+    if (false or true) {
         print 'hej'
         print 'mere hej'
     } else {

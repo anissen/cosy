@@ -54,6 +54,11 @@ class Disassembler {
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump_if_false'), Arg(offset), Hint('($ipPos => $absolute)')];
+                case ByteCodeOpValue.JumpIfTrue:
+                    final offset = program.getInt32(pos);
+                    pos += 4;
+                    final absolute = pos + offset;
+                    [Instruction('jump_if_true'), Arg(offset), Hint('($ipPos => $absolute)')];
                 case ByteCodeOpValue.Jump:
                     final offset = program.getInt32(pos);
                     pos += 4;

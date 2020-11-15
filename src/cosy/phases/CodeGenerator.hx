@@ -20,6 +20,7 @@ enum ByteCodeOp {
     BinaryOp(type: TokenType);
 
     JumpIfFalse;
+    JumpIfTrue;
     Jump;
     Print;
 }
@@ -34,8 +35,11 @@ class ByteCodeOpValue { // TODO: Auto-create this class by a macro?
     static public final PushNumber = 0x6;
     static public final BinaryOp = 0x7;
     static public final JumpIfFalse = 0x8;
-    static public final Jump = 0x9;
-    static public final Print = 0xA;
+    static public final JumpIfTrue = 0x9;
+    static public final Jump = 0xA;
+    static public final Print = 0xB;
+    static public final Or = 0xC;
+    static public final And = 0xD;
 }
 
 // enum abstract ByteCodeValue(Int) {
@@ -171,6 +175,21 @@ class CodeGenerator {
                 emit(ConstantString(v));
             case Grouping(expr): genExpr(expr);
             case Variable(name): emit(GetLocal(localIndexes[name.lexeme]));
+            case Logical(left, op, right):
+                genExpr(left);
+                switch op.type {
+                    case And:
+                        var endJump = emitJump(JumpIfFalse);
+                        emit(Pop(1));
+                        genExpr(right);
+                        patchJump(endJump);
+                    case Or:
+                        var endJump = emitJump(JumpIfTrue);
+                        emit(Pop(1));
+                        genExpr(right);
+                        patchJump(endJump);
+                    case _: throw 'Unhandled Logical case!';
+                }
             case Unary(op, right): if (!op.type.match(Minus)) throw 'error'; genExpr(right); //.concat(['op_negate']);
 			case _: trace('Unhandled expression: $expr'); [];
 		}
@@ -230,8 +249,9 @@ class CodeGenerator {
             case JumpIfFalse:
                 bytes.writeByte(ByteCodeOpValue.JumpIfFalse);
                 bytes.writeInt32(666); // placeholder for jump argument
-                // trace('the value: ${bytes.getBytes().getInt32(bytes.length - 4)}');
-                // return;
+            case JumpIfTrue:
+                bytes.writeByte(ByteCodeOpValue.JumpIfTrue);
+                bytes.writeInt32(666); // placeholder for jump argument
             case Jump:
                 bytes.writeByte(ByteCodeOpValue.Jump);
                 bytes.writeInt32(666); // placeholder for jump argument

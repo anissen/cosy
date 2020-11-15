@@ -70,6 +70,10 @@ class VM {
                     final offset = program.getInt32(pos);
                     pos += 4;
                     if (isFalsey(peek())) pos += offset;
+                case ByteCodeOpValue.JumpIfTrue:
+                    final offset = program.getInt32(pos);
+                    pos += 4;
+                    if (!isFalsey(peek())) pos += offset;
                 case ByteCodeOpValue.Jump:
                     final offset = program.getInt32(pos);
                     pos += 4 + offset;
