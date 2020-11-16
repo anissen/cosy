@@ -214,12 +214,37 @@
 //     }
 // }
 
+// {
+//     if (false or true) {
+//         print 'hej'
+//         print 'mere hej'
+//     } else {
+//         print 'else'
+//     }
+//     print 'the end'
+// }
+
 {
-    if (false or true) {
-        print 'hej'
-        print 'mere hej'
-    } else {
-        print 'else'
+    for false {
+        print 'hello!'
     }
-    print 'the end'
+    print 'end'
 }
+
+{
+    mut b = true
+    for b {
+        print 'hello!'
+        b = false
+    }
+    print 'end'
+}
+
+// {
+//     mut i = 0
+//     for i < 3 {
+//         print 'hello!'
+//         i = i + 1
+//     }
+//     print 'end'
+// }

@@ -122,11 +122,8 @@ class CodeGenerator {
             case Block(statements):
                 var previousLocalsCounter = localsCounter;
                 genStmts(statements);
-                var pops = localsCounter - previousLocalsCounter;
-                if (pops > 0) emit(Pop(pops));
-                // for (_ in previousLocalsCounter...localsCounter) {
-                //     emit(Pop);
-                // }
+                // var pops = localsCounter - previousLocalsCounter;
+                // if (pops > 0) emit(Pop(pops));
                 localsCounter = previousLocalsCounter;
             case If(cond, then, el):
                 genExpr(cond);
@@ -142,6 +139,21 @@ class CodeGenerator {
                 if (el != null) genStmt(el);
                 patchJump(elseJump);
 
+            case ForCondition(cond, body):
+                var loopStart = bytes.length;
+                if (cond != null) {
+                    genExpr(cond);
+                    var exitJump = emitJump(JumpIfFalse);
+                    emit(Pop(1));
+                    genStmts(body);
+                    
+                    emitLoop(loopStart);
+
+                    patchJump(exitJump);
+                    emit(Pop(1));
+                }
+
+
             // case ForCondition(cond, body):
             //     var start = mark();
             //     genExpr(cond);
@@ -155,9 +167,9 @@ class CodeGenerator {
 		}
     }
     
-    function mark() {
-        return output.bytecode.length;
-    }
+    // function mark() {
+    //     return output.bytecode.length;
+    // }
 
     // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr) {
@@ -265,6 +277,13 @@ class CodeGenerator {
         return bytes.length - 4; // -4 for the jump argument
     }
 
+    function emitLoop(loopStart: Int) {
+        bytes.writeByte(ByteCodeOpValue.Jump);
+        var offset = bytes.length - loopStart + 4;
+        trace('loop offset: $offset (from ${bytes.length} to ${loopStart + 4})');
+        bytes.writeInt32(-offset);
+    }
+
     function patchJump(offset: Int) {
         var jump = bytes.length - offset - 4;
         // if (jump > 2147483647) {
@@ -322,7 +341,7 @@ class CodeGenerator {
     // }
 
     function binaryOpCode(type: TokenType) {
-        return ByteCodeOpValue.BinaryOp + type.getIndex(); // HACK: Horrible hack!
+        return ByteCodeOpValue.And + type.getIndex(); // HACK: Horrible hack!
         // return switch type {
         //     case EqualEqual: 'op_equals';
         //     case Plus: 'op_add';
