@@ -64,6 +64,9 @@ class Disassembler {
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump'), Arg(offset), Hint('($ipPos => $absolute)')];
+                // case ByteCodeOpValue.Plus: [Instruction('plus')];
+                // case ByteCodeOpValue.Less: [Instruction('less')];
+                    
                 case _: [Error('[Unknown bytecode: "$code"]')];
             }
 

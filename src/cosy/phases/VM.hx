@@ -43,7 +43,7 @@ class VM {
         var pos = 0;
         var output = '';
         while (pos < program.length) {
-            var code = program.get(pos++);
+            var code: ByteCodeOpValue = program.get(pos++);
             // trace('IP ${pos-1}: $code');
             // var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
             
@@ -78,10 +78,12 @@ class VM {
                     final offset = program.getInt32(pos);
                     pos += 4 + offset;
                 // case 18: opEquals();
-                // case 19: 
-                //     var right = popNumber();
-                //     var left  = popNumber();
-                //     push(Number(left + right));
+                case ByteCodeOpValue.Plus: 
+                    var right = popNumber();
+                    var left  = popNumber();
+                    push(Number(left + right));
+                case ByteCodeOpValue.Less:
+                    push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
                 // case 31:
                     
                 // case 'op_sub': push(Number(popNumber() - popNumber()));

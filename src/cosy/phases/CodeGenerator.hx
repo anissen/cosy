@@ -23,31 +23,29 @@ enum ByteCodeOp {
     JumpIfTrue;
     Jump;
     Print;
+    Plus;
+    Less;
 }
 
-class ByteCodeOpValue { // TODO: Auto-create this class by a macro?
-    static public final NoOp = 0x0;
-    static public final ConstantString = 0x1;
-    static public final GetLocal = 0x2;
-    static public final Pop = 0x3;
-    static public final PushTrue = 0x4;
-    static public final PushFalse = 0x5;
-    static public final PushNumber = 0x6;
-    static public final BinaryOp = 0x7;
-    static public final JumpIfFalse = 0x8;
-    static public final JumpIfTrue = 0x9;
-    static public final Jump = 0xA;
-    static public final Print = 0xB;
-    static public final Or = 0xC;
-    static public final And = 0xD;
+enum abstract ByteCodeOpValue(Int) to Int from Int {
+    // New instructions *must* be added at the end to avoid breaking backwards compability
+    final NoOp = 0;
+    final ConstantString;
+    final GetLocal;
+    final Pop;
+    final PushTrue;
+    final PushFalse;
+    final PushNumber;
+    final BinaryOp;
+    final JumpIfFalse;
+    final JumpIfTrue;
+    final Jump;
+    final Print;
+    final Or;
+    final And;
+    final Plus;
+    final Less;
 }
-
-// enum abstract ByteCodeValue(Int) {
-//     var PrintByte; // implicit value: 0
-//     var NoOpByte;
-//     var PopByte;
-//     var GetLocalByte;
-// }
 
 // typedef Byte = Int; //TODO: Should be packed as bytes
 
@@ -257,7 +255,7 @@ class CodeGenerator {
                 bytes.writeFloat(n);
             case BinaryOp(type): 
                 // [binaryOpCode(type)];
-                bytes.writeByte(binaryOpCode(type)); // TODO: This is wrong as it maps into ByteCodeOpValue
+                bytes.writeByte(binaryOpCode(type));
             case JumpIfFalse:
                 bytes.writeByte(ByteCodeOpValue.JumpIfFalse);
                 bytes.writeInt32(666); // placeholder for jump argument
@@ -267,6 +265,8 @@ class CodeGenerator {
             case Jump:
                 bytes.writeByte(ByteCodeOpValue.Jump);
                 bytes.writeInt32(666); // placeholder for jump argument
+            case Plus: bytes.writeByte(ByteCodeOpValue.Plus);
+            case Less: bytes.writeByte(ByteCodeOpValue.Less);
         }
         // bytesCopy = bytes;
         // trace(Disassembler.disassemble(bytesCopy.getBytes()));
@@ -340,19 +340,19 @@ class CodeGenerator {
     //     // output.bytecode.push(op.getIndex());
     // }
 
-    function binaryOpCode(type: TokenType) {
-        return ByteCodeOpValue.And + type.getIndex(); // HACK: Horrible hack!
-        // return switch type {
-        //     case EqualEqual: 'op_equals';
-        //     case Plus: 'op_add';
-        //     case Minus: 'op_sub';
-        //     case Star: 'op_mult';
-        //     case Slash: 'op_div';
-        //     case Less: 'op_less';
-        //     case LessEqual: 'op_less_eq';
-        //     case Greater: 'op_greater';
-        //     case GreaterEqual: 'op_greater_eq';
-        //     case _: throw 'error';
-        // }
+    function binaryOpCode(type: TokenType): ByteCodeOpValue {
+        // return ByteCodeOpValue.And + type.getIndex(); // HACK: Horrible hack!
+        return switch type {
+            // case EqualEqual: 'op_equals';
+            case Plus: Plus;
+            // case Minus: 'op_sub';
+            // case Star: 'op_mult';
+            // case Slash: 'op_div';
+            case Less: Less;
+            // case LessEqual: 'op_less_eq';
+            // case Greater: 'op_greater';
+            // case GreaterEqual: 'op_greater_eq';
+            case _: trace('unhandled type: $type'); throw 'error';
+        }
     }
 }

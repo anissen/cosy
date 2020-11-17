@@ -224,27 +224,27 @@
 //     print 'the end'
 // }
 
-{
-    for false {
-        print 'hello!'
-    }
-    print 'end'
-}
-
-{
-    mut b = true
-    for b {
-        print 'hello!'
-        b = false
-    }
-    print 'end'
-}
-
 // {
-//     mut i = 0
-//     for i < 3 {
+//     for false {
 //         print 'hello!'
-//         i = i + 1
 //     }
 //     print 'end'
 // }
+
+// {
+//     mut b = true
+//     for b {
+//         print 'hello!'
+//         b = false
+//     }
+//     print 'end'
+// }
+
+{
+    mut i = 0
+    for i < 3 {
+        print 'hello!'
+        i = i + 1
+    }
+    print 'end'
+}
