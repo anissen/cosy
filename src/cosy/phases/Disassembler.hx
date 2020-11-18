@@ -34,6 +34,7 @@ class Disassembler {
             var ipPos = pos;
             var code: ByteCodeOpValue = program.get(pos++);
             var parts = switch code {
+                case NoOp: [Instruction('no_op')];
                 case ByteCodeOpValue.PushTrue: [Instruction('push_true')];
                 case ByteCodeOpValue.PushFalse: [Instruction('push_false')];
                 case ByteCodeOpValue.PushNumber: 
@@ -64,10 +65,9 @@ class Disassembler {
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump'), Arg(offset), Hint('($ipPos => $absolute)')];
-                // case ByteCodeOpValue.Plus: [Instruction('plus')];
-                // case ByteCodeOpValue.Less: [Instruction('less')];
-                    
-                case _: [Error('[Unknown bytecode: "$code"]')];
+                case ByteCodeOpValue.Plus: [Instruction('plus'), Hint('+')];
+                case ByteCodeOpValue.Less: [Instruction('less'), Hint('<')];
+                // case _: [Error('[Unknown bytecode: "$code"]')];
             }
 
             var disassembly = [ for (part in parts) color(part) ].join('\t');

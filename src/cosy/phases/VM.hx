@@ -48,6 +48,7 @@ class VM {
             // var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
             
             switch code {
+                case NoOp: trace('no_op instruction. This is an error.');
                 case ByteCodeOpValue.PushTrue: push(Boolean(true));
                 case ByteCodeOpValue.PushFalse: push(Boolean(false));
                 // case 'push_num': push(Number(Std.parseFloat(program[ip++])));
@@ -102,7 +103,7 @@ class VM {
                 //     frame.slots[slot] = peek();
                 // case 'save_var': variables.set(bytecode[index++], pop());
                 // case 'load_var': push(variables.get(bytecode[index++]));
-                case _: throw 'Unknown bytecode: "$code".';
+                // case _: throw 'Unknown bytecode: "$code".';
             }
             // trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
         }

@@ -36,13 +36,10 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final PushTrue;
     final PushFalse;
     final PushNumber;
-    final BinaryOp;
     final JumpIfFalse;
     final JumpIfTrue;
     final Jump;
     final Print;
-    final Or;
-    final And;
     final Plus;
     final Less;
 }
