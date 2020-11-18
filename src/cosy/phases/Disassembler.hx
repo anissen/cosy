@@ -25,8 +25,8 @@ class Disassembler {
         function color(part: OutputPart): String {
             final str = switch part {
                 case Instruction(s): rpad(s, 15);
-                case Arg(d): rpad('$d', 5);
-                case Hint(h): rpad('($h)', 10);
+                case Arg(d): lpad('$d', 5);
+                case Hint(h): '  ($h)';
                 case Error(s): s;
             };
             if (!colors) return str;
@@ -48,38 +48,45 @@ class Disassembler {
             var code: ByteCodeOpValue = program.get(pos++);
             var parts = switch code {
                 case NoOp: [Instruction('no_op')];
-                case ByteCodeOpValue.PushTrue: [Instruction('push_true')];
-                case ByteCodeOpValue.PushFalse: [Instruction('push_false')];
-                case ByteCodeOpValue.PushNumber: 
+                case PushTrue: [Instruction('push_true')];
+                case PushFalse: [Instruction('push_false')];
+                case PushNumber: 
                     var num = program.getFloat(pos);
                     pos += sizeFloat;
                     [Instruction('push_num'), Arg(num)];
                     // 'push_num $num';
-                case ByteCodeOpValue.ConstantString:
-                    var index = program.get(pos);
+                case ConstantString:
+                    var index = program.getInt32(pos);
                     pos += 4;
                     [Instruction('constant_str'), Arg(index), Hint('${bytecode.strings[index]}')];
                     // 'constant_str $index ("${bytecode.strings[index]}")';
-                case ByteCodeOpValue.Print: [Instruction('print')];
-                case ByteCodeOpValue.Pop: [Instruction('pop ${program.get(pos++)}')];
-                case ByteCodeOpValue.GetLocal: [Instruction('get_local ${program.get(pos++)}')];
-                case ByteCodeOpValue.JumpIfFalse:
+                case Print: [Instruction('print')];
+                case Pop: [Instruction('pop'), Arg(program.get(pos++))];
+                case GetLocal: [Instruction('get_local'), Arg(program.get(pos++))];
+                case JumpIfFalse:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump_if_false'), Arg(offset), Hint('$ipPos => $absolute')];
-                case ByteCodeOpValue.JumpIfTrue:
+                case JumpIfTrue:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump_if_true'), Arg(offset), Hint('$ipPos => $absolute')];
-                case ByteCodeOpValue.Jump:
+                case Jump:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     final absolute = pos + offset;
                     [Instruction('jump'), Arg(offset), Hint('$ipPos => $absolute')];
-                case ByteCodeOpValue.Plus: [Instruction('plus'), Arg(''), Hint('+')];
-                case ByteCodeOpValue.Less: [Instruction('less'), Arg(''),  Hint('<')];
+                case Equal: [Instruction('equal'), Arg(''), Hint('==')];
+                case Addition: [Instruction('add'), Arg(''), Hint('+')];
+                case Subtraction: [Instruction('sub'), Arg(''), Hint('-')];
+                case Multiplication: [Instruction('mult'), Arg(''), Hint('*')];
+                case Division: [Instruction('div'), Arg(''), Hint('/')];
+                case Less: [Instruction('less'), Arg(''),  Hint('<')];
+                case LessEqual: [Instruction('less_equal'), Arg(''),  Hint('<=')];
+                case Greater: [Instruction('greater'), Arg(''),  Hint('>')];
+                case GreaterEqual: [Instruction('greater_equal'), Arg(''),  Hint('>=')];
                 // case _: [Error('[Unknown bytecode: "$code"]')];
             }
 

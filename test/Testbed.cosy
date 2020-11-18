@@ -240,11 +240,23 @@
 //     print 'end'
 // }
 
+// {
+//     mut i = 0
+//     for i < 3 {
+//         print 'hello!'
+//         i = i + 1
+//     }
+//     print 'end'
+// }
+
 {
-    mut i = 0
-    for i < 3 {
-        print 'hello!'
-        i = i + 1
-    }
-    print 'end'
+    var i = 2
+    var j = 3
+    print i == i
+    print i < j
+    print i <= i
+    print i <= j
+    print j > i
+    print i >= i
+    print j >= i
 }

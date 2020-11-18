@@ -49,42 +49,56 @@ class VM {
             
             switch code {
                 case NoOp: trace('no_op instruction. This is an error.');
-                case ByteCodeOpValue.PushTrue: push(Boolean(true));
-                case ByteCodeOpValue.PushFalse: push(Boolean(false));
+                case PushTrue: push(Boolean(true));
+                case PushFalse: push(Boolean(false));
                 // case 'push_num': push(Number(Std.parseFloat(program[ip++])));
-                case ByteCodeOpValue.PushNumber: 
+                case PushNumber: 
                     push(Number(program.getFloat(pos)));
                     pos += sizeFloat;
                 // case 'push_str': push(Text(program[ip++]));
-                case ByteCodeOpValue.ConstantString:
+                case ConstantString:
                     var index = program.get(pos);
                     pos += 4;
                     push(Text(constantStrings[index]));
-                case ByteCodeOpValue.Print: 
+                case Print: 
                     output += asString(pop()) + '\n';
-                case ByteCodeOpValue.Pop: popMultiple(program.get(pos++));
-                case ByteCodeOpValue.GetLocal: 
+                case Pop: popMultiple(program.get(pos++));
+                case GetLocal: 
                     final slot = program.get(pos++);
-                    slots[slot] = peek();
-                    push(slots[slot]);
-                case ByteCodeOpValue.JumpIfFalse:
+                    push(stack[slot]);
+                case JumpIfFalse:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     if (isFalsey(peek())) pos += offset;
-                case ByteCodeOpValue.JumpIfTrue:
+                case JumpIfTrue:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     if (!isFalsey(peek())) pos += offset;
-                case ByteCodeOpValue.Jump:
+                case Jump:
                     final offset = program.getInt32(pos);
                     pos += 4 + offset;
                 // case 18: opEquals();
-                case ByteCodeOpValue.Plus: 
+                case Equal: opEquals();
+                case Addition:
                     var right = popNumber();
                     var left  = popNumber();
                     push(Number(left + right));
-                case ByteCodeOpValue.Less:
-                    push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
+                case Subtraction:
+                    var right = popNumber();
+                    var left  = popNumber();
+                    push(Number(left - right));
+                case Multiplication:
+                    var right = popNumber();
+                    var left  = popNumber();
+                    push(Number(left * right));
+                case Division:
+                    var right = popNumber();
+                    var left  = popNumber();
+                    push(Number(left / right));
+                case Less: push(Boolean(popNumber() > popNumber()));
+                case LessEqual: push(Boolean(popNumber() >= popNumber()));
+                case Greater: push(Boolean(popNumber() < popNumber()));
+                case GreaterEqual: push(Boolean(popNumber() <= popNumber()));
                 // case 31:
                     
                 // case 'op_sub': push(Number(popNumber() - popNumber()));
@@ -172,8 +186,24 @@ class VM {
         // outputText += '\n' + unwrapValue(value);
     }
 
-    inline function opEquals() {
-        push(Boolean(pop().equals(pop())));
+    function opEquals() {
+        final right = pop();
+        final left = pop();
+        final equals = switch right {
+            case Text(t): switch left { 
+                case Text(t2): t == t2;
+                case _: false;
+            }
+            case Boolean(b): switch left {
+                case Boolean(b2): b == b2;
+                case _: false;
+            }
+            case Number(n): switch left {
+                case Number(n2): n == n2;
+                case _: false;
+            }
+        }
+        push(Boolean(equals));
     }
     
     // function opInc() {

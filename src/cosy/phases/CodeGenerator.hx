@@ -23,8 +23,15 @@ enum ByteCodeOp {
     JumpIfTrue;
     Jump;
     Print;
-    Plus;
+    Equal;
+    Addition;
+    Subtraction;
+    Multiplication;
+    Division;
     Less;
+    LessEqual;
+    Greater;
+    GreaterEqual;
 }
 
 enum abstract ByteCodeOpValue(Int) to Int from Int {
@@ -40,8 +47,15 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final JumpIfTrue;
     final Jump;
     final Print;
-    final Plus;
+    final Equal;
+    final Addition;
+    final Subtraction;
+    final Multiplication;
+    final Division;
     final Less;
+    final LessEqual;
+    final Greater;
+    final GreaterEqual;
 }
 
 // typedef Byte = Int; //TODO: Should be packed as bytes
@@ -109,7 +123,6 @@ class CodeGenerator {
             case Print(keyword, expr):
                 genExpr(expr);
                 emit(Print);
-                localsCounter--;
             case Var(name, type, init, mut, foreign):
                 genExpr(init);
                 localIndexes[name.lexeme] = localsCounter++;
@@ -117,8 +130,8 @@ class CodeGenerator {
             case Block(statements):
                 var previousLocalsCounter = localsCounter;
                 genStmts(statements);
-                // var pops = localsCounter - previousLocalsCounter;
-                // if (pops > 0) emit(Pop(pops));
+                var pops = localsCounter - previousLocalsCounter;
+                if (pops > 0) emit(Pop(pops));
                 localsCounter = previousLocalsCounter;
             case If(cond, then, el):
                 genExpr(cond);
@@ -172,13 +185,13 @@ class CodeGenerator {
             case Assign(name, op, value): genExpr(value); //.concat(['save_var', name.lexeme]);
             case Binary(left, op, right): genExpr(left); genExpr(right); emit(BinaryOp(op.type));
             case Literal(v) if (Std.isOfType(v, Bool)):
-                localsCounter++;
+                // localsCounter++;
                 (v ? emit(PushTrue) : emit(PushFalse));
             case Literal(v) if (Std.isOfType(v, Float)):
-                localsCounter++;
+                // localsCounter++;
                 emit(PushNumber(v));
             case Literal(v) if (Std.isOfType(v, String)):
-                localsCounter++;
+                // localsCounter++;
                 emit(ConstantString(v));
             case Grouping(expr): genExpr(expr);
             case Variable(name): emit(GetLocal(localIndexes[name.lexeme]));
@@ -262,8 +275,15 @@ class CodeGenerator {
             case Jump:
                 bytes.writeByte(ByteCodeOpValue.Jump);
                 bytes.writeInt32(666); // placeholder for jump argument
-            case Plus: bytes.writeByte(ByteCodeOpValue.Plus);
+            case Equal: bytes.writeByte(ByteCodeOpValue.Equal);
+            case Addition: bytes.writeByte(ByteCodeOpValue.Addition);
+            case Subtraction: bytes.writeByte(ByteCodeOpValue.Subtraction);
+            case Multiplication: bytes.writeByte(ByteCodeOpValue.Multiplication);
+            case Division: bytes.writeByte(ByteCodeOpValue.Division);
             case Less: bytes.writeByte(ByteCodeOpValue.Less);
+            case LessEqual: bytes.writeByte(ByteCodeOpValue.LessEqual);
+            case Greater: bytes.writeByte(ByteCodeOpValue.Greater);
+            case GreaterEqual: bytes.writeByte(ByteCodeOpValue.GreaterEqual);
         }
         // bytesCopy = bytes;
         // trace(Disassembler.disassemble(bytesCopy.getBytes()));
@@ -340,15 +360,15 @@ class CodeGenerator {
     function binaryOpCode(type: TokenType): ByteCodeOpValue {
         // return ByteCodeOpValue.And + type.getIndex(); // HACK: Horrible hack!
         return switch type {
-            // case EqualEqual: 'op_equals';
-            case Plus: Plus;
-            // case Minus: 'op_sub';
-            // case Star: 'op_mult';
-            // case Slash: 'op_div';
+            case EqualEqual: Equal;
+            case Plus: Addition;
+            case Minus: Subtraction;
+            case Star: Multiplication;
+            case Slash: Division;
             case Less: Less;
-            // case LessEqual: 'op_less_eq';
-            // case Greater: 'op_greater';
-            // case GreaterEqual: 'op_greater_eq';
+            case LessEqual: LessEqual;
+            case Greater: Greater;
+            case GreaterEqual: GreaterEqual;
             case _: trace('unhandled type: $type'); throw 'error';
         }
     }
