@@ -32,7 +32,7 @@ class Disassembler {
         var pos = 0;
         while (pos < program.length) {
             var ipPos = pos;
-            var code = program.get(pos++);
+            var code: ByteCodeOpValue = program.get(pos++);
             var parts = switch code {
                 case ByteCodeOpValue.PushTrue: [Instruction('push_true')];
                 case ByteCodeOpValue.PushFalse: [Instruction('push_false')];
