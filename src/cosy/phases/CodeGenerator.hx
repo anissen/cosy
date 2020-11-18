@@ -277,7 +277,7 @@ class CodeGenerator {
     function emitLoop(loopStart: Int) {
         bytes.writeByte(ByteCodeOpValue.Jump);
         var offset = bytes.length - loopStart + 4;
-        trace('loop offset: $offset (from ${bytes.length} to ${loopStart + 4})');
+        // trace('loop offset: $offset (from ${bytes.length} to ${loopStart + 4})');
         bytes.writeInt32(-offset);
     }
 

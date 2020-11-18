@@ -11,19 +11,32 @@ enum OutputPart {
 class Disassembler {
     
     static public function disassemble(bytecode: cosy.phases.CodeGenerator.Output, colors: Bool = false): String {
+        function lpad(str: String, length: Int, char: String = ' ') {
+            final diff = length - str.length;
+            if (diff > 0) str = [ for (_ in 0...diff) char].join('') + str;
+            return str;
+        }
+        function rpad(str: String, length: Int) {
+            final diff = length - str.length;
+            if (diff > 0) str += [ for (_ in 0...diff) ' '].join('');
+            return str;
+        }
+
         function color(part: OutputPart): String {
-            if (!colors) return switch part {
-                case Instruction(s): s;
-                case Arg(d): d;
-                case Hint(h): h;
+            final str = switch part {
+                case Instruction(s): rpad(s, 15);
+                case Arg(d): rpad('$d', 5);
+                case Hint(h): rpad('($h)', 10);
                 case Error(s): s;
             };
-            return switch part {
-                case Instruction(s): '\033[1;34m$s\033[0m'; // blue
-                case Arg(d): '\033[0;33m$d\033[0m'; // orange
-                case Hint(h): '\033[0;35m$h\033[0m'; // purple
-                case Error(s): '\033[0;31m$s\033[0m'; // red
+            if (!colors) return str;
+            final color = switch part {
+                case Instruction(_): 34; // blue
+                case Arg(_): 33; // orange
+                case Hint(_): 35; // purple
+                case Error(_): 31; // red
             }
+            return '\033[1;${color}m${str}\033[0m';
         }
 
         var output = '\n';
@@ -45,7 +58,7 @@ class Disassembler {
                 case ByteCodeOpValue.ConstantString:
                     var index = program.get(pos);
                     pos += 4;
-                    [Instruction('constant_str'), Arg(index), Hint('(${bytecode.strings[index]})')];
+                    [Instruction('constant_str'), Arg(index), Hint('${bytecode.strings[index]}')];
                     // 'constant_str $index ("${bytecode.strings[index]}")';
                 case ByteCodeOpValue.Print: [Instruction('print')];
                 case ByteCodeOpValue.Pop: [Instruction('pop ${program.get(pos++)}')];
@@ -54,24 +67,24 @@ class Disassembler {
                     final offset = program.getInt32(pos);
                     pos += 4;
                     final absolute = pos + offset;
-                    [Instruction('jump_if_false'), Arg(offset), Hint('($ipPos => $absolute)')];
+                    [Instruction('jump_if_false'), Arg(offset), Hint('$ipPos => $absolute')];
                 case ByteCodeOpValue.JumpIfTrue:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     final absolute = pos + offset;
-                    [Instruction('jump_if_true'), Arg(offset), Hint('($ipPos => $absolute)')];
+                    [Instruction('jump_if_true'), Arg(offset), Hint('$ipPos => $absolute')];
                 case ByteCodeOpValue.Jump:
                     final offset = program.getInt32(pos);
                     pos += 4;
                     final absolute = pos + offset;
-                    [Instruction('jump'), Arg(offset), Hint('($ipPos => $absolute)')];
-                case ByteCodeOpValue.Plus: [Instruction('plus'), Hint('+')];
-                case ByteCodeOpValue.Less: [Instruction('less'), Hint('<')];
+                    [Instruction('jump'), Arg(offset), Hint('$ipPos => $absolute')];
+                case ByteCodeOpValue.Plus: [Instruction('plus'), Arg(''), Hint('+')];
+                case ByteCodeOpValue.Less: [Instruction('less'), Arg(''),  Hint('<')];
                 // case _: [Error('[Unknown bytecode: "$code"]')];
             }
 
-            var disassembly = [ for (part in parts) color(part) ].join('\t');
-            output += '$ipPos\t${pos - ipPos}B\t$disassembly\n';
+            var disassembly = [ for (part in parts) color(part) ].join('');
+            output += '· ${lpad(Std.string(ipPos), 5, "0")}  ${pos - ipPos}B  $disassembly\n';
         }
         return output;
     }
