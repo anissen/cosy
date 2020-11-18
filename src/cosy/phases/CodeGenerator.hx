@@ -12,7 +12,7 @@ import haxe.io.BytesOutput;
 enum ByteCodeOp {
     ConstantString(str: String);
     GetLocal(index: Int);
-    // SetLocal(index :Int);
+    SetLocal(index :Int);
     Pop(n: Int);
     PushTrue;
     PushFalse;
@@ -39,6 +39,7 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final NoOp = 0;
     final ConstantString;
     final GetLocal;
+    final SetLocal;
     final Pop;
     final PushTrue;
     final PushFalse;
@@ -182,7 +183,7 @@ class CodeGenerator {
     // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr) {
 		switch expr {
-            case Assign(name, op, value): genExpr(value); //.concat(['save_var', name.lexeme]);
+            case Assign(name, op, value): genExpr(value); emit(SetLocal(localIndexes[name.lexeme]));
             case Binary(left, op, right): genExpr(left); genExpr(right); emit(BinaryOp(op.type));
             case Literal(v) if (Std.isOfType(v, Bool)):
                 // localsCounter++;
@@ -244,6 +245,12 @@ class CodeGenerator {
                 // 'get_local $index';
                 // [ByteCodeOpValue.GetLocal, index];
                 bytes.writeByte(ByteCodeOpValue.GetLocal);
+                bytes.writeByte(index);
+                // case SetLocal(index): 'set_local $index';
+            case SetLocal(index): 
+                // 'get_local $index';
+                // [ByteCodeOpValue.GetLocal, index];
+                bytes.writeByte(ByteCodeOpValue.SetLocal);
                 bytes.writeByte(index);
                 // case SetLocal(index): 'set_local $index';
             case Pop(n): 

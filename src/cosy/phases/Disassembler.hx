@@ -63,6 +63,7 @@ class Disassembler {
                 case Print: [Instruction('print')];
                 case Pop: [Instruction('pop'), Arg(program.get(pos++))];
                 case GetLocal: [Instruction('get_local'), Arg(program.get(pos++))];
+                case SetLocal: [Instruction('set_local'), Arg(program.get(pos++))];
                 case JumpIfFalse:
                     final offset = program.getInt32(pos);
                     pos += 4;

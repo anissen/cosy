@@ -66,6 +66,9 @@ class VM {
                 case GetLocal: 
                     final slot = program.get(pos++);
                     push(stack[slot]);
+                case SetLocal: 
+                    final slot = program.get(pos++);
+                    stack[slot] = peek();
                 case JumpIfFalse:
                     final offset = program.getInt32(pos);
                     pos += 4;
