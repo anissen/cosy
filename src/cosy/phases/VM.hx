@@ -103,80 +103,12 @@ class VM {
                 case Greater: push(Boolean(popNumber() < popNumber()));
                 case GreaterEqual: push(Boolean(popNumber() <= popNumber()));
                 case Negate: push(Number(-popNumber()));
-                // case 31:
-                    
-                // case 'op_sub': push(Number(popNumber() - popNumber()));
-                // case 'op_mult': push(Number(popNumber() * popNumber()));
-                // case 'op_div': push(Number(popNumber() / popNumber()));
-                // case 'op_negate': push(Number(-popNumber()));
-                // case 'op_less': push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
-                // case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
-                // case 'op_greater': push(Boolean(popNumber() < popNumber()));
-                // case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
-                // case 'load_local':
-                //     var slot = Std.int(popNumber());
-                //     push(frame.slots[slot]);
-                // case 'save_local':
-                //     var slot = Std.int(popNumber());
-                //     frame.slots[slot] = peek();
-                // case 'save_var': variables.set(bytecode[index++], pop());
-                // case 'load_var': push(variables.get(bytecode[index++]));
-                // case _: throw 'Unknown bytecode: "$code".';
             }
             // trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
         }
         if (output.length > 0) {
             trace('\n$output');
         }
-
-
-        // while (ip < program.length) {
-        //     var code = program[ip++];
-        //     var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
-        //     switch code {
-        //         case 'push_true': push(Boolean(true));
-        //         case 'push_false': push(Boolean(false));
-        //         // case 'push_num': push(Number(Std.parseFloat(program[ip++])));
-        //         case 'push_num 2': push(Number(2));
-        //         case 'push_num 3': push(Number(3));
-        //         // case 'push_str': push(Text(program[ip++]));
-        //         case 'constant_str':
-        //             final str = program[ip];
-        //             // constantStrings.push(str);
-        //             push(Text(program[ip++]));
-        //         case 'op_print': opPrint();
-        //         case 'pop': pop();
-        //         case 'pop 2': popMultiple(2);
-        //         case 'get_local 0': 
-        //             final slot = 0;
-        //             slots[slot] = peek();
-        //             push(slots[slot]);
-        //         case 'get_local 1': 
-        //             final slot = 1;
-        //             slots[slot] = peek();
-        //             push(slots[slot]);
-        //         case 'op_equals': opEquals();
-        //         case 'op_add': push(Number(popNumber() + popNumber()));
-        //         case 'op_sub': push(Number(popNumber() - popNumber()));
-        //         case 'op_mult': push(Number(popNumber() * popNumber()));
-        //         case 'op_div': push(Number(popNumber() / popNumber()));
-        //         case 'op_negate': push(Number(-popNumber()));
-        //         case 'op_less': push(Boolean(popNumber() > popNumber())); // operator is reversed because arguments are reversed on stack
-        //         case 'op_less_eq': push(Boolean(popNumber() >= popNumber()));
-        //         case 'op_greater': push(Boolean(popNumber() < popNumber()));
-        //         case 'op_greater_eq': push(Boolean(popNumber() <= popNumber()));
-        //         // case 'load_local':
-        //         //     var slot = Std.int(popNumber());
-        //         //     push(frame.slots[slot]);
-        //         // case 'save_local':
-        //         //     var slot = Std.int(popNumber());
-        //         //     frame.slots[slot] = peek();
-        //         // case 'save_var': variables.set(bytecode[index++], pop());
-        //         // case 'load_var': push(variables.get(bytecode[index++]));
-        //         case _: trace('Unknown bytecode: "$code".');
-        //     }
-        //     trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
-        // }
     }
 
     inline function asString(value: Value): String {
@@ -187,7 +119,6 @@ class VM {
             // case Array(a): trace(a.map(unwrapValue));
             // case Function(f): trace('<fn $f>');
         }
-        // outputText += '\n' + unwrapValue(value);
     }
 
     function opEquals() {
