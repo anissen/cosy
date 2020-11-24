@@ -1,13 +1,7 @@
 package cosy.phases;
 
 import haxe.io.Bytes;
-import haxe.io.BytesBuffer;
 import haxe.io.BytesOutput;
-
-// typedef ByteCode = {
-//     opcode: String,
-//     value: Null<Any>,
-// }
 
 enum ByteCodeOp {
     ConstantString(str: String);
@@ -59,23 +53,12 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final GreaterEqual;
 }
 
-// typedef Byte = Int; //TODO: Should be packed as bytes
-
-abstract Byte(Int) from Int to Int {
-    inline function new(value: Int) {
-        if (value < 0 || value > 255) throw 'Invalid byte value: $value';
-        this = value;
-    }
-}
-
 class Output {
-    // functionIPs: Map<String, int>,
     public var strings: Array<String>;
     public var bytecode: Bytes;
 
     public function new() {
         strings = [];
-        // bytecode = new Bytes();
     }
 }
 
@@ -83,7 +66,6 @@ class CodeGenerator {
     var localsCounter :Int;
     var localIndexes :Map<String, Int>;
     var constantsCounter :Int;
-    // var bytecode :Array<String>;
     var codes: Array<ByteCodeOp>;
     var output: Output;
 
@@ -97,7 +79,6 @@ class CodeGenerator {
         localsCounter = 0;
         constantsCounter = 0;
         localIndexes = new Map();
-        // bytecode = [];
         codes = [];
         output = new Output();
         bytes = new BytesOutput();
@@ -112,11 +93,11 @@ class CodeGenerator {
         }
 	}
 
-    function genExprs(exprs: Array<Expr>) {
-        for (expr in exprs) {
-            genExpr(expr);
-        }
-    }
+    // function genExprs(exprs: Array<Expr>) {
+    //     for (expr in exprs) {
+    //         genExpr(expr);
+    //     }
+    // }
 
 	function genStmt(stmt: Stmt) {
         if (stmt == null) return;
@@ -127,7 +108,6 @@ class CodeGenerator {
             case Var(name, type, init, mut, foreign):
                 genExpr(init);
                 localIndexes[name.lexeme] = localsCounter++;
-                // emit(GetLocal(localsCounter++));
             case Block(statements):
                 var previousLocalsCounter = localsCounter;
                 genStmts(statements);
@@ -147,7 +127,6 @@ class CodeGenerator {
 
                 if (el != null) genStmt(el);
                 patchJump(elseJump);
-
             case ForCondition(cond, body):
                 var loopStart = bytes.length;
                 if (cond != null) {
@@ -160,40 +139,22 @@ class CodeGenerator {
 
                     patchJump(exitJump);
                     emit(Pop(1));
+                } else {
+                    throw 'infinite loops are not yet implemented!';
                 }
-
-
-            // case ForCondition(cond, body):
-            //     var start = mark();
-            //     genExpr(cond);
-            //     emit(JumpIfZero(end));
-            //     genStmts(body);
-            //     emit(Jump(start));
-            //     var end = label();
-            case Expression(expr):
-                genExpr(expr);
+            case Expression(expr): genExpr(expr);
 			case _: trace('Unhandled statement: $stmt'); [];
 		}
     }
     
-    // function mark() {
-    //     return output.bytecode.length;
-    // }
-
     // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr) {
 		switch expr {
             case Assign(name, op, value): genExpr(value); emit(SetLocal(localIndexes[name.lexeme]));
             case Binary(left, op, right): genExpr(left); genExpr(right); emit(BinaryOp(op.type));
-            case Literal(v) if (Std.isOfType(v, Bool)):
-                // localsCounter++;
-                (v ? emit(PushTrue) : emit(PushFalse));
-            case Literal(v) if (Std.isOfType(v, Float)):
-                // localsCounter++;
-                emit(PushNumber(v));
-            case Literal(v) if (Std.isOfType(v, String)):
-                // localsCounter++;
-                emit(ConstantString(v));
+            case Literal(v) if (Std.isOfType(v, Bool)): (v ? emit(PushTrue) : emit(PushFalse));
+            case Literal(v) if (Std.isOfType(v, Float)): emit(PushNumber(v));
+            case Literal(v) if (Std.isOfType(v, String)): emit(ConstantString(v));
             case Grouping(expr): genExpr(expr);
             case Variable(name): emit(GetLocal(localIndexes[name.lexeme]));
             case Logical(left, op, right):
@@ -211,28 +172,12 @@ class CodeGenerator {
                         patchJump(endJump);
                     case _: throw 'Unhandled Logical case!';
                 }
-            case Unary(op, right): if (!op.type.match(Minus)) throw 'error'; genExpr(right); //.concat(['op_negate']);
+            case Unary(op, right): if (!op.type.match(Minus)) throw 'error'; genExpr(right);
 			case _: trace('Unhandled expression: $expr'); [];
 		}
     }
 
-    // function patchJumps() {
-    //     var labels = new Map<String, Int>();
-    //     for (code in codes) {
-    //         switch code {
-    //             case Label(lbl): 
-    //         }
-    //     }
-    // }
-
-    // function emit(op: ByteCodeOp) {
-    //     codes.push(op);
-    // }
-
     function emit(op: ByteCodeOp) {
-        // trace('emit $op');
-        // var bytesCopy = bytes;
-        // trace(Disassembler.disassemble(bytesCopy.getBytes()));
         switch op {
             case Print: 
                 bytes.writeByte(ByteCodeOpValue.Print);
@@ -242,36 +187,22 @@ class CodeGenerator {
                 bytes.writeByte(ByteCodeOpValue.ConstantString);
                 bytes.writeInt32(stringIndex);
             case GetLocal(index): 
-                // 'get_local $index';
-                // [ByteCodeOpValue.GetLocal, index];
                 bytes.writeByte(ByteCodeOpValue.GetLocal);
                 bytes.writeByte(index);
-                // case SetLocal(index): 'set_local $index';
             case SetLocal(index): 
-                // 'get_local $index';
-                // [ByteCodeOpValue.GetLocal, index];
                 bytes.writeByte(ByteCodeOpValue.SetLocal);
                 bytes.writeByte(index);
-                // case SetLocal(index): 'set_local $index';
             case Pop(n): 
-                // 'pop $n';
-                // [ByteCodeOpValue.Pop, n];
                 bytes.writeByte(ByteCodeOpValue.Pop);
                 bytes.writeByte(n);
             case PushTrue: 
-                // 'push_true';
                 bytes.writeByte(ByteCodeOpValue.PushTrue);
             case PushFalse:
-                // 'push_false';
-                // [ByteCodeOpValue.PushTrue];
                 bytes.writeByte(ByteCodeOpValue.PushFalse);
             case PushNumber(n):
-                // 'push_num $n';
-                // [ByteCodeOpValue.PushNumber, BytesData. n];
                 bytes.writeByte(ByteCodeOpValue.PushNumber);
                 bytes.writeFloat(n);
             case BinaryOp(type): 
-                // [binaryOpCode(type)];
                 bytes.writeByte(binaryOpCode(type));
             case JumpIfFalse:
                 bytes.writeByte(ByteCodeOpValue.JumpIfFalse);
@@ -292,8 +223,6 @@ class CodeGenerator {
             case Greater: bytes.writeByte(ByteCodeOpValue.Greater);
             case GreaterEqual: bytes.writeByte(ByteCodeOpValue.GreaterEqual);
         }
-        // bytesCopy = bytes;
-        // trace(Disassembler.disassemble(bytesCopy.getBytes()));
     }
 
     function emitJump(op: ByteCodeOp): Int {
@@ -304,68 +233,23 @@ class CodeGenerator {
     function emitLoop(loopStart: Int) {
         bytes.writeByte(ByteCodeOpValue.Jump);
         var offset = bytes.length - loopStart + 4;
-        // trace('loop offset: $offset (from ${bytes.length} to ${loopStart + 4})');
         bytes.writeInt32(-offset);
     }
 
     function patchJump(offset: Int) {
         var jump = bytes.length - offset - 4;
-        // if (jump > 2147483647) {
-        //     throw 'Too much code to jump over';
-        // }
-        // trace('offset: $offset, jump: $jump');
         overwriteInstruction(offset, jump);
-
-        // TODO: Write a disassembler to help debugging
     }
 
     // TODO: This is probably expensive, but there seems to be no other way (except having the bytes buffer be an Array<Int>)
     function overwriteInstruction(pos: Int, value: Int) {
         final currentBytes = bytes.getBytes();
-        // trace('before: ${currentBytes.getInt32(pos)}');
         currentBytes.setInt32(pos, value);
-        // trace('after: ${currentBytes.getInt32(pos)}');
         bytes = new BytesOutput();
         bytes.write(currentBytes);
     }
 
-
-    // TODO: Maybe output a ByteCodeEnum instead of raw bytecode. This would be way simpler to output and to patch jump offsets. A separate function could then convert it one-to-one to bytecode. BUT we don't know how many bytes to jump then :'(
-
-    // function emit(op :ByteCodeOp) {
-    //     var codes: Array<Byte> = switch op {
-    //         case Print: [ByteCodeOpValue.Print];
-    //         case ConstantString(str):
-    //             var stringIndex = output.strings.length;
-    //             output.strings.push(str);
-    //             [ByteCodeOpValue.ConstantString, stringIndex];
-    //         case GetLocal(index): 
-    //             // 'get_local $index';
-    //             [ByteCodeOpValue.GetLocal, index];
-    //         // case SetLocal(index): 'set_local $index';
-    //         case Pop(n): 
-    //             // 'pop $n';
-    //             [ByteCodeOpValue.Pop, n];
-    //         case PushTrue: 
-    //             // 'push_true';
-    //             [ByteCodeOpValue.PushTrue];
-    //         case PushFalse:
-    //             // 'push_false';
-    //             [ByteCodeOpValue.PushTrue];
-    //         case PushNumber(n):
-    //             // 'push_num $n';
-    //             [ByteCodeOpValue.PushNumber, BytesData. n];
-    //         case BinaryOp(type): [binaryOpCode(type)];
-    //     }
-        
-    //     // bytecode.push(code);
-    //     // bytecode.push('${op.getIndex()}');
-    //     codes.map(c -> output.bytecode.push);
-    //     // output.bytecode.push(op.getIndex());
-    // }
-
     function binaryOpCode(type: TokenType): ByteCodeOpValue {
-        // return ByteCodeOpValue.And + type.getIndex(); // HACK: Horrible hack!
         return switch type {
             case EqualEqual: Equal;
             case Plus: Addition;
