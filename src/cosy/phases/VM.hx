@@ -102,6 +102,7 @@ class VM {
                 case LessEqual: push(Boolean(popNumber() >= popNumber()));
                 case Greater: push(Boolean(popNumber() < popNumber()));
                 case GreaterEqual: push(Boolean(popNumber() <= popNumber()));
+                case Negate: push(Number(-popNumber()));
                 // case 31:
                     
                 // case 'op_sub': push(Number(popNumber() - popNumber()));

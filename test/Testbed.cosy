@@ -249,14 +249,19 @@
 //     print 'end'
 // }
 
-{
-    var i = 2
-    var j = 3
-    print i == i
-    print i < j
-    print i <= i
-    print i <= j
-    print j > i
-    print i >= i
-    print j >= i
-}
+// {
+//     var i = 2
+//     var j = 3
+//     print i == i
+//     print i < j
+//     print i <= i
+//     print i <= j
+//     print j > i
+//     print i >= i
+//     print j >= i
+// }
+
+// {
+//     print 3
+//     print -3 // test negate
+// }

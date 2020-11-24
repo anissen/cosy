@@ -88,6 +88,7 @@ class Disassembler {
                 case LessEqual: [Instruction('less_equal'), Arg(''),  Hint('<=')];
                 case Greater: [Instruction('greater'), Arg(''),  Hint('>')];
                 case GreaterEqual: [Instruction('greater_equal'), Arg(''),  Hint('>=')];
+                case Negate: [Instruction('negate'), Arg(''), Hint('-')];
                 // case _: [Error('[Unknown bytecode: "$code"]')];
             }
 

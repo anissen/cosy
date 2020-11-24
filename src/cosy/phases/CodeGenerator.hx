@@ -26,6 +26,7 @@ enum ByteCodeOp {
     LessEqual;
     Greater;
     GreaterEqual;
+    Negate;
 }
 
 enum abstract ByteCodeOpValue(Int) to Int from Int {
@@ -51,6 +52,7 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final LessEqual;
     final Greater;
     final GreaterEqual;
+    final Negate;
 }
 
 class Output {
@@ -172,7 +174,10 @@ class CodeGenerator {
                         patchJump(endJump);
                     case _: throw 'Unhandled Logical case!';
                 }
-            case Unary(op, right): if (!op.type.match(Minus)) throw 'error'; genExpr(right);
+            case Unary(op, right): 
+                if (!op.type.match(Minus)) throw 'error';
+                genExpr(right);
+                emit(Negate);
 			case _: trace('Unhandled expression: $expr'); [];
 		}
     }
@@ -222,6 +227,7 @@ class CodeGenerator {
             case LessEqual: bytes.writeByte(ByteCodeOpValue.LessEqual);
             case Greater: bytes.writeByte(ByteCodeOpValue.Greater);
             case GreaterEqual: bytes.writeByte(ByteCodeOpValue.GreaterEqual);
+            case Negate: bytes.writeByte(ByteCodeOpValue.Negate);
         }
     }
 
