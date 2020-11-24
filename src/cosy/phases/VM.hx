@@ -66,10 +66,7 @@ class VM {
                     final offset = program.getInt32(pos);
                     pos += 4 + offset;
                 case Equal: opEquals();
-                case Addition:
-                    var right = popNumber();
-                    var left  = popNumber();
-                    push(Number(left + right));
+                case Addition: opAdd();
                 case Subtraction:
                     var right = popNumber();
                     var left  = popNumber();
