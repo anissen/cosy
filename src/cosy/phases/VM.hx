@@ -2,24 +2,12 @@ package cosy.phases;
 
 import cosy.phases.CodeGenerator.ByteCodeOpValue;
 import haxe.ds.GenericStack;
-import haxe.ds.Vector;
 
-using VM.ValueTools;
 enum Value {
     Text(s: String);
     Number(n: Float);
     Boolean(b: Bool);
 }
-
-class ValueTools {
-    static inline public function asNumber(value: Value) {
-        return switch (value) {
-            case Number(n): n;
-            case _: throw 'error';
-        }
-    }
-}
-
 
 class VM {
     var stack: Array<Value>;
@@ -37,7 +25,6 @@ class VM {
         var x :GenericStack<Int>;
         var program = bytecode.bytecode;
         stack = [];
-        var slots = new Vector(255);
         ip = 0;
         final sizeFloat = 4;
         var pos = 0;
@@ -51,11 +38,9 @@ class VM {
                 case NoOp: trace('no_op instruction. This is an error.');
                 case PushTrue: push(Boolean(true));
                 case PushFalse: push(Boolean(false));
-                // case 'push_num': push(Number(Std.parseFloat(program[ip++])));
                 case PushNumber: 
                     push(Number(program.getFloat(pos)));
                     pos += sizeFloat;
-                // case 'push_str': push(Text(program[ip++]));
                 case ConstantString:
                     var index = program.get(pos);
                     pos += 4;
@@ -80,7 +65,6 @@ class VM {
                 case Jump:
                     final offset = program.getInt32(pos);
                     pos += 4 + offset;
-                // case 18: opEquals();
                 case Equal: opEquals();
                 case Addition:
                     var right = popNumber();
@@ -183,7 +167,6 @@ class VM {
         }
     }
 
-    // TODO: Make this a static extension instead, asNumber()
     inline function popNumber(): Float {
         return switch pop() {
             case Number(n): n;
@@ -191,17 +174,17 @@ class VM {
         }
     }
 
-    inline function popText(): String {
-        return switch pop() {
-            case Text(s): s;
-            case _: throw 'error';
-        }
-    }
+    // inline function popText(): String {
+    //     return switch pop() {
+    //         case Text(s): s;
+    //         case _: throw 'error';
+    //     }
+    // }
 
-    inline function popBoolean(): Bool {
-        return switch pop() {
-            case Boolean(b): b;
-            case _: throw 'error';
-        }
-    }
+    // inline function popBoolean(): Bool {
+    //     return switch pop() {
+    //         case Boolean(b): b;
+    //         case _: throw 'error';
+    //     }
+    // }
 }
