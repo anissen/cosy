@@ -129,6 +129,37 @@ class CodeGenerator {
 
                 if (el != null) genStmt(el);
                 patchJump(elseJump);
+            case For(keyword, name, from, to, body):
+                // TODO: Ignore counter variable if it begins with underscore.
+
+                genExpr(from);
+                final localsIndex = localsCounter++;
+                localIndexes[name.lexeme] = localsIndex;
+                // Initialize counter variable to 'from'.
+                emit(SetLocal(localsIndex));
+
+                var loopStart = bytes.length;
+
+                // Test if counter variable is less than 'to'.
+                emit(GetLocal(localsIndex));
+                genExpr(to);
+                emit(Less);
+
+                var exitJump = emitJump(JumpIfFalse);
+                emit(Pop(1));
+                genStmts(body);
+                
+                // Increment counter variable TODO: Could be replaced by an increment instruciton, e.g. "Inc(index)"
+                emit(GetLocal(localsIndex));
+                emit(PushNumber(1));
+                emit(Addition);
+                emit(SetLocal(localsIndex));
+                emit(Pop(1));
+                
+                emitLoop(loopStart);
+
+                patchJump(exitJump);
+                emit(Pop(1));
             case ForCondition(cond, body):
                 var loopStart = bytes.length;
                 if (cond != null) {
@@ -151,6 +182,7 @@ class CodeGenerator {
     
     // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr) {
+        if (expr == null) return;
 		switch expr {
             case Assign(name, op, value): genExpr(value); emit(SetLocal(localIndexes[name.lexeme]));
             case Binary(left, op, right): genExpr(left); genExpr(right); emit(BinaryOp(op.type));

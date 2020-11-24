@@ -88,8 +88,8 @@
 // print 'hello world'
 // print true
 // print -5
-// for i in 0..3 {
-//     print i
+// for j in 0..3 {
+//     print j
 // }
 
 // {
