@@ -265,3 +265,17 @@
 //     print 3
 //     print -3 // test negate
 // }
+
+// {
+//     struct Password {
+//         var value Num
+//     }
+// 
+//     fn validate(p Password) {
+//         var x Num = p.value
+//         print x
+//     }
+// 
+//     var pass = Password { value = 23 }
+//     validate(pass)
+// }
