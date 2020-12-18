@@ -34,6 +34,7 @@ class Cosy {
             #end
         });
         Cosy.setFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ });
+        Cosy.setFunction('read_file', (args) -> { return File.getContent(args[0]).split('\n'); });
         
         #if sys
         var args = Sys.args();
