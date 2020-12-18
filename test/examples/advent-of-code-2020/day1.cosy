@@ -1,0 +1,48 @@
+foreign fn read_file(path Str) Array Str
+foreign fn stringToNumber(input Str) Num
+
+var input = read_file('test/examples/advent-of-code-2020/data/day1.txt')
+//var input = [1721, 979, 366, 299, 675, 1456]
+
+mut numbers Array Num = []
+for e in input {
+    if e.length == 0 {
+        continue
+    }
+    numbers.push(stringToNumber(e))
+}
+
+// Part 1: Find two numbers that sum to 2020.
+fn part_1() {
+    for i in 0..numbers.length {
+        for i2 in i..numbers.length {
+            var a = numbers.get(i)
+            var b = numbers.get(i2)
+            if a + b == 2020 {
+                print a + ' and ' + b + ' sum to 2020'
+                print 'Mult: ' + a * b
+                return _
+            }
+        }
+    }
+}
+part_1()
+
+// Part 2: Find three numbers that sum to 2020.
+fn part_2() {
+    for i in 0..numbers.length {
+        for i2 in i..numbers.length {
+            for i3 in i2..numbers.length {
+                var a = numbers.get(i)
+                var b = numbers.get(i2)
+                var c = numbers.get(i3)
+                if a + b + c == 2020 {
+                    print a + ' and ' + b + ' and ' + c + ' sum to 2020'
+                    print 'Mult: ' + a * b * c
+                    return _
+                }
+            }
+        }
+    }
+}
+part_2()
