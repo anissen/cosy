@@ -226,9 +226,20 @@ class Typer {
                             case 'charAt': Function([Number], Text);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
-                    case Struct(v) | Mutable(Struct(v)):
-                        if (v.exists(name.lexeme)) {
-                            return v[name.lexeme];
+                    case NamedStruct(structName) | Mutable(NamedStruct(structName)): 
+                        return switch variableTypes.get(structName) {
+                            case Struct(structType) | Mutable(Struct(structType)):
+                                if (structType.exists(name.lexeme)) {
+                                    return structType[name.lexeme];
+                                } else {
+                                    Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
+                                    return Unknown;
+                                }
+                            case _: throw 'Get on unknown type ${objType}';
+                        }
+                    case Struct(structType) | Mutable(Struct(structType)):
+                        if (structType.exists(name.lexeme)) {
+                            return structType[name.lexeme];
                         } else {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                             return Unknown;
