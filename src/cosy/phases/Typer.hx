@@ -221,7 +221,7 @@ class Typer {
                         }
                     case Text | Mutable(Text):
                         return switch name.lexeme {
-                            case 'length': Function([], Number);
+                            case 'length': Number;
                             case 'split': Function([Text], Array(Text));
                             case 'charAt': Function([Number], Text);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
