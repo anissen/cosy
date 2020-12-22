@@ -217,6 +217,7 @@ class Typer {
                             case 'concat': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'pop': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'get': Function([Number], t);
+                            case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case Text | Mutable(Text):

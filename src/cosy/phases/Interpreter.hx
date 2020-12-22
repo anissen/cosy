@@ -1,5 +1,7 @@
 package cosy.phases;
 
+import cosy.Cosy.ForeignFunction;
+
 class Interpreter {
     final globals: Environment;
     final locals = new Locals();
@@ -287,6 +289,11 @@ class Interpreter {
             case 'concat': new CustomCallable(1, (args -> (args[0] :Array<Any>).map(array.push)));
             case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
             case 'pop': new CustomCallable(0, (_ -> (array.length == 0 ? throw new RuntimeError(name, 'Cannot pop from empty array.') : array.pop())));
+            case 'map': new CustomCallable(1, function(args) {
+                var arg: ForeignFunction = args[0];
+                return [ for (v in array) arg.call(this, [v]) ];
+            });
+            // case 'map': new CustomCallable(1, args -> array.map(args[0]));
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }
