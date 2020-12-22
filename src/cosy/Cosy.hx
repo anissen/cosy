@@ -33,8 +33,12 @@ class Cosy {
             throw 'Not implemented on this platform!';
             #end
         });
-        Cosy.setFunction('stringToNumber', (args) -> { return Std.parseInt(args[0]); /* can be null! */ });
-        Cosy.setFunction('read_file', (args) -> { return File.getContent(args[0]).split('\n'); });
+        Cosy.setFunction('stringToNumber', (args) -> Std.parseInt(args[0]) /* can be null! */);
+        Cosy.setFunction('read_file', (args) -> { 
+            var lines = File.getContent(args[0]).split('\n');
+            lines.pop(); // remove last line (assuming empty line)
+            return lines;
+        });
         
         #if sys
         var args = Sys.args();
