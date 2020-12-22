@@ -25,7 +25,7 @@ class Cosy {
     public static var strict = false;
 
     static function main() {
-        Cosy.setFunction('randomInt', (args) -> { return Std.random(args[0]); });
+        Cosy.setFunction('randomInt', (args) -> return Std.random(args[0]));
         Cosy.setFunction('readInput', (args) -> {
             #if sys
             return Sys.stdin().readLine();
@@ -299,7 +299,7 @@ Options:
     }
 
     public static function runtimeError(e:RuntimeError) {
-        var msg = '[[line ${e.token.line}] Runtime Error: ${e.message}';
+        var msg = '[line ${e.token.line}] Runtime Error: ${e.message}';
         println(color(msg, Error));
         hadRuntimeError = true;
     }
