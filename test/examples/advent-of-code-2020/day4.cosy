@@ -1,5 +1,6 @@
 // https://adventofcode.com/2020/day/4
 
+foreign fn stringToNumber(input Str) Num
 foreign fn read_file(path Str) Str
 
 var input = read_file('test/examples/advent-of-code-2020/data/day4.txt')
@@ -18,15 +19,35 @@ var input = read_file('test/examples/advent-of-code-2020/data/day4.txt')
 // hcl:#cfa07d eyr:2025 pid:166559648
 // iyr:2011 ecl:brn hgt:59in'
 
-var passports = input.replace('\n\n', '$').replace('\n', ' ').split('$')
+struct Field {
+    var name Str
+    var value Str
+}
 
-fn has_required_fields(passport Str) Bool {
+struct Passport {
+    var fields Array Field
+}
+
+var passport_list = input.replace('\n\n', '$').replace('\n', ' ').split('$')
+
+fn parse(passport Str) {
     var parts = passport.split(' ')
-    for field in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'] {
+    mut tmp_fields Array Field = []
+    for part in parts {
+        var components = part.split(':')
+        tmp_fields.push(Field { name = components.get(0), value = components.get(1) })
+    }
+    var fields Array Field = tmp_fields // HACK to workaround an error in Typer
+    return Passport { fields = fields }
+}
+
+var passports = passport_list.map(parse)
+
+fn has_required_fields(passport Passport) Bool {
+    for required_field_name in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'] {
         mut found_field = false
-        for part in parts {
-            var code = part.split(':').get(0)
-            if code == field {
+        for field in passport.fields {
+            if field.name == required_field_name {
                 found_field = true
                 break
             }
@@ -53,33 +74,98 @@ fn part_1() {
     }
     print 'Valid passwords: ' + valid_password
 }
-// part_1();
+part_1()
 
-// Find all valid passports
-fn part_2() {
-    fn is_valid(passport Str) Bool {
-        var parts = passport.split(' ')
-        for field in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'] {
-            mut found_field = false
-            for part in parts {
-                var code = part.split(':').get(0)
-                if code == field {
-                    found_field = true
+fn value_in_range(value Num, min Num, max Num) Bool {
+    return value >= min and value <= max
+}
+
+fn has_valid_values(passport Passport) Bool {
+    fn field_value_in_range(field Field, min Num, max Num) {
+        return value_in_range(stringToNumber(field.value), min, max)
+    }
+
+    for field in passport.fields {
+        if field.name == 'byr' {
+            // byr (Birth Year) - four digits; at least 1920 and at most 2002.
+            if !field_value_in_range(field, 1920, 2002) {
+                return false
+            }
+        } else if field.name == 'iyr' {
+            // iyr (Issue Year) - four digits; at least 2010 and at most 2020.
+            if !field_value_in_range(field, 2010, 2020) {
+                return false
+            }
+        } else if field.name == 'eyr' {
+            // eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
+            if !field_value_in_range(field, 2020, 2030) {
+                return false
+            }
+        } else if field.name == 'hgt' {
+            // hgt (Height) - a number followed by either cm or in:
+            var height_unit = field.value.substr(field.value.length - 2, 2)
+            if height_unit == 'cm' {
+                // If cm, the number must be at least 150 and at most 193.
+                var height_cm = field.value.substr(0, field.value.length - 2)
+                if !value_in_range(stringToNumber(height_cm), 150, 193) {
+                    return false
+                }
+            } else if height_unit == 'in' {
+                // If in, the number must be at least 59 and at most 76.
+                var height_in = field.value.substr(0, field.value.length - 2)
+                if !value_in_range(stringToNumber(height_in), 59, 76) {
+                    return false
+                }
+            } else {
+                return false
+            }
+        } else if field.name == 'hcl' {
+            // hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
+            if field.value.charAt(0) != '#' {
+                return false
+            }
+            for i in 1..6 {
+                var char = field.value.charAt(i)
+                if char != '0' and char != '1' and char != '2' and char != '3' and char != '4' and char != '5' and char != '6' and char != '7' and char != '8' and char != '9' and char != 'a' and char != 'b' and char != 'c' and char != 'd' and char != 'e' and char != 'f' {
+                    return false
+                }
+            }
+        } else if field.name == 'ecl' {
+            // ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
+            mut has_match = false
+            for color in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'] {
+                if field.value == color {
+                    has_match = true
                     break
                 }
             }
-            if !found_field {
+            if !has_match {
                 return false
             }
+        } else if field.name == 'pid' {
+            // pid (Passport ID) - a nine-digit number, including leading zeroes.
+            if field.value.length != 9 {
+                return false
+            }
+            for i in 0..field.value.length {
+                var char = field.value.charAt(i)
+                if char != '0' and char != '1' and char != '2' and char != '3' and char != '4' and char != '5' and char != '6' and char != '7' and char != '8' and char != '9' {
+                    return false
+                }
+            }
         }
-        return true
     }
-    
+
+    return true
+}
+
+// Find all valid passports
+fn part_2() {
     mut valid_password = 0
     for passport in passports {
         // print '-------'
         // print passport
-        if is_valid(passport) {
+        if has_required_fields(passport) and has_valid_values(passport) {
             // print '=> is valid' 
             valid_password += 1
         } else {
@@ -88,4 +174,4 @@ fn part_2() {
     }
     print 'Valid passwords: ' + valid_password
 }
-part_2();
+part_2()
