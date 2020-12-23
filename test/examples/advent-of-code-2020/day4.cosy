@@ -1,0 +1,91 @@
+// https://adventofcode.com/2020/day/4
+
+foreign fn read_file(path Str) Str
+
+var input = read_file('test/examples/advent-of-code-2020/data/day4.txt')
+
+// var input = 'ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+// byr:1937 iyr:2017 cid:147 hgt:183cm
+
+// iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
+// hcl:#cfa07d byr:1929
+
+// hcl:#ae17e1 iyr:2013
+// eyr:2024
+// ecl:brn pid:760753108 byr:1931
+// hgt:179cm
+
+// hcl:#cfa07d eyr:2025 pid:166559648
+// iyr:2011 ecl:brn hgt:59in'
+
+var passports = input.replace('\n\n', '$').replace('\n', ' ').split('$')
+
+fn has_required_fields(passport Str) Bool {
+    var parts = passport.split(' ')
+    for field in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'] {
+        mut found_field = false
+        for part in parts {
+            var code = part.split(':').get(0)
+            if code == field {
+                found_field = true
+                break
+            }
+        }
+        if !found_field {
+            return false
+        }
+    }
+    return true
+}
+
+// Find all passports that contain 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'
+fn part_1() {
+    mut valid_password = 0
+    for passport in passports {
+        // print '-------'
+        // print passport
+        if has_required_fields(passport) {
+            // print '=> is valid' 
+            valid_password += 1
+        } else {
+            // print '=> is INVALID' 
+        }
+    }
+    print 'Valid passwords: ' + valid_password
+}
+// part_1();
+
+// Find all valid passports
+fn part_2() {
+    fn is_valid(passport Str) Bool {
+        var parts = passport.split(' ')
+        for field in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'] {
+            mut found_field = false
+            for part in parts {
+                var code = part.split(':').get(0)
+                if code == field {
+                    found_field = true
+                    break
+                }
+            }
+            if !found_field {
+                return false
+            }
+        }
+        return true
+    }
+    
+    mut valid_password = 0
+    for passport in passports {
+        // print '-------'
+        // print passport
+        if is_valid(passport) {
+            // print '=> is valid' 
+            valid_password += 1
+        } else {
+            // print '=> is INVALID' 
+        }
+    }
+    print 'Valid passwords: ' + valid_password
+}
+part_2();
