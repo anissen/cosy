@@ -224,7 +224,9 @@ class Typer {
                         return switch name.lexeme {
                             case 'length': Number;
                             case 'split': Function([Text], Array(Text));
+                            case 'replace': Function([Text, Text], Text);
                             case 'charAt': Function([Number], Text);
+                            case 'substr': Function([Number, Number], Text);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case NamedStruct(structName) | Mutable(NamedStruct(structName)): 
