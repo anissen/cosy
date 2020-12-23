@@ -21,7 +21,7 @@ class Interpreter {
             for (statement in statements) execute(statement);
         } catch (e:RuntimeError) {
             Cosy.runtimeError(e);
-        } catch(eof:haxe.io.Eof) {
+        } catch (eof:haxe.io.Eof) {
             // program is quit while waiting for user text input
         }
     }
@@ -290,7 +290,7 @@ class Interpreter {
             case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
             case 'pop': new CustomCallable(0, (_ -> (array.length == 0 ? throw new RuntimeError(name, 'Cannot pop from empty array.') : array.pop())));
             case 'map': new CustomCallable(1, function(args) {
-                var arg: ForeignFunction = args[0];
+                var arg: Callable = args[0];
                 return [ for (v in array) arg.call(this, [v]) ];
             });
             // case 'map': new CustomCallable(1, args -> array.map(args[0]));
