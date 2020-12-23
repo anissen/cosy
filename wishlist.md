@@ -26,6 +26,8 @@ fun x() { print "hej" }
   - [ ] Useless expressions, e.g. `'hello world'`
   - [ ] Function and variable names uses snake_case
   - [ ] Struct names uses PascalCase
+  - [ ] All paths not returning a value if the function has a return value
+  - [ ] Ensure correct number of arguments at compile time instead of at runtime
 - [ ] Optimizer
   - [ ] Optimize usages of literals in `var`'s. They're constants in pratice.
   - [ ] Optimize e.g. `x + 2 + 3 + 4 + 5 + 6` to `x + 20`

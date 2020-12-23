@@ -279,3 +279,10 @@
 //     var pass = Password { value = 23 }
 //     validate(pass)
 // }
+
+{
+    struct Field {}
+    mut tmp_fields Array Field = []
+    var fields Array Field = tmp_fields
+    print fields
+}
