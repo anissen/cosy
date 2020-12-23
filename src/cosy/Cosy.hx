@@ -34,11 +34,12 @@ class Cosy {
             #end
         });
         Cosy.setFunction('stringToNumber', (args) -> Std.parseInt(args[0]) /* can be null! */);
-        Cosy.setFunction('read_file', (args) -> { 
+        Cosy.setFunction('read_lines', (args) -> { 
             var lines = File.getContent(args[0]).split('\n');
             lines.pop(); // remove last line (assuming empty line)
             return lines;
         });
+        Cosy.setFunction('read_file', (args) -> File.getContent(args[0]));
         
         #if sys
         var args = Sys.args();

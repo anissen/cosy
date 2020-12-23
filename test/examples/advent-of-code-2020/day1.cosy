@@ -1,7 +1,7 @@
-foreign fn read_file(path Str) Array Str
+foreign fn read_lines(path Str) Array Str
 foreign fn stringToNumber(input Str) Num
 
-var input = read_file('test/examples/advent-of-code-2020/data/day1.txt')
+var input = read_lines('test/examples/advent-of-code-2020/data/day1.txt')
 // var input = ['1721', '979', '366', '299', '675', '1456']
 
 var numbers = input.map(stringToNumber)

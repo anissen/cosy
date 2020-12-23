@@ -1,6 +1,6 @@
-foreign fn read_file(path Str) Array Str
+foreign fn read_lines(path Str) Array Str
 
-var input = read_file('test/examples/advent-of-code-2020/data/day3.txt')
+var input = read_lines('test/examples/advent-of-code-2020/data/day3.txt')
 // var input = [
 //     '..##.......',
 //     '#...#...#..',
