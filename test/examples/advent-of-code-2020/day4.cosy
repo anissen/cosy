@@ -61,18 +61,8 @@ fn has_required_fields(passport Passport) Bool {
 
 // Find all passports that contain 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'
 fn part_1() {
-    mut valid_password = 0
-    for passport in passports {
-        // print '-------'
-        // print passport
-        if has_required_fields(passport) {
-            // print '=> is valid' 
-            valid_password += 1
-        } else {
-            // print '=> is INVALID' 
-        }
-    }
-    print 'Valid passwords: ' + valid_password
+    var valid_passwords = passports.filter(has_required_fields)
+    print 'Valid passwords: ' + valid_passwords.length
 }
 part_1()
 
@@ -161,17 +151,10 @@ fn has_valid_values(passport Passport) Bool {
 
 // Find all valid passports
 fn part_2() {
-    mut valid_password = 0
-    for passport in passports {
-        // print '-------'
-        // print passport
-        if has_required_fields(passport) and has_valid_values(passport) {
-            // print '=> is valid' 
-            valid_password += 1
-        } else {
-            // print '=> is INVALID' 
-        }
+    fn is_valid(passport Passport) {
+        return has_required_fields(passport) and has_valid_values(passport)
     }
-    print 'Valid passwords: ' + valid_password
+    var valid_passwords = passports.filter(is_valid)
+    print 'Valid passwords: ' + valid_passwords.length
 }
 part_2()

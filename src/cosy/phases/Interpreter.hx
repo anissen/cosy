@@ -293,7 +293,15 @@ class Interpreter {
                 var arg: Callable = args[0];
                 return [ for (v in array) arg.call(this, [v]) ];
             });
-            // case 'map': new CustomCallable(1, args -> array.map(args[0]));
+            case 'filter': new CustomCallable(1, (args) -> {
+                var arg: Callable = args[0];
+                var res = [];
+                for (v in array) {
+                    var r = arg.call(this, [v]);
+                    if (r) res.push(v);
+                }
+                return res;
+            });
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }
