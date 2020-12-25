@@ -302,6 +302,15 @@ class Interpreter {
                 }
                 return res;
             });
+            case 'count': new CustomCallable(1, (args) -> {
+                var sum = 0;
+                final arg: Callable = args[0];
+                for (v in array) {
+                    var r = arg.call(this, [v]);
+                    if (r) sum++;
+                }
+                return sum;
+            });
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }

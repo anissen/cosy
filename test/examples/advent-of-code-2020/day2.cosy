@@ -22,9 +22,9 @@ fn parse(str Str) Password {
 }
 
 fn validate_part_1(p Password) {
-    var char_count = p.pass.filter(fn (char Str) {
+    var char_count = p.pass.count(fn (char Str) {
         return char == p.char
-    }).length
+    })
     return char_count >= p.min and char_count <= p.max
 }
 

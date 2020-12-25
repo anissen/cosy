@@ -219,6 +219,7 @@ class Typer {
                             case 'get': Function([Number], t);
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
+                            case 'count': Function([Function([t], Boolean)], Number);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case Text | Mutable(Text):
