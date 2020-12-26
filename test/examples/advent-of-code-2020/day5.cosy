@@ -1,0 +1,53 @@
+// https://adventofcode.com/2020/day/5
+
+foreign fn read_lines(path Str) Array Str
+
+var input = read_lines('test/examples/advent-of-code-2020/data/day5.txt')
+// var input = ['FBFBBFFRLR', 'BFFFBBFRRR', 'FFFBBBFRRR', 'BBFFBBFRLL']
+
+fn get_row_partioning(arr Array Str) {
+    return arr.filter(fn(i Str) {
+        return i == 'F' or i == 'B'
+    }).map(fn(i Str) {
+        return i == 'F'
+    })
+}
+fn get_col_partioning(arr Array Str) {
+    return arr.filter(fn(i Str) {
+        return i == 'L' or i == 'R'
+    }).map(fn(i Str) {
+        return i == 'L'
+    })
+}
+
+fn bsp(bsp_input Array Bool, max Num) {
+    mut res_min = 0
+    mut res_max = max
+    for b in bsp_input {
+        if b {
+            res_max = res_min + (res_max - res_min - 1) / 2
+        } else {
+            res_min = res_min + (res_max - res_min + 1) / 2
+        }
+    }
+    if res_min != res_max {
+        print 'ERROR: Unique value not found'
+    }
+    return res_min
+}
+
+fn part_1() {
+    mut highest_seat_id = 0
+    for l in input {
+        var input_array = l.split('')
+        var row = bsp(get_row_partioning(input_array), 127)
+        var col = bsp(get_col_partioning(input_array), 7)
+        var seat_id = row * 8 + col
+        // print '# PART 1: ' + row + ' * 8 + ' + col + ' = ' + seat_id
+        if seat_id > highest_seat_id {
+            highest_seat_id = seat_id
+        }
+    }
+    print '# PART 1: Highest seat ID: ' + highest_seat_id
+}
+part_1()
