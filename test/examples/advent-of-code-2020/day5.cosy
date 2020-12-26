@@ -36,18 +36,31 @@ fn bsp(bsp_input Array Bool, max Num) {
     return res_min
 }
 
+mut seat_ids Array Num = []
+for l in input {
+    var input_array = l.split('')
+    var row = bsp(get_row_partioning(input_array), 127)
+    var col = bsp(get_col_partioning(input_array), 7)
+    var seat_id = row * 8 + col
+    seat_ids.push(seat_id)
+}
+var sorted_seat_ids = seat_ids.sort(fn(a Num, b Num) { return a - b })
+
 fn part_1() {
-    mut highest_seat_id = 0
-    for l in input {
-        var input_array = l.split('')
-        var row = bsp(get_row_partioning(input_array), 127)
-        var col = bsp(get_col_partioning(input_array), 7)
-        var seat_id = row * 8 + col
-        // print '# PART 1: ' + row + ' * 8 + ' + col + ' = ' + seat_id
-        if seat_id > highest_seat_id {
-            highest_seat_id = seat_id
-        }
-    }
+    mut highest_seat_id = sorted_seat_ids.get(sorted_seat_ids.length - 1)
     print '# PART 1: Highest seat ID: ' + highest_seat_id
 }
 part_1()
+
+fn part_2() {
+    mut value = sorted_seat_ids.get(0)
+    for i in 1..sorted_seat_ids.length {
+        value += 1
+        var v = sorted_seat_ids.get(i)
+        if v != value {
+            print '# PART 2: Empty seat at seat ID: ' + value
+            return _
+        }
+    }
+}
+part_2()
