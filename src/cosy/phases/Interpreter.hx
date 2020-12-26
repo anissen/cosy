@@ -319,6 +319,12 @@ class Interpreter {
                 }
                 return sum;
             });
+            case 'sort': new CustomCallable(1, (args) -> {
+                var f: Callable = args[0];
+                var array_copy = array;
+                array_copy.sort((a, b) -> f.call(this, [a, b]));
+                return array_copy;
+            });
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }

@@ -208,6 +208,10 @@ class Typer {
                             case 'concat': Function([Array(t)], Void);
                             case 'pop': Function([], t);
                             case 'get': Function([Number], t);
+                            case 'map': Function([Function([t], Unknown)], Array(Unknown));
+                            case 'filter': Function([Function([t], Boolean)], Array(t));
+                            case 'count': Function([Function([t], Boolean)], Number);
+                            case 'sort': Function([Function([t, t], Number)], Array(t));
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case Array(t):
@@ -220,6 +224,7 @@ class Typer {
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
+                            case 'sort': Function([Function([t, t], Number)], Array(t));
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case Text | Mutable(Text):
@@ -364,6 +369,9 @@ class Typer {
     }
 
     function matchType(valueType :VariableType, expectedType :VariableType) :Bool {
+        // trace('-----');
+        // trace('valueType: $valueType');
+        // trace('expectedType: $expectedType');
         return switch [valueType, expectedType] {
             case [_, Unknown]: true;
             case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
