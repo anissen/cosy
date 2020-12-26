@@ -110,7 +110,7 @@ fun x() { print "hej" }
 - [x] Suggest variables/functions when misspelling variables/functions
 - [ ] Use more `final` variables and `inline` functions (https://haxe.org/manual/class-field-inline.html)
 - [ ] Make built-in functions snake-case, e.g. `stringToNumber` to `string_to_number`
-- [ ] Being able to concatinate strings and booleans
+- [x] Being able to concatinate strings and booleans
 - [ ] Remove brackets and use indentation checking instead?
 
 # Project wishlist

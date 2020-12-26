@@ -145,6 +145,10 @@ class Interpreter {
                             (left:String) + (right:Float);
                         else if (Std.isOfType(left, String) && Std.isOfType(right, String))
                             (left:String) + (right:String);
+                        else if (Std.isOfType(left, Bool) && Std.isOfType(right, String))
+                            (left:String) + (right:String);
+                        else if (Std.isOfType(left, String) && Std.isOfType(right, Bool))
+                            (left:String) + (right:String);
                         else throw new RuntimeError(op, 'Operands cannot be concatinated.');
                     case MinusEqual:
                         final left = lookUpVariable(name, expr);
@@ -208,6 +212,10 @@ class Interpreter {
                         else if (Std.isOfType(left, String) && Std.isOfType(right, Float))
                             (left:String) + (right:Float);
                         else if (Std.isOfType(left, String) && Std.isOfType(right, String))
+                            (left:String) + (right:String);
+                        else if (Std.isOfType(left, Bool) && Std.isOfType(right, String))
+                            (left:String) + (right:String);
+                        else if (Std.isOfType(left, String) && Std.isOfType(right, Bool))
                             (left:String) + (right:String);
                         else throw new RuntimeError(op, 'Operands cannot be concatinated.');
                     case Greater:
