@@ -319,6 +319,15 @@ class Interpreter {
                 }
                 return sum;
             });
+            case 'sum': new CustomCallable(1, (args) -> {
+                var sum = 0;
+                final arg: Callable = args[0];
+                for (v in array) {
+                    var r: Int = arg.call(this, [v]);
+                    sum += r;
+                }
+                return sum;
+            });
             case 'sort': new CustomCallable(1, (args) -> {
                 var f: Callable = args[0];
                 var array_copy = array;

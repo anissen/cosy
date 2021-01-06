@@ -63,17 +63,15 @@ fn group_answer_count(group Array Str, func Fn(Array Str, Str) Bool) {
 var groups = get_groups()
 
 { // part 1
-    mut total_questions_answered = 0
-    for group in groups {
-        total_questions_answered += group_answer_count(group, did_anyone_answer_question)
-    }
+    var total_questions_answered = groups.sum(fn(group Array Str) {
+        return group_answer_count(group, did_anyone_answer_question)
+    })
     print '# PART 1: ' + total_questions_answered + ' questions answered'
 }
 
 { // part 2
-    mut total_questions_answered = 0
-    for group in groups {
-        total_questions_answered += group_answer_count(group, did_everyone_answer_question)
-    }
+    var total_questions_answered = groups.sum(fn(group Array Str) {
+        return group_answer_count(group, did_everyone_answer_question)
+    })
     print '# PART 2: ' + total_questions_answered + ' questions answered'
 }
