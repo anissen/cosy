@@ -22,39 +22,58 @@ fn get_groups() {
     return groups
 }
 
-fn part_1() {
-    fn did_answer_question(group Array Str, question Str) Bool {
-        for str in group {
-            for letter in str.split('') {
-                if letter == question {
-                    return true
-                }
+fn did_anyone_answer_question(group Array Str, question Str) Bool {
+    for str in group {
+        for letter in str.split('') {
+            if letter == question {
+                return true
             }
         }
-        return false
     }
-    
-    fn group_answer_count(group Array Str) {
-        var questions = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-        mut question_count = 0
-        for question in questions {
-            if did_answer_question(group, question) {
-                question_count += 1
-            }
-        }
-        return question_count
-    }
+    return false
+}
 
-    // print 'Groups'
+fn did_everyone_answer_question(group Array Str, question Str) Bool {
+    for str in group {
+        mut did_answer = false
+        for letter in str.split('') {
+            if letter == question {
+                did_answer = true
+                break
+            }
+        }
+        if !did_answer {
+            return false
+        }
+    }
+    return true
+}
+
+fn group_answer_count(group Array Str, func Fn(Array Str, Str) Bool) {
+    var questions = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    mut question_count = 0
+    for question in questions {
+        if func(group, question) {
+            question_count += 1
+        }
+    }
+    return question_count
+}
+
+var groups = get_groups()
+
+{ // part 1
     mut total_questions_answered = 0
-    var groups = get_groups()
     for group in groups {
-        // print group
-        var count = group_answer_count(group)
-        // print 'Answered: ' + count
-        total_questions_answered += count
+        total_questions_answered += group_answer_count(group, did_anyone_answer_question)
     }
-
     print '# PART 1: ' + total_questions_answered + ' questions answered'
 }
-part_1()
+
+{ // part 2
+    mut total_questions_answered = 0
+    for group in groups {
+        total_questions_answered += group_answer_count(group, did_everyone_answer_question)
+    }
+    print '# PART 2: ' + total_questions_answered + ' questions answered'
+}
