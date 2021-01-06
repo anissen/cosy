@@ -380,10 +380,8 @@ class Typer {
             case [Mutable(t1), t2]: matchType(t1, t2);
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
-                for (param1 in params1) {
-                    for (param2 in params2) {
-                        if (!matchType(param1, param2)) return false;
-                    }
+                for (i in 0...params1.length) {
+                    if (!matchType(params1[i], params2[i])) return false;
                 }
                 matchType(v1, v2);
             case [Array(Unknown), Array(_)]: true; // handle case where e.g. var a Array Num = []
