@@ -53,6 +53,7 @@ class Resolver {
 			case Var(name, type, init, mut, foreign):
                 if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 var member = currentStruct.match(Struct);
+                markTypeAsRead(type);
 				declare(name, mut, member);
                 if (init != null) resolveExpr(init);
                 else if (!mut && !member) Cosy.error(name, 'Non-mutable variables must be initialized.');
@@ -167,7 +168,29 @@ class Resolver {
 			case AnonFunction(params, body, returnType): 
 				resolveFunction(null, params, body, Function, false);
 		}
-	}
+    }
+    
+    function markTypeAsRead(type: Typer.VariableType) {
+        // Flag structs used as type annotations as 'Read', e.g.
+        // struct Field {}
+        // var f Array Field = []
+        // trace(type);
+        switch type {
+            case NamedStruct(structName): 
+                var i = scopes.length - 1;
+                while (i >= 0) {
+                    var scope = scopes.get(i);
+                    if (scope.exists(structName)) {
+                        scope.get(structName).state = Read;
+                        break;
+                    }
+                    i--;
+                }
+            //case Mutable(t): markTypeAsRead(t); // Required?
+            case Array(t): markTypeAsRead(t); 
+            case _:
+        }
+    }
 	
 	function resolveFunction(name:Token, params:Array<Param>, body:Array<Stmt>, type:FunctionType, foreign:Bool) {
 		var enclosingFunction = currentFunction;
