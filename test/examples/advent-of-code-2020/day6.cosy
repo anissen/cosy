@@ -1,0 +1,60 @@
+// https://adventofcode.com/2020/day/6
+
+foreign fn read_lines(path Str) Array Str
+
+var input = read_lines('test/examples/advent-of-code-2020/data/day6.txt')
+// var input = ['abc', '', 'a', 'b', 'c', '', 'ab', 'ac', '', 'a', 'a', 'a', 'a', '', 'b']
+
+fn get_groups() {
+    mut groups Array Array Str = []
+    mut group Array Str = []
+    for i in input {
+        if i.length == 0 {
+            groups.push(group)
+            group = []
+            continue
+        }
+        group.push(i)
+    }
+    if group.length > 0 {
+        groups.push(group)
+    }
+    return groups
+}
+
+fn part_1() {
+    fn did_answer_question(group Array Str, question Str) Bool {
+        for str in group {
+            for letter in str.split('') {
+                if letter == question {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    fn group_answer_count(group Array Str) {
+        var questions = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        mut question_count = 0
+        for question in questions {
+            if did_answer_question(group, question) {
+                question_count += 1
+            }
+        }
+        return question_count
+    }
+
+    // print 'Groups'
+    mut total_questions_answered = 0
+    var groups = get_groups()
+    for group in groups {
+        // print group
+        var count = group_answer_count(group)
+        // print 'Answered: ' + count
+        total_questions_answered += count
+    }
+
+    print '# PART 1: ' + total_questions_answered + ' questions answered'
+}
+part_1()
