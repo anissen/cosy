@@ -36,6 +36,6 @@ class StructInstance {
             if (b < a) return 1;
             return 0;
         });
-		return '${structName.lexeme} instance { ${fieldsArray.join(', ')} }';
+		return '${structName.lexeme} { ${fieldsArray.join(', ')} }';
 	}
 }
