@@ -1,5 +1,6 @@
 package cosy;
 
+import sys.FileSystem;
 import cosy.phases.*;
 import haxe.Timer;
 import haxe.io.Path;
@@ -20,6 +21,7 @@ class Cosy {
     static var outputJavaScript = false;
     static var outputDisassembly = true; // TODO: Set to true for testing purposes, should be false by default
     static var validateOnly = false;
+    static var watch = true;
     static var outputTimes = true; // TODO: Set to true for testing purposes, should be false by default
     static var noColors = false;
     public static var strict = false;
@@ -53,6 +55,7 @@ class Cosy {
                 case '--javascript': outputJavaScript = true;
                 case '--strict': strict = true;
                 case '--validate-only': validateOnly = true;
+                case '--watch': watch = true;
                 case '--times': outputTimes = true;
                 case '--no-colors': noColors = true;
                 case _: argErrors.push(arg);
@@ -74,6 +77,7 @@ Options:
 --strict         Enable strict enforcing of types.
 --validate-only  Only perform code validation.
 --times          Output time spent in each phase.
+--watch          Watch the file for changes and automatically rerun.
 --no-colors      Disable colors in log output.'
             );
             Sys.exit(64);
@@ -109,6 +113,28 @@ Options:
         }
 
         runFile(file);
+
+        if (watch) {
+            var stat = FileSystem.stat(file);
+            function has_file_changed() {
+                if (stat == null) return false;
+                var new_stat = FileSystem.stat(file);
+                if (new_stat == null) return false;
+                var has_changed = (new_stat.mtime.getTime() != stat.mtime.getTime());
+                stat = new_stat;
+                return has_changed;
+            }
+            function watch_file() {
+                if (has_file_changed()) {
+                    var time = Date.now();
+                    var text = '> "$file" changed at $time';
+                    Sys.println(noColors ? text : '\033[1;34m$text\033[0m');
+                    runFile(file);
+                }
+            }
+            var timer = new Timer(1000);
+            timer.run = watch_file;
+        }
         #end
     }
 
@@ -116,8 +142,10 @@ Options:
     static function runFile(path:String) {
         var content = File.getContent(path);
         run(content);
-        if (hadError) Sys.exit(65);
-        if (hadRuntimeError) Sys.exit(70);
+        if (!watch) {
+            if (hadError) Sys.exit(65);
+            if (hadRuntimeError) Sys.exit(70);
+        }
     }
     #end
 
