@@ -1,10 +1,10 @@
-S instance { x = 4 }
-S instance { x = 6 }
-S instance { x = 4 }
-S instance { x = 4 }
-S instance { x = 1 }
-Point instance { a = [], x = 5, y = 13 }
-Test instance { a = Point instance { a = [], x = 666, y = 777 }, b = "hej" }
-Test2 instance { a = [3,4,5], p = Point instance { a = [], x = 4, y = 12 } }
-Point instance { a = [], x = 3, y = 4 }
-Entity instance { arr = [5,6,7], text = "default value", x = 3, y = 5 }
+S { x = 4 }
+S { x = 6 }
+S { x = 4 }
+S { x = 4 }
+S { x = 1 }
+Point { a = [], x = 5, y = 13 }
+Test { a = Point { a = [], x = 666, y = 777 }, b = "hej" }
+Test2 { a = [3,4,5], p = Point { a = [], x = 4, y = 12 } }
+Point { a = [], x = 3, y = 4 }
+Entity { arr = [5,6,7], text = "default value", x = 3, y = 5 }

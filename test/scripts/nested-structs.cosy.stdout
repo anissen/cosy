@@ -1,4 +1,4 @@
-Person instance { age = 42, name = "John", sizes = Sizes instance { height = 186, shoeSize = 33 } }
-Person instance { age = 42, name = "John", sizes = Sizes instance { height = 196, shoeSize = 33 } }
-Person instance { age = 42, name = "Peter", sizes = Sizes instance { height = 206, shoeSize = 33 } }
-Person instance { age = 42, name = "John", sizes = Sizes instance { height = 196, shoeSize = 33 } }
+Person { age = 42, name = "John", sizes = Sizes { height = 186, shoeSize = 33 } }
+Person { age = 42, name = "John", sizes = Sizes { height = 196, shoeSize = 33 } }
+Person { age = 42, name = "Peter", sizes = Sizes { height = 206, shoeSize = 33 } }
+Person { age = 42, name = "John", sizes = Sizes { height = 196, shoeSize = 33 } }
