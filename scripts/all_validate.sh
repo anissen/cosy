@@ -29,9 +29,8 @@ for filename in test/scripts/*.cosy; do
     echo -ne "\033[0m"
     echo -ne "\033[0;31m"
     # use 2>&1 to redirect stderr into stdout
-    # hl bin/cosy.hl $options ../test/scripts/$filename 2>&1 | diff ../test/scripts/$filename.stdout -
-    #hl bin/hl/cosy.hl $filename 2>&1 | diff $filename.stdout -
-    java -jar bin/java/cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
+    # hl bin/hl/Cosy.hl --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
+    java -jar bin/jvm/Cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
     retVal=$?
     echo -ne "\033[0m"
     # if [ $retVal -ne 0 ]; then
