@@ -2,8 +2,13 @@
 
 foreign fn read_lines(path Str) Array Str
 
-var input = read_lines('test/examples/advent-of-code-2020/data/day5.txt')
-// var input = ['FBFBBFFRLR', 'BFFFBBFRRR', 'FFFBBBFRRR', 'BBFFBBFRLL']
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['FBFBBFFRLR', 'BFFFBBFRRR', 'FFFBBBFRRR', 'BBFFBBFRLL']
+} else {
+    input = read_lines('test/examples/advent-of-code-2020/data/day5.txt')
+}
 
 fn get_row_partioning(arr Array Str) {
     return arr.filter(fn(i Str) {
@@ -46,12 +51,13 @@ for l in input {
 }
 var sorted_seat_ids = seat_ids.sort(fn(a Num, b Num) { return a - b })
 
-fn part_1() {
+// Part 1
+{
     mut highest_seat_id = sorted_seat_ids.get(sorted_seat_ids.length - 1)
     print '# PART 1: Highest seat ID: ' + highest_seat_id
 }
-part_1()
 
+// Part 2
 fn part_2() {
     mut value = sorted_seat_ids.get(0)
     for i in 1..sorted_seat_ids.length {

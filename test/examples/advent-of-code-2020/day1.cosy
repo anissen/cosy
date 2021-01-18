@@ -1,8 +1,15 @@
+// https://adventofcode.com/2020/day/1
+
 foreign fn read_lines(path Str) Array Str
 foreign fn stringToNumber(input Str) Num
 
-var input = read_lines('test/examples/advent-of-code-2020/data/day1.txt')
-// var input = ['1721', '979', '366', '299', '675', '1456']
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['1721', '979', '366', '299', '675', '1456']
+} else {
+    input = read_lines('test/examples/advent-of-code-2020/data/day1.txt')
+}
 
 var numbers = input.map(stringToNumber)
 
@@ -13,8 +20,9 @@ fn part_1() {
             var a = numbers.get(i)
             var b = numbers.get(i2)
             if a + b == 2020 {
-                print a + ' and ' + b + ' sum to 2020'
-                print 'Mult: ' + a * b
+                // print a + ' and ' + b + ' sum to 2020'
+                // print 'Mult: ' + a * b
+                print '# PART 1: ' + a * b
                 return _
             }
         }
@@ -31,8 +39,9 @@ fn part_2() {
                 var b = numbers.get(i2)
                 var c = numbers.get(i3)
                 if a + b + c == 2020 {
-                    print a + ' and ' + b + ' and ' + c + ' sum to 2020'
-                    print 'Mult: ' + a * b * c
+                    // print a + ' and ' + b + ' and ' + c + ' sum to 2020'
+                    // print 'Mult: ' + a * b * c
+                    print '# PART 2: ' + a * b * c
                     return _
                 }
             }

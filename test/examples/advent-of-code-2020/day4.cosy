@@ -3,21 +3,25 @@
 foreign fn stringToNumber(input Str) Num
 foreign fn read_file(path Str) Str
 
-var input = read_file('test/examples/advent-of-code-2020/data/day4.txt')
+mut input Str
+var test_mode = true
+if test_mode {
+    input = 'ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+byr:1937 iyr:2017 cid:147 hgt:183cm
 
-// var input = 'ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
-// byr:1937 iyr:2017 cid:147 hgt:183cm
+iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
+hcl:#cfa07d byr:1929
 
-// iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
-// hcl:#cfa07d byr:1929
+hcl:#ae17e1 iyr:2013
+eyr:2024
+ecl:brn pid:760753108 byr:1931
+hgt:179cm
 
-// hcl:#ae17e1 iyr:2013
-// eyr:2024
-// ecl:brn pid:760753108 byr:1931
-// hgt:179cm
-
-// hcl:#cfa07d eyr:2025 pid:166559648
-// iyr:2011 ecl:brn hgt:59in'
+hcl:#cfa07d eyr:2025 pid:166559648
+iyr:2011 ecl:brn hgt:59in'
+} else {
+    input = read_file('test/examples/advent-of-code-2020/data/day4.txt')
+}
 
 struct Field {
     var name Str
@@ -32,12 +36,11 @@ var passport_list = input.replace('\n\n', '$').replace('\n', ' ').split('$')
 
 fn parse(passport Str) {
     var parts = passport.split(' ')
-    mut tmp_fields Array Field = []
+    mut fields Array Field = []
     for part in parts {
         var components = part.split(':')
-        tmp_fields.push(Field { name = components.get(0), value = components.get(1) })
+        fields.push(Field { name = components.get(0), value = components.get(1) })
     }
-    var fields Array Field = tmp_fields // HACK to workaround an error in Typer
     return Passport { fields = fields }
 }
 
@@ -59,11 +62,10 @@ fn has_required_fields(passport Passport) Bool {
     return true
 }
 
-// Find all passports that contain 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'
-fn part_1() {
-    print '#PART 1: Valid passwords: ' + passports.count(has_required_fields)
+// Part 1: Find all passports that contain 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'
+{
+    print '# PART 1: Valid passwords: ' + passports.count(has_required_fields)
 }
-part_1()
 
 fn value_in_range(value Num, min Num, max Num) Bool {
     return value >= min and value <= max
@@ -148,11 +150,10 @@ fn has_valid_values(passport Passport) Bool {
     return true
 }
 
-// Find all valid passports
-fn part_2() {
+// Part 2: Find all valid passports
+{
     fn is_valid(passport Passport) {
         return has_required_fields(passport) and has_valid_values(passport)
     }
-    print '#PART 2: Valid passwords: ' + passports.count(is_valid)
+    print '# PART 2: Valid passwords: ' + passports.count(is_valid)
 }
-part_2()

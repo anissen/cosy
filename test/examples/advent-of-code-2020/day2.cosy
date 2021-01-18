@@ -1,8 +1,15 @@
+// https://adventofcode.com/2020/day/2
+
 foreign fn read_lines(path Str) Array Str
 foreign fn stringToNumber(input Str) Num
 
-var input = read_lines('test/examples/advent-of-code-2020/data/day2.txt')
-// var input = ['1-3 a: abcde','1-3 b: cdefg','2-9 c: ccccccccc']
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['1-3 a: abcde','1-3 b: cdefg','2-9 c: ccccccccc']
+} else {
+    input = read_lines('test/examples/advent-of-code-2020/data/day2.txt')
+}
 
 struct Password {
     var min Num
@@ -38,7 +45,15 @@ fn validate_part_2(p Password) {
 }
 
 var parsed_input = input.map(parse)
-var valid_count_part_1 = parsed_input.filter(validate_part_1)
-print '# PART 1: ' + valid_count_part_1.length + ' valid passwords'
-var valid_count_part_2 = parsed_input.filter(validate_part_2)
-print '# PART 2: ' + valid_count_part_2.length + ' valid passwords'
+
+// Part 1
+{
+    var valid_count_part_1 = parsed_input.filter(validate_part_1)
+    print '# PART 1: ' + valid_count_part_1.length + ' valid passwords'
+}
+
+// Part 2
+{
+    var valid_count_part_2 = parsed_input.filter(validate_part_2)
+    print '# PART 2: ' + valid_count_part_2.length + ' valid passwords'
+}

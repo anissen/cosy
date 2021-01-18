@@ -1,19 +1,26 @@
+// https://adventofcode.com/2020/day/3
+
 foreign fn read_lines(path Str) Array Str
 
-var input = read_lines('test/examples/advent-of-code-2020/data/day3.txt')
-// var input = [
-//     '..##.......',
-//     '#...#...#..',
-//     '.#....#..#.',
-//     '..#.#...#.#',
-//     '.#...##..#.',
-//     '..#.##.....',
-//     '.#.#.#....#',
-//     '.#........#',
-//     '#.##...#...',
-//     '#...##....#',
-//     '.#..#...#.#',
-// ]
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = [
+        '..##.......',
+        '#...#...#..',
+        '.#....#..#.',
+        '..#.#...#.#',
+        '.#...##..#.',
+        '..#.##.....',
+        '.#.#.#....#',
+        '.#........#',
+        '#.##...#...',
+        '#...##....#',
+        '.#..#...#.#',
+    ]
+} else {
+    input = read_lines('test/examples/advent-of-code-2020/data/day3.txt')
+}
 
 fn count_trees(slope_x Num, slope_y Num) Num {
     mut x = 0
@@ -37,13 +44,12 @@ fn count_trees(slope_x Num, slope_y Num) Num {
 }
 
 // Part 1: Count trees with a 3-1 slope
-fn part_1() {
-    print '#PART 1: Number of trees hit: ' + treescount_trees(3, 1)
+{
+    print '# PART 1: Number of trees hit: ' + count_trees(3, 1)
 }
-part_1()
 
 // Part 1: Multiple number of trees from different slopes
-fn part_2() {
+{
     // Slopes:
     // Right 1, down 1.
     // Right 3, down 1.
@@ -52,8 +58,8 @@ fn part_2() {
     // Right 1, down 2.
     mut result = 1
     for trees in [count_trees(1, 1), count_trees(3, 1), count_trees(5, 1), count_trees(7, 1), count_trees(1, 2)] {
-        print 'Number of trees hit: ' + trees
+        // print 'Number of trees hit: ' + trees
         result *= trees
     }
-    print result
+    print '# PART 2: Number of trees hit: ' + result
 }

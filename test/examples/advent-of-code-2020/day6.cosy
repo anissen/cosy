@@ -2,8 +2,13 @@
 
 foreign fn read_lines(path Str) Array Str
 
-var input = read_lines('test/examples/advent-of-code-2020/data/day6.txt')
-// var input = ['abc', '', 'a', 'b', 'c', '', 'ab', 'ac', '', 'a', 'a', 'a', 'a', '', 'b']
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['abc', '', 'a', 'b', 'c', '', 'ab', 'ac', '', 'a', 'a', 'a', 'a', '', 'b']
+} else {
+    input = read_lines('test/examples/advent-of-code-2020/data/day6.txt')
+}
 
 fn get_groups() {
     mut groups Array Array Str = []
@@ -62,14 +67,14 @@ fn group_answer_count(group Array Str, func Fn(Array Str, Str) Bool) {
 
 var groups = get_groups()
 
-{ // part 1
+{ // Part 1
     var total_questions_answered = groups.sum(fn(group Array Str) {
         return group_answer_count(group, did_anyone_answer_question)
     })
     print '# PART 1: ' + total_questions_answered + ' questions answered'
 }
 
-{ // part 2
+{ // Part 2
     var total_questions_answered = groups.sum(fn(group Array Str) {
         return group_answer_count(group, did_everyone_answer_question)
     })
