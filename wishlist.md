@@ -46,8 +46,8 @@ fun x() { print "hej" }
   - [x] Support for push
   - [x] Support for getting value at index
   - [ ] Support for array indexing?
-  - [ ] Support for map function
-  - [ ] Support for filter function
+  - [x] Support for map function
+  - [x] Support for filter function
 - [ ] Support for maps
 - [ ] String interpolation
 - [x] +=, -=, *=, /= operators
