@@ -19,10 +19,10 @@ class Cosy {
     static var outputPrettyPrint = false;
     static var outputBytecode = false;
     static var outputJavaScript = false;
-    static var outputDisassembly = true; // TODO: Set to true for testing purposes, should be false by default
+    static var outputDisassembly = false;
     static var validateOnly = false;
-    static var watch = true;
-    static var outputTimes = true; // TODO: Set to true for testing purposes, should be false by default
+    static var watch = false;
+    static var outputTimes = false;
     static var noColors = false;
     public static var strict = false;
 
@@ -271,27 +271,27 @@ Options:
             return;
         }
 
-        startMeasure('Code generator');
-        var codeGenerator = new CodeGenerator();
-        var bytecodeOutput = codeGenerator.generate(statements);
-        var bytecode = bytecodeOutput.bytecode;
-        endMeasure('Code generator');
+        // startMeasure('Code generator');
+        // var codeGenerator = new CodeGenerator();
+        // var bytecodeOutput = codeGenerator.generate(statements);
+        // var bytecode = bytecodeOutput.bytecode;
+        // endMeasure('Code generator');
         
-        if (outputDisassembly) {
-            startMeasure('Disassembler');
-            var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-            endMeasure('Disassembler');
-            printlines([disassembly]);
-        }
+        // if (outputDisassembly) {
+        //     startMeasure('Disassembler');
+        //     var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
+        //     endMeasure('Disassembler');
+        //     printlines([disassembly]);
+        // }
 
-        startMeasure('VM interpreter');
-        var vm = new VM();
-        vm.run(bytecodeOutput);
-        endMeasure('VM interpreter');
+        // startMeasure('VM interpreter');
+        // var vm = new VM();
+        // vm.run(bytecodeOutput);
+        // endMeasure('VM interpreter');
 
         // trace('AST interpreter');
         startMeasure('AST interpreter');
-        trace('AST output:');
+        // trace('AST output:');
         interpreter.interpret(statements);
         endMeasure('AST interpreter');
 
