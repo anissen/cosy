@@ -25,7 +25,7 @@ fun x() { print "hej" }
   - [ ] `if` with constant conditional expression
   - [ ] Useless expressions, e.g. `'hello world'`
   - [ ] Function and variable names uses snake_case
-  - [ ] Struct names uses PascalCase
+  - [ ] Struct names uses PascalCase (??)
   - [ ] All paths not returning a value if the function has a return value
   - [ ] Ensure correct number of arguments at compile time instead of at runtime
 - [ ] Optimizer

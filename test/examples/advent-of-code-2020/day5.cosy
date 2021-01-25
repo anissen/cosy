@@ -10,7 +10,7 @@ if test_mode {
     input = read_lines('test/examples/advent-of-code-2020/data/day5.txt')
 }
 
-fn get_row_partioning(arr Array Str) {
+fn get_row_partioning(arr Array Str) Array Bool {
     return arr.filter(fn(i Str) {
         return i == 'F' or i == 'B'
     }).map(fn(i Str) {
