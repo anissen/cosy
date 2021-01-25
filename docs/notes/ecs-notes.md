@@ -77,3 +77,15 @@ fn move() {
     }
 }
 ```
+
+When adding/removing a component to/from an entity, match the entity against all systems.
+That is:
+    for each system, s:
+        for each component in the system, cs:
+            check if the entity has all required components (cs)
+            if it does, add the entity to the system
+            otherwise, remove it from the system (if it is already in the system)
+Each system has a map of (entity, system components).
+    The entity is used when removing the entity
+    The system components are the data looped over
+See https://github.com/fponticelli/edge/blob/b56c002ea40d0e8dc228ae4a1740ca0ee5534eb1/demo/basic/bin/main.js#L155-L168
