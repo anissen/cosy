@@ -15,7 +15,11 @@ echo -ne "\033[0;35m"
 echo "> Validating"
 echo -ne "\033[0m"
 
-fileglobs=("test/scripts/*.cosy" "test/examples/advent-of-code-2020/*.cosy")
+fileglobs=(
+    "test/scripts/*.cosy"
+    "test/examples/99-bottles/*.cosy"
+    "test/examples/advent-of-code-2020/*.cosy"
+)
 for filename in ${fileglobs[@]}; do
     [ -f "$filename" ] || break
     optionsFile=$filename.options
