@@ -19,6 +19,7 @@ class Cosy {
     static var outputPrettyPrint = false;
     static var outputBytecode = false;
     static var outputJavaScript = false;
+    static var outputMarkdown = false;
     static var outputDisassembly = false;
     static var validateOnly = false;
     static var watch = false;
@@ -53,6 +54,7 @@ class Cosy {
                 case '--bytecode': outputBytecode = true;
                 case '--disassembly': outputDisassembly = true;
                 case '--javascript': outputJavaScript = true;
+                case '--markdown': outputMarkdown = true;
                 case '--strict': strict = true;
                 case '--validate-only': validateOnly = true;
                 case '--watch': watch = true;
@@ -74,6 +76,7 @@ Options:
 --bytecode       Prints the compiled Cosy bytecode.
 --disassembly    Pretty-print Cosy bytecode.
 --javascript     Prints the corresponding JavaScript code.
+--markdown       Prints the code as Markdown documentation.
 --strict         Enable strict enforcing of types.
 --validate-only  Only perform code validation.
 --times          Output time spent in each phase.
@@ -88,8 +91,9 @@ Options:
         if (outputBytecode) printCount++;
         if (outputDisassembly) printCount++;
         if (outputJavaScript) printCount++;
+        if (outputMarkdown) printCount++;
         if (printCount > 1) {
-            Sys.println('Only pass one of --prettyprint/--bytecode/--disassembly/--javascript\n');
+            Sys.println('Only pass one of --prettyprint/--bytecode/--disassembly/--javascript/--markdown\n');
             Sys.exit(64);
         }
 
@@ -268,6 +272,16 @@ Options:
             var printer = new JavaScriptPrinter();
             // for (stmt in statements) println(printer.printStmt(stmt));
             printlines(statements.map(printer.printStmt));
+            return;
+        }
+        
+        if (outputMarkdown) {
+            println('# Cosy file');
+            println('## Functions');
+
+            var printer = new MarkdownPrinter();
+            var outputLines = statements.map(printer.printStmt);
+            printlines([outputLines.join('')]);
             return;
         }
 

@@ -9,14 +9,14 @@ class AstPrinter {
 		return [ for (_ in 0...indentAmount) "  " ].join("");
 	}
 
-    function printBlock(statements:Array<Stmt>):String {
+    public function printBlock(statements:Array<Stmt>):String {
         indentAmount++;
         var s = [ for (stmt in statements) indent() + printStmt(stmt) ].join('\n');
         indentAmount--;
         return '{\n$s\n${indent()}}';
     }
 
-    function printExprBlock(exprs:Array<Expr>):String {
+    public function printExprBlock(exprs:Array<Expr>):String {
         indentAmount++;
         var s = [ for (expr in exprs) indent() + printExpr(expr) ].join('\n');
         indentAmount--;
