@@ -1,12 +1,12 @@
 package cosy;
 
-import sys.FileSystem;
 import cosy.phases.*;
 import haxe.Timer;
-import haxe.io.Path;
 
 #if sys
+import sys.FileSystem;
 import sys.io.File;
+import haxe.io.Path;
 #end
 
 class Cosy {
@@ -29,20 +29,17 @@ class Cosy {
 
     static function main() {
         Cosy.setFunction('randomInt', (args) -> return Std.random(args[0]));
-        Cosy.setFunction('readInput', (args) -> {
-            #if sys
-            return Sys.stdin().readLine();
-            #else
-            throw 'Not implemented on this platform!';
-            #end
-        });
         Cosy.setFunction('stringToNumber', (args) -> Std.parseInt(args[0]) /* can be null! */);
-        Cosy.setFunction('read_lines', (args) -> { 
+
+        #if sys
+        Cosy.setFunction('readInput', (args) -> Sys.stdin().readLine());
+        Cosy.setFunction('read_lines', (args) -> {
             var lines = File.getContent(args[0]).split('\n');
             lines.pop(); // remove last line (assuming empty line)
             return lines;
         });
         Cosy.setFunction('read_file', (args) -> File.getContent(args[0]));
+        #end
         
         #if sys
         var args = Sys.args();
