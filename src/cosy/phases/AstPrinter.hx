@@ -77,7 +77,7 @@ class AstPrinter {
     }
     
     // TODO: Make this an extension on VariableType
-    public function formatType(type :Typer.VariableType) {
+    public function formatType(type: VariableType) {
         return switch type {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];

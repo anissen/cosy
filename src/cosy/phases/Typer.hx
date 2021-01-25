@@ -1,18 +1,6 @@
 package cosy.phases;
 
-enum VariableType {
-    Unknown;
-    Void;
-    Boolean;
-    Number;
-    Text;
-    Instance;
-    Function(paramTypes:Array<VariableType>, returnType:VariableType);
-    Array(type:VariableType);
-    Struct(variables:Map<String, VariableType>);
-    NamedStruct(name:String);
-    Mutable(type:VariableType);
-}
+import cosy.VariableType;
 
 typedef VariableMeta = {
     var mutable: Bool;
@@ -111,8 +99,8 @@ class Typer {
 		}
     }
     
-    function typeVar(name: Token, type: VariableType, init: Expr) :VariableType {
-        var initType = (init != null ? typeExpr(init) : Unknown);
+    function typeVar(name: Token, type: VariableType, init: Expr): VariableType {
+        var initType = (init != null ? typeExpr(init) : VariableType.Unknown);
         if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
         if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
         return (!type.match(Unknown) ? type : initType);
@@ -343,7 +331,7 @@ class Typer {
         return ret;
     }
     
-    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType, foreign: Bool) :VariableType {
+    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:VariableType, foreign: Bool) :VariableType {
         if (Cosy.strict) {
             for (i in 0...params.length) {
                 if (params[i].type.match(Unknown)) Cosy.error(params[i].name, '[strict] Parameter has unknown type.');

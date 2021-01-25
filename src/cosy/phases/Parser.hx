@@ -166,7 +166,7 @@ class Parser {
 		}
     }
     
-    function paramType() :Typer.VariableType {
+    function paramType(): VariableType {
         return if (match([BooleanType])) {
             Boolean;
         } else if (match([NumberType])) {

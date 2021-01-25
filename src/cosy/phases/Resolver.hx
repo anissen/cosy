@@ -170,7 +170,7 @@ class Resolver {
 		}
     }
     
-    function markTypeAsRead(type: Typer.VariableType) {
+    function markTypeAsRead(type: VariableType) {
         // Flag structs used as type annotations as 'Read', e.g.
         // struct Field {}
         // var f Array Field = []
