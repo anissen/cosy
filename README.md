@@ -294,7 +294,7 @@ Cosy is a work-in-progress.
 
 Current focus is: :star: _Bytecode code generator and virtual machine_.
 
-See the [wishlist](wishlist.md) for a list of proposed features (and known issues).
+See the [wishlist](https://github.com/anissen/cosy/blob/master/wishlist.md) for a list of proposed features (and known issues).
 
 <!--
 ## License
