@@ -1,5 +1,8 @@
 package cosy.phases;
 
+import cosy.phases.Resolver.Variable;
+using cosy.VariableType.VariableTypeTools;
+
 class AstPrinter {
 	public function new() {}
 
@@ -75,28 +78,14 @@ class AstPrinter {
 				'fn ($parameters) $block';
 		}
     }
-    
-    // TODO: Make this an extension on VariableType
-    public function formatType(type: VariableType) {
-        return switch type {
-            case Function(paramTypes, returnType):
-                var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
-                'Fn(${paramStr.join(", ")})';
-            case Array(t): StringTools.trim('Array ' + formatType(t));
-            case Text: 'Str';
-            case Number: 'Num';
-            case Boolean: 'Bool';
-            case Unknown: ''; // Ignore Unknown in this case to leave it out of the prettified code
-            case _: '$type';
-        }
-    }
 
-    public function formatParams(params :Array<Param>) :String {
+    function formatParams(params :Array<Param>) :String {
         return [ for (param in params) formatParam(param) ].join(", ");
     }
 
-    public function formatParam(param :Param) :String {
-        var typeStr = formatType(param.type);
+    function formatParam(param :Param) :String {
+        // Ignore Unknown in this case to leave it out of the prettified code
+        var typeStr = (param.type.match(Unknown) ? '' : param.type.formatType());
         return param.name.lexeme + (typeStr != '' ? ' $typeStr' : '');
     }
 }
