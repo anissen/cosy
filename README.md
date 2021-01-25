@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/anissen/cosy">
-    <img src="docs/images/cosy-logo.svg" height="30%" width="30%">
+    <img src="https://raw.githubusercontent.com/anissen/cosy/master/docs/images/cosy-logo.svg" height="30%" width="30%">
   </a>
 
   <p align="center">
@@ -45,7 +45,7 @@ print 'hello world'
 * Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/). Originally based on [Lox](http://www.craftinginterpreters.com/).
 
 ## Cosy data flow
-<img src="docs/images/data-flow.png" width="100%">
+<img src="https://raw.githubusercontent.com/anissen/cosy/master/docs/images/data-flow.png" width="100%">
 
 
 ## Code examples
