@@ -34,7 +34,7 @@ class AstPrinter {
             case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body, returnType, foreign):
 				var declaration = '${foreign ? "foreign fn" : "fn"} ${name.lexeme}';
-                var parameters = [ for (param in params) formatParam(param) ].join(', ');
+                var parameters = formatParams(params);
                 if (foreign) return '$declaration($parameters)';
                 var block = printBlock(body);
 				'$declaration($parameters) $block';
@@ -62,13 +62,14 @@ class AstPrinter {
             case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body, returnType):
-				var parameters = [ for (param in params) formatParam(param) ].join(',');
+                var parameters = formatParams(params);
 				var block = printStmt(Block(body));
 				'fn ($parameters) $block';
 		}
     }
     
-    function formatType(type :Typer.VariableType) {
+    // TODO: Make this an extension on VariableType
+    public function formatType(type :Typer.VariableType) {
         return switch type {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
@@ -82,7 +83,11 @@ class AstPrinter {
         }
     }
 
-    function formatParam(param :Param) :String {
+    public function formatParams(params :Array<Param>) :String {
+        return [ for (param in params) formatParam(param) ].join(", ");
+    }
+
+    public function formatParam(param :Param) :String {
         var typeStr = formatType(param.type);
         return param.name.lexeme + (typeStr != '' ? ' $typeStr' : '');
     }
