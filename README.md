@@ -23,12 +23,10 @@ Cosy is a simple and pleasant programming language. Cosy is simple to read and w
 print 'hello world'
 ```
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-
 ## High-level features
 * Familiar syntax.
 * Lambda functions (anonymous functions).
-* Gradural typing.
+* Gradurally typed.
 * Small and concise.
   * Cosy is made with fewer than 2200 lines of source code.
   * Few keywords (`and`, `break`, `continue`, `else`, `false`, `for`, `fn`, `in`, `if`, `mut`, `or`, `print`, `return`, `struct`, `true`, `var`, `Bool`, `Num`, `Str`, `Void`, `Array` and `Fn`).
@@ -42,7 +40,6 @@ print 'hello world'
   * Type checking.
 * Has built-in code formatter.
 * Web based [playground](http://andersnissen.com/cosy/playground/).
-* Interactive ([REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)) mode.
 * Simple code optimization.
 * No library dependencies.
 * Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/). Originally based on [Lox](http://www.craftinginterpreters.com/).
@@ -295,34 +292,12 @@ Run: `./bin/hlc/Cosy [OPTIONS] [SOURCE_FILE]`
 
 Cosy is a work-in-progress.
 
-Current focus is: :star: _Bytecode code generator and virtual machine_. Come check it out at the [bytecode](https://github.com/anissen/cosy/tree/bytecode) branch.
+Current focus is: :star: _Bytecode code generator and virtual machine_.
 
 See the [wishlist](wishlist.md) for a list of proposed features (and known issues).
 
-
-<!-- 
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
--->
-
-
+<!--
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
-
-<!-- 
-## Acknowledgements
-
-* []()
-* []()
-* []()
 -->
-
