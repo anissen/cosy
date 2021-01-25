@@ -112,6 +112,7 @@ fun x() { print "hej" }
 - [ ] Make built-in functions snake-case, e.g. `stringToNumber` to `string_to_number`
 - [x] Being able to concatinate strings and booleans
 - [ ] Remove brackets and use indentation checking instead?
+- [ ] Make a 'docs' command that outputs the following to the 'docs' directory (docsify): index.html, readme.md, _sidebar.md and a markdown file for each cosy file.
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
