@@ -162,7 +162,7 @@ Options:
         #end
     }
 
-    @:expose // TODO: Maybe expose shallow?
+    @:expose
     static function validate(source:String) {
         hadError = false;
 

@@ -4,6 +4,7 @@
 --no-traces
 
 -dce full
+-D shallow-expose
 -D analyzer-optimize
 -D source-map
 -D js-es=6
