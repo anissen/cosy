@@ -89,14 +89,9 @@ class Typer {
                 type;
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
-                if (val != null) {
-                    inferredReturnType = typeExpr(val);
-                    
-                    if (!matchType(inferredReturnType, typedReturnType)) {
-                        Cosy.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
-                    }
-                } else {
-                    inferredReturnType = Void;
+                inferredReturnType = (val != null ? typeExpr(val) : Void);
+                if (!matchType(inferredReturnType, typedReturnType)) {
+                    Cosy.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
                 }
             case Struct(name, declarations):
                 var structMeta :StructMeta = { members: new Map() };
