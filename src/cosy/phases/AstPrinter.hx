@@ -8,17 +8,25 @@ class AstPrinter {
 	function indent():String {
 		return [ for (_ in 0...indentAmount) "  " ].join("");
 	}
+    
+    public function printStmts(stmts: Array<Stmt>): String {
+        return [ for (stmt in stmts) indent() + printStmt(stmt) ].join('\n');
+    }
 
-    public function printBlock(statements:Array<Stmt>):String {
+    function printBlock(stmts:Array<Stmt>):String {
         indentAmount++;
-        var s = [ for (stmt in statements) indent() + printStmt(stmt) ].join('\n');
+        var s = printStmts(stmts);
         indentAmount--;
         return '{\n$s\n${indent()}}';
     }
 
-    public function printExprBlock(exprs:Array<Expr>):String {
+    function printExprs(exprs: Array<Expr>): String {
+        return [ for (expr in exprs) indent() + printExpr(expr) ].join('\n');
+    }
+
+    function printExprBlock(exprs:Array<Expr>):String {
         indentAmount++;
-        var s = [ for (expr in exprs) indent() + printExpr(expr) ].join('\n');
+        var s = printExprs(exprs);
         indentAmount--;
         return '{\n$s\n${indent()}}';
     }

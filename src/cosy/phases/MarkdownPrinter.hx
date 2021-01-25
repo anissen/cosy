@@ -27,7 +27,7 @@ class MarkdownPrinter {
 <summary>Code</summary>
 
 ```js
-${astPrinter.printBlock(body)}
+${astPrinter.printStmts(body)}
 ```
 </details>
 
