@@ -81,7 +81,7 @@ class Typer {
                 }
                 typeStmts(body);
             case ForCondition(cond, body): typeStmts(body);
-			case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType);
+			case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType, foreign);
 			case Expression(e): typeExpr(e);
             case Print(keyword, e): 
                 var type = typeExpr(e);
@@ -333,7 +333,7 @@ class Typer {
                     }
                 }
                 structType;
-			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType);
+			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType, false);
 			case Literal(v) if (Std.isOfType(v, Float)): Number;
 			case Literal(v) if (Std.isOfType(v, String)): Text;
 			case Literal(v) if (Std.isOfType(v, Bool)): Boolean;
@@ -348,7 +348,7 @@ class Typer {
         return ret;
     }
     
-    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType) :VariableType {
+    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:Typer.VariableType, foreign: Bool) :VariableType {
         if (Cosy.strict) {
             for (i in 0...params.length) {
                 if (params[i].type.match(Unknown)) Cosy.error(params[i].name, '[strict] Parameter has unknown type.');
@@ -362,7 +362,7 @@ class Typer {
         typeStmts(body);
         
         var computedReturnType = switch returnType {
-            case Unknown: inferredReturnType;
+            case Unknown if (!foreign): inferredReturnType;
             case _: returnType;
         }
 
