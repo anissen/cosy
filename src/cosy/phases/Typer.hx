@@ -340,6 +340,11 @@ class Typer {
         var types = [ for (param in params) param.type ];
         for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
+        // TODO: typedReturnType will be incorrect if the return statement returns a function, e.g.
+        // fn x() {
+        //     return fn() Num { return 42 } 
+        // }
+        // print x()()
         typedReturnType = returnType.annotated;
         inferredReturnType = Void;
         typeStmts(body);
