@@ -76,6 +76,16 @@ fn move() {
         
     }
 }
+
+query(fn(p Position, v Velocity)) {
+    p.x += v.x
+    p.y += v.y
+}
+
+for entity in query(fn(p Position, v Velocity)) {
+    p.x += v.x
+    p.y += v.y
+}
 ```
 
 When adding/removing a component to/from an entity, match the entity against all systems.

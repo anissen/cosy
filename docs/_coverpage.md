@@ -5,7 +5,7 @@
 - 💎 Minimal yet familiar syntax
 - 🛡 Immutable by default
 - ⚡️️ Small and concise
-- 🔥 Gradually typed
+- 🔥 Gradual typing
 - 🚨 Compile-time validation
 - 👾 Standalone or embedded
 
