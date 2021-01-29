@@ -103,7 +103,7 @@ Options:
             var files = sys.FileSystem.readDirectory(dir).filter(f -> !sys.FileSystem.isDirectory(Path.join([dir, f])));
             var bestMatches = EditDistance.bestMatches(filename, files);
             if (bestMatches.length > 0) {
-                bestMatches = bestMatches.map(m -> '"${Path.join([dir, filename])}"');
+                bestMatches = bestMatches.map(m -> '"${Path.join([dir, m])}"');
                 var lastMatch = bestMatches.pop();
                 var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
                 message += ' Did you mean $formattedMatches?';
