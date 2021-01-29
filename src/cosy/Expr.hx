@@ -1,5 +1,7 @@
 package cosy;
 
+import cosy.VariableType;
+
 enum Expr {
 	ArrayLiteral(keyword:Token, exprs:Array<Expr>);
     Assign(name:Token, op:Token, value:Expr);
@@ -14,5 +16,5 @@ enum Expr {
 	StructInit(name:Token, decls:Array<Expr>);
 	Unary(op:Token, right:Expr);
 	Variable(name:Token);
-	AnonFunction(params:Array<Param>, body:Array<Stmt>, returnType:VariableType);
+	AnonFunction(params:Array<Param>, body:Array<Stmt>, returnType:ComputedVariableType);
 }

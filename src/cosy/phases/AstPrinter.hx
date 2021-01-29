@@ -46,9 +46,11 @@ class AstPrinter {
 			case Function(name, params, body, returnType, foreign):
 				var declaration = '${foreign ? "foreign fn" : "fn"} ${name.lexeme}';
                 var parameters = formatParams(params);
-                if (foreign) return '$declaration($parameters)';
+                var retType = returnType.annotated.formatType(true);
+                if (retType != '') retType = ' $retType';
+                if (foreign) return '$declaration($parameters)$retType';
                 var block = printBlock(body);
-				'$declaration($parameters) $block';
+				'$declaration($parameters)$retType $block';
 			case If(cond, then, el): 'if ${printExpr(cond)} ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
 			case Print(keyword, e): '${keyword.lexeme} ${printExpr(e)}';
             case Return(keyword, value): keyword.lexeme + (value != null ? ' ${printExpr(value)}' : '');
@@ -74,8 +76,10 @@ class AstPrinter {
 			case Variable(name): name.lexeme;
 			case AnonFunction(params, body, returnType):
                 var parameters = formatParams(params);
-				var block = printStmt(Block(body));
-				'fn ($parameters) $block';
+                var block = printStmt(Block(body));
+                var retType = returnType.annotated.formatType(true);
+                if (retType != '') retType = ' $retType';
+				'fn($parameters)$retType $block';
 		}
     }
 
@@ -85,7 +89,8 @@ class AstPrinter {
 
     function formatParam(param :Param) :String {
         // Ignore Unknown in this case to leave it out of the prettified code
-        var typeStr = (param.type.match(Unknown) ? '' : param.type.formatType());
-        return param.name.lexeme + (typeStr != '' ? ' $typeStr' : '');
+        var typeStr = param.type.formatType(true);
+        if (typeStr != '') typeStr = ' $typeStr';
+        return param.name.lexeme + typeStr;
     }
 }

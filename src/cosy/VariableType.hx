@@ -14,17 +14,22 @@ enum VariableType {
     Mutable(type:VariableType);
 }
 
+typedef ComputedVariableType = {
+	annotated: VariableType,
+	?computed: VariableType,
+}
+
 class VariableTypeTools {
-    static public function formatType(type: VariableType) {
+    static public function formatType(type: VariableType, hideUnknown: Bool = true) {
         return switch type {
             case Function(paramTypes, returnType):
                 var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
-                'Fn(${paramStr.join(", ")})';
+                'Fn(${paramStr.join(", ")}) ${formatType(returnType, hideUnknown)}';
             case Array(t): StringTools.trim('Array ' + formatType(t));
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
-            case Unknown: 'Unknown';
+            case Unknown: (hideUnknown ? '' : 'Unknown');
             case _: '$type';
         }
     }

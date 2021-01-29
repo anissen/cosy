@@ -331,7 +331,7 @@ class Typer {
         return ret;
     }
     
-    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType:VariableType, foreign: Bool) :VariableType {
+    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType: ComputedVariableType, foreign: Bool) :VariableType {
         if (Cosy.strict) {
             for (i in 0...params.length) {
                 if (params[i].type.match(Unknown)) Cosy.error(params[i].name, '[strict] Parameter has unknown type.');
@@ -340,14 +340,16 @@ class Typer {
         var types = [ for (param in params) param.type ];
         for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
-        typedReturnType = returnType;
+        typedReturnType = returnType.annotated;
         inferredReturnType = Void;
         typeStmts(body);
         
-        var computedReturnType = switch returnType {
+        var computedReturnType = switch returnType.annotated {
             case Unknown if (!foreign): inferredReturnType;
-            case _: returnType;
+            case _: returnType.annotated;
         }
+
+        returnType.computed = computedReturnType;
 
         if (name != null) variableTypes.set(name.lexeme, Function(types, computedReturnType));
         return Function(types, computedReturnType);

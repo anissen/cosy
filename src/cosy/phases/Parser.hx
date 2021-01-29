@@ -220,12 +220,12 @@ class Parser {
         // if (returnType.match(Unknown)) returnType = Void; // implicit Void
 
         if (foreign) {
-            return AnonFunction(params, [], returnType);
+            return AnonFunction(params, [], { annotated: returnType });
         }
 
 		consume(LeftBrace, 'Expect "{" before $kind body');
 		var body = block();
-		return AnonFunction(params, body, returnType);
+		return AnonFunction(params, body, { annotated: returnType });
 	}
 	
 	function assignment():Expr {

@@ -277,8 +277,7 @@ Options:
             println('## Functions');
 
             var printer = new MarkdownPrinter();
-            var outputLines = statements.map(printer.printStmt);
-            printlines([outputLines.join('')]);
+            println(printer.printStatements(statements));
             return;
         }
 
