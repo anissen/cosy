@@ -36,6 +36,8 @@ ${astPrinter.printStmts(body)}
 
 ';
                 return s;
+            // case Block(statements): Lambda.foreach(statements, printStmt);
+            case Block(statements): [ for (stmt in statements) printStmt(stmt) ].join('');
 			case _: '';
 		}
 	}
