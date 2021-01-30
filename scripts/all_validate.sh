@@ -15,6 +15,8 @@ echo -ne "\033[0;35m"
 echo "> Validating"
 echo -ne "\033[0m"
 
+numberOfFiles=0
+validFiles=0
 fileglobs=(
     "test/scripts/*.cosy"
     "test/examples/99-bottles/*.cosy"
@@ -23,6 +25,7 @@ fileglobs=(
 )
 for filename in ${fileglobs[@]}; do
     [ -f "$filename" ] || break
+    let numberOfFiles++
     optionsFile=$filename.options
     options=""
     echo -ne "\033[0;35m"
@@ -38,6 +41,9 @@ for filename in ${fileglobs[@]}; do
     # hl bin/hl/Cosy.hl --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
     java -jar bin/jvm/Cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
     retVal=$?
+    if [ $retVal == 0 ]; then
+        let validFiles++
+    fi
     echo -ne "\033[0m"
     # if [ $retVal -ne 0 ]; then
     #     echo -ne "\033[0;31m"
@@ -50,3 +56,12 @@ for filename in ${fileglobs[@]}; do
     #     echo -ne "\033[0m"
     # fi
 done
+if [ $validFiles == $numberOfFiles ]; then
+    echo -ne "\033[0;34m"
+else
+    echo -ne "\033[0;31m"
+fi
+echo "> $validFiles/$numberOfFiles are valid"
+echo -ne "\033[0m"
+numberOfInvalidFiles=$((numberOfFiles - validFiles))
+exit $numberOfInvalidFiles
