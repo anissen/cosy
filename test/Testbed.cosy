@@ -280,9 +280,45 @@
 //     validate(pass)
 // }
 
+// {
+//     struct Field {}
+//     mut tmp_fields Array Field = []
+//     var fields Array Field = tmp_fields
+//     print fields
+// }
+
+// {
+//     fn test(x) {
+//         print x
+//     }
+
+//     test('hello')
+//     test(12)
+// }
+
 {
-    struct Field {}
-    mut tmp_fields Array Field = []
-    var fields Array Field = tmp_fields
-    print fields
+    fn z()Fn(Num) Num{
+        return fn(x Num)Num{
+            return x+2
+        }
+    }
+    z()
+}
+
+{
+    fn x(){
+        return fn() {
+            return 42
+        } 
+    }
+    print x()()
+}
+
+{
+    fn z() Fn(Num) Num {
+        return fn(x) {
+            return x+2
+        }
+    }
+    print z()
 }

@@ -266,3 +266,43 @@
     print x
 }
 
+// -----------
+
+{
+    fn z() Fn(Num) Num {
+        return fn(x Num) Num {
+            return x+2
+        }
+    }
+    print z()
+}
+
+// TODO: This test should not fail!
+// {
+//     fn z() Fn(Num) Num {
+//         return fn(x) {
+//             return x+2
+//         }
+//     }
+//     print z()
+// }
+
+{
+    fn x(){
+        return fn() Num {
+            return 42
+        } 
+    }
+    print x()()
+}
+
+{
+    fn x(){
+        return fn() {
+            return 42
+        } 
+    }
+    print x()()
+}
+
+// -----------

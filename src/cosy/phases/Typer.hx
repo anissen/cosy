@@ -14,8 +14,7 @@ typedef StructMeta = {
 class Typer {
     var structsMeta :Map<String, StructMeta> = new Map();
     var variableTypes :Map<String, VariableType> = new Map();
-    var typedReturnType :VariableType = Unknown;
-    var inferredReturnType :VariableType = Void;
+    var currentFunctionReturnType = new cosy.Stack<ComputedVariableType>();
 	
 	public function new() {
         variableTypes.set('clock', Function([], Number));
@@ -77,9 +76,12 @@ class Typer {
                 type;
 			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
-                inferredReturnType = (val != null ? typeExpr(val) : Void);
-                if (!matchType(inferredReturnType, typedReturnType)) {
-                    Cosy.error(kw, 'Function expected to return ${formatType(typedReturnType)} but got ${formatType(inferredReturnType)}');
+                if (currentFunctionReturnType.length == 0) return; // Attempting to do a top-level return.
+                var functionReturnType = currentFunctionReturnType.peek();
+                var annotatedReturnType = functionReturnType.annotated;
+                functionReturnType.computed = (val != null ? typeExpr(val) : Void);
+                if (!matchType(functionReturnType.computed, annotatedReturnType)) {
+                    Cosy.error(kw, 'Function expected to return ${formatType(annotatedReturnType)} but got ${formatType(functionReturnType.computed)}');
                 }
             case Struct(name, declarations):
                 var structMeta :StructMeta = { members: new Map() };
@@ -340,24 +342,17 @@ class Typer {
         var types = [ for (param in params) param.type ];
         for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
-        // TODO: typedReturnType will be incorrect if the return statement returns a function, e.g.
-        // fn x() {
-        //     return fn() Num { return 42 } 
-        // }
-        // print x()()
-        typedReturnType = returnType.annotated;
-        inferredReturnType = Void;
+        currentFunctionReturnType.push({ annotated: returnType.annotated, computed: Void });
         typeStmts(body);
+        var computedReturnType = currentFunctionReturnType.pop().computed;
         
-        var computedReturnType = switch returnType.annotated {
-            case Unknown if (!foreign): inferredReturnType;
+        returnType.computed = switch returnType.annotated {
+            case Unknown if (!foreign): computedReturnType;
             case _: returnType.annotated;
         }
 
-        returnType.computed = computedReturnType;
-
-        if (name != null) variableTypes.set(name.lexeme, Function(types, computedReturnType));
-        return Function(types, computedReturnType);
+        if (name != null) variableTypes.set(name.lexeme, Function(types, returnType.computed));
+        return Function(types, returnType.computed);
     }
 
     function matchType(valueType :VariableType, expectedType :VariableType) :Bool {
