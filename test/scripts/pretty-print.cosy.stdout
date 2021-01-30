@@ -8,3 +8,9 @@ var b = 3
   }
   print g()(2)
 }
+var f = fn() Fn(Num) Num {
+  return fn(x Num) Num {
+    return x + 2
+  }
+}
+f()
