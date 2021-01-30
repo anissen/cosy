@@ -286,9 +286,3 @@
 //     var fields Array Field = tmp_fields
 //     print fields
 // }
-
-{
-    if 4 < 5 {
-        print 'hello'
-    }
-}

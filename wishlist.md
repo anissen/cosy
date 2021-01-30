@@ -93,7 +93,7 @@ fun x() { print "hej" }
 - [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
 - [x] Make a new and improved Hangman example with properly typed code, structs and arrays
 - [ ] Update Cosy basics example with structs, functions taking mut struct, string functions
-- [ ] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
+- [-] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
 - [ ] Cosy documentation using Dox (https://github.com/HaxeFoundation/dox)
 - [ ] Make Cosy FFI work for more targets (see https://community.haxe.org/t/is-there-a-way-to-expose-a-haxe-library-as-a-library-for-another-target/508)
 - [x] Make a `phases` sub-package
