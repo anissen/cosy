@@ -271,24 +271,23 @@
 {
     fn z() Fn(Num) Num {
         return fn(x Num) Num {
-            return x+2
+            return x + 2
         }
     }
-    print z()
+    print z()(3)
 }
 
-// TODO: This test should not fail!
-// {
-//     fn z() Fn(Num) Num {
-//         return fn(x) {
-//             return x+2
-//         }
-//     }
-//     print z()
-// }
+{
+    fn z() Fn(Num) Num {
+        return fn(x) {
+            return x + 2
+        }
+    }
+    print z()(3)
+}
 
 {
-    fn x(){
+    fn x() {
         return fn() Num {
             return 42
         } 
@@ -297,7 +296,7 @@
 }
 
 {
-    fn x(){
+    fn x() {
         return fn() {
             return 42
         } 
@@ -306,3 +305,11 @@
 }
 
 // -----------
+
+{
+    var f = fn(z) {
+        return z
+    }
+    var x Num = f(true)
+    print x
+}

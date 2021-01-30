@@ -361,6 +361,7 @@ class Typer {
         // trace('expectedType: $expectedType');
         return switch [valueType, expectedType] {
             case [_, Unknown]: true;
+            case [Unknown, _]: true;
             case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
             case [NamedStruct(name1), NamedStruct(name2)]: matchType(variableTypes.get(name1), variableTypes.get(name2));
             case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
