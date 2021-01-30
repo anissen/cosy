@@ -1,0 +1,29 @@
+hello world!
+Point { text = "default value", x = 3, y = 5 }
+true
+loop #0
+loop #1
+loop #2
+no counter
+no counter
+no counter
+conditional loop #i
+conditional loop #i
+conditional loop #i
+array value: 5
+array value: 6
+array value: 7
+hello world
+5 * 5 = 25
+make me a sandwich, please!
+i'm called 1 time(s)
+i'm called 2 time(s)
+i'm called 3 time(s)
+counting down...
+2
+1
+0
+i'm always printing this
+true
+42
+the arg is unused, but that's okay

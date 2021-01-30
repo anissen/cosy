@@ -19,6 +19,7 @@ fileglobs=(
     "test/scripts/*.cosy"
     "test/examples/99-bottles/*.cosy"
     "test/examples/advent-of-code-2020/*.cosy"
+    "test/examples/misc/*.cosy"
 )
 for filename in ${fileglobs[@]}; do
     [ -f "$filename" ] || break
