@@ -93,7 +93,11 @@ class Resolver {
                 resolveExpr(e);
             case Print(keyword, e):
 				resolveExpr(e);
-			case If(cond, then, el):
+			case If(keyword, cond, then, el):
+                switch cond {
+                    case Literal(v) if (Std.isOfType(v, Bool)): Cosy.error(keyword, 'This condition is always $v.');
+                    case _:
+                }
 				resolveExpr(cond);
 				resolveStmt(then);
 				if(el != null) resolveStmt(el);

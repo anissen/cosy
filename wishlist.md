@@ -21,8 +21,8 @@ fun x() { print "hej" }
   - [x] Simple dead code
   - [ ] Variables written multiple times without being read
   - [x] Using uninitialized variables (`var`)
-  - [ ] Using uninitialized variables (`mut`)
-  - [ ] `if` with constant conditional expression
+  - [x] Using uninitialized variables (`mut`)
+  - [x] `if` with constant conditional expression
   - [ ] Useless expressions, e.g. `'hello world'`
   - [ ] Function and variable names uses snake_case
   - [ ] Struct names uses PascalCase (??)

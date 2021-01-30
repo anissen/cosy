@@ -39,7 +39,7 @@ class JavaScriptPrinter {
 				var parameters = [ for (token in params) token.name.lexeme ].join(',');
 				var block = printStmt(Block(body));
 				'$declaration($parameters) $block';
-			case If(cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
+			case If(keyword, cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
             case Print(keyword, e): 'console.log(${printExpr(e)});';
             case Struct(name, declarations): '// ${name.lexeme} struct';
 			case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';

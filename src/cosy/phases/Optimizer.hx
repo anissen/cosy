@@ -21,7 +21,7 @@ class Optimizer {
 		return switch stmt {
             case Block(statements): Block(optimizeStmts(statements));
             case Expression(e): Expression(optimizeExpr(e));
-            case If(cond, then, el): If(optimizeExpr(cond), optimizeStmt(then), (el != null ? optimizeStmt(el) : null));
+            case If(keyword, cond, then, el): If(keyword, optimizeExpr(cond), optimizeStmt(then), (el != null ? optimizeStmt(el) : null));
             case Print(keyword, e): Print(keyword, optimizeExpr(e));
             case Var(name, type, init, mut, foreign): Var(name, type, (init != null ? optimizeExpr(init) : init), mut, foreign);
             case Return(keyword, value): Return(keyword, (value != null ? optimizeExpr(value) : null));

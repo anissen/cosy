@@ -1,9 +1,9 @@
 fn f() {
-  print 'before return'
-  if (false) return _
-  print 'after first return'
-  return _
-  print 'after second return'
+    print 'before return'
+    if (false) return _
+    print 'after first return'
+    return _
+    print 'after second return'
 }
 
 f()
@@ -18,4 +18,12 @@ for 0..3 {
     print 'before continue'
     continue
     print 'after continue'
+}
+
+if 5 < 4 {
+    print 'always false'
+} else if 4 < 5 {
+    print 'always true'
+} else {
+    print 'never hit'
 }

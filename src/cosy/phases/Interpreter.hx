@@ -75,7 +75,7 @@ class Interpreter {
                 }
                 
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
-            case If(cond, then, el):
+            case If(keyword, cond, then, el):
                 if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
             case Print(keyword, e):

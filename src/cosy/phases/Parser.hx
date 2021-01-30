@@ -94,10 +94,11 @@ class Parser {
 	}
 	
 	function ifStatement():Stmt {
+		var keyword = previous();
 		var condition = expression();
 		var then = statement();
 		var el = if (match([Else])) statement() else null;
-		return If(condition, then, el);
+		return If(keyword, condition, then, el);
 	}
 	
 	function printStatement():Stmt {

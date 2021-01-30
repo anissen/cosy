@@ -11,7 +11,7 @@ enum Stmt {
 	ForArray(name:Token, array:Expr, body:Array<Stmt>);
 	ForCondition(?cond:Expr, body:Array<Stmt>);
 	Function(name:Token, params:Array<Param>, body:Array<Stmt>, returnType: ComputedVariableType, foreign:Bool);
-	If(cond:Expr, then:Stmt, el:Stmt);
+	If(keyword:Token, cond:Expr, then:Stmt, el:Stmt);
 	Print(keyword:Token, e:Expr);
 	Return(keyword:Token, value:Expr);
 	Struct(name:Token, declarations:Array<Stmt>);

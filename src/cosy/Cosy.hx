@@ -236,6 +236,11 @@ Options:
 
         if (hadError) return;
 
+        startMeasure('Optimizer');
+        var optimizer = new Optimizer();
+        statements = optimizer.optimize(statements);
+        endMeasure('Optimizer');
+
         startMeasure('Resolver');
         var resolver = new Resolver(interpreter);
         resolver.resolve(statements);
@@ -248,11 +253,6 @@ Options:
 
         if (hadError) return;
         if (validateOnly) return;
-
-        startMeasure('Optimizer');
-        var optimizer = new Optimizer();
-        statements = optimizer.optimize(statements);
-        endMeasure('Optimizer');
 
         if (outputPrettyPrint) {
             var printer = new AstPrinter();

@@ -74,7 +74,7 @@ class Typer {
                 var type = typeExpr(e);
                 if (type.match(Void)) Cosy.error(keyword, 'Cannot print values of type void.');
                 type;
-			case If(cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
+			case If(keyword, cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
 			case Return(kw, val):
                 if (currentFunctionReturnType.length == 0) return; // Attempting to do a top-level return.
                 var functionReturnType = currentFunctionReturnType.peek();
