@@ -1,0 +1,57 @@
+# Run this code through https://sketchviz.com/
+
+digraph G {
+    node [shape=square, style=filled];
+    bgcolor=transparent;
+    rankdir=LR
+
+    start [label= "", shape=none,height=.0,width=.0];
+    Interpreter;
+    CodeGenerator [label="Code\nGenerator"];
+    Disassembler [label="Disassembler"];
+    ASTPrinter [label="AST\nPrinter"];
+    JavaScriptPrinter [label="JavaScript\nPrinter"];
+    MarkdownPrinter [label="Markdown\nPrinter"];
+    VM [label="Virtual\nMachine"];
+    Cosy [label="Cosy\n(formatted)", shape=Msquare, color="#7FDBFF"];
+    JavaScript [shape=Msquare, color="#7FDBFF"];
+    Markdown [shape=Msquare, color="#7FDBFF"];
+    Bytecode [label="Cosy\nbytecode", shape=Msquare, color="#7FDBFF"];
+    Disassembly [label="Cosy\nbytecode\ndisassembly", shape=Msquare, color="#7FDBFF"];
+    Execution [shape=Msquare, color="orange"];
+    Resolver [label="Static\nAnalyser"];
+    start -> Scanner [label=<<font color="gray">*Cosy source code*</font>>];
+    Scanner -> Parser [label=<<font color="gray">*Tokens*</font>>];
+    Parser -> Optimizer [label=<<font color="gray">*AST*</font>>]
+    Optimizer -> Resolver [label=<<font color="gray">*AST*</font>>];
+    Resolver -> Typer [label=<<font color="gray">*AST*</font>>];
+    Typer -> CodeGenerator [label=<<font color="gray">*T-AST*</font>>];
+    Typer -> Disassembler [label=<<font color="gray">*T-AST*</font>>];
+    Typer -> ASTPrinter [label=<<font color="gray">*T-AST*</font>>];
+    ASTPrinter -> Cosy;
+    Typer -> JavaScriptPrinter [label=<<font color="gray">*T-AST*</font>>];
+    JavaScriptPrinter -> JavaScript;
+    Typer -> MarkdownPrinter  [label=<<font color="gray">*T-AST*</font>>];
+    MarkdownPrinter -> Markdown;
+    Typer -> Interpreter [label=<<font color="gray">*T-AST*</font>>];
+    Interpreter -> Execution;
+
+    CodeGenerator -> Bytecode;
+    CodeGenerator -> VM;
+    Disassembler -> Disassembly;
+    Bytecode -> VM;
+
+    VM -> Execution;
+
+    subgraph cluster_1 {
+        Bytecode;
+        Disassembly;
+        Cosy;
+        JavaScript;
+        Markdown
+
+        label = <<font color="#7FDBFF">*Output*</font>>;
+        fontsize = 20;
+        color="#7FDBFF";
+    }
+}
