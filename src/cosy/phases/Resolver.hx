@@ -10,7 +10,7 @@ typedef Variable = {
 class Resolver {
 	final interpreter:Interpreter;
 	
-	final scopes = new Stack<Map<String, Variable>>();
+	final scopes = new cosy.Stack<Map<String, Variable>>();
 	var currentFunction:FunctionType = None;
 	var currentStruct:StructType = None;
 	
@@ -277,12 +277,6 @@ class Resolver {
     }
 }
 
-@:forward(push, pop, length)
-abstract Stack<T>(Array<T>) {
-	public inline function new() this = [];
-	public inline function peek() return this[this.length - 1];
-	public inline function get(i:Int) return this[i];
-}
 private enum VariableState {
 	Declared;
 	Defined;
