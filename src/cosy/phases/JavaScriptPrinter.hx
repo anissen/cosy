@@ -12,7 +12,7 @@ class JavaScriptPrinter {
 	var indentAmount:Int = 0;
 
 	function indent():String {
-		return [ for (_ in 0...indentAmount) "  " ].join("");
+		return [ for (_ in 0...indentAmount) "    " ].join("");
 	}
 
     function printBlock(statements:Array<Stmt>):String {
