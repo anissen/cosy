@@ -232,7 +232,7 @@ class Interpreter {
                         (left:Float) <= (right:Float);
                     case BangEqual: !isEqual(left, right);
                     case EqualEqual: isEqual(left, right);
-                    case _: null; // unreachable
+                    case _: throw 'Binary op type "${op.type}" is unhandled!'; // unreachable
                 }
             case Call(callee, paren, args):
                 final callee = evaluate(callee);
