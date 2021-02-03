@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo -ne "\033[0;34m"
 echo "> Compiling cosy..."
 haxe build.hxml
@@ -23,39 +22,36 @@ fileglobs=(
     "test/examples/advent-of-code-2020/*.cosy"
     "test/examples/misc/*.cosy"
 )
-for filename in ${fileglobs[@]}; do
-    [ -f "$filename" ] || break
-    let numberOfFiles++
-    optionsFile=$filename.options
-    options=""
-    echo -ne "\033[0;35m"
-    if [ -f $optionsFile ]; then
-        options="$(cat $optionsFile)"
-        echo "==> Validating '$options $filename'"
-    else
-        echo "==> Validating '$filename'"
-    fi
-    echo -ne "\033[0m"
-    echo -ne "\033[0;31m"
-    # use 2>&1 to redirect stderr into stdout
-    # hl bin/hl/Cosy.hl --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
-    java -jar bin/jvm/Cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
-    retVal=$?
-    if [ $retVal == 0 ]; then
-        let validFiles++
-    fi
-    echo -ne "\033[0m"
-    # if [ $retVal -ne 0 ]; then
-    #     echo -ne "\033[0;31m"
-    #     echo "====> Error in $filename"
-    #     echo -ne "\033[0m"
-    #     #exit $retVal
-    # else
-    #     echo -ne "\033[0;32m"
-    #     echo "OK!"
-    #     echo -ne "\033[0m"
-    # fi
-done
+validate () {
+    for filename in ${fileglobs[@]}; do
+        [ -f "$filename" ] || break
+        let numberOfFiles++
+        optionsFile=$filename.options
+        options=""
+        echo -ne "\033[0;35m"
+        if [ -f $optionsFile ]; then
+            options="$(cat $optionsFile)"
+            echo "==> Validating '$options $filename'"
+        else
+            echo "==> Validating '$filename'"
+        fi
+        echo -ne "\033[0m"
+        echo -ne "\033[0;31m"
+        # use 2>&1 to redirect stderr into stdout
+        # hl bin/hl/Cosy.hl --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
+        before=$SECONDS
+        java -jar bin/jvm/Cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
+        retVal=$?
+        if [ $SECONDS -gt $((before+1)) ]; then # TODO: This is a *very* crude test for execution time of tests!
+            echo "... SLOW!"
+        fi
+        if [ $retVal == 0 ]; then
+            let validFiles++
+        fi
+        echo -ne "\033[0m"
+    done
+}
+time validate
 if [ $validFiles == $numberOfFiles ]; then
     echo -ne "\033[0;34m"
 else
@@ -64,4 +60,5 @@ fi
 echo "> $validFiles/$numberOfFiles are valid"
 echo -ne "\033[0m"
 numberOfInvalidFiles=$((numberOfFiles - validFiles))
+
 exit $numberOfInvalidFiles
