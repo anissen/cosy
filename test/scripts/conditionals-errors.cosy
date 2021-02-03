@@ -1,0 +1,3 @@
+if 4 {
+    print 'this does not have a boolean condition'
+}

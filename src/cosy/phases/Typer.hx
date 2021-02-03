@@ -74,7 +74,14 @@ class Typer {
                 var type = typeExpr(e);
                 if (type.match(Void)) Cosy.error(keyword, 'Cannot print values of type void.');
                 type;
-			case If(keyword, cond, then, el): typeStmt(then); if (el != null) typeStmt(el);
+			case If(keyword, cond, then, el):
+                var condType = typeExpr(cond);
+                switch condType {
+                    case Boolean | Mutable(Boolean):
+                    case _: Cosy.error(keyword, 'The condition must evaluate to a be boolean value (instead of ${formatType(condType)}).');
+                }
+                typeStmt(then);
+                if (el != null) typeStmt(el);
 			case Return(kw, val):
                 if (currentFunctionReturnType.length == 0) return; // Attempting to do a top-level return.
                 var functionReturnType = currentFunctionReturnType.peek();
