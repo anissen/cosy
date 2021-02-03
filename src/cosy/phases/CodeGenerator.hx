@@ -116,7 +116,7 @@ class CodeGenerator {
                 var pops = localsCounter - previousLocalsCounter;
                 if (pops > 0) emit(Pop(pops));
                 localsCounter = previousLocalsCounter;
-            case If(cond, then, el):
+            case If(keyword, cond, then, el):
                 genExpr(cond);
                 var thenJump = emitJump(JumpIfFalse);
                 emit(Pop(1));
