@@ -62,6 +62,7 @@ class Scanner {
 			case '-'.code: addToken(match('='.code) ? MinusEqual : Minus);
 			case '+'.code: addToken(match('='.code) ? PlusEqual : Plus);
 			case '*'.code: addToken(match('='.code) ? StarEqual : Star);
+			case '%'.code: addToken(match('='.code) ? PercentEqual : Percent);
 			case '_'.code if (!isAlpha(peek())): addToken(Underscore);
 			case '.'.code: addToken(match('.'.code) ? DotDot : Dot);
 			case '!'.code: addToken(match('='.code) ? BangEqual : Bang);

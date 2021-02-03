@@ -165,6 +165,11 @@ class Interpreter {
                         final right = evaluate(value);
                         checkNumberOperands(op, left, right);
                         (left: Float) * (right: Float);
+                    case PercentEqual:
+                        final left = lookUpVariable(name, expr);
+                        final right = evaluate(value);
+                        checkNumberOperands(op, left, right);
+                        (left: Float) % (right: Float);
                     case _: throw 'error';
                 }
                 switch locals.get(expr) {
@@ -218,6 +223,9 @@ class Interpreter {
                         else if (Std.isOfType(left, String) && Std.isOfType(right, Bool))
                             (left:String) + (right:String);
                         else throw new RuntimeError(op, 'Operands cannot be concatinated.');
+                    case Percent:
+                            checkNumberOperands(op, left, right);
+                            (left:Float) % (right:Float);
                     case Greater:
                         checkNumberOperands(op, left, right);
                         (left:Float) > (right:Float);

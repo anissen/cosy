@@ -232,7 +232,7 @@ class Parser {
 	function assignment():Expr {
 		var expr = or();
 		
-		if (match([Equal, PlusEqual, MinusEqual, SlashEqual, StarEqual])) {
+		if (match([Equal, PlusEqual, MinusEqual, SlashEqual, StarEqual, PercentEqual])) {
 			var equals = previous();
 			var value = assignment();
 			
@@ -311,7 +311,7 @@ class Parser {
 	function multiplication():Expr {
 		var expr = unary();
 		
-		while (match([Star, Slash])) {
+		while (match([Star, Slash, Percent])) {
 			var op = previous();
 			var right = multiplication();
 			expr = Binary(expr, op, right);

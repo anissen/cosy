@@ -140,7 +140,7 @@ class Typer {
                 }
 			case Binary(left, op, right): 
                 switch op.type {
-                    case Star | Slash | Minus: Number;
+                    case Star | Slash | Minus | Percent: Number;
                     case Bang | BangEqual | Equal | EqualEqual | Greater | GreaterEqual | Less | LessEqual: Boolean;
                     case Plus:
                         var leftType = typeExpr(left);

@@ -10,5 +10,8 @@ print v
 v *= 2
 print v
 
-v /= 5
+v /= 4
+print v
+
+v %= 2
 print v

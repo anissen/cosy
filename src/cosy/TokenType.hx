@@ -11,6 +11,7 @@ enum TokenType {
     Plus; PlusEqual;
     Slash; SlashEqual;
     Star; StarEqual;
+    Percent; PercentEqual;
 	
 	Bang; BangEqual;
 	Equal; EqualEqual;

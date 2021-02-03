@@ -22,6 +22,7 @@ enum ByteCodeOp {
     Subtraction;
     Multiplication;
     Division;
+    Modulus;
     Less;
     LessEqual;
     Greater;
@@ -255,6 +256,7 @@ class CodeGenerator {
             case Subtraction: bytes.writeByte(ByteCodeOpValue.Subtraction);
             case Multiplication: bytes.writeByte(ByteCodeOpValue.Multiplication);
             case Division: bytes.writeByte(ByteCodeOpValue.Division);
+            case Modulus: bytes.writeByte(ByteCodeOpValue.Modulus);
             case Less: bytes.writeByte(ByteCodeOpValue.Less);
             case LessEqual: bytes.writeByte(ByteCodeOpValue.LessEqual);
             case Greater: bytes.writeByte(ByteCodeOpValue.Greater);
@@ -294,6 +296,7 @@ class CodeGenerator {
             case Minus: Subtraction;
             case Star: Multiplication;
             case Slash: Division;
+            case Percent: Modulus;
             case Less: Less;
             case LessEqual: LessEqual;
             case Greater: Greater;

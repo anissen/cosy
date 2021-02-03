@@ -42,6 +42,7 @@ class Optimizer {
                                 case Minus: (v1 :Float) - (v2 :Float);
                                 case Star:  (v1 :Float) * (v2 :Float);
                                 case Slash: (v1 :Float) / (v2 :Float);
+                                case Percent: (v1 :Float) % (v2 :Float);
                                 case Less:  (v1 :Float) < (v2 :Float);
                                 case LessEqual: (v1 :Float) <= (v2 :Float);
                                 case Greater: (v1 :Float) > (v2 :Float);
