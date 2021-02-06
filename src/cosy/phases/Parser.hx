@@ -84,12 +84,13 @@ class Parser {
             // ForCondition:
             // for i < 10
             // for
+            var keyword = previous();
             var condition = (check(LeftBrace) ? null : expression());
                 
             consume(LeftBrace, 'Expect "{" before loop body.');
             var body = block();
             
-            ForCondition(condition, body);
+            ForCondition(keyword, condition, body);
         }
 	}
 	

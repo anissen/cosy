@@ -67,7 +67,7 @@ class Typer {
                     case _: Cosy.error(name, 'Can only loop over value of type array.');
                 }
                 typeStmts(body);
-            case ForCondition(cond, body): typeStmts(body);
+            case ForCondition(keyword, cond, body): typeStmts(body);
 			case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType, foreign);
 			case Expression(e): typeExpr(e);
             case Print(keyword, e): 

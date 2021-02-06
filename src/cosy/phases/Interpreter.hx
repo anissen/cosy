@@ -59,7 +59,7 @@ class Interpreter {
                         } catch (err: Continue) {}
                     }
                 } catch (err: Break) {}
-            case ForCondition(cond, body):
+            case ForCondition(keyword, cond, body):
                 final env = new Environment(environment);
                 try {
                     while(cond != null ? isTruthy(evaluate(cond)) : true) {

@@ -42,7 +42,7 @@ class AstPrinter {
 			case Expression(e): '${printExpr(e)}';
 			case For(keyword, name, from, to, body): 'for ${name != null ? name.lexeme + " in " : ""}${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
 			case ForArray(name, array, body): 'for ${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
-            case ForCondition(cond, body): 'for ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
+            case ForCondition(keyword, cond, body): '${keyword.lexeme} ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
 			case Function(name, params, body, returnType, foreign):
 				var declaration = '${foreign ? "foreign fn" : "fn"} ${name.lexeme}';
                 var parameters = formatParams(params);

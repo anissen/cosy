@@ -79,7 +79,7 @@ class Resolver {
                 if (body.length == 0) Cosy.error(name, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
-            case ForCondition(cond, body):
+            case ForCondition(keyword, cond, body):
 				if (cond != null) resolveExpr(cond);
                 beginScope();
 				resolveStmts(body);
