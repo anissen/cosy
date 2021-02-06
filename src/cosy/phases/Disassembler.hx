@@ -42,6 +42,7 @@ class Disassembler {
         var output = '\n';
         var program = bytecode.bytecode;
         final sizeFloat = 4;
+        var token_index = 0;
         var pos = 0;
         while (pos < program.length) {
             var ipPos = pos;
@@ -91,6 +92,13 @@ class Disassembler {
                 case GreaterEqual: [Instruction('greater_equal'), Arg(''),  Hint('>=')];
                 case Negate: [Instruction('negate'), Arg(''), Hint('-')];
                 // case _: [Error('[Unknown bytecode: "$code"]')];
+            }
+
+            var prev_token = (token_index > 0 ? bytecode.tokens[token_index - 1] : null);
+            var cur_token = bytecode.tokens[token_index++];
+            if (cur_token != null && prev_token != cur_token) {
+                // lpad('line $l ║ ', 13)
+                output += '\033[1;30mLine ${cur_token.line} (${cur_token.type} "${cur_token.lexeme}")\033[0m\n';
             }
 
             var disassembly = [ for (part in parts) color(part) ].join('');
