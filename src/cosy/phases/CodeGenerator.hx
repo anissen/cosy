@@ -60,7 +60,7 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
 class Output {
     public var strings: Array<String>;
     public var bytecode: Bytes;
-    public var tokens = new Array<Token>();
+    public var tokens = new Map<Int, Token>();
 
     public function new() {
         strings = [];
@@ -71,7 +71,7 @@ class CodeGenerator {
     var localsCounter :Int;
     var localIndexes :Map<String, Int>;
     var output: Output;
-    var currentToken = null;
+    var emitCount = 0;
 
     var bytes: BytesOutput; // TODO: Bytecode may not be compatible between target languages due to differences in how bytes are represented in haxe.io.Bytes
 
@@ -105,11 +105,11 @@ class CodeGenerator {
         if (stmt == null) return;
 		switch stmt {
             case Print(keyword, expr):
-                currentToken = keyword;
+                add_token(keyword);
                 genExpr(expr);
                 emit(Print);
             case Var(name, type, init, mut, foreign):
-                currentToken = name;
+                add_token(name);
                 genExpr(init);
                 localIndexes[name.lexeme] = localsCounter++;
             case Block(statements):
@@ -119,7 +119,7 @@ class CodeGenerator {
                 if (pops > 0) emit(Pop(pops));
                 localsCounter = previousLocalsCounter;
             case If(keyword, cond, then, el):
-                currentToken = keyword;
+                add_token(keyword);
                 genExpr(cond);
                 var thenJump = emitJump(JumpIfFalse);
                 emit(Pop(1));
@@ -133,7 +133,7 @@ class CodeGenerator {
                 if (el != null) genStmt(el);
                 patchJump(elseJump);
             case For(keyword, name, from, to, body):
-                currentToken = keyword;
+                add_token(keyword);
                 // TODO: Ignore counter variable if it begins with underscore.
 
                 genExpr(from);
@@ -165,7 +165,7 @@ class CodeGenerator {
                 patchJump(exitJump);
                 emit(Pop(1));
             case ForCondition(keyword, cond, body):
-                currentToken = keyword;
+                add_token(keyword);
                 var loopStart = bytes.length;
                 if (cond != null) {
                     genExpr(cond);
@@ -190,11 +190,11 @@ class CodeGenerator {
         if (expr == null) return;
 		switch expr {
             case Assign(name, op, value):
-                currentToken = name;
+                add_token(name);
                 genExpr(value);
                 emit(SetLocal(localIndexes[name.lexeme]));
             case Binary(left, op, right):
-                currentToken = op;
+                add_token(op);
                 genExpr(left);
                 genExpr(right);
                 emit(BinaryOp(op.type));
@@ -203,10 +203,10 @@ class CodeGenerator {
             case Literal(v) if (Std.isOfType(v, String)): emit(ConstantString(v));
             case Grouping(expr): genExpr(expr);
             case Variable(name): 
-                currentToken = name;
+                add_token(name);
                 emit(GetLocal(localIndexes[name.lexeme]));
             case Logical(left, op, right):
-                currentToken = op;
+                add_token(op);
                 genExpr(left);
                 switch op.type {
                     case And:
@@ -222,7 +222,7 @@ class CodeGenerator {
                     case _: throw 'Unhandled Logical case!';
                 }
             case Unary(op, right): 
-                currentToken = op;
+                add_token(op);
                 if (!op.type.match(Minus)) throw 'error';
                 genExpr(right);
                 emit(Negate);
@@ -230,8 +230,14 @@ class CodeGenerator {
 		}
     }
 
+    function add_token(token: Token) {
+        if (!output.tokens.exists(emitCount)) {
+            output.tokens[emitCount] = token;
+        }
+    }
+
     function emit(op: ByteCodeOp) {
-        output.tokens.push(currentToken);
+        emitCount++;
         switch op {
             case Print: 
                 bytes.writeByte(ByteCodeOpValue.Print);
