@@ -79,6 +79,10 @@ class VM {
                     var right = popNumber();
                     var left  = popNumber();
                     push(Number(left / right));
+                case Modulus:
+                    var right = popNumber();
+                    var left  = popNumber();
+                    push(Number(left % right));
                 case Less: push(Boolean(popNumber() > popNumber()));
                 case LessEqual: push(Boolean(popNumber() >= popNumber()));
                 case Greater: push(Boolean(popNumber() < popNumber()));

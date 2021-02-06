@@ -49,6 +49,7 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final Subtraction;
     final Multiplication;
     final Division;
+    final Modulus;
     final Less;
     final LessEqual;
     final Greater;

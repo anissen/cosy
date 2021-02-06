@@ -84,6 +84,7 @@ class Disassembler {
                 case Subtraction: [Instruction('sub'), Arg(''), Hint('-')];
                 case Multiplication: [Instruction('mult'), Arg(''), Hint('*')];
                 case Division: [Instruction('div'), Arg(''), Hint('/')];
+                case Modulus: [Instruction('mod'), Arg(''), Hint('%')];
                 case Less: [Instruction('less'), Arg(''),  Hint('<')];
                 case LessEqual: [Instruction('less_equal'), Arg(''),  Hint('<=')];
                 case Greater: [Instruction('greater'), Arg(''),  Hint('>')];
