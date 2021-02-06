@@ -70,8 +70,6 @@ class Output {
 class CodeGenerator {
     var localsCounter :Int;
     var localIndexes :Map<String, Int>;
-    var constantsCounter :Int;
-    var codes: Array<ByteCodeOp>;
     var output: Output;
     var currentToken = null;
 
@@ -83,9 +81,7 @@ class CodeGenerator {
 
 	public inline function generate(stmts: Array<Stmt>): Output {
         localsCounter = 0;
-        constantsCounter = 0;
         localIndexes = new Map();
-        codes = [];
         output = new Output();
         bytes = new BytesOutput();
         genStmts(stmts);
