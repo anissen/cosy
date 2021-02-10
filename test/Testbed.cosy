@@ -22,20 +22,20 @@
 
 
 // {
-//     foreign fn readInput() Str
-//     foreign fn stringToNumber(inputx Str) Num
+//     foreign fn read_input() Str
+//     foreign fn string_to_number(inputx Str) Num
 
 //     // fn input() Str {
 //     //     return 's'
 //     // }
     
-//     // fn stringToNumber(input Str) Num { // 'local' param is causing problems!
+//     // fn string_to_number(input Str) Num { // 'local' param is causing problems!
 //     //     print input
 //     //     return 55
 //     // }
 
-//     var s = readInput()
-//     var guess = stringToNumber(s)
+//     var s = read_input()
+//     var guess = string_to_number(s)
 //     print guess
 // }
 

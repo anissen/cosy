@@ -28,11 +28,11 @@ class Cosy {
     public static var strict = false;
 
     static function main() {
-        Cosy.setFunction('randomInt', (args) -> return Std.random(args[0]));
-        Cosy.setFunction('stringToNumber', (args) -> Std.parseInt(args[0]) /* can be null! */);
+        Cosy.setFunction('random_int', (args) -> return Std.random(args[0]));
+        Cosy.setFunction('string_to_number', (args) -> Std.parseInt(args[0]) /* can be null! */);
 
         #if sys
-        Cosy.setFunction('readInput', (args) -> Sys.stdin().readLine());
+        Cosy.setFunction('read_input', (args) -> Sys.stdin().readLine());
         Cosy.setFunction('read_lines', (args) -> {
             var lines = File.getContent(args[0]).split('\n');
             lines.pop(); // remove last line (assuming empty line)

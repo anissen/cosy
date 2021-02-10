@@ -1,6 +1,6 @@
 // https://adventofcode.com/2020/day/4
 
-foreign fn stringToNumber(input Str) Num
+foreign fn string_to_number(input Str) Num
 foreign fn read_file(path Str) Str
 
 mut input Str
@@ -73,7 +73,7 @@ fn value_in_range(value Num, min Num, max Num) Bool {
 
 fn has_valid_values(passport Passport) Bool {
     fn field_value_in_range(field Field, min Num, max Num) {
-        return value_in_range(stringToNumber(field.value), min, max)
+        return value_in_range(string_to_number(field.value), min, max)
     }
 
     for field in passport.fields {
@@ -98,13 +98,13 @@ fn has_valid_values(passport Passport) Bool {
             if height_unit == 'cm' {
                 // If cm, the number must be at least 150 and at most 193.
                 var height_cm = field.value.substr(0, field.value.length - 2)
-                if !value_in_range(stringToNumber(height_cm), 150, 193) {
+                if !value_in_range(string_to_number(height_cm), 150, 193) {
                     return false
                 }
             } else if height_unit == 'in' {
                 // If in, the number must be at least 59 and at most 76.
                 var height_in = field.value.substr(0, field.value.length - 2)
-                if !value_in_range(stringToNumber(height_in), 59, 76) {
+                if !value_in_range(string_to_number(height_in), 59, 76) {
                     return false
                 }
             } else {
@@ -112,11 +112,11 @@ fn has_valid_values(passport Passport) Bool {
             }
         } else if field.name == 'hcl' {
             // hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
-            if field.value.charAt(0) != '#' {
+            if field.value.char_at(0) != '#' {
                 return false
             }
             for i in 1..6 {
-                var char = field.value.charAt(i)
+                var char = field.value.char_at(i)
                 if char != '0' and char != '1' and char != '2' and char != '3' and char != '4' and char != '5' and char != '6' and char != '7' and char != '8' and char != '9' and char != 'a' and char != 'b' and char != 'c' and char != 'd' and char != 'e' and char != 'f' {
                     return false
                 }
@@ -139,7 +139,7 @@ fn has_valid_values(passport Passport) Bool {
                 return false
             }
             for i in 0..field.value.length {
-                var char = field.value.charAt(i)
+                var char = field.value.char_at(i)
                 if char != '0' and char != '1' and char != '2' and char != '3' and char != '4' and char != '5' and char != '6' and char != '7' and char != '8' and char != '9' {
                     return false
                 }

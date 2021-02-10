@@ -1,7 +1,7 @@
 // https://adventofcode.com/2020/day/1
 
 foreign fn read_lines(path Str) Array Str
-foreign fn stringToNumber(input Str) Num
+foreign fn string_to_number(input Str) Num
 
 mut input Array Str
 var test_mode = true
@@ -11,7 +11,7 @@ if test_mode {
     input = read_lines('test/examples/advent-of-code-2020/data/day1.txt')
 }
 
-var numbers = input.map(stringToNumber)
+var numbers = input.map(string_to_number)
 
 // Part 1: Find two numbers that sum to 2020.
 fn part_1() {

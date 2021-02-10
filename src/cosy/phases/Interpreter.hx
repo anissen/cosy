@@ -351,7 +351,7 @@ class Interpreter {
             case 'length': string.length;
             case 'split': new CustomCallable(1, (args -> string.split(args[0])));
             case 'replace': new CustomCallable(2, (args -> StringTools.replace(string, args[0], args[1])));
-            case 'charAt': new CustomCallable(1, (args -> string.charAt(args[0])));
+            case 'char_at': new CustomCallable(1, (args -> string.charAt(args[0])));
             case 'substr': new CustomCallable(2, (args -> string.substr(Std.int(args[0]), Std.int(args[1]))));
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }

@@ -1,7 +1,7 @@
 // https://adventofcode.com/2020/day/2
 
 foreign fn read_lines(path Str) Array Str
-foreign fn stringToNumber(input Str) Num
+foreign fn string_to_number(input Str) Num
 
 mut input Array Str
 var test_mode = true
@@ -21,8 +21,8 @@ struct Password {
 fn parse(str Str) Password {
     var parts = str.split(' ')  // ['1-3', 'a:', 'abcde'] from '1-3 a: abcde'
 	var min_max = parts.get(0).split('-') // [1, 3] from '1-3
-    var min = stringToNumber(min_max.get(0))
-    var max = stringToNumber(min_max.get(1))
+    var min = string_to_number(min_max.get(0))
+    var max = string_to_number(min_max.get(1))
     var char = parts.get(1).split(':').get(0) // 'a' from 'a:'
     var pass = parts.get(2)
     return Password { min = min, max = max, char = char, pass = pass.split('') }

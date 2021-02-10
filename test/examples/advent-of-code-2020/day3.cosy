@@ -36,7 +36,7 @@ fn count_trees(slope_x Num, slope_y Num) Num {
         if x >= row.length {
             x -= row.length
         }
-        if row.charAt(x) == '#' {
+        if row.char_at(x) == '#' {
             trees += 1
         }
     }
