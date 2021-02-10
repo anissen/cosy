@@ -120,7 +120,9 @@ fun x() { print "hej" }
 - [ ] Make a syntax highlighting extension for vscode
 - [ ] Enable null-safety feature for Haxe
 - [ ] Unit tests
-- [ ] Simple CI using Github Actions (see https://github.com/lix-pm/lix.vscode/commit/d45e30e618aa1aea23a26ea589d23c8916e9af68)
+- [x] Simple CI using Github Actions
+- [ ] Add Windows CI using Github Actions
+- [ ] Add C++ and JavaScript to CI using Github Actions
 - [ ] VSCode tasks
 - [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe, https://github.com/vshaxe/vscode-extern)
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
