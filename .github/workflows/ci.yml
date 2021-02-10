@@ -19,4 +19,4 @@ jobs:
         run: |
           haxelib install hxjava
       - name: Validate
-        run: ./scripts/all_validate.sh
+        run: sh ./scripts/all_validate.sh
