@@ -10,7 +10,7 @@ jobs:
         # Windows is not yet supported due to ./scripts/all_validate.sh being unix-dependant
         # os: [ubuntu-latest, macos-latest, windows-latest]
         haxe: [4.2.0]
-      fail-fast: true
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
