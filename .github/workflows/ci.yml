@@ -15,5 +15,8 @@ jobs:
       - uses: krdlab/setup-haxe@v1.1.5
         with:
           haxe-version: 4.2.0
+      - name: Install dependencies
+        run: |
+          haxelib install hxjava
       - name: Validate
         run: ./scripts/all_validate.sh
