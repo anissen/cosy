@@ -253,9 +253,11 @@ Include in your HTML body: `<script src="cosy.js"></script>`.
 Run: `window.cosy.Cosy.run("print 'hello javascript!'")`.
 
 #### Using Node
-Build: `haxe -main cosy.Cosy -cp src -js bin/node/cosy.js -lib hxnodejs`.
+Build: `haxe scripts/node.hxml`.
 
-Run: 
+Run (as script): `node ./bin/node/cosy.js [OPTIONS] [SOURCE_FILE]`.
+
+Run (as library): 
 ```js
 const cosy = require("./bin/node/cosy.js").cosy.Cosy;
 cosy.run("print 'hello node!'");

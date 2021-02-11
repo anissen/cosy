@@ -1,0 +1,19 @@
+-cp src
+-main cosy.Cosy
+
+-lib hxnodejs
+
+-dce full
+-D shallow-expose
+-D analyzer-optimize
+-D source-map
+-D js-es=6
+-D js-unflatten
+-D loop_unroll_max_cost=5
+# -D no-inline
+
+-js bin/node/cosy.js
+
+-lib closure
+-D closure_warning_level=QUIET
+-D closure_overwrite

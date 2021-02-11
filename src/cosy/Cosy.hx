@@ -31,7 +31,7 @@ class Cosy {
         Cosy.setFunction('random_int', (args) -> return Std.random(args[0]));
         Cosy.setFunction('string_to_number', (args) -> Std.parseInt(args[0]) /* can be null! */);
 
-        #if sys
+        #if (sys || nodejs)
         Cosy.setFunction('read_input', (args) -> Sys.stdin().readLine());
         Cosy.setFunction('read_lines', (args) -> {
             var lines = File.getContent(args[0]).split('\n');
@@ -39,9 +39,12 @@ class Cosy {
             return lines;
         });
         Cosy.setFunction('read_file', (args) -> File.getContent(args[0]));
-        #end
         
-        #if sys
+        #if nodejs
+        final usedAsModule = js.Syntax.code('require.main !== module');
+        if (usedAsModule) return;
+        #end
+
         var args = Sys.args();
         var argErrors = [];
         for (i in 0...args.length - 1) {
@@ -139,7 +142,7 @@ Options:
         #end
     }
 
-    #if sys
+    #if (sys || nodejs)
     static function runFile(path:String) {
         var content = File.getContent(path);
         run(content);
@@ -155,7 +158,7 @@ Options:
     }
 
     public static function println(v :Dynamic) {
-        #if sys
+        #if (sys || nodejs)
         Sys.println(v);
         #elseif js
         js.Browser.console.log(v);
