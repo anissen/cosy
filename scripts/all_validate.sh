@@ -1,7 +1,8 @@
 #!/bin/bash
 echo -ne "\033[0;34m"
 echo "> Compiling cosy..."
-haxe build.hxml
+# haxe scripts/jvm.hxml
+haxe scripts/node.hxml
 retVal=$?
 if [ $retVal -ne 0 ]; then
     echo -ne "\033[0;31m"
@@ -38,9 +39,12 @@ validate () {
         echo -ne "\033[0m"
         echo -ne "\033[0;31m"
         # use 2>&1 to redirect stderr into stdout
-        # hl bin/hl/Cosy.hl --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
         before=$SECONDS
-        java -jar bin/jvm/Cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
+        # hashlink c++: ./bin/hlc/Cosy
+        # hashlink vm:  hl bin/hl/Cosy.hl
+        # jvm:          java -jar bin/jvm/Cosy.jar
+        # node:         node bin/node/cosy.js
+        node bin/node/cosy.js --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
         retVal=$?
         if [ $SECONDS -gt $((before+1)) ]; then # TODO: This is a *very* crude test for execution time of tests!
             echo "... SLOW!"
