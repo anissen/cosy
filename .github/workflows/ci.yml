@@ -19,6 +19,7 @@ jobs:
           haxe-version: 4.2.0
       - name: Install dependencies
         run: |
-          haxelib install hxjava
+          # haxelib install hxjava
+          haxelib install hxnodejs
       - name: Validate
         run: ./scripts/all_validate.sh
