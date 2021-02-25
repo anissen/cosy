@@ -3,7 +3,7 @@ package cosy;
 import cosy.phases.*;
 import haxe.Timer;
 
-#if sys
+#if (sys || nodejs)
 import sys.FileSystem;
 import sys.io.File;
 import haxe.io.Path;
