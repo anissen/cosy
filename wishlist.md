@@ -120,13 +120,27 @@ fun x() { print "hej" }
 - [ ] Make a syntax highlighting extension for vscode
 - [ ] Enable null-safety feature for Haxe
 - [ ] Unit tests
+- [ ] Make a Haxe-based test runner á la https://github.com/munificent/craftinginterpreters/blob/master/tool/bin/test.dart (see https://github.com/munificent/craftinginterpreters#testing)
 - [x] Simple CI using Github Actions
 - [ ] Add Windows CI using Github Actions
-- [ ] Add C++ and JavaScript to CI using Github Actions
+- [ ] Add all languages to CI using Github Actions
+  - [ ] C++
+  - [ ] Hashlink VM
+  - [ ] Hashlink C++
+  - [ ] Java
+  - [ ] JVM
+  - [ ] Eval
+  - [ ] JavaScript
+  - [ ] Node
+  - [ ] Python
+  - [ ] C#
+  - [ ] Lua?
+  - [ ] PHP?
 - [ ] VSCode tasks
 - [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe, https://github.com/vshaxe/vscode-extern)
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 - [ ] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
+- [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
 - [ ] Use import.hx
 - [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting)
 
