@@ -1,1 +1,1 @@
-[line 4] Error at "s2": Only struct parameters can be marked as `mut`.
+[line 4] Error at "s2": Only struct and array parameters can be marked as `mut`.
