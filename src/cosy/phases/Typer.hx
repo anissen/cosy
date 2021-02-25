@@ -200,6 +200,7 @@ class Typer {
                             case 'concat': Function([Array(t)], Void);
                             case 'pop': Function([], t);
                             case 'get': Function([Number], t);
+                            case 'set': Function([Number, t], t);
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
@@ -214,6 +215,7 @@ class Typer {
                             case 'concat': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'pop': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'get': Function([Number], t);
+                            case 'set': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
