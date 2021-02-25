@@ -258,7 +258,8 @@ class Typer {
                 switch type {
                     // case Mutable(Struct(_)):
                     case Mutable(Mutable(Struct(_))):
-                    case _: Cosy.error(name, 'Only mutable structs can be passed as "mut". You passed ${formatType(type, false)}.');
+                    case Mutable(Mutable(Array(_))):
+                    case _: Cosy.error(name, 'Only mutable structs and arrays can be passed as "mut". You passed ${formatType(type, false)}.');
                 }
                 type;
 			case Set(obj, name, value):

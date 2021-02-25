@@ -208,9 +208,12 @@ class Parser {
                 var name = consume(Identifier, 'Expect parameter name.');
                 var type = paramType();
                 if (mutable) {
-                    if (!type.match(NamedStruct(_)) && !type.match(Unknown)) {
-                        error(name, 'Only struct parameters can be marked as `mut`.');
-                    }
+					switch type {
+						case NamedStruct(_):
+						case Unknown:
+						case Array(_):
+						case _: error(name, 'Only struct and array parameters can be marked as `mut`.');
+					}
                     type = Mutable(type);
                 }
                 params.push({ name: name, type: type });
