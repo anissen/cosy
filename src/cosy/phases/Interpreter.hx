@@ -427,7 +427,7 @@ private class CustomCallable implements Callable {
     public function toString() :String return '<native fn>';
 }
 
-abstract Locals(Map<{}, Int>) {
+abstract Locals(Map<#if hl EnumValue #else {} #end, Int>) {
     public inline function new() this = new Map();
     public inline function get(expr:Expr):Null<Int> return this.get(cast expr); // this is a hack, depends on implementation details of ObjectMap
     public inline function set(expr:Expr, v:Int) this.set(cast expr, v); // this is a hack, depends on implementation details of ObjectMap
