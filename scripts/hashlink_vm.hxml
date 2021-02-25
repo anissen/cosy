@@ -1,0 +1,6 @@
+-cp src
+-main cosy.Cosy
+
+-dce full
+
+-hl bin/hl/cosy.hl
