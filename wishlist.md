@@ -120,7 +120,7 @@ fun x() { print "hej" }
 - [ ] Make a syntax highlighting extension for vscode
 - [ ] Enable null-safety feature for Haxe
 - [ ] Unit tests
-- [ ] Make a Haxe-based test runner á la https://github.com/munificent/craftinginterpreters/blob/master/tool/bin/test.dart (see https://github.com/munificent/craftinginterpreters#testing)
+- [ ] Make a Haxe-based test runner á la https://github.com/munificent/craftinginterpreters/blob/master/tool/bin/test.dart (see https://github.com/munificent/craftinginterpreters#testing). Alternatively, make built-in support for tests in Cosy.
 - [x] Simple CI using Github Actions
 - [ ] Add Windows CI using Github Actions
 - [ ] Add all languages to CI using Github Actions
@@ -142,11 +142,13 @@ fun x() { print "hej" }
 - [ ] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
 - [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
 - [ ] Use import.hx
-- [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting)
+- [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting, example configuration: https://github.com/armory3d/zui/blob/master/checkstyle.json)
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
 - [ ] Yield functionality (generators or coroutines)
+- [ ] Hot reloading
+- [ ] Make a web-based app for creative coding (á la a _very_ simplified p5.js)
 - [ ] Easy to integrate C/C++ libraries
 - [ ] Fibers á la Wren
 - [ ] Built-in threading
