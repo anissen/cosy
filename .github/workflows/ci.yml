@@ -1,6 +1,7 @@
 name: Cosy
 
 on: [push, pull_request]
+# update on changes to specific path: edwardthomson.com/blog/github_actions_10_path_triggers.html
 
 jobs:
   build:
