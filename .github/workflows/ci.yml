@@ -6,20 +6,25 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
         # Windows is not yet supported due to ./scripts/all_validate.sh being unix-dependant
+        os: [ubuntu-latest, macos-latest]
+        haxe: [4.2.1, stable]
         # os: [ubuntu-latest, macos-latest, windows-latest]
         haxe: [4.2.0]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: krdlab/setup-haxe@v1.1.5
+      - name: Use Haxe ${{ matrix.haxe }}
+        uses: krdlab/setup-haxe@v1.1.5
         with:
-          haxe-version: 4.2.0
+          haxe-version: ${{ matrix.haxe }}
       - name: Install dependencies
         run: |
           # haxelib install hxjava
           haxelib install hxnodejs
       - name: Validate
         run: ./scripts/all_validate.sh
+      # - name: Validate on Java
+      #   run: ./scripts/all_validate.sh java
+      #   if: matrix.target == 'java'
