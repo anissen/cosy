@@ -6,10 +6,10 @@ fn eval(code Array Num) {
     mut stack Array Num = []
     mut ip = 0
     for ip < code.length {
-        var op = code.get(ip)
+        var op = code[ip]
         if op == push {
             ip += 1
-            stack.push(code.get(ip))
+            stack.push(code[ip])
         } else if op == add {
             var right = stack.pop()
             var left = stack.pop()

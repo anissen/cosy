@@ -144,6 +144,9 @@ class Resolver {
 				for (arg in arguments) resolveExpr(arg);
 			case Get(obj, name):
                 resolveExpr(obj);
+			case GetIndex(obj, index):
+                resolveExpr(obj);
+                resolveExpr(index);
             case MutArgument(keyword, name):
                 resolveLocal(expr, name, true);
 			case Set(obj, name, value):
@@ -157,6 +160,10 @@ class Resolver {
                     case Get(getObj, getName): // ignore???
                     case _: trace(obj); throw 'this is unexpected';
                 }
+            case SetIndex(obj, index, value):
+                resolveExpr(obj);
+                resolveExpr(index);
+                resolveExpr(value);
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
             case StructInit(name, decls):

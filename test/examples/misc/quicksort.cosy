@@ -2,24 +2,24 @@
 // array, and places all values smaller than pivot to left of pivot and all greater elements to right of pivot.
 fn partition(mut arr Array Num, low Num, high Num) {
     mut i = (low - 1)           // Index of smaller element.
-    var pivot = arr.get(high)
+    var pivot = arr[high]
   
     for j in low..high {
         // If current element is smaller than or equal to pivot.
-        if arr.get(j) <= pivot {
+        if arr[j] <= pivot {
             // Increment index of smaller element.
             i = i + 1
             // Swap i and j
-            var tmp = arr.get(i)
-            arr.set(i, arr.get(j))
-            arr.set(j, tmp)
+            var tmp = arr[i]
+            arr[i] = arr[j]
+            arr[j] = tmp
         }
     }
   
     // Swap (i + 1) and (high)
-    var tmp = arr.get(i + 1)
-    arr.set(i + 1, arr.get(high))
-    arr.set(high, tmp)
+    var tmp = arr[i + 1]
+    arr[i + 1] = arr[high]
+    arr[high] = tmp
     return (i + 1)
 }
   

@@ -53,16 +53,16 @@ var sorted_seat_ids = seat_ids.sort(fn(a Num, b Num) { return a - b })
 
 // Part 1
 {
-    mut highest_seat_id = sorted_seat_ids.get(sorted_seat_ids.length - 1)
+    mut highest_seat_id = sorted_seat_ids[sorted_seat_ids.length - 1]
     print '# PART 1: Highest seat ID: ' + highest_seat_id
 }
 
 // Part 2
 fn part_2() {
-    mut value = sorted_seat_ids.get(0)
+    mut value = sorted_seat_ids[0]
     for i in 1..sorted_seat_ids.length {
         value += 1
-        var v = sorted_seat_ids.get(i)
+        var v = sorted_seat_ids[i]
         if v != value {
             print '# PART 2: Empty seat at seat ID: ' + value
             return _

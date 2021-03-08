@@ -17,8 +17,8 @@ var numbers = input.map(string_to_number)
 fn part_1() {
     for i in 0..numbers.length {
         for i2 in i..numbers.length {
-            var a = numbers.get(i)
-            var b = numbers.get(i2)
+            var a = numbers[i]
+            var b = numbers[i2]
             if a + b == 2020 {
                 // print a + ' and ' + b + ' sum to 2020'
                 // print 'Mult: ' + a * b
@@ -35,9 +35,9 @@ fn part_2() {
     for i in 0..numbers.length {
         for i2 in i..numbers.length {
             for i3 in i2..numbers.length {
-                var a = numbers.get(i)
-                var b = numbers.get(i2)
-                var c = numbers.get(i3)
+                var a = numbers[i]
+                var b = numbers[i2]
+                var c = numbers[i3]
                 if a + b + c == 2020 {
                     // print a + ' and ' + b + ' and ' + c + ' sum to 2020'
                     // print 'Mult: ' + a * b * c

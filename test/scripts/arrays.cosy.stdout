@@ -19,9 +19,9 @@ concat([10, 11]):
 [6,7,8,9,10,11]
 array.pop(): 
 [6,7,8,9,10]
-array.get(2): 
+array[2]: 
 8
-array.get(3): 
+array[3]: 
 9
 1
 2

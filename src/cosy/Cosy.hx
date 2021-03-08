@@ -267,9 +267,6 @@ Options:
         if (outputJavaScript) {
             // Hack to inject a JavaScript standard library
             var stdLib = '// standard library\nlet clock = Date.now;\n';
-            // Hack to fix arrays being index by .get(x) instead of [x]. TODO: Remove this when array index is implemented
-            stdLib += 'Array.prototype.get = function(i) { return this[i]; }\n';
-            stdLib += 'Array.prototype.set = function(i, v) { this[i] = v; }\n';
             println(stdLib);
 
             var printer = new JavaScriptPrinter();

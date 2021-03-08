@@ -41,10 +41,10 @@
 	print 'array.pop(): '
 	array.pop()
 	print array
-	print 'array.get(2): '
-	print array.get(2)
-	print 'array.get(3): '
-	print array.get(3)
+	print 'array[2]: '
+	print array[2]
+	print 'array[3]: '
+	print array[3]
 }
 
 {

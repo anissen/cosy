@@ -262,12 +262,35 @@ class Interpreter {
                 else if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).get(name);
                 else if (Std.isOfType(obj, String)) return stringGet(obj, name);
                 else throw new RuntimeError(name, 'Only instances have properties');
+            case GetIndex(obj, index):
+                // var a = new AstPrinter();
+                // trace(a.printExpr(obj));
+                // var k = new KeywordVisitor();
+                // trace(k.getExprKeywords([obj]));
+                final obj = evaluate(obj);
+                
+                if (Std.isOfType(obj, Array)) {
+                    var idx = evaluate(index);
+                    if (!Std.isOfType(idx, Int)) throw 'Index must be an Int.';
+                    // if (arg < 0 && arg >= array.length) throw new RuntimeError(Token(), 'Array out of bounds (index $arg in array of length ${array.length}).');
+                    return (obj: Array<Any>)[(idx: Int)];
+                }
+                // else throw new RuntimeError(name, 'Bracket operator can only be used on arrays.');
+                else throw 'Bracket operator can only be used on arrays.'; // TODO: Use RuntimeError with keyword
             case Set(obj, name, value):
                 // TODO: Should also handle assignment operators: +=, -=, /=, *=
                 final obj = evaluate(obj);
                 final value = evaluate(value);
                 if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).set(name, value);
                 else throw new RuntimeError(name, 'Only instances have fields');
+                value;
+            case SetIndex(obj, index, value):
+                // TODO: Should also handle assignment operators: +=, -=, /=, *=
+                final obj = evaluate(obj);
+                final index = evaluate(index);
+                final value = evaluate(value);
+                if (Std.isOfType(obj, Array)) (obj :Array<Any>)[(index: Int)] = value;
+                else throw 'Bracket notion is only allowed on arrays'; // new RuntimeError(name, 'Only instances have fields');
                 value;
             case Grouping(e):
                 evaluate(e);

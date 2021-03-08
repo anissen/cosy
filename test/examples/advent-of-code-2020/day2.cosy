@@ -20,11 +20,11 @@ struct Password {
 
 fn parse(str Str) Password {
     var parts = str.split(' ')  // ['1-3', 'a:', 'abcde'] from '1-3 a: abcde'
-	var min_max = parts.get(0).split('-') // [1, 3] from '1-3
-    var min = string_to_number(min_max.get(0))
-    var max = string_to_number(min_max.get(1))
-    var char = parts.get(1).split(':').get(0) // 'a' from 'a:'
-    var pass = parts.get(2)
+	var min_max = parts[0].split('-') // [1, 3] from '1-3
+    var min = string_to_number(min_max[0])
+    var max = string_to_number(min_max[1])
+    var char = parts[1].split(':')[0] // 'a' from 'a:'
+    var pass = parts[2]
     return Password { min = min, max = max, char = char, pass = pass.split('') }
 }
 
@@ -36,8 +36,8 @@ fn validate_part_1(p Password) {
 }
 
 fn validate_part_2(p Password) {
-    var first_char_matches = p.pass.get(p.min - 1) == p.char
-    var second_char_matches = p.pass.get(p.max - 1) == p.char
+    var first_char_matches = p.pass[p.min - 1] == p.char
+    var second_char_matches = p.pass[p.max - 1] == p.char
     if first_char_matches and second_char_matches {
         return false
     }

@@ -66,11 +66,13 @@ class AstPrinter {
 			case Binary(left, op, right): '${printExpr(left)} ${op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): '${printExpr(callee)}(${[ for (arg in arguments) printExpr(arg) ].join(', ')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
+			case GetIndex(obj, index): '${printExpr(obj)}[${printExpr(index)}]';
 			case Grouping(e): '(${printExpr(e)})';
 			case Literal(v): if (Std.isOfType(v, String)) { '\'$v\''; } else { '$v'; };
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
             case MutArgument(keyword, name): 'mut ${name.lexeme}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
+			case SetIndex(obj, index, value): '${printExpr(obj)}[${printExpr(index)}] = ${printExpr(value)}';
             case StructInit(name, decls): printExprBlock(decls);
             case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;

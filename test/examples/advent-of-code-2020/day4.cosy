@@ -39,7 +39,7 @@ fn parse(passport Str) {
     mut fields Array Field = []
     for part in parts {
         var components = part.split(':')
-        fields.push(Field { name = components.get(0), value = components.get(1) })
+        fields.push(Field { name = components[0], value = components[1] })
     }
     return Passport { fields = fields }
 }

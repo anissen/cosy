@@ -199,8 +199,6 @@ class Typer {
                             case 'push': Function([t], Void);
                             case 'concat': Function([Array(t)], Void);
                             case 'pop': Function([], t);
-                            case 'get': Function([Number], t);
-                            case 'set': Function([Number, t], t);
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
@@ -213,8 +211,6 @@ class Typer {
                             case 'length': Number;
                             case 'push': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'concat': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
-                            case 'pop': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
-                            case 'get': Function([Number], t);
                             case 'set': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
@@ -253,6 +249,12 @@ class Typer {
                     case _: throw 'Get "${name.lexeme}" on unknown type ${objType}';
                     // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
+            case GetIndex(obj, index):
+                var objType = typeExpr(obj);
+                return switch objType {
+                    case Mutable(Array(t)) |  Array(t): t;
+                    case _: throw 'Get index of unknown type ${objType}';
+                }
             case MutArgument(keyword, name):
                 var type = Mutable(variableTypes.get(name.lexeme));
                 switch type {
@@ -285,7 +287,16 @@ class Typer {
                         }
                     case _: //trace(objType); TODO: throw 'unexpected';
                 }
-                Unknown; // TODO: What should Set return?
+                typeExpr(value);
+			case SetIndex(obj, index, value):
+                var objType = typeExpr(obj);
+                var valueType = typeExpr(value);
+                switch objType {
+                    case Array(t): throw 'Cannot set value on immutable array.'; // TODO: Make this a Cosy.error
+                    case Mutable(Array(t)): if (!matchType(valueType, t)) throw 'Cannot assign ${formatType(valueType)} to ${formatType(t)}'; // TODO: Make this a Cosy.error
+                    case _: throw 'unexpected';
+                }
+                typeExpr(value);
             case Grouping(e): typeExpr(e);
             case Unary(op, e): 
                 switch op.type {

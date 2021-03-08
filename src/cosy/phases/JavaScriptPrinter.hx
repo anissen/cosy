@@ -58,11 +58,13 @@ class JavaScriptPrinter {
                 var calleeName = printExpr(callee);
                 '$calleeName(${arguments.map(printExpr).join(',')})';
 			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
+			case GetIndex(obj, index): '${printExpr(obj)}[${printExpr(index)}]';
 			case Grouping(e): '(${printExpr(e)})';
 			case MutArgument(keyword, name): name.lexeme;
 			case Literal(v): if (v == null) { 'null'; } else if (Std.isOfType(v, String)) { '"$v"'; } else { '$v'; };
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
 			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
+			case SetIndex(obj, index, value): '${printExpr(obj)}[${printExpr(index)}] = ${printExpr(value)}';
             case StructInit(name, decls): 
                 var init = [ for (decl in decls) StringTools.replace(printExpr(decl), ' = ', ': ') ];
                 '{ ${init.join(", ")} }';
