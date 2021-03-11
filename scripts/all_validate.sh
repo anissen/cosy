@@ -44,6 +44,8 @@ validate () {
         # hashlink vm:  hl bin/hl/Cosy.hl
         # jvm:          java -jar bin/jvm/Cosy.jar
         # node:         node bin/node/cosy.js
+        # ./scripts/run.sh --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
+        # java -jar bin/jvm/Cosy.jar --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
         node bin/node/cosy.js --no-colors $options $filename 2>&1 | diff --unified=0 $filename.stdout -
         retVal=$?
         if [ $SECONDS -gt $((before+1)) ]; then # TODO: This is a *very* crude test for execution time of tests!
