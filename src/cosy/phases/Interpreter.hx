@@ -21,8 +21,6 @@ class Interpreter {
             for (statement in statements) execute(statement);
         } catch (e:RuntimeError) {
             Cosy.runtimeError(e);
-        } catch (eof:haxe.io.Eof) {
-            // program is quit while waiting for user text input
         }
     }
 
