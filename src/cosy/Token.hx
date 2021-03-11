@@ -14,6 +14,6 @@ class Token {
 	}
 	
 	public function toString() :String {
-        return 'Token { type: $type, lexeme: "$lexeme"' + (literal != null ? ', literal: $literal' : '') + ' }';
+        return 'Token { type: $type, lexeme: "$lexeme", line: $line' + (literal != null ? ', literal: $literal' : '') + ' }';
 	}
 }
