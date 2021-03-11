@@ -5,9 +5,8 @@
 x()
 fun x() { print "hej" }
 ```
-- [x] REPL functionality performs static analysis prematurely (e.g. `var x = 3` results in an "unused variable" error)
-- [x] Array method calls is not checked for immutability
 - [ ] Struct `Set` expression should also handle assignment operators: +=, -=, /=, *=
+- [ ] Array `SetIndex` expression should also handle assignment operators: +=, -=, /=, *=
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)
@@ -40,12 +39,12 @@ fun x() { print "hej" }
   - [ ] member-functions
 - [ ] Modules
 - [ ] Experiment with bytecode
-- [ ] Support for arrays
+- [x] Support for arrays
   - [x] Support for array literal
   - [x] Support for array length
   - [x] Support for push
   - [x] Support for getting value at index
-  - [ ] Support for array indexing?
+  - [x] Support for array indexing
   - [x] Support for map function
   - [x] Support for filter function
 - [ ] Support for maps
@@ -93,13 +92,13 @@ fun x() { print "hej" }
 - [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
 - [x] Make a new and improved Hangman example with properly typed code, structs and arrays
 - [ ] Update Cosy basics example with structs, functions taking mut struct, string functions
-- [-] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
+- [ ] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
 - [ ] Cosy documentation using Dox (https://github.com/HaxeFoundation/dox)
 - [ ] Make Cosy FFI work for more targets (see https://community.haxe.org/t/is-there-a-way-to-expose-a-haxe-library-as-a-library-for-another-target/508)
 - [x] Make a `phases` sub-package
-- [ ] Change array type annotation from e.g. `Array Num` to `Num[]`
-- [ ] Maybe: Change type annotation from e.g. `Str` to `String` and `Num` to `Number`
-- [ ] Maybe: Change type annotation from e.g. `fn F(blah Fun(String) Number) Number[]` to `fn F(blah: ((xyz: String) => Number)): Number[]`
+- [ ] Change array type annotation from e.g. `Array Num` to `num[]`
+- [ ] Maybe: Change type annotation from e.g. `Str` to `string` and `Num` to `number`
+- [ ] Maybe: Change type annotation from e.g. `fn F(blah Fun(string) number) number[]` to `fn F(blah: ((xyz: string) => number)): number[]`
 - [ ] Compile errors ordered by line number, regardless of compilation phase (how?)
 - [ ] Introduce an `Any` type that is only allowed for foreign functions
 - [x] Add `--benchmark` option
