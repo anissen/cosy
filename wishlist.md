@@ -113,7 +113,7 @@ fun x() { print "hej" }
 - [ ] Remove brackets and use indentation checking instead?
 - [ ] Make a 'docs' command that outputs the following to the 'docs' directory (docsify): index.html, readme.md, _sidebar.md and a markdown file for each cosy file.
 - [ ] Make a CLI `--help` command
-- [ ] Make the CLI write out Cosy version and/or git commit
+- [x] Make the CLI write out Cosy version and/or git commit
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
