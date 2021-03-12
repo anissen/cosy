@@ -264,7 +264,7 @@ class Typer {
                     case _: Cosy.error(name, 'Only mutable structs and arrays can be passed as "mut". You passed ${formatType(type, false)}.');
                 }
                 type;
-			case Set(obj, name, value):
+			case Set(obj, name, op, value):
                 var objType = typeExpr(obj);
                 objType = switch objType {
                     case Mutable(NamedStruct(n)) | NamedStruct(n): variableTypes.get(n);
@@ -288,12 +288,12 @@ class Typer {
                     case _: //trace(objType); TODO: throw 'unexpected';
                 }
                 typeExpr(value);
-			case SetIndex(obj, index, value):
+			case SetIndex(obj, index, op, value):
                 var objType = typeExpr(obj);
                 var valueType = typeExpr(value);
                 switch objType {
-                    case Array(t): throw 'Cannot set value on immutable array.'; // TODO: Make this a Cosy.error
-                    case Mutable(Array(t)): if (!matchType(valueType, t)) throw 'Cannot assign ${formatType(valueType)} to ${formatType(t)}'; // TODO: Make this a Cosy.error
+                    case Array(t): Cosy.error(op, 'Cannot set value on immutable array.');
+                    case Mutable(Array(t)): if (!matchType(valueType, t)) Cosy.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(t)}');
                     case _: throw 'unexpected';
                 }
                 typeExpr(value);

@@ -59,3 +59,18 @@ struct Point {
     entity.arr = [5, 6, 7]
     print entity
 }
+
+
+{
+	struct S {
+		mut x Num
+	}
+	mut s = S { x = 42}
+	print s
+	s.x = 45
+	print s
+	s.x += 45
+	print s
+	s.x -= 25
+	print s
+}

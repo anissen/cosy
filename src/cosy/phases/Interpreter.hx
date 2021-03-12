@@ -143,51 +143,39 @@ class Interpreter {
             (left:String) + (right:String);
         else throw new RuntimeError(op, 'Operands cannot be concatenated.');
     }
+
+    function resultingValue(left: Any, op: Token, right: Any): Any {
+        return switch op.type {
+            case Equal: right;
+            case PlusEqual: plusEqual(left, op, right);
+            case MinusEqual:
+                checkNumberOperands(op, left, right);
+                (left: Float) - (right: Float);
+            case SlashEqual:
+                checkNumberOperands(op, left, right);
+                (left: Float) / (right: Float);
+            case StarEqual:
+                checkNumberOperands(op, left, right);
+                (left: Float) * (right: Float);
+            case PercentEqual:
+                checkNumberOperands(op, left, right);
+                (left: Float) % (right: Float);
+            case _: throw 'error';
+        }
+    }
+
     @SuppressWarnings('checkstyle:CyclomaticComplexity', 'checkstyle:NestedControlFlow', 'checkstyle:MethodLength')
     function evaluate(expr :Expr) :Any {
         return switch expr {
             case ArrayLiteral(keyword, exprs):
                 [ for (expr in exprs) evaluate(expr) ];
             case Assign(name, op, value):
+                var right = evaluate(value);
                 var value: Any = switch op.type {
-                    case Equal: evaluate(value);
-                    case PlusEqual:
-                        final left = lookUpVariable(name, expr);
-                        final right = evaluate(value);
-                        if (Std.isOfType(left, Float) && Std.isOfType(right, Float))
-                            (left:Float) + (right:Float);
-                        else if (Std.isOfType(left, Float) && Std.isOfType(right, String))
-                            (left:Float) + (right:String);
-                        else if (Std.isOfType(left, String) && Std.isOfType(right, Float))
-                            (left:String) + (right:Float);
-                        else if (Std.isOfType(left, String) && Std.isOfType(right, String))
-                            (left:String) + (right:String);
-                        else if (Std.isOfType(left, Bool) && Std.isOfType(right, String))
-                            (left:String) + (right:String);
-                        else if (Std.isOfType(left, String) && Std.isOfType(right, Bool))
-                            (left:String) + (right:String);
-                        else throw new RuntimeError(op, 'Operands cannot be concatinated.');
-                    case MinusEqual:
-                        final left = lookUpVariable(name, expr);
-                        final right = evaluate(value);
-                        checkNumberOperands(op, left, right);
-                        (left: Float) - (right: Float);
-                    case SlashEqual:
-                        final left = lookUpVariable(name, expr);
-                        final right = evaluate(value);
-                        checkNumberOperands(op, left, right);
-                        (left: Float) / (right: Float);
-                    case StarEqual:
-                        final left = lookUpVariable(name, expr);
-                        final right = evaluate(value);
-                        checkNumberOperands(op, left, right);
-                        (left: Float) * (right: Float);
-                    case PercentEqual:
-                        final left = lookUpVariable(name, expr);
-                        final right = evaluate(value);
-                        checkNumberOperands(op, left, right);
-                        (left: Float) % (right: Float);
-                    case _: throw 'error';
+                    case Equal: right;
+                    case _:
+                        var left = lookUpVariable(name, expr);
+                        resultingValue(left, op, right);
                 }
                 switch locals.get(expr) {
                     case null: globals.assign(name, value);
@@ -282,20 +270,23 @@ class Interpreter {
                 }
                 // else throw new RuntimeError(name, 'Bracket operator can only be used on arrays.');
                 else throw 'Bracket operator can only be used on arrays.'; // TODO: Use RuntimeError with keyword
-            case Set(obj, name, value):
-                // TODO: Should also handle assignment operators: +=, -=, /=, *=
+            case Set(obj, name, op, value):
                 final obj = evaluate(obj);
-                final value = evaluate(value);
-                if (Std.isOfType(obj, StructInstance)) (obj :StructInstance).set(name, value);
-                else throw new RuntimeError(name, 'Only instances have fields');
+                if (Std.isOfType(obj, StructInstance)) {
+                    final instance: StructInstance = obj;
+                    final value = evaluate(value);
+                    instance.set(name, resultingValue(instance.get(name), op, value));
+                } else throw new RuntimeError(name, 'Only instances have fields');
                 value;
-            case SetIndex(obj, index, value):
-                // TODO: Should also handle assignment operators: +=, -=, /=, *=
+            case SetIndex(obj, index, op, value):
                 final obj = evaluate(obj);
-                final index = evaluate(index);
-                final value = evaluate(value);
-                if (Std.isOfType(obj, Array)) (obj :Array<Any>)[(index: Int)] = value;
-                else throw 'Bracket notion is only allowed on arrays'; // new RuntimeError(name, 'Only instances have fields');
+                if (Std.isOfType(obj, Array)) {
+                    final arr: Array<Any> = obj;
+                    final index: Int = evaluate(index);
+                    final element: Any = arr[index];
+                    final value = evaluate(value);
+                    arr[index] = resultingValue(element, op, value);
+                } else throw new RuntimeError(op, 'Bracket notion is only allowed on arrays');
                 value;
             case Grouping(e):
                 evaluate(e);

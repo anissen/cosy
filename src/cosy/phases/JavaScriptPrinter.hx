@@ -63,8 +63,8 @@ class JavaScriptPrinter {
 			case MutArgument(keyword, name): name.lexeme;
 			case Literal(v): if (v == null) { 'null'; } else if (Std.isOfType(v, String)) { '"$v"'; } else { '$v'; };
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
-			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
-			case SetIndex(obj, index, value): '${printExpr(obj)}[${printExpr(index)}] = ${printExpr(value)}';
+			case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
+			case SetIndex(obj, index, op, value): '${printExpr(obj)}[${printExpr(index)}] ${op.lexeme} ${printExpr(value)}';
             case StructInit(name, decls): 
                 var init = [ for (decl in decls) StringTools.replace(printExpr(decl), ' = ', ': ') ];
                 '{ ${init.join(", ")} }';

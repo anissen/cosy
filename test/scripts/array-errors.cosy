@@ -9,3 +9,16 @@
 	array_push(arr)
 	print arr
 }
+
+
+{
+	mut arr = ['2','3','4']
+	arr[1] += 3
+	print arr
+}
+
+{
+	mut arr = [2, 3, 4]
+	arr[1] += '3'
+	print arr
+}

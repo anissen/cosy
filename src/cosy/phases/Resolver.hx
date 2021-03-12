@@ -149,7 +149,7 @@ class Resolver {
                 resolveExpr(index);
             case MutArgument(keyword, name):
                 resolveLocal(expr, name, true);
-			case Set(obj, name, value):
+			case Set(obj, name, op, value):
 				resolveExpr(value);
                 resolveExpr(obj);
 
@@ -160,7 +160,7 @@ class Resolver {
                     case Get(getObj, getName): // ignore???
                     case _: trace(obj); throw 'this is unexpected';
                 }
-            case SetIndex(obj, index, value):
+            case SetIndex(obj, index, op, value):
                 resolveExpr(obj);
                 resolveExpr(index);
                 resolveExpr(value);

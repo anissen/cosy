@@ -5,8 +5,6 @@
 x()
 fun x() { print "hej" }
 ```
-- [ ] Struct `Set` expression should also handle assignment operators: +=, -=, /=, *=
-- [ ] Array `SetIndex` expression should also handle assignment operators: +=, -=, /=, *=
 
 # Wish list
 - [x] Immutable-by-default (e.g. introduce a `mut` keyword)

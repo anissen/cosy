@@ -13,8 +13,8 @@ enum Expr {
 	Literal(v:Any);
     Logical(left:Expr, op:Token, right:Expr);
     MutArgument(keyword:Token, name:Token);
-	Set(obj:Expr, name:Token, value:Expr);
-	SetIndex(obj:Expr, index:Expr, value:Expr);
+	Set(obj:Expr, name:Token, op:Token, value:Expr);
+	SetIndex(obj:Expr, index:Expr, op:Token, value:Expr);
 	StructInit(name:Token, decls:Array<Expr>);
 	Unary(op:Token, right:Expr);
 	Variable(name:Token);

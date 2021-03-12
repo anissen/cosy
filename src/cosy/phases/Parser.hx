@@ -237,17 +237,17 @@ class Parser {
 		var expr = or();
 		
 		if (match([Equal, PlusEqual, MinusEqual, SlashEqual, StarEqual, PercentEqual])) {
-			var equals = previous();
+			var op = previous();
 			var value = assignment();
 			
 			switch expr {
-				case Variable(name): return Assign(name, equals, value);
-				case Get(obj, name): return Set(obj, name, value);
-				case GetIndex(obj, index): return SetIndex(obj, index, value);
+				case Variable(name): return Assign(name, op, value);
+				case Get(obj, name): return Set(obj, name, op, value);
+				case GetIndex(obj, index): return SetIndex(obj, index, op, value);
 				case _:
 			}
 			
-			error(equals, 'Invalid assignment target.');
+			error(op, 'Invalid assignment target.');
 		}
 		
 		return expr;

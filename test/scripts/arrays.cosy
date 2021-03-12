@@ -73,3 +73,18 @@
         print_letter(a)
     }
 }
+
+{
+	mut arr = [3, 4, 5]
+	print 'arr: ' + arr
+	print 'arr[0]: ' + arr[0]
+	print 'arr[1]: ' + arr[1]
+	print 'arr[2]: ' + arr[2]
+	arr[0] = 6
+	print 'arr[0] = 6: ' + arr[0]
+	arr[1] += 45
+	print 'arr[1] += 45: ' + arr[1]
+	arr[1] -= 25
+	print 'arr[1] -= 25: ' + arr[1]
+	print 'arr: ' + arr
+}

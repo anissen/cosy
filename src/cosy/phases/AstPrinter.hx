@@ -71,8 +71,8 @@ class AstPrinter {
 			case Literal(v): if (Std.isOfType(v, String)) { '\'$v\''; } else { '$v'; };
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
             case MutArgument(keyword, name): 'mut ${name.lexeme}';
-			case Set(obj, name, value): '${printExpr(obj)}.${name.lexeme} = ${printExpr(value)}';
-			case SetIndex(obj, index, value): '${printExpr(obj)}[${printExpr(index)}] = ${printExpr(value)}';
+			case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
+			case SetIndex(obj, index, op, value): '${printExpr(obj)}[${printExpr(index)}] ${op.lexeme} ${printExpr(value)}';
             case StructInit(name, decls): printExprBlock(decls);
             case Unary(op, right): '${op.lexeme}${printExpr(right)}';
 			case Variable(name): name.lexeme;

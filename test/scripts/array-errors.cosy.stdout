@@ -1,2 +1,4 @@
 [line 3] Error at "push": Cannot call mutating method on immutable array.
 [line 6] Error at "push": Cannot call mutating method on immutable array.
+[line 16] Error at "+=": Cannot assign Num to Str
+[line 22] Error at "+=": Cannot assign Str to Num
