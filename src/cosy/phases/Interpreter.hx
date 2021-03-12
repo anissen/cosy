@@ -124,6 +124,25 @@ class Interpreter {
         }
     }
 
+    function plusEqual(left: Any, op: Token, right: Any): Any {
+        return if (Std.isOfType(left, Float) && Std.isOfType(right, Float))
+            (left:Float) + (right:Float);
+        else if (Std.isOfType(left, Float) && Std.isOfType(right, String))
+            (left:Float) + (right:String);
+        else if (Std.isOfType(left, String) && Std.isOfType(right, Float))
+            (left:String) + (right:Float);
+        else if (Std.isOfType(left, String) && Std.isOfType(right, String))
+            (left:String) + (right:String);
+        else if (Std.isOfType(left, Bool) && Std.isOfType(right, String))
+            (left:String) + (right:String);
+        else if (Std.isOfType(left, String) && Std.isOfType(right, Bool))
+            (left:String) + (right:String);
+        else if (Std.isOfType(left, String) && Std.isOfType(right, Array))
+            (left:String) + (right:String);
+        else if (Std.isOfType(left, Array) && Std.isOfType(right, String))
+            (left:String) + (right:String);
+        else throw new RuntimeError(op, 'Operands cannot be concatenated.');
+    }
     @SuppressWarnings('checkstyle:CyclomaticComplexity', 'checkstyle:NestedControlFlow', 'checkstyle:MethodLength')
     function evaluate(expr :Expr) :Any {
         return switch expr {
@@ -208,22 +227,10 @@ class Interpreter {
                         checkNumberOperands(op, left, right);
                         (left:Float) * (right:Float);
                     case Plus:
-                        if (Std.isOfType(left, Float) && Std.isOfType(right, Float))
-                            (left:Float) + (right:Float);
-                        else if (Std.isOfType(left, Float) && Std.isOfType(right, String))
-                            (left:Float) + (right:String);
-                        else if (Std.isOfType(left, String) && Std.isOfType(right, Float))
-                            (left:String) + (right:Float);
-                        else if (Std.isOfType(left, String) && Std.isOfType(right, String))
-                            (left:String) + (right:String);
-                        else if (Std.isOfType(left, Bool) && Std.isOfType(right, String))
-                            (left:String) + (right:String);
-                        else if (Std.isOfType(left, String) && Std.isOfType(right, Bool))
-                            (left:String) + (right:String);
-                        else throw new RuntimeError(op, 'Operands cannot be concatinated.');
+                        plusEqual(left, op, right);
                     case Percent:
-                            checkNumberOperands(op, left, right);
-                            (left:Float) % (right:Float);
+                        checkNumberOperands(op, left, right);
+                        (left:Float) % (right:Float);
                     case Greater:
                         checkNumberOperands(op, left, right);
                         (left:Float) > (right:Float);
