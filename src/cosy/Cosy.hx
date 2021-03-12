@@ -283,8 +283,7 @@ Options:
 
         if (outputPrettyPrint) {
             var printer = new AstPrinter();
-            // for (stmt in statements) println(printer.printStmt(stmt));
-            printlines(statements.map(printer.printStmt));
+            for (stmt in statements) println(printer.printStmt(stmt));
             return;
         }
 
@@ -294,8 +293,7 @@ Options:
             println(stdLib);
 
             var printer = new JavaScriptPrinter();
-            // for (stmt in statements) println(printer.printStmt(stmt));
-            printlines(statements.map(printer.printStmt));
+            for (stmt in statements) println(printer.printStmt(stmt));
             return;
         }
         
