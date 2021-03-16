@@ -28,7 +28,7 @@ print 'hello world'
 * Lambda functions (anonymous functions).
 * Gradural typing.
 * Small and concise.
-  * Cosy is made with fewer than 2200 lines of source code.
+  * Cosy is made with fewer than 3200 lines of source code.
   * Few keywords.
 * Safety.
   * Variable are immutable by default.
