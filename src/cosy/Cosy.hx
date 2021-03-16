@@ -290,7 +290,9 @@ Options:
 
         if (outputJavaScript) {
             // Hack to inject a JavaScript standard library
-            var stdLib = '// standard library\nlet clock = Date.now;\n';
+            var stdLib = '// standard library\n';
+            stdLib += 'const clock = Date.now;\n';
+            stdLib += 'const string_from_char_code = String.fromCharCode;';
             println(stdLib);
 
             var printer = new JavaScriptPrinter();

@@ -48,6 +48,14 @@ class JavaScriptPrinter {
                 '${mut ? "var" : "const"} ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 		}
 	}
+
+	function std_function_map(token: Token) {
+		return switch token.lexeme {
+			case 'char_at': 'charAt';
+			case 'char_code_at': 'charCodeAt';
+			case lexeme: lexeme;
+		}
+	}
 	
 	public function printExpr(expr:Expr):String {
 		return switch expr {
@@ -57,7 +65,7 @@ class JavaScriptPrinter {
 			case Call(callee, paren, arguments): 
                 var calleeName = printExpr(callee);
                 '$calleeName(${arguments.map(printExpr).join(',')})';
-			case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
+			case Get(obj, name): '${printExpr(obj)}.${std_function_map(name)}';
 			case GetIndex(obj, index): '${printExpr(obj)}[${printExpr(index)}]';
 			case Grouping(e): '(${printExpr(e)})';
 			case MutArgument(keyword, name): name.lexeme;
