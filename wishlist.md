@@ -140,6 +140,7 @@ fun x() { print "hej" }
 - [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
 - [ ] Use import.hx
 - [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting, example configuration: https://github.com/armory3d/zui/blob/master/checkstyle.json)
+- [ ] Put on Haxelib
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
