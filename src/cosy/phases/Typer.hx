@@ -204,6 +204,7 @@ class Typer {
                             case 'count': Function([Function([t], Boolean)], Number);
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
+                            case 'shift': Function([], t);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
                     case Array(t):
@@ -215,6 +216,7 @@ class Typer {
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
+                            case 'shift': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
