@@ -220,23 +220,18 @@ git clone https://github.com/anissen/cosy.git
 Usage: `cosy (options) (source file)`
 
 Options:
-* `--prettyprint`
-  
-    Prints the formatted source.
-
-* `--javascript`
-  
-    Prints the corresponding JavaScript code.
-
-* `--strict`
-
-    Enable strict enforcing of types.
-
-* `--validate-only`
-
-    Only perform code validation.
-
-If called without arguments, Cosy is started in REPL mode.
+```
+--prettyprint    Prints the formatted source.
+--bytecode       Prints the compiled Cosy bytecode.
+--disassembly    Pretty-print Cosy bytecode.
+--javascript     Prints the corresponding JavaScript code.
+--markdown       Prints the code as Markdown documentation.
+--strict         Enable strict enforcing of types.
+--validate-only  Only perform code validation.
+--times          Output time spent in each phase.
+--watch          Watch the file for changes and automatically rerun.
+--no-colors      Disable colors in log output.
+```
 
 <!--
 Information about using Cosy as stand-alone and integrated into other code as a library
