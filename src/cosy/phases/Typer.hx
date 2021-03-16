@@ -225,6 +225,7 @@ class Typer {
                             case 'split': Function([Text], Array(Text));
                             case 'replace': Function([Text, Text], Text);
                             case 'char_at': Function([Number], Text);
+                            case 'char_code_at': Function([Number], Number);
                             case 'substr': Function([Number, Number], Text);
                             case _: Cosy.error(name, 'Unknown array property or function.'); Void;
                         }
