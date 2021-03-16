@@ -141,7 +141,7 @@ class Interpreter {
             (left:String) + (right:String);
         else if (Std.isOfType(left, Array) && Std.isOfType(right, String))
             (left:String) + (right:String);
-        else throw new RuntimeError(op, 'Operands cannot be concatenated.');
+        else throw new RuntimeError(op, 'Operands $left and $right cannot be concatenated.');
     }
 
     function resultingValue(left: Any, op: Token, right: Any): Any {
