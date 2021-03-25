@@ -57,7 +57,7 @@ fun x() { print "hej" }
 - [ ] A more convient way to handle a standard library
 - [ ] Replace `return _` with `return`. Look at how semicolons are handling in the original implementation.
 - [ ] Simplify code now that...
-  - [ ] Variable shadowing is gone
+  - [ ] Variable shadowing is gone (scopes may be simplified)
   - [x] nil is gone
   - [x] for-loops can be made without an identifer (underscores are not required on unused loop counters anymore)
   - [x] Classes are gone
@@ -72,6 +72,7 @@ fun x() { print "hej" }
 - [ ] Perserve empty lines and comments when pretty-printing and outputting to javascript
 - [ ] Time a "real" project and do performance optimizations
 - [ ] Algebraic data types
+- [ ] Switch/match functionality
 - [ ] Pure functions as default (cannot modify variables outside scope, must be deterministic, can only call other pure functions)
 - [ ] "Transform" functions that promote data-oriented design; must be pure, must not include `if` + called functions must satify the same constraints. Could be done with annotations, e.g. `[transform] fn trans() { ... }`
 - [ ] Better error position reporting with character from-to indexes
@@ -128,7 +129,7 @@ fun x() { print "hej" }
   - [ ] JVM
   - [ ] Eval
   - [ ] JavaScript
-  - [ ] Node
+  - [x] Node.js
   - [ ] Python
   - [ ] C#
   - [ ] Lua?
@@ -138,7 +139,6 @@ fun x() { print "hej" }
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 - [x] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
 - [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
-- [ ] Use import.hx
 - [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting, example configuration: https://github.com/armory3d/zui/blob/master/checkstyle.json)
 - [ ] Put on Haxelib
 
@@ -147,7 +147,7 @@ fun x() { print "hej" }
 - [ ] Yield functionality (generators or coroutines)
 - [ ] Hot reloading
 - [ ] Make a web-based app for creative coding (á la a _very_ simplified p5.js)
-- [ ] Easy to integrate C/C++ libraries
+- [ ] Easy to integrate into C/C++ projects
 - [ ] Fibers á la Wren
 - [ ] Built-in threading
 - [ ] Make a Cosy debugger (https://www.google.com/search?q=how+to+write+a+debugger)
