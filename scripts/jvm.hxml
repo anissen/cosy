@@ -1,10 +1,4 @@
--cp src
--main cosy.Cosy
-
-# -js bin/node/cosy.js
-# -lib hxnodejs
-
--dce full
+scripts/common.hxml
 
 --jvm bin/jvm/cosy.jar
 # -java bin/java

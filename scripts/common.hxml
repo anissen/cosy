@@ -1,0 +1,6 @@
+-cp src
+-main cosy.Cosy
+
+-dce full
+
+# --macro nullSafety("cosy", Strict)

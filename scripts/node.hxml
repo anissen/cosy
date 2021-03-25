@@ -1,9 +1,7 @@
--cp src
--main cosy.Cosy
+scripts/common.hxml
 
 -lib hxnodejs
 
--dce full
 -D shallow-expose
 -D analyzer-optimize
 -D source-map

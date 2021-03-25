@@ -1,7 +1,4 @@
--cp src
--main cosy.Cosy
-
--dce full
+scripts/common.hxml
 
 -hl bin/hlc/build/cosy.c
 --cmd gcc -O3 -o bin/hlc/Cosy -std=c11 -I bin/hlc/build bin/hlc/build/Cosy.c -lhl

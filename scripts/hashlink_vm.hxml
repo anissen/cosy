@@ -1,6 +1,3 @@
--cp src
--main cosy.Cosy
-
--dce full
+scripts/common.hxml
 
 -hl bin/hl/cosy.hl

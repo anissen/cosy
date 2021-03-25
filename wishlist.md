@@ -136,7 +136,7 @@ fun x() { print "hej" }
 - [ ] VSCode tasks
 - [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe, https://github.com/vshaxe/vscode-extern)
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
-- [ ] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
+- [x] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
 - [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
 - [ ] Use import.hx
 - [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting, example configuration: https://github.com/armory3d/zui/blob/master/checkstyle.json)

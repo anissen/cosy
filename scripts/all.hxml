@@ -1,0 +1,22 @@
+# C++
+# Hashlink VM
+# Hashlink C++
+# Java
+# JVM
+# Eval
+# JavaScript
+# Node.js
+# Python
+# C#
+# Lua?
+# PHP?
+
+scripts/javascript.hxml
+--next
+scripts/hashlink_cpp.hxml
+--next
+scripts/hashlink_vm.hxml
+--next
+scripts/jvm.hxml
+--next
+scripts/node.hxml
