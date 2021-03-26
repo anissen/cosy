@@ -49,11 +49,18 @@ class JavaScriptPrinter {
 		}
 	}
 
-	function std_function_map(token: Token) {
+	function std_function_get_map(token: Token) {
 		return switch token.lexeme {
 			case 'char_at': 'charAt';
 			case 'char_code_at': 'charCodeAt';
 			case lexeme: lexeme;
+		}
+	}
+	
+	function std_function_map(str: String) {
+		return switch str {
+			case 'floor': 'Math.floor';
+			case _: str;
 		}
 	}
 	
@@ -63,9 +70,9 @@ class JavaScriptPrinter {
 			case Assign(name, op, value): '${name.lexeme} ${op.lexeme} ${printExpr(value)}';
 			case Binary(left, op, right): '${printExpr(left)} ${op.type.match(EqualEqual) ? '===' : op.lexeme} ${printExpr(right)}';
 			case Call(callee, paren, arguments): 
-                var calleeName = printExpr(callee);
+                var calleeName = std_function_map(printExpr(callee));
                 '$calleeName(${arguments.map(printExpr).join(',')})';
-			case Get(obj, name): '${printExpr(obj)}.${std_function_map(name)}';
+			case Get(obj, name): '${printExpr(obj)}.${std_function_get_map(name)}';
 			case GetIndex(obj, index): '${printExpr(obj)}[${printExpr(index)}]';
 			case Grouping(e): '(${printExpr(e)})';
 			case MutArgument(keyword, name): name.lexeme;
