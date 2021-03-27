@@ -1,6 +1,6 @@
 {
     struct Sizes {
-        mut shoeSize Num
+        mut shoe_size Num
         mut height Num
     }
 
@@ -14,7 +14,7 @@
         age = 42,
         name = 'John',
         sizes = Sizes {
-            shoeSize = 33,
+            shoe_size = 33,
             height = 186
         }
     }

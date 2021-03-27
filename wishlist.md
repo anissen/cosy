@@ -16,12 +16,11 @@ fun x() { print "hej" }
 - [x] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
 - [x] Static analysis for
   - [x] Simple dead code
-  - [ ] Variables written multiple times without being read
   - [x] Using uninitialized variables (`var`)
   - [x] Using uninitialized variables (`mut`)
   - [x] `if` with constant conditional expression
   - [ ] Useless expressions, e.g. `'hello world'`
-  - [ ] Function and variable names uses snake_case
+  - [x] Function and variable names uses snake_case
   - [ ] Struct names uses PascalCase (??)
   - [ ] All paths not returning a value if the function has a return value
   - [ ] Ensure correct number of arguments at compile time instead of at runtime

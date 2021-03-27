@@ -1,4 +1,4 @@
-fn makeCounter() {
+fn make_counter() {
   mut i = 0
   fn count() {
     i = i + 1
@@ -8,6 +8,6 @@ fn makeCounter() {
   return count
 }
 
-var counter = makeCounter()
+var counter = make_counter()
 counter() // 1
 counter() // 2

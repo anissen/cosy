@@ -1,6 +1,6 @@
 // "99 Bottles of Beer" song made with Cosy made to be minimal
 
-fn formatBottles(count Num) Str {
+fn format_bottles(count Num) Str {
     if count == 0      { return 'no more bottles'  }
     else if count == 1 { return '1 bottle'         }
     else               { return count + ' bottles' }
@@ -8,10 +8,10 @@ fn formatBottles(count Num) Str {
 
 mut bottles = 99
 for bottles > 0 {
-    var bottleText = formatBottles(bottles)
-    print bottleText + ' of beer on the wall, ' + bottleText + ' of beer.'
+    var bottle_text = format_bottles(bottles)
+    print bottle_text + ' of beer on the wall, ' + bottle_text + ' of beer.'
     bottles -= 1
-    print 'Take one down and pass it around, ' + formatBottles(bottles) + ' of beer on the wall.\n'
+    print 'Take one down and pass it around, ' + format_bottles(bottles) + ' of beer on the wall.\n'
 }
 print 'No more bottles of beer on the wall, no more bottles of beer.'
 print 'Go to the store and buy some more, 99 bottles of beer on the wall.'

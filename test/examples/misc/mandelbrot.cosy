@@ -1,16 +1,16 @@
 // Mandelbrot, adapted from https://github.com/wren-lang/wren/blob/main/example/mandelbrot.wren
 foreign fn floor(v Num) Num
 
-var yMin = -0.2
-var yMax = 0.1
-var xMin = -1.5
-var xMax = -1.1
+var y_min = -0.2
+var y_max = 0.1
+var x_min = -1.5
+var x_max = -1.1
 
-for yPixel in 0..24 {
-    var y = (yPixel / 24) * (yMax - yMin) + yMin
+for y_pixel in 0..24 {
+    var y = (y_pixel / 24) * (y_max - y_min) + y_min
     mut pixels = ''
-    for xPixel in 0..80 {
-        var x = (xPixel / 79) * (xMax - xMin) + xMin
+    for x_pixel in 0..80 {
+        var x = (x_pixel / 79) * (x_max - x_min) + x_min
         mut pixel = ' '
         mut x0 = x
         mut y0 = y

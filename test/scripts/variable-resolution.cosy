@@ -1,11 +1,11 @@
 var a = 'global'
 {
-  fn showA() {
+  fn show_a() {
     print a
   }
 
-  showA()
+  show_a()
   var a = 'block'
   print a
-  showA()
+  show_a()
 }

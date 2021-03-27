@@ -9,6 +9,8 @@ typedef Variable = {
 
 class Resolver {
 	final interpreter:Interpreter;
+
+    final snakeCaseRegex = ~/^[_a-z0-9]*$/;
 	
 	final scopes = new cosy.Stack<Map<String, Variable>>();
 	var currentFunction:FunctionType = None;
@@ -52,6 +54,7 @@ class Resolver {
             case Continue(keyword):
 			case Var(name, type, init, mut, foreign):
                 if (foreign && !Cosy.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
+                if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Variable names must use snake_case.');
                 var member = currentStruct.match(Struct);
                 markTypeAsRead(type);
 				declare(name, mut, member);
@@ -64,6 +67,7 @@ class Resolver {
                 
                 beginScope();
                 if (name != null) {
+                    if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Loop variable names must use snake_case.');
                     declare(name);
                     define(name);
                 }
@@ -86,6 +90,7 @@ class Resolver {
                 endScope();
 			case Function(name, params, body, returnType, foreign):
                 if (foreign && !Cosy.foreignFunctions.exists(name.lexeme)) Cosy.error(name, 'Foreign function not set.');
+                if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Function names must use snake_case.');
 				declare(name);
 				define(name);
                 resolveFunction(name, params, body, Function, foreign);

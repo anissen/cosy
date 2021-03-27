@@ -1,4 +1,4 @@
-Person { age = 42, name = "John", sizes = Sizes { height = 186, shoeSize = 33 } }
-Person { age = 42, name = "John", sizes = Sizes { height = 196, shoeSize = 33 } }
-Person { age = 42, name = "Peter", sizes = Sizes { height = 206, shoeSize = 33 } }
-Person { age = 42, name = "John", sizes = Sizes { height = 196, shoeSize = 33 } }
+Person { age = 42, name = "John", sizes = Sizes { height = 186, shoe_size = 33 } }
+Person { age = 42, name = "John", sizes = Sizes { height = 196, shoe_size = 33 } }
+Person { age = 42, name = "Peter", sizes = Sizes { height = 206, shoe_size = 33 } }
+Person { age = 42, name = "John", sizes = Sizes { height = 196, shoe_size = 33 } }

@@ -1,31 +1,31 @@
 // "99 Bottles of Beer" song made with Cosy in a way that demonstrates language concepts
 
-fn formatBottles(count Num, capitalized Bool, addBeverage Fn(Str) Str) Str {
+fn format_bottles(count Num, capitalized Bool, add_beverage Fn(Str) Str) Str {
     if count == 0 {
         if capitalized {
-            return addBeverage('No more bottles')
+            return add_beverage('No more bottles')
         } else {
-            return addBeverage('no more bottles')
+            return add_beverage('no more bottles')
         }
     } else if count == 1 {
-        return addBeverage('1 bottle')
+        return add_beverage('1 bottle')
     } else {
-        return addBeverage(count + ' bottles')
+        return add_beverage(count + ' bottles')
     }
 }
 
-fn formatBeerBottles(count Num, capitalized Bool) {
-    return formatBottles(count, capitalized, fn(text Str) {
+fn format_beer_bottles(count Num, capitalized Bool) {
+    return format_bottles(count, capitalized, fn(text Str) {
         return text + ' of beer'
     })
 }
 
 mut bottles = 99
 for {
-    print formatBeerBottles(bottles, true) + ' on the wall, ' + formatBeerBottles(bottles, false) + '.'
+    print format_beer_bottles(bottles, true) + ' on the wall, ' + format_beer_bottles(bottles, false) + '.'
     if (bottles > 0) {
         bottles -= 1
-        print 'Take one down and pass it around, ' + formatBeerBottles(bottles, false) + ' on the wall.\n'
+        print 'Take one down and pass it around, ' + format_beer_bottles(bottles, false) + ' on the wall.\n'
     } else {
         print 'Go to the store and buy some more, 99 bottles of beer on the wall.'
         break
