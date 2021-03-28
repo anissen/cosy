@@ -2,5 +2,6 @@
 -main cosy.Cosy
 
 -dce full
+-D analyzer-optimize
 
 # --macro nullSafety("cosy", Strict)

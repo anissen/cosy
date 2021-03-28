@@ -3,7 +3,6 @@ scripts/common.hxml
 -lib hxnodejs
 
 -D shallow-expose
--D analyzer-optimize
 -D source-map
 -D js-es=6
 -D js-unflatten
