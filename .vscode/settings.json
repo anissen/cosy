@@ -1,0 +1,15 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/node_modules/**": true,
+        "assets/js/dependencies": true,
+        "bin": true
+    },
+    "haxe.configurations": [
+        ["scripts/eval_debug.hxml"], // hxml file is a normal Haxe argument too
+    ]
+}

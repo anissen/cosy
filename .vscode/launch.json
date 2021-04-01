@@ -8,7 +8,7 @@
             "name": "Haxe Interpreter",
             "type": "haxe-eval",
             "request": "launch",
-			"args": ["scripts/debug.hxml"]
+			"args": ["scripts/eval_debug.hxml"]
         }
     ]
 }
