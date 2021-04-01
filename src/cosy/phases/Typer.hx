@@ -300,6 +300,7 @@ class Typer {
                     case _: throw 'unexpected';
                 }
                 typeExpr(value);
+            case StringInterpolation(exprs): Text; // TODO: Is this good enough?
             case Grouping(e): typeExpr(e);
             case Unary(op, e): 
                 switch op.type {

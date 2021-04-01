@@ -169,6 +169,8 @@ class Resolver {
                 resolveExpr(obj);
                 resolveExpr(index);
                 resolveExpr(value);
+            case StringInterpolation(exprs):
+                for (e in exprs) resolveExpr(e);
 			case Grouping(e) | Unary(_, e):
 				resolveExpr(e);
             case StructInit(name, decls):

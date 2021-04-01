@@ -1,7 +1,7 @@
 package cosy;
 
 enum TokenType {
-	LeftParen; RightParen; LeftBrace; RightBrace; LeftBracket; RightBracket;
+	LeftParen; RightParen; LeftBrace; RightBrace; LeftBracket; RightBracket; DollarLeftBrace;
     
     Comma; Dot; DotDot;
 

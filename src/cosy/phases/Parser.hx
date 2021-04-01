@@ -372,7 +372,8 @@ class Parser {
 	function primary():Expr {
 		if (match([False])) return Literal(false);
 		if (match([True])) return Literal(true);
-		if (match([Number, String])) return Literal(previous().literal);
+		if (match([Number])) return Literal(previous().literal);
+		if (match([String])) return string();
 		if (match([Fn])) return funcBody("function", false);
 		if (match([Identifier])) return identifier();
 		if (match([Mut])) return MutArgument(previous(), consume(Identifier, 'Expect variable name after "mut".'));
@@ -414,6 +415,26 @@ class Parser {
             return Variable(variable);
         }
     }
+
+	function string(): Expr {
+		final expr = Expr.Literal(previous().literal);
+		if (check(DollarLeftBrace)) {
+			var exprs = [expr];
+			do {
+				if (match([DollarLeftBrace])) {
+					exprs.push(expression());
+					consume(RightBrace, 'Expect "}" after string interpolation start.');
+				} else if (match([String])) {
+					exprs.push(string());
+				} else {
+					error(peek(), 'Unexpected token in string interpolation.');
+				}
+			} while (check(DollarLeftBrace) || check(String));
+			return Expr.StringInterpolation(exprs);
+		} else {
+			return expr;
+		}
+	}
 	
 	function consume(type:TokenType, message:String):Token {
         if (check(type)) return advance();

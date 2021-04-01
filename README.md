@@ -38,6 +38,7 @@ print 'hello world'
   * Unused variables.
   * Simple dead code detection, i.e. statements following an unconditional `return` in a block.
   * Type checking.
+* String interpolation.
 * Has built-in code formatter.
 * Web based [playground](http://andersnissen.com/cosy/playground/).
 * Simple code optimization.

@@ -16,6 +16,7 @@ enum Expr {
 	Set(obj:Expr, name:Token, op:Token, value:Expr);
 	SetIndex(obj:Expr, index:Expr, op:Token, value:Expr);
 	StructInit(name:Token, decls:Array<Expr>);
+	StringInterpolation(parts:Array<Expr>); // n string parts, n - 1 interpolation parts. [str1, interp1, str2, interp2, str3]
 	Unary(op:Token, right:Expr);
 	Variable(name:Token);
 	AnonFunction(params:Array<Param>, body:Array<Stmt>, returnType:ComputedVariableType);

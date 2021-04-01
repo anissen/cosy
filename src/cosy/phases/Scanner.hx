@@ -35,6 +35,7 @@ class Scanner {
 	var start = 0;
 	var current = 0;
 	var line = 1;
+	var interpolationMode = false;
 	
 	public function new(source: String) {
 		this.source = source;
@@ -56,6 +57,10 @@ class Scanner {
 			case ')'.code: addToken(RightParen);
 			case '{'.code: addToken(LeftBrace);
 			case '}'.code: addToken(RightBrace);
+				if (interpolationMode) {
+					interpolationMode = false;
+					string(); // the lexeme is wrong!
+				}
 			case '['.code: addToken(LeftBracket);
 			case ']'.code: addToken(RightBracket);
 			case ','.code: addToken(Comma);
@@ -103,6 +108,28 @@ class Scanner {
 	
 	function string() {
 		while ((peek() != '\''.code || peekPrevious() == '\\'.code) && !isAtEnd()) {
+			// It is a string interpolation type string
+			// Output:
+			// String
+			// 		// repeat for each ${}-pair
+			// 		DollarLeftBrace
+			// 		{Interpolation tokens}
+			// 		RightBrace
+			// 		(String)	
+			if (peek() == '$'.code && peekNext() == '{'.code) {
+				var value = source.substring(start + 1, current);
+				value = StringTools.replace(value, '\\n', '\n');
+				value = StringTools.replace(value, '\\\'', '\'');
+				addToken(String, value);
+
+				start = current; // TODO: This may break stuff!
+				advance();
+				advance();
+				addToken(DollarLeftBrace);
+				start = current; // TODO: This may break stuff!
+				interpolationMode = true;
+				return;
+			}
 			if (peek() == '\n'.code) line++;
 			advance();
 		}
