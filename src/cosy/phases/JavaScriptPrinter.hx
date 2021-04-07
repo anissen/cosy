@@ -80,7 +80,7 @@ class JavaScriptPrinter {
 			case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
 			case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
 			case SetIndex(obj, index, op, value): '${printExpr(obj)}[${printExpr(index)}] ${op.lexeme} ${printExpr(value)}';
-			case StringInterpolation(exprs): [ for (i => e in exprs) printExpr(e) ].join(' + ');
+			case StringInterpolation(exprs): '`' + [ for (i => expr in exprs) { var e = printExpr(expr); (i % 2 == 0 ? e.substr(1, e.length - 2) : "${" + e + "}"); } ].join('') + '`';
             case StructInit(name, decls): 
                 var init = [ for (decl in decls) StringTools.replace(printExpr(decl), ' = ', ': ') ];
                 '{ ${init.join(", ")} }';
