@@ -141,7 +141,12 @@ class Interpreter {
         //     (left:String) + (right:String);
         // else if (Std.isOfType(left, Array) && Std.isOfType(right, String))
         //     (left:String) + (right:String);
-        else throw new RuntimeError(op, 'Operands $left and $right cannot be concatenated.');
+        else throw new RuntimeError(op, 'Operands ${getPrintableValue(left)} and ${getPrintableValue(right)} cannot be concatenated.');
+    }
+
+    function getPrintableValue(value: Any) {
+        if (Std.isOfType(value, String)) return '"$value"';
+        return value;
     }
 
     function resultingValue(left: Any, op: Token, right: Any): Any {
