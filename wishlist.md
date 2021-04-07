@@ -112,6 +112,7 @@ fun x() { print "hej" }
 - [ ] Make a 'docs' command that outputs the following to the 'docs' directory (docsify): index.html, readme.md, _sidebar.md and a markdown file for each cosy file.
 - [ ] Make a CLI `--help` command
 - [x] Make the CLI write out Cosy version and/or git commit
+- [x] Detect invalid concatinations (+) in the Typer (and show a hint about string interpolation if one of the types is a string)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

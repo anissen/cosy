@@ -152,8 +152,23 @@ class Typer {
                     case Plus:
                         var leftType = typeExpr(left);
                         var rightType = typeExpr(right);
-                        if (leftType.match(Text) || rightType.match(Text)) return Text;
-                        if (leftType.match(Number) || rightType.match(Number)) return Number;
+                        
+                        var isLeftNumber = leftType.match(Number) || leftType.match(Mutable(Number));
+                        var isRightNumber = rightType.match(Number) || rightType.match(Mutable(Number));
+                        if (isLeftNumber && isRightNumber) return Number;
+
+                        var isLeftText = leftType.match(Text) || leftType.match(Mutable(Text));
+                        var isRightText = rightType.match(Text) || rightType.match(Mutable(Text));
+                        if (isLeftText && isRightText) return Text;
+
+                        // TODO: Unknown should also be acceptable on either side UNLESS running in 'strict mode'
+
+                        if (isLeftText || isRightText) {
+                            Cosy.error(op, 'Values of type ${formatType(leftType)} and ${formatType(rightType)} cannot be concatinated.');
+                            Cosy.hint(op, "Use string interpolation, e.g. {value}, to add non-string types to a string.");
+                        } else if (isLeftNumber || isRightNumber) {
+                            Cosy.error(op, 'Values of types ${formatType(leftType)} and ${formatType(rightType)} cannot be added.');
+                        }
                         Unknown;
                     case _: throw 'should never happen';
                 }

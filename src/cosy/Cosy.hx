@@ -369,6 +369,11 @@ Options:
             case Token(token): report(token.line, 'at "${token.lexeme}"', message);
         }
     }
+    
+    public static function hint(token: Token, message:String) {
+        var msg = '[line ${token.line}] Hint: $message';
+        println(color(msg, Hint));
+    }
 
     public static function runtimeError(e:RuntimeError) {
         var msg = '[line ${e.token.line}] Runtime Error: ${e.message}';
@@ -381,6 +386,7 @@ Options:
         return switch color {
             case Error: '\033[1;31m$text\033[0m';
             case Warning: '\033[0;33m$text\033[0m';
+            case Hint: '\033[0;36m$text\033[0m';
             case Misc: '\033[0;35m$text\033[0m';
         }
     }
@@ -389,6 +395,7 @@ Options:
 enum Color {
     Error;
     Warning;
+    Hint;
     Misc;
 }
 
