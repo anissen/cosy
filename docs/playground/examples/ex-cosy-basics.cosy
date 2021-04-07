@@ -126,7 +126,7 @@ dead_code()
 var unused = 42 // error if the line below is removed
 print unused
 // because of this, we also have to use the variables defined at the top
-if !a print b + c + d + immutable + mutable
+if !a print '{b} {c} {d} {immutable} {mutable}'
 
 // variables can be marked purposely unused with an underscore
 fn some_function(_unused) {
