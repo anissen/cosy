@@ -161,14 +161,23 @@ class Typer {
                         var isRightText = rightType.match(Text) || rightType.match(Mutable(Text));
                         if (isLeftText && isRightText) return Text;
 
-                        // TODO: Unknown should also be acceptable on either side UNLESS running in 'strict mode'
+                        var isLeftTyped = !leftType.match(Unknown);
+                        var isRightTyped = !rightType.match(Unknown);
 
-                        if (isLeftText || isRightText) {
-                            Cosy.error(op, 'Values of type ${formatType(leftType)} and ${formatType(rightType)} cannot be concatinated.');
-                            Cosy.hint(op, "Use string interpolation, e.g. {value}, to add non-string types to a string.");
-                        } else if (isLeftNumber || isRightNumber) {
-                            Cosy.error(op, 'Values of types ${formatType(leftType)} and ${formatType(rightType)} cannot be added.');
+                        if (Cosy.strict) {
+                            if (!isLeftTyped) Cosy.error(op, 'Left side of "+" has unknown type.');
+                            if (!isRightTyped) Cosy.error(op, 'Right side of "+" has unknown type.');
                         }
+
+                        if (isLeftTyped && isRightTyped) {
+                            if (isLeftText || isRightText) {
+                                Cosy.error(op, 'Values of type ${formatType(leftType)} and ${formatType(rightType)} cannot be concatinated.');
+                                Cosy.hint(op, "Use string interpolation, e.g. {value}, to add non-string types to a string.");
+                            } else if (isLeftNumber || isRightNumber) {
+                                Cosy.error(op, 'Values of types ${formatType(leftType)} and ${formatType(rightType)} cannot be added.');
+                            }
+                        }
+                        
                         Unknown;
                     case _: throw 'should never happen';
                 }
