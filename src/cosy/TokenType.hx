@@ -2,6 +2,8 @@ package cosy;
 
 enum TokenType {
 	LeftParen; RightParen; LeftBrace; RightBrace; LeftBracket; RightBracket;
+
+	StringInterpolationStart; StringInterpolationEnd;
     
     Comma; Dot; DotDot;
 

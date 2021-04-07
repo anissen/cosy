@@ -418,18 +418,18 @@ class Parser {
 
 	function string(): Expr {
 		final expr = Expr.Literal(previous().literal);
-		if (check(LeftBrace)) {
+		if (check(StringInterpolationStart)) {
 			var exprs = [expr];
 			do {
-				if (match([LeftBrace])) {
+				if (match([StringInterpolationStart])) {
 					exprs.push(expression());
-					consume(RightBrace, 'Expect "}" after string interpolation start.');
+					consume(StringInterpolationEnd, 'Expect "}" after string interpolation start.');
 				} else if (match([String])) {
 					exprs.push(string());
 				} else {
 					error(peek(), 'Unexpected token in string interpolation.');
 				}
-			} while (check(LeftBrace) || check(String));
+			} while (check(StringInterpolationStart) || check(String));
 			return Expr.StringInterpolation(exprs);
 		} else {
 			return expr;

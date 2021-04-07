@@ -55,11 +55,14 @@ class Scanner {
 		switch c {
 			case '('.code: addToken(LeftParen);
 			case ')'.code: addToken(RightParen);
-			case '{'.code: addToken(LeftBrace);
-			case '}'.code: addToken(RightBrace);
+			case '{'.code: addToken(interpolationMode ? StringInterpolationEnd : LeftBrace);
+			case '}'.code:
 				if (interpolationMode) {
+					addToken(StringInterpolationEnd);
 					interpolationMode = false;
 					string(); // the lexeme is wrong!
+				} else {
+					addToken(RightBrace);
 				}
 			case '['.code: addToken(LeftBracket);
 			case ']'.code: addToken(RightBracket);
@@ -112,9 +115,9 @@ class Scanner {
 			// Output:
 			// String
 			// 		// repeat for each {}-pair
-			// 		DollarLeftBrace
+			// 		StringInterpolationStart
 			// 		{Interpolation tokens}
-			// 		RightBrace
+			// 		StringInterpolationEnd
 			// 		(String)	
 			if (peek() == '{'.code) {
 				var value = source.substring(start + 1, current);
@@ -124,7 +127,7 @@ class Scanner {
 
 				start = current;
 				advance(); // Skip '{'
-				addToken(LeftBrace);
+				addToken(StringInterpolationStart);
 				start = current;
 				interpolationMode = true;
 				return;
