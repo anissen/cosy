@@ -1,0 +1,2 @@
+print 'answer: ' + 3
+print 42 + true

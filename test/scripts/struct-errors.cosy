@@ -34,7 +34,7 @@ struct Fake {
     	print 'hello'
     }
     print point
-    print point.x + ', ' + point.y
+    print '{point.x}, {point.y}'
 }
 
 {

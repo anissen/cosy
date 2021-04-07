@@ -1,5 +1,5 @@
 {
-    mut i = '' + 42 + 1 + 0 + 1
+    mut i = '{42 + 1 + 0 + 1}'
     print i
     i = 22
     print i
@@ -127,11 +127,11 @@
 
 {
     mut f = fn(x Num, y Str) {
-        print x + y
+        print '{x}{y}'
     }
     f(4, 'hej')
     f = fn(x Str, y Num) {
-        print x + y
+        print '{x}{y}'
     }
     f('dav', 5)
 }
@@ -145,7 +145,7 @@
         }
     }
     // print times
-    times(fn(x Num) { print 'called ' + x + ' time(s)' }, 3)
+    times(fn(x Num) { print 'called {x} time(s)' }, 3)
 }
 
 // -----------
@@ -156,7 +156,7 @@
     }
 
     fn f2(s Str) {
-        return s + 45
+        return '{s}{45}'
     }
 
     mut x = f
@@ -183,7 +183,7 @@
         return x * x
     }
     fn foo(x Num) {
-        return '' + x
+        return '{x}'
     }
     mut s = square(5)
     s = foo(s)
@@ -214,7 +214,7 @@
     fn do_fun(f Fn(Num), n Num) {
         f(n)
     }
-    do_fun(fn(x Num) { print 'i\'m fn ' + x }, 3)
+    do_fun(fn(x Num) { print 'i\'m fn {x}' }, 3)
 }
 
 // -----------

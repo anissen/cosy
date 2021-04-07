@@ -1,0 +1,3 @@
+[line 1] Error at "+": Values of type Str and Num cannot be concatinated.
+[line 1] Hint: Use string interpolation, e.g. {value}, to add non-string types to a string.
+[line 2] Error at "+": Values of types Num and Bool cannot be added.
