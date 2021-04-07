@@ -30,11 +30,11 @@
 	array.push(8)
 	print array
 	var p = array.push
-	print 'array.length: ' + array.length
+	print 'array.length: {array.length}'
 	p(9)
 	print 'array.push(9): '
 	print array
-	print 'array.length: ' + array.length
+	print 'array.length: {array.length}'
 	print 'concat([10, 11]): '
 	array.concat([10, 11])
 	print array
@@ -76,15 +76,15 @@
 
 {
 	mut arr = [3, 4, 5]
-	print 'arr: ' + arr
-	print 'arr[0]: ' + arr[0]
-	print 'arr[1]: ' + arr[1]
-	print 'arr[2]: ' + arr[2]
+	print 'arr: {arr}'
+	print 'arr[0]: {arr[0]}'
+	print 'arr[1]: {arr[1]}'
+	print 'arr[2]: {arr[2]}'
 	arr[0] = 6
-	print 'arr[0] = 6: ' + arr[0]
+	print 'arr[0] = 6: {arr[0]}'
 	arr[1] += 45
-	print 'arr[1] += 45: ' + arr[1]
+	print 'arr[1] += 45: {arr[1]}'
 	arr[1] -= 25
-	print 'arr[1] -= 25: ' + arr[1]
-	print 'arr: ' + arr
+	print 'arr[1] -= 25: {arr[1]}'
+	print 'arr: {arr}'
 }

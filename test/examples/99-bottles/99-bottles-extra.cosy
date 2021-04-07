@@ -10,22 +10,22 @@ fn format_bottles(count Num, capitalized Bool, add_beverage Fn(Str) Str) Str {
     } else if count == 1 {
         return add_beverage('1 bottle')
     } else {
-        return add_beverage(count + ' bottles')
+        return add_beverage('{count} bottles')
     }
 }
 
 fn format_beer_bottles(count Num, capitalized Bool) {
     return format_bottles(count, capitalized, fn(text Str) {
-        return text + ' of beer'
+        return '{text} of beer'
     })
 }
 
 mut bottles = 99
 for {
-    print format_beer_bottles(bottles, true) + ' on the wall, ' + format_beer_bottles(bottles, false) + '.'
+    print '{format_beer_bottles(bottles, true)} on the wall, {format_beer_bottles(bottles, false)}.'
     if (bottles > 0) {
         bottles -= 1
-        print 'Take one down and pass it around, ' + format_beer_bottles(bottles, false) + ' on the wall.\n'
+        print 'Take one down and pass it around, {format_beer_bottles(bottles, false)} on the wall.\n'
     } else {
         print 'Go to the store and buy some more, 99 bottles of beer on the wall.'
         break

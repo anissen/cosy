@@ -64,7 +64,7 @@ fn has_required_fields(passport Passport) Bool {
 
 // Part 1: Find all passports that contain 'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'
 {
-    print '# PART 1: Valid passwords: ' + passports.count(has_required_fields)
+    print '# PART 1: Valid passwords: {passports.count(has_required_fields)}'
 }
 
 fn value_in_range(value Num, min Num, max Num) Bool {
@@ -155,5 +155,5 @@ fn has_valid_values(passport Passport) Bool {
     fn is_valid(passport Passport) {
         return has_required_fields(passport) and has_valid_values(passport)
     }
-    print '# PART 2: Valid passwords: ' + passports.count(is_valid)
+    print '# PART 2: Valid passwords: {passports.count(is_valid)}'
 }

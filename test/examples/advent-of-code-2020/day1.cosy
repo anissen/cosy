@@ -20,9 +20,7 @@ fn part_1() {
             var a = numbers[i]
             var b = numbers[i2]
             if a + b == 2020 {
-                // print a + ' and ' + b + ' sum to 2020'
-                // print 'Mult: ' + a * b
-                print '# PART 1: ' + a * b
+                print '# PART 1: {a * b}'
                 return _
             }
         }
@@ -39,9 +37,7 @@ fn part_2() {
                 var b = numbers[i2]
                 var c = numbers[i3]
                 if a + b + c == 2020 {
-                    // print a + ' and ' + b + ' and ' + c + ' sum to 2020'
-                    // print 'Mult: ' + a * b * c
-                    print '# PART 2: ' + a * b * c
+                    print '# PART 2: {a * b * c}'
                     return _
                 }
             }

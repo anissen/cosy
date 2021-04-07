@@ -45,7 +45,7 @@ fn count_trees(slope_x Num, slope_y Num) Num {
 
 // Part 1: Count trees with a 3-1 slope
 {
-    print '# PART 1: Number of trees hit: ' + count_trees(3, 1)
+    print '# PART 1: Number of trees hit: {count_trees(3, 1)}'
 }
 
 // Part 1: Multiple number of trees from different slopes
@@ -61,5 +61,5 @@ fn count_trees(slope_x Num, slope_y Num) Num {
         // print 'Number of trees hit: ' + trees
         result *= trees
     }
-    print '# PART 2: Number of trees hit: ' + result
+    print '# PART 2: Number of trees hit: {result}'
 }

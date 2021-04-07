@@ -49,11 +49,11 @@ var parsed_input = input.map(parse)
 // Part 1
 {
     var valid_count_part_1 = parsed_input.filter(validate_part_1)
-    print '# PART 1: ' + valid_count_part_1.length + ' valid passwords'
+    print '# PART 1: {valid_count_part_1.length} valid passwords'
 }
 
 // Part 2
 {
     var valid_count_part_2 = parsed_input.filter(validate_part_2)
-    print '# PART 2: ' + valid_count_part_2.length + ' valid passwords'
+    print '# PART 2: {valid_count_part_2.length} valid passwords'
 }

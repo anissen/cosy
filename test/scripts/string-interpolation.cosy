@@ -1,18 +1,22 @@
-print '4 * 5 = ${4 * 5}'
-print '7.5 / 3 = ${7.5 / 3}'
-print '${1}'
-print '|${1}|'
-print '${1}${2}'
-print '|${1}|${2}|'
-print '|${'hello from the inside'}|'
+print '4 * 5 = {4 * 5}'
+print '7.5 / 3 = {7.5 / 3}'
+print '{1}'
+print '|{1}|'
+print '{1}{2}'
+print '|{1}|{2}|'
+print '|{'hello from the inside'}|'
 
 fn square(v Num) {
     return v * v
 }
-print '5 squared is ${square(5)}'
+print '5 squared is {square(5)}'
 
 struct Test {
     var value Str
 }
 var t = Test { value = 'hello' }
-print 'Test struct: ${t}'
+print 'Test struct: {t}'
+
+// raw string literal
+// var raw = "4 * 5 = {4 * 5}"
+// raw strings must be checked to see that they *cannot* be normal strings

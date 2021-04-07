@@ -111,22 +111,21 @@ class Scanner {
 			// It is a string interpolation type string
 			// Output:
 			// String
-			// 		// repeat for each ${}-pair
+			// 		// repeat for each {}-pair
 			// 		DollarLeftBrace
 			// 		{Interpolation tokens}
 			// 		RightBrace
 			// 		(String)	
-			if (peek() == '$'.code && peekNext() == '{'.code) {
+			if (peek() == '{'.code) {
 				var value = source.substring(start + 1, current);
 				value = StringTools.replace(value, '\\n', '\n');
 				value = StringTools.replace(value, '\\\'', '\'');
 				addToken(String, value);
 
-				start = current; // TODO: This may break stuff!
-				advance();
-				advance();
-				addToken(DollarLeftBrace);
-				start = current; // TODO: This may break stuff!
+				start = current;
+				advance(); // Skip '{'
+				addToken(LeftBrace);
+				start = current;
 				interpolationMode = true;
 				return;
 			}

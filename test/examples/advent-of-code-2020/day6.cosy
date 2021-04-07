@@ -71,12 +71,12 @@ var groups = get_groups()
     var total_questions_answered = groups.sum(fn(group Array Str) {
         return group_answer_count(group, did_anyone_answer_question)
     })
-    print '# PART 1: ' + total_questions_answered + ' questions answered'
+    print '# PART 1: {total_questions_answered} questions answered'
 }
 
 { // Part 2
     var total_questions_answered = groups.sum(fn(group Array Str) {
         return group_answer_count(group, did_everyone_answer_question)
     })
-    print '# PART 2: ' + total_questions_answered + ' questions answered'
+    print '# PART 2: {total_questions_answered} questions answered'
 }

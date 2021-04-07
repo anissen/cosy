@@ -418,10 +418,10 @@ class Parser {
 
 	function string(): Expr {
 		final expr = Expr.Literal(previous().literal);
-		if (check(DollarLeftBrace)) {
+		if (check(LeftBrace)) {
 			var exprs = [expr];
 			do {
-				if (match([DollarLeftBrace])) {
+				if (match([LeftBrace])) {
 					exprs.push(expression());
 					consume(RightBrace, 'Expect "}" after string interpolation start.');
 				} else if (match([String])) {
@@ -429,7 +429,7 @@ class Parser {
 				} else {
 					error(peek(), 'Unexpected token in string interpolation.');
 				}
-			} while (check(DollarLeftBrace) || check(String));
+			} while (check(LeftBrace) || check(String));
 			return Expr.StringInterpolation(exprs);
 		} else {
 			return expr;

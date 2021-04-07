@@ -2,14 +2,14 @@ print 'for min..max'
 for i in 0..5 {
     print i
     if i > 2 break
-    print 'still ' + i
+    print 'still {i}'
 }
 
 print 'for array'
 for i in [3,4,5] {
     print i
     if i == 4 break
-        print 'still ' + i
+        print 'still {i}'
 }
 
 print 'for'
@@ -17,6 +17,6 @@ mut i = 0
 for {
     print i
     if i == 3 break
-    print 'still ' + i
+    print 'still {i}'
     i += 1
 }

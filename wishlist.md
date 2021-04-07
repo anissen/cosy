@@ -45,7 +45,7 @@ fun x() { print "hej" }
   - [x] Support for map function
   - [x] Support for filter function
 - [ ] Support for maps
-- [ ] String interpolation
+- [x] String interpolation
 - [x] +=, -=, *=, /= operators
 - [x] Typing phase
 - [x] Optimization phase

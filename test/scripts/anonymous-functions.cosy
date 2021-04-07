@@ -5,5 +5,5 @@ fn thrice(f) {
 }
 
 thrice(fn (a) {
-    print a + '!'
+    print '{a}!'
 })

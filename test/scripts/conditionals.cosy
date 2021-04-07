@@ -8,8 +8,8 @@ print 'hi' and 2 // 2
 
 mut i = 0
 for i < 10 {
-    print 'while #' + i
+    print 'while #{i}'
     i = i + 1
 }
 
-for j in 0..10 { print 'for #' + j }
+for j in 0..10 { print 'for #{j}' }

@@ -38,7 +38,7 @@ if b < 5 and 4 == 4 {
 
 // loop with counter
 for i in 0..3 {
-    print 'loop #' + i
+    print 'loop #{i}'
 }
 
 // loop without counter
@@ -55,7 +55,7 @@ for j < 3 {
 
 // loop over array
 for i in [5, 6, 7] {
-	print 'array value: ' + i
+	print 'array value: {i}'
 }
 
 
@@ -69,7 +69,7 @@ say('world')
 var square = fn(value Num) {
     return value * value
 }
-print '5 * 5 = ' + square(5)
+print '5 * 5 = {square(5)}'
 
 // functions can return functions
 fn say_with_extra_text(extra_text Str) {
@@ -86,7 +86,7 @@ fn do_n_times(f Fn(Num), n Num) {
         f(i)
     }
 }
-do_n_times(fn(x Num) { print 'i\'m called ' + (x + 1) + ' time(s)' }, 3)
+do_n_times(fn(x Num) { print 'i\'m called {x + 1} time(s)' }, 3)
 
 // functions act as closures
 fn counter(start, increment) Fn() Num {

@@ -7,7 +7,7 @@ for i in 1..100 {
         s += 'Buzz'
     }
     if s == '' {
-        s = '' + i
+        s = '{i}'
     }
     print s
 }

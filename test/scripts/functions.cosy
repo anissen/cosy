@@ -15,7 +15,7 @@ fn h() {
     //print 'step 2'
     //return 2
 }
-print 'result: ' + h()
+print 'result: {h()}'
 
 { // return inner funciton
     fn make_hi_func() {
