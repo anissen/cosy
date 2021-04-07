@@ -16,7 +16,7 @@
 }
 
 {
-	var i = 4 + 3 + 'hello' + ' ' + 'world' + 2 + 1
+	var i = '{4 + 3} hello' + ' ' + 'world {2 + 1}'
 	print i
 }
 

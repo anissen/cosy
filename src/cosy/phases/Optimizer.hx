@@ -70,6 +70,7 @@ class Optimizer {
                         });
                     case _: Expr.Logical(l, op, r);
                 }
+            case StringInterpolation(parts): Expr.StringInterpolation(parts.map(optimizeExpr));
 			case _: expr;
 		}
     }

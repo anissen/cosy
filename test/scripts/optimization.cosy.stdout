@@ -13,7 +13,7 @@
     print j
 }
 {
-    var i = 7 + 'hello' + ' ' + 'world' + 2 + 1
+    var i = '{7} hello' + ' ' + 'world {3}'
     print i
 }
 {
