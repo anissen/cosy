@@ -42,6 +42,10 @@ class Cosy {
         });
         Cosy.setFunction('read_file', (args) -> File.getContent(args[0]));
         
+        #if (cpp && static_link)
+        return;
+        #end
+        
         #if nodejs
         final usedAsModule = js.Syntax.code('require.main !== module');
         if (usedAsModule) return;
@@ -169,7 +173,8 @@ Options:
     }
 
     #if (sys || nodejs)
-    static function runFile(path:String) {
+    @:expose
+    public static function runFile(path:String) {
         var content = File.getContent(path);
         run(content);
         if (!watch) {

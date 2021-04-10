@@ -1,0 +1,3 @@
+scripts/common.hxml
+-D static_link
+-cpp bin/cpp_lib
