@@ -76,7 +76,7 @@ class Cosy {
             }
             Sys.println(
 'Cosy compiler (${getGitCommitSHA()} @ ${getBuildDate()})
-Usage: cosy (options) [source file]
+Usage: cosy <options> [source file]
 
 Options:
 --prettyprint    Prints the formatted source.
