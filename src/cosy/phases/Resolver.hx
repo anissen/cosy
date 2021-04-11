@@ -59,7 +59,7 @@ class Resolver {
                 markTypeAsRead(type);
 				declare(name, mut, member);
                 if (init != null) resolveExpr(init);
-                else if (!mut && !member) Cosy.error(name, 'Non-mutable variables must be initialized.');
+                else if (!foreign && !mut && !member) Cosy.error(name, 'Non-mutable variables must be initialized.');
 				define(name, mut, member);
             case For(keyword, name, from, to, body):
                 resolveExpr(from);
