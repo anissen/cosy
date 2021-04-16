@@ -11,5 +11,8 @@
     },
     "haxe.configurations": [
         ["scripts/eval_debug.hxml"], // hxml file is a normal Haxe argument too
-    ]
+    ],
+    "files.associations": {
+        "*.cosy": "haxe",
+    }
 }

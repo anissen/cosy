@@ -125,7 +125,7 @@ fun x() { print "hej" }
   - [ ] C++
   - [ ] Hashlink VM
   - [ ] Hashlink C++
-  - [ ] Java
+  - ~~[ ] Java~~
   - [ ] JVM
   - [ ] Eval
   - [ ] JavaScript

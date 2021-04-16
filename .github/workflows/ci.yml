@@ -10,6 +10,7 @@ jobs:
         # Windows is not yet supported due to ./scripts/all_validate.sh being unix-dependant
         os: [ubuntu-latest, macos-latest]
         haxe: [4.2.1]
+        # target: [jvm, js, node] # etc..
         # os: [ubuntu-latest, macos-latest, windows-latest]
       fail-fast: false
     runs-on: ${{ matrix.os }}
