@@ -366,6 +366,11 @@ class Parser {
 		}
 		
 		var paren = consume(RightParen, 'Expect ")" after arguments.');
+		// trace(callee);
+		// var k = new KeywordVisitor();
+		// var xxx = k.getExprKeywords([callee]);
+		// trace([for (x in xxx) x.lexeme].join('.'));
+		// return Call(callee, xxx[xxx.length - 1], args);
 		return Call(callee, paren, args);
 	}
 	

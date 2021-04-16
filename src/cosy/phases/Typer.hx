@@ -199,6 +199,9 @@ class Typer {
                         // trace(paramTypes);
                         // trace(argumentTypes);
                         if (arguments.length != paramTypes.length) {
+                            // var k = new KeywordVisitor();
+                            // var keywords = k.getExprKeywords([callee]);
+                            // var token = keywords[keywords.length - 1];
                             Cosy.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
                         } else {
                             for (i in 0...paramTypes.length) {
