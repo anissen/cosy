@@ -30,7 +30,11 @@ class Cosy {
     static function main() {
         Cosy.setFunction('random_int', (args) -> return Std.random(args[0]));
         Cosy.setFunction('floor', (args) -> return Math.floor(args[0]));
-        Cosy.setFunction('string_to_number', (args) -> Std.parseInt(args[0]) /* can be null! */);
+        Cosy.setFunction('string_to_number', (args) -> {
+            // TODO: Should return an error if failing to parse. For now, it simply returns zero.
+            final value = Std.parseInt(args[0]);
+            return (value != null ? value : 0);
+        });
         Cosy.setFunction('string_from_char_code', (args) -> String.fromCharCode(args[0]));
 
         #if (sys || nodejs)
