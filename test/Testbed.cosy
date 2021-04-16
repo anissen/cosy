@@ -1,53 +1,8 @@
-
-// mut letters_guessed = ['a']
-// for l in letters_guessed {
-//     print l
-// }
-
-// mut a = [3,2,4,6]
-// print a.map(fn(x) { return x * 2 })
-// print 
-
-//fn test() Str {} // TODO: Should fail because there is no return statements
 // {
-//     foreign fn yo(value Num) Void
-//     foreign var xyz
-
-//     print 'hello\nworld'
-//     print yo(34)
-//     print xyz
-//     // test()
-//     print 'done'
+//     fn test() Str {} // TODO: Should fail because there is no return statements
+//     print test()
 // }
 
-
-// {
-//     foreign fn read_input() Str
-//     foreign fn string_to_number(inputx Str) Num
-
-//     // fn input() Str {
-//     //     return 's'
-//     // }
-    
-//     // fn string_to_number(input Str) Num { // 'local' param is causing problems!
-//     //     print input
-//     //     return 55
-//     // }
-
-//     var s = read_input()
-//     var guess = string_to_number(s)
-//     print guess
-// }
-
-// foreign fn yo() Void
-// yo()
-
-// print Cosy.Math.random()
-
-// {
-// foreign fn hi(exclaim Bool)
-// hi(true)
-// }
 
 // {
 //     struct Point {   // Struct
@@ -56,7 +11,7 @@
 //     }
 //     // instantiate struct
 //     mut point = Point { x = 3, y = 4 }
-
+// 
 //     fn mutf(mut p Point) {
 //         p.x = 5
 //     }
@@ -64,6 +19,7 @@
 //     mutf(point) // TODO: Fail! Should be mut
 //     print point
 // }
+
 
 // {
 //     struct S {}
@@ -74,215 +30,31 @@
 //     mutf(s) // TODO: Fail! Should be mut
 // }
 
-// print 2 + '3' + 2
-// print 2 + 5 + 2
-// print 4 * 3 / 2 + 7.4
-// mut i
-// i = 42
-// print i < 4
-// print i <= 4
-// print i <= 42
-// print i >= 42
-// print i >= 52
-// print i > 52
-// print 'hello world'
-// print true
-// print -5
-// for j in 0..3 {
-//     print j
-// }
 
 // {
-//     var i = 2
-//     print 'starts!'
-//     if (i > 3) {
-//         print '1'
-//     } else if (i > 2) {
-//         print '2'
-//     } else {
-//         print '3'
+//     // AST interpreter takes ~5 seconds on a 16" MacBook Pro
+//     foreign fn random_int(n Num)
+
+//     var n = 1000000
+//     mut a = []
+//     for 0..n {
+//         a.push(0)
 //     }
-//     print 'done!'
-// }
-
-// {
-//     for i in 0..6 {
-//         if (i == 2) continue
-//         if (i == 4) break
-//         print 'hello #' + i
+//     for 0..10 {
+//         a[random_int(n)] = 1
 //     }
-// }
 
-// {
-//     mut i = 0
-//     for i < 2 {
-//         print 'hello #' + i
-//         i = i + 1
-//     }
-// }
-
-// {
-//     mut i = 0
-//     for {
-//         print 'hello!'
-//         for {
-//             print 'yo'
-//             if (i < 555) break
+//     var t0 = clock()
+//     mut counter = 0
+//     mut l = []
+//     for j in 0..a.length {
+//         if a[j] == 1 and a[j + 1] == 0 {
+//             l.push(counter)
 //         }
-//         break
+//         counter += 1
 //     }
+//     var t1 = clock()
+//     print l
+//     print 'Time spend: {(t1 - t0) / 1000} seconds'
 // }
 
-// {
-//     mut i = 0
-//     for {
-//         print 'hello #' + i
-//         i = i + 1
-//         if i > 2 break
-//     }
-// }
-
-// {
-//     for i in [2,3,4,5,6] {
-//         // if (i == 3) continue
-//         // if (i == 5) break
-//         print 'hello #' + i
-//     }
-// }
-
-// var a = [2,3,4,5,6]
-// print a
-
-// fn f(x, y) {
-//     print 'hello' + x + y
-// }
-// f(5, 3)
-
-// {
-// fn f() {
-//     var x = 'hello'
-//     var y = 'world'
-//     print x + ' ' + y
-// }
-// print 'before call #1'
-// f()
-// print 'after call #1'
-
-// print 'before call #2'
-// f()
-// print 'after call #2'
-// }
-
-// {
-//     fn f() {
-//         return '[return value]'
-//     }
-//     print f()
-// }
-
-// var f2 = fn (xyz) { print xyz }
-// // print f2
-// f2('hello')
-
-// {
-//     fn f2(xyz) { print xyz }
-//     f2('hello')
-// }
-
-// {
-//     fn fibonacci(n) {
-//         if n <= 1 return n
-//         return fibonacci(n - 2) + fibonacci(n - 1)
-//     }
-
-//     for i in 0..10 {
-//         print fibonacci(i)
-//     }
-// }
-
-// {
-//     var a = 2 //'asdf'
-//     var b = a + 3 //+ 2 + 3 + 4 + 5 + 6 + 3 + 2 + 3 + 4 + 5 + 6 + 3 + 2 + 3 + 4 + 5 + 6 + 3 + 2 + 3 + 4 + 5 + 6 + 3 + 2 + 3 + 4 + 5 + 6
-//     print b
-// }
-
-// {
-//     mut i = 0
-//     for i < 3 {
-//         print i
-//         i = i + 1
-//     }
-// }
-
-// {
-//     if (false or true) {
-//         print 'hej'
-//         print 'mere hej'
-//     } else {
-//         print 'else'
-//     }
-//     print 'the end'
-// }
-
-// {
-//     for false {
-//         print 'hello!'
-//     }
-//     print 'end'
-// }
-
-// {
-//     mut b = true
-//     for b {
-//         print 'hello!'
-//         b = false
-//     }
-//     print 'end'
-// }
-
-// {
-//     mut i = 0
-//     for i < 3 {
-//         print 'hello!'
-//         i = i + 1
-//     }
-//     print 'end'
-// }
-
-// {
-//     var i = 2
-//     var j = 3
-//     print i == i
-//     print i < j
-//     print i <= i
-//     print i <= j
-//     print j > i
-//     print i >= i
-//     print j >= i
-// }
-
-// {
-//     print 3
-//     print -3 // test negate
-// }
-
-// {
-//     struct Password {
-//         var value Num
-//     }
-// 
-//     fn validate(p Password) {
-//         var x Num = p.value
-//         print x
-//     }
-// 
-//     var pass = Password { value = 23 }
-//     validate(pass)
-// }
-
-// {
-//     struct Field {}
-//     mut tmp_fields Array Field = []
-//     var fields Array Field = tmp_fields
-//     print fields
-// }
