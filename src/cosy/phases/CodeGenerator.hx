@@ -185,14 +185,43 @@ class CodeGenerator {
 		}
     }
     
-    // TODO: We also need line information for each bytecode
 	function genExpr(expr: Expr) {
         if (expr == null) return;
 		switch expr {
             case Assign(name, op, value):
+                final localIndex = localIndexes[name.lexeme];
                 add_token(name);
                 genExpr(value);
-                emit(SetLocal(localIndexes[name.lexeme]));
+                switch op.type {
+                    case Equal: emit(SetLocal(localIndex));
+                    case PlusEqual:
+                        // TODO: We need to know the type of `name` here in order to produce optimized bytecode (instead of having to typecheck in the VM)
+
+                        emit(GetLocal(localIndex));
+                        emit(Addition);
+                        emit(SetLocal(localIndex));
+                    // case MinusEqual:
+                    //     final left = lookUpVariable(name, expr);
+                    //     final right = evaluate(value);
+                    //     checkNumberOperands(op, left, right);
+                    //     (left: Float) - (right: Float);
+                    // case SlashEqual:
+                    //     final left = lookUpVariable(name, expr);
+                    //     final right = evaluate(value);
+                    //     checkNumberOperands(op, left, right);
+                    //     (left: Float) / (right: Float);
+                    // case StarEqual:
+                    //     final left = lookUpVariable(name, expr);
+                    //     final right = evaluate(value);
+                    //     checkNumberOperands(op, left, right);
+                    //     (left: Float) * (right: Float);
+                    // case PercentEqual:
+                    //     final left = lookUpVariable(name, expr);
+                    //     final right = evaluate(value);
+                    //     checkNumberOperands(op, left, right);
+                    //     (left: Float) % (right: Float);
+                    case _: throw 'Unhandled case ${op.type}';
+                }
             case Binary(left, op, right):
                 add_token(op);
                 genExpr(left);
