@@ -12,6 +12,8 @@ enum ByteCodeOp {
     PushFalse;
     PushNumber(n: Float);
     BinaryOp(type: TokenType);
+    Function(index: Int, argCount: Int, name: String);
+    Call(argCount: Int);
 
     JumpIfFalse;
     JumpIfTrue;
@@ -55,6 +57,8 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final Greater;
     final GreaterEqual;
     final Negate;
+    final Function;
+    final Call;
 }
 
 class Output {
@@ -95,11 +99,11 @@ class CodeGenerator {
         }
 	}
 
-    // function genExprs(exprs: Array<Expr>) {
-    //     for (expr in exprs) {
-    //         genExpr(expr);
-    //     }
-    // }
+    function genExprs(exprs: Array<Expr>) {
+        for (expr in exprs) {
+            genExpr(expr);
+        }
+    }
 
 	function genStmt(stmt: Stmt) {
         if (stmt == null) return;
@@ -180,6 +184,13 @@ class CodeGenerator {
                 } else {
                     throw 'infinite loops are not yet implemented!';
                 }
+            case Function(name, params, body, returnType, foreign):
+                add_token(name);
+                final index = localsCounter++;
+                localIndexes[name.lexeme] = index;
+                emit(Function(index, params.length, name.lexeme));
+                genStmts(body);
+            //     trace('function ${name.lexeme}');
             case Expression(expr): genExpr(expr);
 			case _: trace('Unhandled statement: $stmt'); [];
 		}
@@ -227,6 +238,11 @@ class CodeGenerator {
                 genExpr(left);
                 genExpr(right);
                 emit(BinaryOp(op.type));
+            case Call(callee, paren, arguments):
+                add_token(paren);
+                genExpr(callee);
+                emit(Call(arguments.length));
+                genExprs(arguments);
             case Literal(v) if (Std.isOfType(v, Bool)): (v ? emit(PushTrue) : emit(PushFalse));
             case Literal(v) if (Std.isOfType(v, Float)): emit(PushNumber(v));
             case Literal(v) if (Std.isOfType(v, String)): emit(ConstantString(v));
@@ -255,7 +271,8 @@ class CodeGenerator {
                 if (!op.type.match(Minus)) throw 'error';
                 genExpr(right);
                 emit(Negate);
-			case _: trace('Unhandled expression: $expr'); [];
+			// case _: trace('Unhandled expression: $expr'); [];
+            case _: throw 'Unhandled expression: $expr';
 		}
     }
 
@@ -293,6 +310,16 @@ class CodeGenerator {
                 bytes.writeFloat(n);
             case BinaryOp(type): 
                 bytes.writeByte(binaryOpCode(type));
+            case Call(argCount):
+                bytes.writeByte(ByteCodeOpValue.Call);
+                bytes.writeInt32(argCount);
+            case Function(index, argCount, name):
+                bytes.writeByte(ByteCodeOpValue.Function);
+                bytes.writeInt32(index);
+                bytes.writeInt32(argCount);
+                var stringIndex = output.strings.length;
+                output.strings.push(name);
+                bytes.writeInt32(stringIndex);
             case JumpIfFalse:
                 bytes.writeByte(ByteCodeOpValue.JumpIfFalse);
                 bytes.writeInt32(666); // placeholder for jump argument

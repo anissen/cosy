@@ -88,6 +88,19 @@ class VM {
                 case Greater: push(Boolean(popNumber() < popNumber()));
                 case GreaterEqual: push(Boolean(popNumber() <= popNumber()));
                 case Negate: push(Number(-popNumber()));
+                case Function:
+                    var index = program.get(pos);
+                    pos += 4;
+                    var argCount = program.get(pos);
+                    pos += 4;
+                    var nameIndex = program.get(pos);
+                    pos += 4;
+                    var name = constantStrings[nameIndex];
+                    trace('fn $name (index $index) $argCount argument(s)');
+                case Call:
+                    var argCount = program.get(pos);
+                    pos += 4;
+                    trace('call function with $argCount argument(s)');
             }
             // trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
         }

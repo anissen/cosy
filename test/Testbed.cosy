@@ -58,3 +58,8 @@
 //     print 'Time spend: {(t1 - t0) / 1000} seconds'
 // }
 
+{
+    // testing the bytecode code generator + disassembler + vm
+    fn hello() {}
+    hello()
+}

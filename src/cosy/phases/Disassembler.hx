@@ -8,6 +8,25 @@ enum OutputPart {
     Error(s: String);
 }
 
+/* TODO: Make the output assembly easier to read, e.g. more like the following from snekky-lang.org
+
+00 | 00 | Constant {index: 0, value: UserFunction(10,2)}
+01 | 05 | Jump {index: 33}
+02 | 10 | Store {index: 0, name: a}
+03 | 15 | Store {index: 1, name: b}
+04 | 20 | Load {index: 0, name: a}
+05 | 25 | Load {index: 1, name: b}
+06 | 30 | Add
+07 | 31 | Return
+08 | 32 | Return
+09 | 33 | Store {index: 2, name: add}
+10 | 38 | Constant {index: 1, value: Number(2)}
+11 | 43 | Constant {index: 2, value: Number(1)}
+12 | 48 | Load {index: 2, name: add}
+13 | 53 | Call {parametersCount: 2}
+14 | 58 | Pop
+*/
+
 class Disassembler {
     
     static public function disassemble(bytecode: cosy.phases.CodeGenerator.Output, colors: Bool = false): String {
@@ -91,6 +110,18 @@ class Disassembler {
                 case Greater: [Instruction('greater'), Arg(''),  Hint('>')];
                 case GreaterEqual: [Instruction('greater_equal'), Arg(''),  Hint('>=')];
                 case Negate: [Instruction('negate'), Arg(''), Hint('-')];
+                case Function: 
+                    var index = program.getInt32(pos);
+                    pos += 4;
+                    var argCount = program.getInt32(pos);
+                    pos += 4;
+                    var nameIndex = program.get(pos);
+                    pos += 4;
+                    [Instruction('fn'), Arg(index), Arg(argCount)];
+                case Call: 
+                    var argCount = program.getInt32(pos);
+                    pos += 4;
+                    [Instruction('call'), Arg(argCount)];
                 // case _: [Error('[Unknown bytecode: "$code"]')];
             }
 

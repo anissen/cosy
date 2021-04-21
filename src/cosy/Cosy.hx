@@ -20,7 +20,7 @@ class Cosy {
     static var outputBytecode = false;
     static var outputJavaScript = false;
     static var outputMarkdown = false;
-    static var outputDisassembly = false;
+    static var outputDisassembly = true;
     static var validateOnly = false;
     static var watch = false;
     static var outputTimes = false;
@@ -319,29 +319,32 @@ Options:
             return;
         }
 
-        // startMeasure('Code generator');
-        // var codeGenerator = new CodeGenerator();
-        // var bytecodeOutput = codeGenerator.generate(statements);
-        // var bytecode = bytecodeOutput.bytecode;
-        // endMeasure('Code generator');
+        startMeasure('Code generator');
+        var codeGenerator = new CodeGenerator();
+        var bytecodeOutput = codeGenerator.generate(statements);
+        var bytecode = bytecodeOutput.bytecode;
+        endMeasure('Code generator');
         
-        // if (outputDisassembly) {
-        //     startMeasure('Disassembler');
-        //     var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-        //     endMeasure('Disassembler');
-        //     printlines([disassembly]);
-        // }
+        if (outputDisassembly) {
+            startMeasure('Disassembler');
+            var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
+            endMeasure('Disassembler');
+            printlines([disassembly]);
+        }
 
-        // startMeasure('VM interpreter');
-        // var vm = new VM();
-        // vm.run(bytecodeOutput);
-        // endMeasure('VM interpreter');
+        trace('VM interpreter');
+        startMeasure('VM interpreter');
+        var vm = new VM();
+        vm.run(bytecodeOutput);
+        endMeasure('VM interpreter');
+        trace('-------------');
 
-        // trace('AST interpreter');
+        trace('AST interpreter');
         startMeasure('AST interpreter');
         // trace('AST output:');
         interpreter.interpret(statements);
         endMeasure('AST interpreter');
+        trace('-------------');
 
         if (outputTimes) {
             println('\n$measureOutput');
