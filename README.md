@@ -32,7 +32,7 @@ print 'hello world'
   * Few keywords.
 * Safety.
   * Variable are immutable by default.
-  * No `null` or `nil`.
+  * No `null`, `nil` or `undefined`.
   * No variable shadowing.
 * Compile-time validation.
   * Unused variables.
@@ -40,12 +40,12 @@ print 'hello world'
   * Type checking.
 * String interpolation.
 * Has built-in code formatter.
-* Web based [playground](http://andersnissen.com/cosy/playground/).
 * Simple code optimization.
 * No library dependencies.
-* Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/). Originally based on [Lox](http://www.craftinginterpreters.com/).
+* Web based [playground](http://andersnissen.com/cosy/playground/).
+* Inspired by [V](https://vlang.io/), [Rust](https://www.rust-lang.org/) and [Haxe](https://haxe.org/) among others. Originally based on [Lox](http://www.craftinginterpreters.com/).
 
-## Cosy data flow
+## Cosy compiler data flow
 <img src="https://raw.githubusercontent.com/anissen/cosy/master/docs/images/data-flow.png" width="100%">
 
 
@@ -199,26 +199,33 @@ some_function(1234)
 </details>
 
 
-## Getting Started
+## Getting started
 
 To get a local copy up and running follow these simple steps.
 
-### Prerequisites
+1. Clone the cosy repository
+    ```sh
+    git clone https://github.com/anissen/cosy.git
+    ```
 
-Cosy is written in [Haxe](https://haxe.org/) and requires the Haxe compiler to build.
+2. Change to the repository directory
+    ```sh
+    cd cosy
+    ```
 
+3. Install [lix](https://github.com/lix-pm/lix.client), a Haxe package manager
+    ```sh
+    npm install lix -g
+    ```
 
-### Installation
- 
-Clone the cosy repository
-```sh
-git clone https://github.com/anissen/cosy.git
-```
+4. Downloading all dependencies
+    ```sh
+    lix download
+    ```
 
+## Usage
 
-### Usage
-
-Usage: `cosy (options) (source file)`
+Usage: `cosy <options> (source file)`
 
 Options:
 ```
@@ -238,17 +245,17 @@ Options:
 Information about using Cosy as stand-alone and integrated into other code as a library
 -->
 
-#### Using Haxe interpreter
+### Using Haxe interpreter
 Run: `haxe -cp src --run cosy.Cosy`.
 
-#### Using JavaScript
+### Using JavaScript
 Build: `haxe scripts/javascript.hxml`.
 
 Include in your HTML body: `<script src="cosy.js"></script>`.
 
 Run: `window.cosy.Cosy.run("print 'hello javascript!'")`.
 
-#### Using Node
+### Using Node
 Build: `haxe scripts/node.hxml`.
 
 Run (as script): `node ./bin/node/cosy.js`.
@@ -259,31 +266,53 @@ const cosy = require("./bin/node/cosy.js").cosy.Cosy;
 cosy.run("print 'hello node!'");
 ```
 
-#### Using Java
-Build: `haxe -cp src -main cosy.Cosy -java bin/java`.
+### Using Java
+Build:
 
-Run: `java -jar bin/java/cosy.jar`.
+    haxe -cp src -main cosy.Cosy -java bin/java
 
-#### Using JVM
-Build: `haxe -cp src -main cosy.Cosy --jvm bin/jvm/Cosy.jar`.
+Run: 
 
-Run: `java -jar bin/jvm/Cosy.jar`.
+    java -jar bin/java/cosy.jar
 
-#### Using C++
-Build: `haxe -main cosy.Cosy -cp src -cpp bin/cpp`
+### Using JVM
+Build:
 
-Run: `./bin/cpp/Cosy`.
+    haxe -cp src -main cosy.Cosy --jvm bin/jvm/Cosy.jar
 
-#### Using HashLink (bytecode or C)
-Build to bytecode: `haxe -main cosy.Cosy -cp src -hl bin/hl/Cosy.hl`
+Run:
 
-Run from bytecode: `hl bin/hl/Cosy.hl`
+    java -jar bin/jvm/Cosy.jar
 
-Build to C: `haxe -main cosy.Cosy -cp src -hl bin/hlc/build/Cosy.c`
+### Using C++
+Build:
 
-Compile: `gcc -O3 -o bin/hlc/Cosy -std=c11 -I bin/hlc/build bin/hlc/build/Cosy.c -lhl`
+    haxe -main cosy.Cosy -cp src -cpp bin/cpp
 
-Run: `./bin/hlc/Cosy`
+Run:
+
+    ./bin/cpp/Cosy
+
+### Using HashLink (bytecode or C)
+Build to bytecode
+
+    haxe -main cosy.Cosy -cp src -hl bin/hl/Cosy.hl
+
+Run from bytecode
+
+    hl bin/hl/Cosy.hl
+
+Build to C
+
+    haxe -main cosy.Cosy -cp src -hl bin/hlc/build/Cosy.c
+
+Compile
+
+    gcc -O3 -o bin/hlc/Cosy -std=c11 -I bin/hlc/build bin/hlc/build/Cosy.c -lhl
+
+Run:
+
+    ./bin/hlc/Cosy
 
 
 ## Roadmap
