@@ -12,8 +12,9 @@ enum ByteCodeOp {
     PushFalse;
     PushNumber(n: Float);
     BinaryOp(type: TokenType);
-    Function(index: Int, argCount: Int, name: String);
+    Function(argCount: Int, name: String);
     Call(argCount: Int);
+    Return;
 
     JumpIfFalse;
     JumpIfTrue;
@@ -59,15 +60,23 @@ enum abstract ByteCodeOpValue(Int) to Int from Int {
     final Negate;
     final Function;
     final Call;
+    final Return;
+}
+
+typedef FunctionDefinition = {
+    var name: String;
+    var pos: Int;
+    var length: Int;
 }
 
 class Output {
-    public var strings: Array<String>;
+    public var strings: Array<String> = [];
+    public var functions: Array<FunctionDefinition> = [];
     public var bytecode: Bytes;
     public var tokens = new Map<Int, Token>();
 
     public function new() {
-        strings = [];
+        
     }
 }
 
@@ -186,10 +195,22 @@ class CodeGenerator {
                 }
             case Function(name, params, body, returnType, foreign):
                 add_token(name);
-                final index = localsCounter++;
-                localIndexes[name.lexeme] = index;
-                emit(Function(index, params.length, name.lexeme));
+                // final functionsIndex = output.functions.length;
+                // emit(PushNumber(functionsIndex));
+                emit(Function(params.length, name.lexeme));
+                final localsIndex = localsCounter++;
+                localIndexes[name.lexeme] = localsIndex;
+                emit(SetLocal(localsIndex));
+                
+                var funcJump = emitJump(Jump);
+
+                for (i => param in params) { // TODO: must be in a function frame (otherwise i is not unique)
+                    localIndexes[param.name.lexeme] = localsCounter++;
+                    emit(SetLocal(i));
+                }
                 genStmts(body);
+                emit(Return);
+                patchJump(funcJump);
             //     trace('function ${name.lexeme}');
             case Expression(expr): genExpr(expr);
 			case _: trace('Unhandled statement: $stmt'); [];
@@ -240,9 +261,10 @@ class CodeGenerator {
                 emit(BinaryOp(op.type));
             case Call(callee, paren, arguments):
                 add_token(paren);
+                genExprs(arguments);
                 genExpr(callee);
                 emit(Call(arguments.length));
-                genExprs(arguments);
+                // Load function?
             case Literal(v) if (Std.isOfType(v, Bool)): (v ? emit(PushTrue) : emit(PushFalse));
             case Literal(v) if (Std.isOfType(v, Float)): emit(PushNumber(v));
             case Literal(v) if (Std.isOfType(v, String)): emit(ConstantString(v));
@@ -312,14 +334,22 @@ class CodeGenerator {
                 bytes.writeByte(binaryOpCode(type));
             case Call(argCount):
                 bytes.writeByte(ByteCodeOpValue.Call);
-                bytes.writeInt32(argCount);
-            case Function(index, argCount, name):
+                bytes.writeByte(argCount);
+            case Function(argCount, name):
+                var functionStart = bytes.length + 12; // TODO: HACK, +12 is to skip the following jump statement
                 bytes.writeByte(ByteCodeOpValue.Function);
-                bytes.writeInt32(index);
-                bytes.writeInt32(argCount);
-                var stringIndex = output.strings.length;
-                output.strings.push(name);
-                bytes.writeInt32(stringIndex);
+                bytes.writeInt32(functionStart);
+                // bytes.writeByte(argCount);
+                
+                // var stringIndex = output.strings.length;
+                // output.strings.push(name);
+                // bytes.writeInt32(stringIndex);
+                
+                // var functionIndex = output.functions.length;
+                // output.functions.push({ name: name, pos: functionStart, length: (bytes.length + 19) - functionStart });
+                // bytes.writeInt32(functionIndex);
+            case Return:
+                bytes.writeByte(ByteCodeOpValue.Return);
             case JumpIfFalse:
                 bytes.writeByte(ByteCodeOpValue.JumpIfFalse);
                 bytes.writeInt32(666); // placeholder for jump argument

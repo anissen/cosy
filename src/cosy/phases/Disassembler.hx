@@ -111,18 +111,19 @@ class Disassembler {
                 case GreaterEqual: [Instruction('greater_equal'), Arg(''),  Hint('>=')];
                 case Negate: [Instruction('negate'), Arg(''), Hint('-')];
                 case Function: 
-                    var index = program.getInt32(pos);
+                    var functionPos = program.getInt32(pos);
                     pos += 4;
-                    var argCount = program.getInt32(pos);
-                    pos += 4;
-                    var nameIndex = program.get(pos);
-                    pos += 4;
-                    [Instruction('fn'), Arg(index), Arg(argCount)];
+                    // var argCount = program.get(pos++);
+                    // var nameIndex = program.get(pos);
+                    // pos += 4;
+                    // var functionIndex = program.get(pos);
+                    // pos += 4;
+                    [Instruction('fn'), Arg(functionPos)];
                 case Call: 
-                    var argCount = program.getInt32(pos);
-                    pos += 4;
+                    var argCount = program.get(pos++);
                     [Instruction('call'), Arg(argCount)];
-                // case _: [Error('[Unknown bytecode: "$code"]')];
+                case Return: [Instruction('return')];
+                // case _: throw 'unknown bytecode: $code'; //[Error('[Unknown bytecode: "$code"]')];
             }
 
             var prev_token = (token_index > 0 ? bytecode.tokens[token_index - 1] : null);

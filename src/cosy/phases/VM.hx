@@ -7,6 +7,7 @@ enum Value {
     Text(s: String);
     Number(n: Float);
     Boolean(b: Bool);
+    Function(i: Int);
 }
 
 class VM {
@@ -22,15 +23,37 @@ class VM {
         // TODO: The global environment should also be treated like a function to get consistent behavior (see http://www.craftinginterpreters.com/calls-and-functions.html)
     
         var constantStrings = bytecode.strings;
+        var constantFunctions = bytecode.functions;
         var x :GenericStack<Int>;
         var program = bytecode.bytecode;
         stack = [];
         ip = 0;
         final sizeFloat = 4;
+        final sizeInt = 4;
         var pos = 0;
         var output = '';
+
+        function readFloat() {
+            final value = program.getFloat(pos);
+            pos += sizeFloat;
+            return value;
+        }
+        
+        function readInt() {
+            final value = program.getInt32(pos);
+            pos += sizeInt;
+            return value;
+        }
+        
+        function readByte() {
+            return program.get(pos++);
+        }
+
+        var return_to_pos = -1;
+
         while (pos < program.length) {
-            var code: ByteCodeOpValue = program.get(pos++);
+            var code: ByteCodeOpValue = readByte();
+            // trace('### code: $code');
             // trace('IP ${pos-1}: $code');
             // var stackBefore = stack.copy(); // TODO: Only for testing! Remove it
             
@@ -39,32 +62,34 @@ class VM {
                 case PushTrue: push(Boolean(true));
                 case PushFalse: push(Boolean(false));
                 case PushNumber: 
-                    push(Number(program.getFloat(pos)));
-                    pos += sizeFloat;
+                    push(Number(readFloat()));
                 case ConstantString:
-                    var index = program.get(pos);
-                    pos += 4;
+                    var index = readInt();
                     push(Text(constantStrings[index]));
+                // case ConstantFunction: // TODO: Maybe??
+
                 case Print: 
                     output += asString(pop()) + '\n';
-                case Pop: popMultiple(program.get(pos++));
+                case Pop: popMultiple(readByte());
                 case GetLocal: 
-                    final slot = program.get(pos++);
+                    final slot = readByte();
+                    // trace('getlocal $slot, ${stack[slot]} (@ pos ${pos - 2})');
                     push(stack[slot]);
                 case SetLocal: 
-                    final slot = program.get(pos++);
+                    final slot = readByte();
+                    // trace('setlocal $slot, ${peek()}');
+                    // trace('--> stack before: $stack');
                     stack[slot] = peek();
+                    // trace('--> stack after: $stack');
                 case JumpIfFalse:
-                    final offset = program.getInt32(pos);
-                    pos += 4;
+                    final offset = readInt();
                     if (isFalsey(peek())) pos += offset;
                 case JumpIfTrue:
-                    final offset = program.getInt32(pos);
-                    pos += 4;
+                    final offset = readInt();
                     if (!isFalsey(peek())) pos += offset;
                 case Jump:
-                    final offset = program.getInt32(pos);
-                    pos += 4 + offset;
+                    final offset = readInt();
+                    pos += offset;
                 case Equal: opEquals();
                 case Addition: opAdd();
                 case Subtraction:
@@ -89,18 +114,35 @@ class VM {
                 case GreaterEqual: push(Boolean(popNumber() <= popNumber()));
                 case Negate: push(Number(-popNumber()));
                 case Function:
-                    var index = program.get(pos);
-                    pos += 4;
-                    var argCount = program.get(pos);
-                    pos += 4;
-                    var nameIndex = program.get(pos);
-                    pos += 4;
-                    var name = constantStrings[nameIndex];
-                    trace('fn $name (index $index) $argCount argument(s)');
+                    var functionPos = readInt();
+                    // trace('fn at pos $functionPos');
+                    push(Function(functionPos));
+
+                    // var argCount = readByte();
+                    // var nameIndex = readInt();
+                    // var name = constantStrings[nameIndex];
+                    // trace('fn $name (pos $functionPos) $argCount argument(s)');
+                    
+                    // var functionIndex = readInt();
+                    // var functionDef = constantFunctions[functionIndex];
+                    // trace('fn ${functionDef.name}, pos ${functionDef.pos}, length: ${functionDef.length}');
                 case Call:
-                    var argCount = program.get(pos);
-                    pos += 4;
-                    trace('call function with $argCount argument(s)');
+                    var argCount = readByte();
+                    // trace('call function with $argCount argument(s)');
+
+                    return_to_pos = pos;
+                    pos = popFunctionPos();
+                    // trace('function pos: $pos');
+
+                    // var functionIndex = Std.int(popNumber());
+                    // var functionDef = constantFunctions[functionIndex];
+                    // trace('fn ${functionDef.name}, pos ${functionDef.pos}, length: ${functionDef.length}');
+                    // pos = functionDef.pos;
+
+                    // pos = Std.int(popNumber());
+                    // pos = Std.int(v);
+                    // trace(pos);
+                case Return: pos = return_to_pos; //Sys.exit(0); // TODO: Implement
             }
             // trace(' ## IP: $ip, Op: $code,\t Stack: $stackBefore => $stack');
         }
@@ -113,7 +155,8 @@ class VM {
         return switch value {
             case Text(s): s;
             case Boolean(b): b ? 'true' : 'false';
-            case Number(n): Std.string(n);
+            case Number(n): '$n';
+            case Function(i): 'func #$i'; // TODO: Get the function name from constantFunctions
             // case Array(a): trace(a.map(unwrapValue));
             // case Function(f): trace('<fn $f>');
         }
@@ -135,6 +178,7 @@ class VM {
                 case Number(n2): n == n2;
                 case _: false;
             }
+            case _: throw 'cannot compare $left and $right';
         }
         push(Boolean(equals));
     }
@@ -178,12 +222,20 @@ class VM {
             case Number(n): n == 0;
             case Boolean(b): !b;
             case Text(s): false;
+            case _: throw 'error';
         }
     }
 
     inline function popNumber(): Float {
         return switch pop() {
             case Number(n): n;
+            case _: throw 'error';
+        }
+    }
+    
+    inline function popFunctionPos(): Int {
+        return switch pop() {
+            case Function(i): i;
             case _: throw 'error';
         }
     }
