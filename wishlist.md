@@ -113,6 +113,7 @@ fun x() { print "hej" }
 - [ ] Make a CLI `--help` command
 - [x] Make the CLI write out Cosy version and/or git commit
 - [x] Detect invalid concatinations (+) in the Typer (and show a hint about string interpolation if one of the types is a string)
+- [ ] Make `--times` show how many lines/second was processed (scanner + parser)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
