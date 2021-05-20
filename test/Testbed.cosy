@@ -60,6 +60,12 @@
 
 {
     // testing the bytecode code generator + disassembler + vm
-    fn hello() {}
-    hello()
+    print 'before function'
+    fn hello(x Num) {
+        print 'hello from function'
+        print x * x
+    }
+    print 'before call'
+    hello(4)
+    print 'after call'
 }
