@@ -273,14 +273,13 @@ class Resolver {
         if (name.lexeme == 'clock' || name.lexeme == 'random') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
         
         var bestMatches = EditDistance.bestMatches(name.lexeme, names);
-        var message = 'Variable not declared in this scope.';
+        Cosy.error(name, 'Variable not declared in this scope.');
         if (bestMatches.length > 0) {
             bestMatches = bestMatches.map(m -> '"$m"');
             var lastMatch = bestMatches.pop();
             var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
-            message += ' Did you mean $formattedMatches?';
+            Cosy.hint(name, 'Did you mean $formattedMatches?');
         }
-        Cosy.error(name, message);
 	}
 
     function findInScopes(name: Token) :Null<Variable> {

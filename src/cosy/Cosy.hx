@@ -110,7 +110,7 @@ Options:
 
         var file = args[args.length - 1];
         if (!sys.FileSystem.exists(file)) {
-            var message = 'Source file not found: "$file".';
+            println(color('Source file not found: "$file".', Error));
 
             var dir = Path.directory(file);
             var filename = Path.withoutDirectory(file);
@@ -120,10 +120,9 @@ Options:
                 bestMatches = bestMatches.map(m -> '"${Path.join([dir, m])}"');
                 var lastMatch = bestMatches.pop();
                 var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
-                message += ' Did you mean $formattedMatches?';
+                println(color('Did you mean $formattedMatches?', Hint));
             }
 
-            Sys.println(message);
             Sys.exit(64);
         }
 
