@@ -20,7 +20,7 @@ class Cosy {
     static var outputBytecode = false;
     static var outputJavaScript = false;
     static var outputMarkdown = false;
-    static var outputDisassembly = true;
+    static var outputDisassembly = false;
     static var validateOnly = false;
     static var watch = false;
     static var outputTimes = false;
@@ -100,7 +100,7 @@ Options:
         var printCount = 0;
         if (outputPrettyPrint) printCount++;
         if (outputBytecode) printCount++;
-        if (outputDisassembly) printCount++;
+        // if (outputDisassembly) printCount++;
         if (outputJavaScript) printCount++;
         if (outputMarkdown) printCount++;
         if (printCount > 1) {
@@ -318,32 +318,37 @@ Options:
             return;
         }
 
-        startMeasure('Code generator');
-        var codeGenerator = new CodeGenerator();
-        var bytecodeOutput = codeGenerator.generate(statements);
-        var bytecode = bytecodeOutput.bytecode;
-        endMeasure('Code generator');
-        
-        if (outputDisassembly) {
-            startMeasure('Disassembler');
-            var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-            endMeasure('Disassembler');
-            printlines([disassembly]);
+        if (outputBytecode || outputDisassembly) {
+            startMeasure('Code generator');
+            var codeGenerator = new CodeGenerator();
+            var bytecodeOutput = codeGenerator.generate(statements);
+            // var bytecode = bytecodeOutput.bytecode;
+            endMeasure('Code generator');
+            
+            if (outputDisassembly) {
+                startMeasure('Disassembler');
+                var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
+                endMeasure('Disassembler');
+                printlines([disassembly]);
+            }
+
+            if (outputBytecode) {
+                trace('-------------');
+                trace('VM interpreter');
+                startMeasure('VM interpreter');
+                var vm = new VM();
+                vm.run(bytecodeOutput);
+                endMeasure('VM interpreter');
+                trace('-------------');
+            }
         }
 
-        trace('VM interpreter');
-        startMeasure('VM interpreter');
-        var vm = new VM();
-        vm.run(bytecodeOutput);
-        endMeasure('VM interpreter');
-        trace('-------------');
-
-        trace('AST interpreter');
+        // trace('AST interpreter');
         startMeasure('AST interpreter');
         // trace('AST output:');
         interpreter.interpret(statements);
         endMeasure('AST interpreter');
-        trace('-------------');
+        // trace('-------------');
 
         if (outputTimes) {
             println('\n$measureOutput');
