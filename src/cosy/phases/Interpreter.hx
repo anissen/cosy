@@ -294,7 +294,7 @@ class Interpreter {
                 } else throw new RuntimeError(op, 'Bracket notion is only allowed on arrays');
                 value;
             case StringInterpolation(exprs):
-                [ for (e in exprs) evaluate(e) ].join('');
+                [ for (e in exprs) stringify(evaluate(e)) ].join('');
             case Grouping(e):
                 evaluate(e);
             case MutArgument(keyword, name):
