@@ -114,6 +114,11 @@ fun x() { print "hej" }
 - [x] Make the CLI write out Cosy version and/or git commit
 - [x] Detect invalid concatinations (+) in the Typer (and show a hint about string interpolation if one of the types is a string)
 - [ ] Make `--times` show how many lines/second was processed (scanner + parser)
+- [ ] Replace `var` with `let` (because they're constants, not variables)
+- [ ] Improve error messages
+- [ ] Split Cosy.hx into Cosy.hx and Compiler.hx
+- [ ] Make embedded execution be two-part: scanning, parsing, typing, optimizing + interpreting. The first part should return an AST that can be handed to the interpreter. See https://github.com/HaxeFoundation/hscript/#example
+- [ ] Put colors on the Mandelbrot example (see https://asciinema.org/a/20055)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
@@ -151,5 +156,5 @@ fun x() { print "hej" }
 - [ ] Easy to integrate into C/C++ projects
 - [ ] Fibers á la Wren
 - [ ] Built-in threading
-- [ ] Make a Cosy debugger (https://www.google.com/search?q=how+to+write+a+debugger)
+- [ ] Make a Cosy debugger (https://www.google.com/search?q=how+to+write+a+debugger, https://microsoft.github.io/debug-adapter-protocol/)
 - [ ] Cosy Roguelike (see https://github.com/Kode/Kha/wiki/Tutorials, https://github.com/lewislepton/kha-examples, https://github.com/RblSb/khaguide)
