@@ -118,7 +118,6 @@ fun x() { print "hej" }
 - [ ] Improve error messages
 - [ ] Split Cosy.hx into Cosy.hx and Compiler.hx
 - [ ] Make embedded execution be two-part: scanning, parsing, typing, optimizing + interpreting. The first part should return an AST that can be handed to the interpreter. See https://github.com/HaxeFoundation/hscript/#example
-- [ ] Put colors on the Mandelbrot example (see https://asciinema.org/a/20055)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
