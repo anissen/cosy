@@ -8,7 +8,7 @@ SHARED_FLAGS := \
 	-std=c++17 \
 	-pedantic \
 	-Wshadow \
-	-I/Users/anders/haxe/haxe_libraries/hxcpp/4.2.1/haxelib/include \
+	-I/Users/anders/haxe/haxe_libraries/hxcpp/4.2.3/haxelib/include \
 	-L../../../bin/cpp_lib -I../../../bin/cpp_lib/include -lCosy
 
 build:
