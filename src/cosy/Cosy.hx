@@ -200,7 +200,7 @@ Options:
     }
 
     @:expose
-    static function validate(source:String) {
+    public static function validate(source:String): Bool {
         hadError = false;
 
         var scanner = new Scanner(source);
@@ -208,7 +208,7 @@ Options:
         var parser = new Parser(tokens);
         var statements = parser.parse();
 
-        if (hadError) return;
+        if (hadError) return false;
 
         var resolver = new Resolver(interpreter);
         resolver.resolve(statements);
@@ -216,7 +216,9 @@ Options:
         var typer = new Typer();
         typer.type(statements);
 
-        if (hadError) return;
+        if (hadError) return false;
+
+        return true;
     }
 
     @:expose
@@ -253,14 +255,16 @@ Options:
         measureOutput += '\n· ';
         measureOutput += color('$phase took\t${round2(duration, 3)} ms', Misc);
     }
-    
+
+    /*
+    Cosy.hx should be split into:
+    - Cosy.hx (main interface for CLI and embedding)
+    - Compiler.hx (compiler-specific stuff; parse(), validate(), run() etc.)
+    - Program.hx (abstraction of an executable; can set variables/functions and run specific functions, e.g. run_function('draw'))
+    */
+
     @:expose
-    public static function run(source :String) {
-        hadError = false;
-        measureOutput = color('Times:', Misc);
-
-        var start = Timer.stamp();
-
+    public static function parse(source :String): Null<Array<Stmt>> /* TODO: Should be Program */ {
         startMeasure('Scanner');
         var scanner = new Scanner(source);
         var tokens = scanner.scanTokens();
@@ -271,7 +275,7 @@ Options:
         var statements = parser.parse();
         endMeasure('Parser');
 
-        if (hadError) return;
+        if (hadError) return null;
 
         startMeasure('Optimizer');
         var optimizer = new Optimizer();
@@ -287,6 +291,17 @@ Options:
         var typer = new Typer();
         typer.type(statements);
         endMeasure('Typer');
+
+        return statements;
+    }
+    
+    @:expose
+    public static function run(source :String) {
+        hadError = false;
+        measureOutput = color('Times:', Misc);
+
+        var start = Timer.stamp();
+        var statements = parse(source);
 
         if (hadError) return;
         if (validateOnly) return;
