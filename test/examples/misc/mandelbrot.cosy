@@ -27,7 +27,7 @@ for y_pixel in 0..24 {
 
             // Stop if the point escaped.
             var d = (x0 * x0) + (y0 * y0)
-            if (d > 4) {
+            if d > 4 {
                 pixel = ' .:;+=xX$&'.split('')[floor(iter / 8)]
                 break
             }
