@@ -2,7 +2,6 @@ package cosy;
 
 import cosy.phases.*;
 import haxe.Timer;
-
 #if (sys || nodejs)
 import sys.FileSystem;
 import sys.io.File;
@@ -11,8 +10,8 @@ import haxe.io.Path;
 
 class Cosy {
     static final interpreter = new Interpreter();
-    public static final foreignFunctions :Map<String, ForeignFunction> = new Map();
-    public static final foreignVariables :Map<String, Any> = new Map();
+    public static final foreignFunctions: Map<String, ForeignFunction> = new Map();
+    public static final foreignVariables: Map<String, Any> = new Map();
 
     static var hadError = false;
     static var hadRuntimeError = false;
@@ -45,11 +44,11 @@ class Cosy {
             return lines;
         });
         Cosy.setFunction('read_file', (args) -> File.getContent(args[0]));
-        
+
         #if (cpp && static_link)
         return;
         #end
-        
+
         #if nodejs
         final usedAsModule = js.Syntax.code('require.main !== module');
         if (usedAsModule) return;
@@ -73,13 +72,12 @@ class Cosy {
                 case _: argErrors.push(arg);
             }
         }
-        
+
         if (args.length == 0 || argErrors.length > 0) {
             if (argErrors.length > 0) {
                 Sys.println('Unknown argument(s): ${argErrors.join(", ")}\n');
             }
-            Sys.println(
-'Cosy compiler (${getGitCommitSHA()} @ ${getBuildDate()})
+            Sys.println('Cosy compiler (${getGitCommitSHA()} @ ${getBuildDate()})
 Usage: cosy <options> [source file]
 
 Options:
@@ -92,11 +90,11 @@ Options:
 --validate-only  Only perform code validation.
 --times          Output time spent in each phase.
 --watch          Watch the file for changes and automatically rerun.
---no-colors      Disable colors in log output.'
-            );
+--no-colors      Disable colors in log output.');
+
             Sys.exit(64);
         }
-        
+
         var printCount = 0;
         if (outputPrettyPrint) printCount++;
         if (outputBytecode) printCount++;
@@ -177,7 +175,7 @@ Options:
 
     #if (sys || nodejs)
     @:expose
-    public static function runFile(path:String) {
+    public static function runFile(path: String) {
         var content = File.getContent(path);
         run(content);
         if (!watch) {
@@ -187,11 +185,12 @@ Options:
     }
     #end
 
-    public static function printlines(a :Array<Dynamic>) {
-        for (e in a) println(e);
+    public static function printlines(a: Array<Dynamic>) {
+        for (e in a)
+            println(e);
     }
 
-    public static function println(v :Dynamic) {
+    public static function println(v: Dynamic) {
         #if (sys || nodejs)
         Sys.println(v);
         #elseif js
@@ -200,7 +199,7 @@ Options:
     }
 
     @:expose
-    public static function validate(source:String): Bool {
+    public static function validate(source: String): Bool {
         hadError = false;
 
         var scanner = new Scanner(source);
@@ -222,10 +221,10 @@ Options:
     }
 
     @:expose
-    public static function setFunction(name: String, func: Array<Any> -> Any) {
+    public static function setFunction(name: String, func: Array<Any>->Any) {
         foreignFunctions[name] = new ForeignFunction(func);
     }
-    
+
     @:expose
     public static function setVariable(name: String, variable: Any) {
         foreignVariables[name] = variable;
@@ -238,9 +237,9 @@ Options:
         return num;
     }
 
-    static var measureStarts :Map<String, Float> = new Map();
+    static var measureStarts: Map<String, Float> = new Map();
     static var measureOutput = '';
-    
+
     static function startMeasure(phase: String) {
         if (!outputTimes) return;
         measureStarts[phase] = Timer.stamp();
@@ -257,14 +256,13 @@ Options:
     }
 
     /*
-    Cosy.hx should be split into:
-    - Cosy.hx (main interface for CLI and embedding)
-    - Compiler.hx (compiler-specific stuff; parse(), validate(), run() etc.)
-    - Program.hx (abstraction of an executable; can set variables/functions and run specific functions, e.g. run_function('draw'))
-    */
-
+        Cosy.hx should be split into:
+        - Cosy.hx (main interface for CLI and embedding)
+        - Compiler.hx (compiler-specific stuff; parse(), validate(), run() etc.)
+        - Program.hx (abstraction of an executable; can set variables/functions and run specific functions, e.g. run_function('draw'))
+     */
     @:expose
-    public static function parse(source :String): Null<Array<Stmt>> /* TODO: Should be Program */ {
+    public static function parse(source: String): Null<Array<Stmt>> /* TODO: Should be Program */ {
         startMeasure('Scanner');
         var scanner = new Scanner(source);
         var tokens = scanner.scanTokens();
@@ -294,9 +292,9 @@ Options:
 
         return statements;
     }
-    
+
     @:expose
-    public static function run(source :String) {
+    public static function run(source: String) {
         hadError = false;
         measureOutput = color('Times:', Misc);
 
@@ -308,7 +306,8 @@ Options:
 
         if (outputPrettyPrint) {
             var printer = new AstPrinter();
-            for (stmt in statements) println(printer.printStmt(stmt));
+            for (stmt in statements)
+                println(printer.printStmt(stmt));
             return;
         }
 
@@ -320,10 +319,11 @@ Options:
             println(stdLib);
 
             var printer = new JavaScriptPrinter();
-            for (stmt in statements) println(printer.printStmt(stmt));
+            for (stmt in statements)
+                println(printer.printStmt(stmt));
             return;
         }
-        
+
         if (outputMarkdown) {
             println('# Cosy file');
             println('## Functions');
@@ -339,7 +339,7 @@ Options:
             var bytecodeOutput = codeGenerator.generate(statements);
             // var bytecode = bytecodeOutput.bytecode;
             endMeasure('Code generator');
-            
+
             if (outputDisassembly) {
                 startMeasure('Disassembler');
                 var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
@@ -374,12 +374,12 @@ Options:
         }
     }
 
-    static function reportWarning(line:Int, where:String, message:String) {
+    static function reportWarning(line: Int, where: String, message: String) {
         var msg = '[line $line] Warning $where: $message';
         println(color(msg, Warning));
     }
 
-    public static function warning(data:ErrorData, message:String) {
+    public static function warning(data: ErrorData, message: String) {
         switch data {
             case Line(line): reportWarning(line, '', message);
             case Token(token) if (token.type == Eof): reportWarning(token.line, 'at end', message);
@@ -387,32 +387,32 @@ Options:
         }
     }
 
-    static function report(line:Int, where:String, message:String) {
+    static function report(line: Int, where: String, message: String) {
         var msg = '[line $line] Error $where: $message';
         println(color(msg, Error));
         hadError = true;
     }
 
-    public static function error(data:ErrorData, message:String) {
+    public static function error(data: ErrorData, message: String) {
         switch data {
             case Line(line): report(line, '', message);
             case Token(token) if (token.type == Eof): report(token.line, 'at end', message);
             case Token(token): report(token.line, 'at "${token.lexeme}"', message);
         }
     }
-    
-    public static function hint(token: Token, message:String) {
+
+    public static function hint(token: Token, message: String) {
         var msg = '[line ${token.line}] Hint: $message';
         println(color(msg, Hint));
     }
 
-    public static function runtimeError(e:RuntimeError) {
+    public static function runtimeError(e: RuntimeError) {
         var msg = '[line ${e.token.line}] Runtime Error: ${e.message}';
         println(color(msg, Error));
         hadRuntimeError = true;
     }
 
-    static function color(text :String, color :Color) {
+    static function color(text: String, color: Color) {
         if (noColors) return text;
         return switch color {
             case Error: '\033[1;31m$text\033[0m';
@@ -431,21 +431,26 @@ enum Color {
 }
 
 enum ErrorDataType {
-    Line(v:Int);
-    Token(v:Token);
+    Line(v: Int);
+    Token(v: Token);
 }
 
 abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
-    @:from static inline function line(v:Int):ErrorData return Line(v);
-    @:from static inline function token(v:Token):ErrorData return Token(v);
+    @:from static inline function line(v: Int): ErrorData return Line(v);
+
+    @:from static inline function token(v: Token): ErrorData return Token(v);
 }
 
 class ForeignFunction implements Callable {
     final method: (args: Array<Any>) -> Any;
+
     public function new(method: (args: Array<Any>) -> Any) {
         this.method = method;
     }
-    public function arity() :Int return 0; // never called
-    public function call(interpreter :Interpreter, args :Array<Any>) :Any return method(args);
-    public function toString() :String return '<foreign fn>';
+
+    public function arity(): Int return 0; // never called
+
+    public function call(interpreter: Interpreter, args: Array<Any>): Any return method(args);
+
+    public function toString(): String return '<foreign fn>';
 }

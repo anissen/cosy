@@ -12,6 +12,10 @@
     "haxe.configurations": [
         ["scripts/eval_debug.hxml"], // hxml file is a normal Haxe argument too
     ],
+    "[haxe]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
+    },
     "files.associations": {
         "*.cosy": "haxe",
     }

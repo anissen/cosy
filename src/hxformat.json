@@ -1,0 +1,17 @@
+{
+  "indentation": {
+    "character": "    "
+  },
+  "sameLine": {
+    "ifBody": "keep",
+    "elseBody": "same",
+    "caseBody": "same",
+    "functionBody": "same",
+    "whileBody": "same",
+    "doWhileBody": "same"
+  },
+  "whitespace": {
+    "typeHintColonPolicy": "after",
+    "typeCheckColonPolicy": "after"
+  }
+}

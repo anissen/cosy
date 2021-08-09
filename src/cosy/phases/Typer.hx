@@ -12,37 +12,37 @@ typedef StructMeta = {
 }
 
 class Typer {
-    var structsMeta :Map<String, StructMeta> = new Map();
-    var variableTypes :Map<String, VariableType> = new Map();
+    var structsMeta: Map<String, StructMeta> = new Map();
+    var variableTypes: Map<String, VariableType> = new Map();
     var currentFunctionReturnType = new cosy.Stack<ComputedVariableType>();
-	
-	public function new() {
+
+    public function new() {
         variableTypes.set('clock', Function([], Number));
         variableTypes.set('random', Function([], Number));
-	}
-	
-	public inline function type(stmts:Array<Stmt>): Void {
-        typeStmts(stmts);
-	}
+    }
 
-	inline function typeStmts(stmts:Array<Stmt>) {
+    public inline function type(stmts: Array<Stmt>): Void {
+        typeStmts(stmts);
+    }
+
+    inline function typeStmts(stmts: Array<Stmt>) {
         for (stmt in stmts) {
             typeStmt(stmt);
         }
-	}
+    }
 
-    inline function typeExprs(exprs:Array<Expr>) {
+    inline function typeExprs(exprs: Array<Expr>) {
         for (expr in exprs) {
             typeExpr(expr);
         }
     }
 
-	function typeStmt(stmt:Stmt) {
-		switch stmt {
-			case Block(statements): typeStmts(statements);
-			case Break(keyword):
-			case Continue(keyword):
-			case Var(name, type, init, mut, foreign): 
+    function typeStmt(stmt: Stmt) {
+        switch stmt {
+            case Block(statements): typeStmts(statements);
+            case Break(keyword):
+            case Continue(keyword):
+            case Var(name, type, init, mut, foreign):
                 var computedType = typeVar(name, type, init);
                 if (mut) computedType = Mutable(computedType);
                 variableTypes.set(name.lexeme, computedType);
@@ -68,13 +68,13 @@ class Typer {
                 }
                 typeStmts(body);
             case ForCondition(keyword, cond, body): typeStmts(body);
-			case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType, foreign);
-			case Expression(e): typeExpr(e);
-            case Print(keyword, e): 
+            case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType, foreign);
+            case Expression(e): typeExpr(e);
+            case Print(keyword, e):
                 var type = typeExpr(e);
                 if (type.match(Void)) Cosy.error(keyword, 'Cannot print values of type void.');
                 type;
-			case If(keyword, cond, then, el):
+            case If(keyword, cond, then, el):
                 var condType = typeExpr(cond);
                 switch condType {
                     case Boolean | Mutable(Boolean):
@@ -82,7 +82,7 @@ class Typer {
                 }
                 typeStmt(then);
                 if (el != null) typeStmt(el);
-			case Return(kw, val):
+            case Return(kw, val):
                 if (currentFunctionReturnType.length == 0) return; // Attempting to do a top-level return.
                 var functionReturnType = currentFunctionReturnType.peek();
                 var annotatedReturnType = functionReturnType.annotated;
@@ -91,12 +91,12 @@ class Typer {
                     Cosy.error(kw, 'Function expected to return ${formatType(annotatedReturnType)} but got ${formatType(functionReturnType.computed)}');
                 }
             case Struct(name, declarations):
-                var structMeta :StructMeta = { members: new Map() };
-                var decls :Map<String, VariableType> = new Map();
+                var structMeta: StructMeta = {members: new Map()};
+                var decls: Map<String, VariableType> = new Map();
                 for (decl in declarations) {
                     switch decl {
-                        case Var(name, type, init, mut, foreign): 
-                            structMeta.members.set(name.lexeme, { mutable: mut, initialized: (init != null) });
+                        case Var(name, type, init, mut, foreign):
+                            structMeta.members.set(name.lexeme, {mutable: mut, initialized: (init != null)});
                             var computedType = typeVar(name, type, init);
                             if (mut) computedType = Mutable(computedType);
                             decls.set(name.lexeme, computedType);
@@ -105,18 +105,19 @@ class Typer {
                 }
                 structsMeta.set(name.lexeme, structMeta);
                 variableTypes.set(name.lexeme, Struct(decls));
-		}
+        }
     }
-    
+
     function typeVar(name: Token, type: VariableType, init: Expr): VariableType {
         var initType = (init != null ? typeExpr(init) : VariableType.Unknown);
         if (initType.match(Void)) Cosy.error(name, 'Cannot assign Void to a variable');
-        if (init != null && !matchType(initType, type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
+        if (init != null && !matchType(initType,
+            type)) Cosy.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
         return (!type.match(Unknown) ? type : initType);
     }
-	
-	function typeExpr(expr:Expr) :VariableType {
-		var ret = switch expr {
+
+    function typeExpr(expr: Expr): VariableType {
+        var ret = switch expr {
             case ArrayLiteral(keyword, exprs):
                 var arrayType = Unknown;
                 for (i in 0...exprs.length) {
@@ -130,7 +131,7 @@ class Typer {
                     }
                 }
                 return Array(arrayType);
-			case Assign(name, op, value):
+            case Assign(name, op, value):
                 var assigningType = typeExpr(value);
                 var varType = variableTypes.get(name.lexeme);
                 if (varType.match(Unknown) || varType.match(Mutable(Unknown))) {
@@ -139,20 +140,20 @@ class Typer {
                     Cosy.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType, false)}');
                 }
                 return assigningType;
-			case Variable(name):
+            case Variable(name):
                 if (variableTypes.exists(name.lexeme)) {
                     return variableTypes.get(name.lexeme);
                 } else { // can happen for recursive function calls
                     return Unknown;
                 }
-			case Binary(left, op, right): 
+            case Binary(left, op, right):
                 switch op.type {
                     case Star | Slash | Minus | Percent: Number;
                     case Bang | BangEqual | Equal | EqualEqual | Greater | GreaterEqual | Less | LessEqual: Boolean;
                     case Plus:
                         var leftType = typeExpr(left);
                         var rightType = typeExpr(right);
-                        
+
                         var isLeftNumber = leftType.match(Number) || leftType.match(Mutable(Number));
                         var isRightNumber = rightType.match(Number) || rightType.match(Mutable(Number));
                         if (isLeftNumber && isRightNumber) return Number;
@@ -177,12 +178,12 @@ class Typer {
                                 Cosy.error(op, 'Values of types ${formatType(leftType)} and ${formatType(rightType)} cannot be added.');
                             }
                         }
-                        
+
                         Unknown;
                     case _: throw 'should never happen';
                 }
             case Logical(left, _, right): Boolean;
-			case Call(callee, paren, arguments):
+            case Call(callee, paren, arguments):
                 var calleeType = typeExpr(callee);
                 calleeType = switch (calleeType) {
                     case Mutable(f): f;
@@ -195,7 +196,7 @@ class Typer {
                 switch calleeType {
                     case Function(paramTypes, returnType):
                         type = returnType;
-                        var argumentTypes = [ for (arg in arguments) typeExpr(arg) ];
+                        var argumentTypes = [for (arg in arguments) typeExpr(arg)];
                         // trace(paramTypes);
                         // trace(argumentTypes);
                         if (arguments.length != paramTypes.length) {
@@ -207,7 +208,8 @@ class Typer {
                             for (i in 0...paramTypes.length) {
                                 if (argumentTypes[i].match(Unknown)) Cosy.warning(paren, 'Argument ${i + 1} has type Unknown.');
                                 if (!matchType(argumentTypes[i], paramTypes[i])) {
-                                    Cosy.error(paren, 'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
+                                    Cosy.error(paren,
+                                        'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
                                 }
                             }
                         }
@@ -217,7 +219,7 @@ class Typer {
                     case _: // TODO: maybe throw 'unexpected';
                 }
                 type;
-			case Get(obj, name):
+            case Get(obj, name):
                 var objType = typeExpr(obj);
                 return switch objType {
                     case Mutable(Array(t)):
@@ -232,21 +234,33 @@ class Typer {
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case 'shift': Function([], t);
-                            case _: Cosy.error(name, 'Unknown array property or function.'); Void;
+                            case _:
+                                Cosy.error(name, 'Unknown array property or function.');
+                                Void;
                         }
                     case Array(t):
                         return switch name.lexeme {
                             case 'length': Number;
-                            case 'push': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
-                            case 'concat': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
-                            case 'pop': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
+                            case 'push':
+                                Cosy.error(name, 'Cannot call mutating method on immutable array.');
+                                Void;
+                            case 'concat':
+                                Cosy.error(name, 'Cannot call mutating method on immutable array.');
+                                Void;
+                            case 'pop':
+                                Cosy.error(name, 'Cannot call mutating method on immutable array.');
+                                Void;
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
-                            case 'shift': Cosy.error(name, 'Cannot call mutating method on immutable array.'); Void;
+                            case 'shift':
+                                Cosy.error(name, 'Cannot call mutating method on immutable array.');
+                                Void;
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
-                            case _: Cosy.error(name, 'Unknown array property or function.'); Void;
+                            case _:
+                                Cosy.error(name, 'Unknown array property or function.');
+                                Void;
                         }
                     case Text | Mutable(Text):
                         return switch name.lexeme {
@@ -256,9 +270,11 @@ class Typer {
                             case 'char_at': Function([Number], Text);
                             case 'char_code_at': Function([Number], Number);
                             case 'substr': Function([Number, Number], Text);
-                            case _: Cosy.error(name, 'Unknown array property or function.'); Void;
+                            case _:
+                                Cosy.error(name, 'Unknown array property or function.');
+                                Void;
                         }
-                    case NamedStruct(structName) | Mutable(NamedStruct(structName)): 
+                    case NamedStruct(structName) | Mutable(NamedStruct(structName)):
                         return switch variableTypes.get(structName) {
                             case Struct(structType) | Mutable(Struct(structType)):
                                 if (structType.exists(name.lexeme)) {
@@ -277,12 +293,12 @@ class Typer {
                             return Unknown;
                         }
                     case _: throw 'Get "${name.lexeme}" on unknown type ${objType}';
-                    // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
+                        // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
             case GetIndex(obj, index):
                 var objType = typeExpr(obj);
                 return switch objType {
-                    case Mutable(Array(t)) |  Array(t): t;
+                    case Mutable(Array(t)) | Array(t): t;
                     case _: throw 'Get index of unknown type ${objType}';
                 }
             case MutArgument(keyword, name):
@@ -294,7 +310,7 @@ class Typer {
                     case _: Cosy.error(name, 'Only mutable structs and arrays can be passed as "mut". You passed ${formatType(type, false)}.');
                 }
                 type;
-			case Set(obj, name, op, value):
+            case Set(obj, name, op, value):
                 var objType = typeExpr(obj);
                 objType = switch objType {
                     case Mutable(NamedStruct(n)) | NamedStruct(n): variableTypes.get(n);
@@ -311,14 +327,16 @@ class Typer {
                                 case t: t;
                             }
                             if (!structDeclType.match(Mutable(_))) Cosy.error(name, 'Member is not mutable.');
-                            else if (!matchType(valueType, nonMutableStructDeclType)) Cosy.error(name, 'Expected value of type ${formatType(nonMutableStructDeclType)} but got ${formatType(valueType)}');
+                            else if (!matchType(valueType,
+                                nonMutableStructDeclType)) Cosy.error(name,
+                                    'Expected value of type ${formatType(nonMutableStructDeclType)} but got ${formatType(valueType)}');
                         } else {
                             Cosy.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                         }
-                    case _: //trace(objType); TODO: throw 'unexpected';
+                    case _: // trace(objType); TODO: throw 'unexpected';
                 }
                 typeExpr(value);
-			case SetIndex(obj, index, op, value):
+            case SetIndex(obj, index, op, value):
                 var objType = typeExpr(obj);
                 var valueType = typeExpr(value);
                 switch objType {
@@ -329,7 +347,7 @@ class Typer {
                 typeExpr(value);
             case StringInterpolation(exprs): Text; // TODO: Is this good enough?
             case Grouping(e): typeExpr(e);
-            case Unary(op, e): 
+            case Unary(op, e):
                 switch op.type {
                     case Bang: Boolean;
                     case Minus: Number;
@@ -342,7 +360,7 @@ class Typer {
                     case Struct(variables): variables;
                     case _: throw 'unexpected';
                 }
-                
+
                 for (decl in decls) {
                     switch decl {
                         case Assign(name, op, value):
@@ -360,7 +378,8 @@ class Typer {
                                 case t: t;
                             }
                             assignedMembers.push(name.lexeme);
-                            if (!matchType(valueType, memberType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
+                            if (!matchType(valueType,
+                                memberType)) Cosy.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
                         case _: throw 'unexpected';
                     }
                 }
@@ -370,12 +389,12 @@ class Typer {
                     }
                 }
                 structType;
-			case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType, false);
-			case Literal(v) if (Std.isOfType(v, Float)): Number;
-			case Literal(v) if (Std.isOfType(v, String)): Text;
-			case Literal(v) if (Std.isOfType(v, Bool)): Boolean;
-			case Literal(v): Unknown;
-		}
+            case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType, false);
+            case Literal(v) if (Std.isOfType(v, Float)): Number;
+            case Literal(v) if (Std.isOfType(v, String)): Text;
+            case Literal(v) if (Std.isOfType(v, Bool)): Boolean;
+            case Literal(v): Unknown;
+        }
         if (Cosy.strict && ret.match(Unknown)) {
             switch expr {
                 case Call(callee, paren, arguments): Cosy.error(paren, '[strict] ${expr.getName()} has unknown type.');
@@ -384,20 +403,22 @@ class Typer {
         }
         return ret;
     }
-    
-    function handleFunc(name:Token, params:Array<Param>, body:Array<Stmt>, returnType: ComputedVariableType, foreign: Bool) :VariableType {
+
+    function handleFunc(name: Token, params: Array<Param>, body: Array<Stmt>, returnType: ComputedVariableType, foreign: Bool): VariableType {
         if (Cosy.strict) {
             for (i in 0...params.length) {
                 if (params[i].type.match(Unknown)) Cosy.error(params[i].name, '[strict] Parameter has unknown type.');
             }
         }
-        var types = [ for (param in params) param.type ];
-        for (param in params) variableTypes.set(param.name.lexeme, param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
+        var types = [for (param in params) param.type];
+        for (param in params)
+            variableTypes.set(param.name.lexeme,
+                param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
-        currentFunctionReturnType.push({ annotated: returnType.annotated, computed: Void });
+        currentFunctionReturnType.push({annotated: returnType.annotated, computed: Void});
         typeStmts(body);
         var computedReturnType = currentFunctionReturnType.pop().computed;
-        
+
         returnType.computed = switch returnType.annotated {
             case Unknown if (!foreign): computedReturnType;
             case _: returnType.annotated;
@@ -407,7 +428,7 @@ class Typer {
         return Function(types, returnType.computed);
     }
 
-    function matchType(valueType :VariableType, expectedType :VariableType) :Bool {
+    function matchType(valueType: VariableType, expectedType: VariableType): Bool {
         // trace('-----');
         // trace('valueType: $valueType');
         // trace('expectedType: $expectedType');
@@ -438,10 +459,10 @@ class Typer {
         }
     }
 
-    function formatType(type: VariableType, showMutable: Bool = true) :String {
+    function formatType(type: VariableType, showMutable: Bool = true): String {
         return switch type {
             case Function(paramTypes, returnType):
-                var paramStr = [ for (paramType in paramTypes) formatType(paramType) ];
+                var paramStr = [for (paramType in paramTypes) formatType(paramType)];
                 var returnStr = switch returnType {
                     case Void: '';
                     case _: ' -> ' + formatType(returnType);
@@ -454,9 +475,9 @@ class Typer {
             case Boolean: 'Bool';
             case Mutable(t): showMutable ? 'Mut(${formatType(t)})' : formatType(t);
             case NamedStruct(name): formatType(variableTypes.get(name));
-            case Struct(decls): 
-                var declsStr = [ for (name => type in decls) '$name ${formatType(type)}' ];
-                declsStr.sort(function (a, b) {
+            case Struct(decls):
+                var declsStr = [for (name => type in decls) '$name ${formatType(type)}'];
+                declsStr.sort(function(a, b) {
                     if (a < b) return -1;
                     if (b < a) return 1;
                     return 0;

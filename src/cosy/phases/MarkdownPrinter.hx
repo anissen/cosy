@@ -6,7 +6,7 @@ class MarkdownPrinter {
     var astPrinter: AstPrinter;
     var result: String;
 
-	public function new() {
+    public function new() {
         astPrinter = new AstPrinter();
     }
 
@@ -14,7 +14,7 @@ class MarkdownPrinter {
         result += '$s\n';
     }
 
-    public function printStatements(statements:Array<Stmt>):String {
+    public function printStatements(statements: Array<Stmt>): String {
         result = '';
         for (stmt in statements) {
             printStmt(stmt);
@@ -22,12 +22,12 @@ class MarkdownPrinter {
         return result;
     }
 
-	function printStmt(statement:Stmt) {
-		switch statement {
-			case Function(name, params, body, returnType, foreign):
+    function printStmt(statement: Stmt) {
+        switch statement {
+            case Function(name, params, body, returnType, foreign):
                 if (foreign) return;
-                
-                var params = [ for (param in params) '${param.name.lexeme} ${param.type.formatType()}' ].join(", ");
+
+                var params = [for (param in params) '${param.name.lexeme} ${param.type.formatType()}'].join(", ");
                 print('### `${name.lexeme}($params) ${returnType.computed.formatType()}`'); // TODO: This ignores the actual types found in the typer phase :/
 
                 print('Annotated return type: ${returnType.annotated.formatType()}\n');
@@ -38,7 +38,7 @@ class MarkdownPrinter {
                 //     for (p in params) s += '* ${p.name.lexeme} (${astPrinter.formatType(p.type)})\n';
                 //     s += '\n';
                 // }
-                
+
                 // if (!returnType.match(Void)) {
                 //     s += 'Return type: ${astPrinter.formatType(returnType)}\n'; // TODO: This ignores the actual types found in the typer phase :/
                 // }
@@ -52,13 +52,15 @@ ${astPrinter.printStmts(body)}
 </details>
 
 ');
+
             // case Block(statements): Lambda.foreach(statements, printStmt);
-            case Block(statements): for (stmt in statements) printStmt(stmt);
-			case _:
-		}
-	}
-	
-	public function printExpr(expr:Expr):String {
-		return astPrinter.printExpr(expr);
-	}
+            case Block(statements): for (stmt in statements)
+                    printStmt(stmt);
+            case _:
+        }
+    }
+
+    public function printExpr(expr: Expr): String {
+        return astPrinter.printExpr(expr);
+    }
 }

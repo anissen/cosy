@@ -6,7 +6,7 @@ import haxe.io.BytesOutput;
 enum ByteCodeOp {
     ConstantString(str: String);
     GetLocal(index: Int);
-    SetLocal(index :Int);
+    SetLocal(index: Int);
     Pop(n: Int);
     PushTrue;
     PushFalse;
@@ -75,24 +75,20 @@ class Output {
     public var bytecode: Bytes;
     public var tokens = new Map<Int, Token>();
 
-    public function new() {
-        
-    }
+    public function new() {}
 }
 
 class CodeGenerator {
-    var localsCounter :Int;
-    var localIndexes :Map<String, Int>;
+    var localsCounter: Int;
+    var localIndexes: Map<String, Int>;
     var output: Output;
     var emitCount = 0;
 
     var bytes: BytesOutput; // TODO: Bytecode may not be compatible between target languages due to differences in how bytes are represented in haxe.io.Bytes
 
-	public function new() {
+    public function new() {}
 
-	}
-
-	public inline function generate(stmts: Array<Stmt>): Output {
+    public inline function generate(stmts: Array<Stmt>): Output {
         localsCounter = 0;
         localIndexes = new Map();
         output = new Output();
@@ -102,11 +98,11 @@ class CodeGenerator {
         return output;
     }
 
-	function genStmts(stmts: Array<Stmt>) {
+    function genStmts(stmts: Array<Stmt>) {
         for (stmt in stmts) {
             genStmt(stmt);
         }
-	}
+    }
 
     function genExprs(exprs: Array<Expr>) {
         for (expr in exprs) {
@@ -114,9 +110,9 @@ class CodeGenerator {
         }
     }
 
-	function genStmt(stmt: Stmt) {
+    function genStmt(stmt: Stmt) {
         if (stmt == null) return;
-		switch stmt {
+        switch stmt {
             case Print(keyword, expr):
                 add_token(keyword);
                 genExpr(expr);
@@ -137,7 +133,7 @@ class CodeGenerator {
                 var thenJump = emitJump(JumpIfFalse);
                 emit(Pop(1));
                 genStmt(then);
-                
+
                 var elseJump = emitJump(Jump);
 
                 patchJump(thenJump);
@@ -165,14 +161,14 @@ class CodeGenerator {
                 var exitJump = emitJump(JumpIfFalse);
                 emit(Pop(1));
                 genStmts(body);
-                
+
                 // Increment counter variable TODO: Could be replaced by an increment instruciton, e.g. "Inc(index)"
                 emit(GetLocal(localsIndex));
                 emit(PushNumber(1));
                 emit(Addition);
                 emit(SetLocal(localsIndex));
                 emit(Pop(1));
-                
+
                 emitLoop(loopStart);
 
                 patchJump(exitJump);
@@ -185,7 +181,7 @@ class CodeGenerator {
                     var exitJump = emitJump(JumpIfFalse);
                     emit(Pop(1));
                     genStmts(body);
-                    
+
                     emitLoop(loopStart);
 
                     patchJump(exitJump);
@@ -201,7 +197,7 @@ class CodeGenerator {
                 final localsIndex = localsCounter++;
                 localIndexes[name.lexeme] = localsIndex;
                 emit(SetLocal(localsIndex));
-                
+
                 var funcJump = emitJump(Jump);
 
                 for (i => param in params) { // TODO: must be in a function frame (otherwise i is not unique)
@@ -213,13 +209,15 @@ class CodeGenerator {
                 patchJump(funcJump);
             //     trace('function ${name.lexeme}');
             case Expression(expr): genExpr(expr);
-			case _: trace('Unhandled statement: $stmt'); [];
-		}
+            case _:
+                trace('Unhandled statement: $stmt');
+                [];
+        }
     }
-    
-	function genExpr(expr: Expr) {
+
+    function genExpr(expr: Expr) {
         if (expr == null) return;
-		switch expr {
+        switch expr {
             case Assign(name, op, value):
                 final localIndex = localIndexes[name.lexeme];
                 add_token(name);
@@ -264,12 +262,12 @@ class CodeGenerator {
                 genExprs(arguments);
                 genExpr(callee);
                 emit(Call(arguments.length));
-                // Load function?
+            // Load function?
             case Literal(v) if (Std.isOfType(v, Bool)): (v ? emit(PushTrue) : emit(PushFalse));
             case Literal(v) if (Std.isOfType(v, Float)): emit(PushNumber(v));
             case Literal(v) if (Std.isOfType(v, String)): emit(ConstantString(v));
             case Grouping(expr): genExpr(expr);
-            case Variable(name): 
+            case Variable(name):
                 add_token(name);
                 emit(GetLocal(localIndexes[name.lexeme]));
             case Logical(left, op, right):
@@ -288,14 +286,14 @@ class CodeGenerator {
                         patchJump(endJump);
                     case _: throw 'Unhandled Logical case!';
                 }
-            case Unary(op, right): 
+            case Unary(op, right):
                 add_token(op);
                 if (!op.type.match(Minus)) throw 'error';
                 genExpr(right);
                 emit(Negate);
-			// case _: trace('Unhandled expression: $expr'); [];
+            // case _: trace('Unhandled expression: $expr'); [];
             case _: throw 'Unhandled expression: $expr';
-		}
+        }
     }
 
     function add_token(token: Token) {
@@ -307,31 +305,27 @@ class CodeGenerator {
     function emit(op: ByteCodeOp) {
         emitCount++;
         switch op {
-            case Print: 
-                bytes.writeByte(ByteCodeOpValue.Print);
+            case Print: bytes.writeByte(ByteCodeOpValue.Print);
             case ConstantString(str):
                 var stringIndex = output.strings.length;
                 output.strings.push(str);
                 bytes.writeByte(ByteCodeOpValue.ConstantString);
                 bytes.writeInt32(stringIndex);
-            case GetLocal(index): 
+            case GetLocal(index):
                 bytes.writeByte(ByteCodeOpValue.GetLocal);
                 bytes.writeByte(index);
-            case SetLocal(index): 
+            case SetLocal(index):
                 bytes.writeByte(ByteCodeOpValue.SetLocal);
                 bytes.writeByte(index);
-            case Pop(n): 
+            case Pop(n):
                 bytes.writeByte(ByteCodeOpValue.Pop);
                 bytes.writeByte(n);
-            case PushTrue: 
-                bytes.writeByte(ByteCodeOpValue.PushTrue);
-            case PushFalse:
-                bytes.writeByte(ByteCodeOpValue.PushFalse);
+            case PushTrue: bytes.writeByte(ByteCodeOpValue.PushTrue);
+            case PushFalse: bytes.writeByte(ByteCodeOpValue.PushFalse);
             case PushNumber(n):
                 bytes.writeByte(ByteCodeOpValue.PushNumber);
                 bytes.writeFloat(n);
-            case BinaryOp(type): 
-                bytes.writeByte(binaryOpCode(type));
+            case BinaryOp(type): bytes.writeByte(binaryOpCode(type));
             case Call(argCount):
                 bytes.writeByte(ByteCodeOpValue.Call);
                 bytes.writeByte(argCount);
@@ -339,17 +333,16 @@ class CodeGenerator {
                 var functionStart = bytes.length + 12; // TODO: HACK, +12 is to skip the following jump statement
                 bytes.writeByte(ByteCodeOpValue.Function);
                 bytes.writeInt32(functionStart);
-                // bytes.writeByte(argCount);
-                
-                // var stringIndex = output.strings.length;
-                // output.strings.push(name);
-                // bytes.writeInt32(stringIndex);
-                
-                // var functionIndex = output.functions.length;
-                // output.functions.push({ name: name, pos: functionStart, length: (bytes.length + 19) - functionStart });
-                // bytes.writeInt32(functionIndex);
-            case Return:
-                bytes.writeByte(ByteCodeOpValue.Return);
+            // bytes.writeByte(argCount);
+
+            // var stringIndex = output.strings.length;
+            // output.strings.push(name);
+            // bytes.writeInt32(stringIndex);
+
+            // var functionIndex = output.functions.length;
+            // output.functions.push({ name: name, pos: functionStart, length: (bytes.length + 19) - functionStart });
+            // bytes.writeInt32(functionIndex);
+            case Return: bytes.writeByte(ByteCodeOpValue.Return);
             case JumpIfFalse:
                 bytes.writeByte(ByteCodeOpValue.JumpIfFalse);
                 bytes.writeInt32(666); // placeholder for jump argument
@@ -409,7 +402,9 @@ class CodeGenerator {
             case LessEqual: LessEqual;
             case Greater: Greater;
             case GreaterEqual: GreaterEqual;
-            case _: trace('unhandled type: $type'); throw 'error';
+            case _:
+                trace('unhandled type: $type');
+                throw 'error';
         }
     }
 }
