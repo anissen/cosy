@@ -12,6 +12,7 @@
   },
   "whitespace": {
     "typeHintColonPolicy": "after",
-    "typeCheckColonPolicy": "after"
+    "typeCheckColonPolicy": "after",
+    "colonPolicy": "after"
   }
 }

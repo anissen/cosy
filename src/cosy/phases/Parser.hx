@@ -27,7 +27,7 @@ class Parser {
             if (match([Var])) return varDeclaration(false, foreign);
             if (match([Mut])) return varDeclaration(true, foreign);
             return statement();
-        } catch (e:ParseError) {
+        } catch (e: ParseError) {
             synchronize();
             return null;
         }

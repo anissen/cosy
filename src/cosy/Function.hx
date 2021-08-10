@@ -26,7 +26,7 @@ class Function implements Callable {
 
         try {
             interpreter.executeBlock(body, environment);
-        } catch (ret:Return) {
+        } catch (ret: Return) {
             if (!isInitializer) return ret.value;
         }
 
