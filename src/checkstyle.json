@@ -256,7 +256,7 @@
 				"compareOpPolicy": "around",
 				"bitwiseOpPolicy": "around",
 				"boolOpPolicy": "around",
-				"intervalOpPolicy": "around",
+				"intervalOpPolicy": "none",
 				"arrowPolicy": "around",
 				"arrowFunctionPolicy": "ignore",
 				"oldFunctionTypePolicy": "none",

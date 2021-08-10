@@ -154,7 +154,7 @@ Options:
         #if !display
         return macro $v{Date.now().toString()};
         #else
-        return macro $v{""};
+        return macro $v{''};
         #end
     }
 
