@@ -21,7 +21,7 @@ class Interpreter {
         try {
             for (statement in statements)
                 execute(statement);
-        } catch (e:RuntimeError) {
+        } catch (e: RuntimeError) {
             Cosy.runtimeError(e);
         }
     }
@@ -43,9 +43,13 @@ class Interpreter {
                         if (name != null) env.define(name.lexeme, counter);
                         try {
                             executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
-                        } catch (err:Continue) {}
+                        } catch (err: Continue) {
+                            // do nothing
+                        }
                     }
-                } catch (err:Break) {}
+                } catch (err: Break) {
+                    // do nothing
+                }
             case ForArray(name, array, body):
                 final arr: Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
                 final env = new Environment(environment);
@@ -54,18 +58,26 @@ class Interpreter {
                         env.define(name.lexeme, elem);
                         try {
                             executeBlock(body, env);
-                        } catch (err:Continue) {}
+                        } catch (err: Continue) {
+                            // do nothing
+                        }
                     }
-                } catch (err:Break) {}
+                } catch (err: Break) {
+                    // do nothing
+                }
             case ForCondition(keyword, cond, body):
                 final env = new Environment(environment);
                 try {
                     while (cond != null ? isTruthy(evaluate(cond)) : true) {
                         try {
                             executeBlock(body, env);
-                        } catch (err:Continue) {}
+                        } catch (err: Continue) {
+                            // do nothing
+                        }
                     }
-                } catch (err:Break) {}
+                } catch (err: Break) {
+                    // do nothing
+                }
             case Function(name, params, body, returnType, foreign):
                 if (foreign) {
                     environment.define(name.lexeme, Cosy.foreignFunctions[name.lexeme]);
@@ -111,15 +123,15 @@ class Interpreter {
         locals.set(expr, depth);
     }
 
-    public function executeBlock(statements: Array<Stmt>, environment: Environment) {
-        final previous = this.environment;
+    public function executeBlock(statements: Array<Stmt>, env: Environment) {
+        final previous = environment;
         try {
-            this.environment = environment;
+            environment = env;
             for (statement in statements)
                 execute(statement);
-            this.environment = previous; // emulates "finally" statement
-        } catch (e:Dynamic) {
-            this.environment = previous; // emulates "finally" statement
+            environment = previous; // emulates "finally" statement
+        } catch (e: Any) {
+            environment = previous; // emulates "finally" statement
             throw e;
         }
     }
@@ -142,7 +154,7 @@ class Interpreter {
         else throw new RuntimeError(op, 'Operands ${getPrintableValue(left)} and ${getPrintableValue(right)} cannot be concatenated.');
     }
 
-    function getPrintableValue(value: Any) {
+    function getPrintableValue(value: Any): Any {
         if (Std.isOfType(value, String)) return '"$value"';
         return value;
     }
@@ -337,8 +349,8 @@ class Interpreter {
             case 'push': new CustomCallable(1, (args->args.map(array.push)));
             case 'concat': new CustomCallable(1, (args -> (args[0]: Array<Any>).map(array.push)));
             case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
-            case 'pop': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot pop from empty array.'):array.pop())));
-            case 'shift': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot shift from empty array.'):array.shift())));
+            case 'pop': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot pop from empty array.'): array.pop())));
+            case 'shift': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot shift from empty array.'): array.shift())));
             case 'map': new CustomCallable(1, function(args) {
                     var arg: Callable = args[0];
                     return [for (v in array) arg.call(this, [v])];

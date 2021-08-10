@@ -150,7 +150,7 @@ Options:
         #end
     }
 
-    static macro function getBuildDate() {
+    static macro function getBuildDate(): haxe.macro.Expr {
         #if !display
         return macro $v{Date.now().toString()};
         #else
@@ -158,7 +158,7 @@ Options:
         #end
     }
 
-    static macro function getGitCommitSHA() {
+    static macro function getGitCommitSHA(): haxe.macro.Expr {
         #if !display
         var process = new sys.io.Process('git', ['rev-parse', '--short', 'HEAD']);
         if (process.exitCode() != 0) {
@@ -169,7 +169,7 @@ Options:
         var commitSHA = process.stdout.readLine();
         return macro $v{commitSHA};
         #else
-        return macro $v{""};
+        return macro $v{''};
         #end
     }
 
@@ -185,12 +185,12 @@ Options:
     }
     #end
 
-    public static function printlines(a: Array<Dynamic>) {
+    public static function printlines(a: Array<Any>) {
         for (e in a)
             println(e);
     }
 
-    public static function println(v: Dynamic) {
+    public static function println(v: Any) {
         #if (sys || nodejs)
         Sys.println(v);
         #elseif js
@@ -412,7 +412,7 @@ Options:
         hadRuntimeError = true;
     }
 
-    static function color(text: String, color: Color) {
+    static function color(text: String, color: Color): String {
         if (noColors) return text;
         return switch color {
             case Error: '\033[1;31m$text\033[0m';

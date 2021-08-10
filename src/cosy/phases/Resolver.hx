@@ -1,10 +1,10 @@
 package cosy.phases;
 
 typedef Variable = {
-    var name: Token;
-    var state: VariableState;
-    var mutable: Bool;
-    var member: Bool;
+    name: Token,
+    state: VariableState,
+    mutable: Bool,
+    member: Bool,
 }
 
 class Resolver {
@@ -230,7 +230,7 @@ class Resolver {
 
         for (name => variable in scope) {
             if (StringTools.startsWith(variable.name.lexeme, '_')) continue; // ignore variables starting with underscore
-            if (!variable.member && variable.state.match(Defined)) Cosy.error(variable.name, "Local variable is not used.");
+            if (!variable.member && variable.state.match(Defined)) Cosy.error(variable.name, 'Local variable is not used.');
         }
     }
 
