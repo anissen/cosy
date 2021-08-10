@@ -144,7 +144,8 @@ fun x() { print "hej" }
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 - [x] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
 - [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
-- [ ] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting, example configuration: https://github.com/armory3d/zui/blob/master/checkstyle.json)
+- [x] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting)
+- [x] Use a code linter (https://github.com/HaxeCheckstyle/haxe-checkstyle)
 - [ ] Put on Haxelib
 
 ## Long shots

@@ -47,13 +47,10 @@
 			"type": "CyclomaticComplexity",
 			"props": {
 				"thresholds": [
-					{
-						"severity": "WARNING",
-						"complexity": 16
-					},
+					
 					{
 						"severity": "ERROR",
-						"complexity": 26
+						"complexity": 36
 					}
 				]
 			}
@@ -228,7 +225,7 @@
 		{
 			"type": "NestedControlFlow",
 			"props": {
-				"max": 3
+				"max": 5
 			}
 		},
 		{
@@ -364,8 +361,7 @@
 					"FUNCTION",
 					"FOR",
 					"WHILE",
-					"SWITCH",
-					"TRY"
+					"SWITCH"
 				],
 				"option": "aloneorsingle"
 			}
@@ -417,16 +413,6 @@
 				"policy": "onlySingle",
 				"allowException": true
 			}
-		},
-		{
-			"type": "TODOComment",
-			"props": {
-				"format": "^\\s*(TODO|FIXME|HACK|XXX|BUG)"
-			}
-		},
-		{
-			"type": "Trace",
-			"props": {}
 		},
 		{
 			"type": "TrailingWhitespace",
