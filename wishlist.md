@@ -115,9 +115,11 @@ fun x() { print "hej" }
 - [x] Detect invalid concatinations (+) in the Typer (and show a hint about string interpolation if one of the types is a string)
 - [ ] Make `--times` show how many lines/second was processed (scanner + parser)
 - [ ] Replace `var` with `let` (because they're constants, not variables)
+- [ ] Replace `print` with `log` (shorter, more concise)
 - [ ] Improve error messages
 - [ ] Split Cosy.hx into Cosy.hx and Compiler.hx
 - [ ] Make embedded execution be two-part: scanning, parsing, typing, optimizing + interpreting. The first part should return an AST that can be handed to the interpreter. See https://github.com/HaxeFoundation/hscript/#example
+- [ ] Show a stack trace on exceptions
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

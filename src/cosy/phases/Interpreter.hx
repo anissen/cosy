@@ -358,6 +358,8 @@ class Interpreter {
             case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
             case 'pop': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot pop from empty array.'): array.pop())));
             case 'shift': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot shift from empty array.'): array.shift())));
+            case 'remove': new CustomCallable(1,
+                    (args -> (array.length == 0?throw new RuntimeError(name, 'Cannot remove from empty array.'): array.splice(args[0], 1))));
             case 'map': new CustomCallable(1, function(args) {
                     var arg: Callable = args[0];
                     return [for (v in array) arg.call(this, [v])];
