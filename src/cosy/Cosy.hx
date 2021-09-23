@@ -9,43 +9,14 @@ import haxe.io.Path;
 #end
 
 class Cosy {
-    static final interpreter = new Interpreter();
-    public static final foreignFunctions: Map<String, ForeignFunction> = new Map();
-    public static final foreignVariables: Map<String, Any> = new Map();
-
-    static var hadError = false;
-    static var hadRuntimeError = false;
-    static var outputPrettyPrint = false;
-    static var outputBytecode = false;
-    static var outputJavaScript = false;
-    static var outputMarkdown = false;
-    static var outputDisassembly = false;
-    static var validateOnly = false;
-    static var watch = false;
-    static var outputTimes = false;
-    static var noColors = false;
-    public static var strict = false;
+    static var compiler: Compiler = new Compiler();
 
     static function main() {
-        Cosy.setFunction('random_int', (args) -> return Std.random(args[0]));
-        Cosy.setFunction('floor', (args) -> return Math.floor(args[0]));
-        Cosy.setFunction('string_to_number', (args) -> {
-            // TODO: Should return an error if failing to parse. For now, it simply returns zero.
-            final value = Std.parseInt(args[0]);
-            return (value != null ? value : 0);
-        });
-        Cosy.setFunction('string_from_char_code', (args) -> String.fromCharCode(args[0]));
-
-        #if (sys || nodejs)
-        Cosy.setFunction('read_input', (args) -> Sys.stdin().readLine());
-        Cosy.setFunction('read_lines', (args) -> {
-            var lines = File.getContent(args[0]).split('\n');
-            lines.pop(); // remove last line (assuming empty line)
-            return lines;
-        });
-        Cosy.setFunction('read_file', (args) -> File.getContent(args[0]));
-
         #if (cpp && static_link)
+        return;
+        #end
+
+        #if (!sys && !nodejs)
         return;
         #end
 
@@ -54,21 +25,22 @@ class Cosy {
         if (usedAsModule) return;
         #end
 
+        #if sys
         var args = Sys.args();
         var argErrors = [];
         for (i in 0...args.length - 1) {
             var arg = args[i];
             switch arg {
-                case '--prettyprint': outputPrettyPrint = true;
-                case '--bytecode': outputBytecode = true;
-                case '--disassembly': outputDisassembly = true;
-                case '--javascript': outputJavaScript = true;
-                case '--markdown': outputMarkdown = true;
-                case '--strict': strict = true;
-                case '--validate-only': validateOnly = true;
-                case '--watch': watch = true;
-                case '--times': outputTimes = true;
-                case '--no-colors': noColors = true;
+                case '--prettyprint': compiler.outputPrettyPrint = true;
+                case '--bytecode': compiler.outputBytecode = true;
+                case '--disassembly': compiler.outputDisassembly = true;
+                case '--javascript': compiler.outputJavaScript = true;
+                case '--markdown': compiler.outputMarkdown = true;
+                case '--strict': compiler.strict = true;
+                case '--validate-only': compiler.validateOnly = true;
+                case '--watch': compiler.watch = true;
+                case '--times': compiler.outputTimes = true;
+                case '--no-colors': compiler.noColors = true;
                 case _: argErrors.push(arg);
             }
         }
@@ -96,11 +68,11 @@ Options:
         }
 
         var printCount = 0;
-        if (outputPrettyPrint) printCount++;
-        if (outputBytecode) printCount++;
-        // if (outputDisassembly) printCount++;
-        if (outputJavaScript) printCount++;
-        if (outputMarkdown) printCount++;
+        if (compiler.outputPrettyPrint) printCount++;
+        if (compiler.outputBytecode) printCount++;
+        // if (compiler.outputDisassembly) printCount++;
+        if (compiler.outputJavaScript) printCount++;
+        if (compiler.outputMarkdown) printCount++;
         if (printCount > 1) {
             Sys.println('Only pass one of --prettyprint/--bytecode/--disassembly/--javascript/--markdown\n');
             Sys.exit(64);
@@ -124,11 +96,11 @@ Options:
             Sys.exit(64);
         }
 
-        runFile(file);
+        compiler.runFile(file);
 
-        if (watch) {
+        if (compiler.watch) {
             var stat = FileSystem.stat(file);
-            function has_file_changed() {
+            function has_file_changed(): Bool {
                 if (stat == null) return false;
                 var new_stat = FileSystem.stat(file);
                 if (new_stat == null) return false;
@@ -140,8 +112,8 @@ Options:
                 if (has_file_changed()) {
                     var time = Date.now();
                     var text = '> "$file" changed at $time';
-                    Sys.println(noColors ? text : '\033[1;34m$text\033[0m');
-                    runFile(file);
+                    Sys.println(compiler.noColors ? text : '\033[1;34m$text\033[0m');
+                    compiler.runFile(file);
                 }
             }
             var timer = new Timer(1000);
@@ -173,18 +145,6 @@ Options:
         #end
     }
 
-    #if (sys || nodejs)
-    @:expose
-    public static function runFile(path: String) {
-        var content = File.getContent(path);
-        run(content);
-        if (!watch) {
-            if (hadError) Sys.exit(65);
-            if (hadRuntimeError) Sys.exit(70);
-        }
-    }
-    #end
-
     public static function printlines(a: Array<Any>) {
         for (e in a)
             println(e);
@@ -200,59 +160,38 @@ Options:
 
     @:expose
     public static function validate(source: String): Bool {
-        hadError = false;
+        return compiler.validate(source);
+    }
 
-        var scanner = new Scanner(source);
-        var tokens = scanner.scanTokens();
-        var parser = new Parser(tokens);
-        var statements = parser.parse();
+    #if (sys || nodejs)
+    @:expose
+    public static function runFile(path: String) {
+        var source = File.getContent(path);
+        runSource(source);
+    }
+    #end
 
-        if (hadError) return false;
-
-        var resolver = new Resolver(interpreter);
-        resolver.resolve(statements);
-
-        var typer = new Typer();
-        typer.type(statements);
-
-        if (hadError) return false;
-
-        return true;
+    @:expose
+    public static function runSource(source: String) {
+        var program = createProgram();
+        runProgram(program);
     }
 
     @:expose
-    public static function setFunction(name: String, func: Array<Any>->Any) {
-        foreignFunctions[name] = new ForeignFunction(func);
+    public static function createProgram(): Program {
+        return new Program();
     }
+
+    // @:expose
+    // public static function createProgram(source: String): Null<Program> {
+    //     return compiler.createProgram(source);
+    // }
 
     @:expose
-    public static function setVariable(name: String, variable: Any) {
-        foreignVariables[name] = variable;
-    }
-
-    static function round2(number: Float, precision: Int): Float {
-        var num = number;
-        num = num * Math.pow(10, precision);
-        num = Math.round(num) / Math.pow(10, precision);
-        return num;
-    }
-
-    static var measureStarts: Map<String, Float> = new Map();
-    static var measureOutput = '';
-
-    static function startMeasure(phase: String) {
-        if (!outputTimes) return;
-        measureStarts[phase] = Timer.stamp();
-    }
-
-    static function endMeasure(phase: String) {
-        if (!outputTimes) return;
-        if (!measureStarts.exists(phase)) throw 'Measurement for $phase has not been started';
-        var end = Timer.stamp();
-        var duration = (end - measureStarts[phase]) * 1000;
-        while (phase.length < 15) phase += ' ';
-        measureOutput += '\n· ';
-        measureOutput += color('$phase took\t${round2(duration, 3)} ms', Misc);
+    public static function runProgram(program: Program) {
+        // program.statements = parse(program);
+        var interpreter = new Interpreter();
+        interpreter.run(program);
     }
 
     /*
@@ -260,120 +199,8 @@ Options:
         - Cosy.hx (main interface for CLI and embedding)
         - Compiler.hx (compiler-specific stuff; parse(), validate(), run() etc.)
         - Program.hx (abstraction of an executable; can set variables/functions and run specific functions, e.g. run_function('draw'))
+        - [Some utility class? Logging, measurements, printing, macros]
      */
-    @:expose
-    public static function parse(source: String): Null<Array<Stmt>> /* TODO: Should be Program */ {
-        startMeasure('Scanner');
-        var scanner = new Scanner(source);
-        var tokens = scanner.scanTokens();
-        endMeasure('Scanner');
-
-        startMeasure('Parser');
-        var parser = new Parser(tokens);
-        var statements = parser.parse();
-        endMeasure('Parser');
-
-        if (hadError) return null;
-
-        startMeasure('Optimizer');
-        var optimizer = new Optimizer();
-        statements = optimizer.optimize(statements);
-        endMeasure('Optimizer');
-
-        startMeasure('Resolver');
-        var resolver = new Resolver(interpreter);
-        resolver.resolve(statements);
-        endMeasure('Resolver');
-
-        startMeasure('Typer');
-        var typer = new Typer();
-        typer.type(statements);
-        endMeasure('Typer');
-
-        return statements;
-    }
-
-    @:expose
-    public static function run(source: String) {
-        hadError = false;
-        measureOutput = color('Times:', Misc);
-
-        var start = Timer.stamp();
-        var statements = parse(source);
-
-        if (hadError) return;
-        if (validateOnly) return;
-
-        if (outputPrettyPrint) {
-            var printer = new AstPrinter();
-            for (stmt in statements)
-                println(printer.printStmt(stmt));
-            return;
-        }
-
-        if (outputJavaScript) {
-            // Hack to inject a JavaScript standard library
-            var stdLib = '// standard library\n';
-            stdLib += 'const clock = Date.now;\n';
-            stdLib += 'const string_from_char_code = String.fromCharCode;';
-            println(stdLib);
-
-            var printer = new JavaScriptPrinter();
-            for (stmt in statements)
-                println(printer.printStmt(stmt));
-            return;
-        }
-
-        if (outputMarkdown) {
-            println('# Cosy file');
-            println('## Functions');
-
-            var printer = new MarkdownPrinter();
-            println(printer.printStatements(statements));
-            return;
-        }
-
-        if (outputBytecode || outputDisassembly) {
-            startMeasure('Code generator');
-            var codeGenerator = new CodeGenerator();
-            var bytecodeOutput = codeGenerator.generate(statements);
-            // var bytecode = bytecodeOutput.bytecode;
-            endMeasure('Code generator');
-
-            if (outputDisassembly) {
-                startMeasure('Disassembler');
-                var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-                endMeasure('Disassembler');
-                printlines([disassembly]);
-            }
-
-            if (outputBytecode) {
-                trace('-------------');
-                trace('VM interpreter');
-                startMeasure('VM interpreter');
-                var vm = new VM();
-                vm.run(bytecodeOutput);
-                endMeasure('VM interpreter');
-                trace('-------------');
-            }
-        }
-
-        // trace('AST interpreter');
-        startMeasure('AST interpreter');
-        // trace('AST output:');
-        interpreter.interpret(statements);
-        endMeasure('AST interpreter');
-        // trace('-------------');
-
-        if (outputTimes) {
-            println('\n$measureOutput');
-
-            var end = Timer.stamp();
-            var totalDuration = (end - start) * 1000;
-            println(color('Total: ${round2(totalDuration, 3)} ms', Misc));
-        }
-    }
-
     static function reportWarning(line: Int, where: String, message: String) {
         var msg = '[line $line] Warning $where: $message';
         println(color(msg, Warning));
@@ -390,7 +217,7 @@ Options:
     static function report(line: Int, where: String, message: String) {
         var msg = '[line $line] Error $where: $message';
         println(color(msg, Error));
-        hadError = true;
+        compiler.hadError = true;
     }
 
     public static function error(data: ErrorData, message: String) {
@@ -409,11 +236,11 @@ Options:
     public static function runtimeError(e: RuntimeError) {
         var msg = '[line ${e.token.line}] Runtime Error: ${e.message}';
         println(color(msg, Error));
-        hadRuntimeError = true;
+        compiler.hadRuntimeError = true;
     }
 
-    static function color(text: String, color: Color): String {
-        if (noColors) return text;
+    public static function color(text: String, color: Color): String {
+        if (compiler.noColors) return text;
         return switch color {
             case Error: '\033[1;31m$text\033[0m';
             case Warning: '\033[0;33m$text\033[0m';
@@ -439,18 +266,4 @@ abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
     @:from static inline function line(v: Int): ErrorData return Line(v);
 
     @:from static inline function token(v: Token): ErrorData return Token(v);
-}
-
-class ForeignFunction implements Callable {
-    final method: (args: Array<Any>) -> Any;
-
-    public function new(method: (args: Array<Any>) -> Any) {
-        this.method = method;
-    }
-
-    public function arity(): Int return 0; // never called
-
-    public function call(interpreter: Interpreter, args: Array<Any>): Any return method(args);
-
-    public function toString(): String return '<foreign fn>';
 }

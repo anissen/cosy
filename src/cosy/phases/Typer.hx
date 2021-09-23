@@ -15,13 +15,15 @@ class Typer {
     var structsMeta: Map<String, StructMeta> = new Map();
     var variableTypes: Map<String, VariableType> = new Map();
     var currentFunctionReturnType = new cosy.Stack<ComputedVariableType>();
+    var strict: Bool;
 
     public function new() {
         variableTypes.set('clock', Function([], Number));
         variableTypes.set('random', Function([], Number));
     }
 
-    public inline function type(stmts: Array<Stmt>): Void {
+    public inline function type(stmts: Array<Stmt>, strict: Bool): Void {
+        this.strict = strict;
         typeStmts(stmts);
     }
 
@@ -165,7 +167,7 @@ class Typer {
                         var isLeftTyped = !leftType.match(Unknown);
                         var isRightTyped = !rightType.match(Unknown);
 
-                        if (Cosy.strict) {
+                        if (strict) {
                             if (!isLeftTyped) Cosy.error(op, 'Left side of "+" has unknown type.');
                             if (!isRightTyped) Cosy.error(op, 'Right side of "+" has unknown type.');
                         }
@@ -213,7 +215,7 @@ class Typer {
                                 }
                             }
                         }
-                    case Unknown: if (Cosy.strict) Cosy.error(paren, '[strict] Undefined type.');
+                    case Unknown: if (strict) Cosy.error(paren, '[strict] Undefined type.');
                     case Void: // TODO: what?
                     case Instance: // TODO: remove
                     case _: // TODO: maybe throw 'unexpected';
@@ -395,7 +397,7 @@ class Typer {
             case Literal(v) if (Std.isOfType(v, Bool)): Boolean;
             case Literal(v): Unknown;
         }
-        if (Cosy.strict && ret.match(Unknown)) {
+        if (strict && ret.match(Unknown)) {
             switch expr {
                 case Call(callee, paren, arguments): Cosy.error(paren, '[strict] ${expr.getName()} has unknown type.');
                 case _: Cosy.warning(-1, '[strict] ${expr.getName()} has unknown type.');
@@ -405,7 +407,7 @@ class Typer {
     }
 
     function handleFunc(name: Token, params: Array<Param>, body: Array<Stmt>, returnType: ComputedVariableType, foreign: Bool): VariableType {
-        if (Cosy.strict) {
+        if (strict) {
             for (i in 0...params.length) {
                 if (params[i].type.match(Unknown)) Cosy.error(params[i].name, '[strict] Parameter has unknown type.');
             }

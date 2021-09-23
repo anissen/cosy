@@ -1,12 +1,14 @@
 package cosy.phases;
 
-import cosy.Cosy.ForeignFunction;
+import cosy.Program.ForeignFunction;
 
 class Interpreter {
     final globals: Environment;
     final locals = new Locals();
 
     var environment: Environment;
+
+    var program: Program;
 
     static final uninitialized: Any = {};
 
@@ -17,7 +19,12 @@ class Interpreter {
         environment = globals;
     }
 
-    public function interpret(statements: Array<Stmt>) {
+    public function run(program: Program) {
+        this.program = program;
+        interpret(program.statements);
+    }
+
+    function interpret(statements: Array<Stmt>) {
         try {
             for (statement in statements)
                 execute(statement);
@@ -80,7 +87,7 @@ class Interpreter {
                 }
             case Function(name, params, body, returnType, foreign):
                 if (foreign) {
-                    environment.define(name.lexeme, Cosy.foreignFunctions[name.lexeme]);
+                    environment.define(name.lexeme, program.foreignFunctions[name.lexeme]);
                     return;
                 }
 
@@ -106,7 +113,7 @@ class Interpreter {
                 environment.assign(name, struct);
             case Var(name, type, init, mut, foreign):
                 if (foreign) {
-                    environment.define(name.lexeme, Cosy.foreignVariables[name.lexeme]);
+                    environment.define(name.lexeme, program.foreignVariables[name.lexeme]);
                     return;
                 }
 
@@ -257,7 +264,7 @@ class Interpreter {
                     throw new RuntimeError(paren, 'Can only call functions.');
                 } else {
                     final func: Callable = callee;
-                    if (!Std.isOfType(func, Cosy.ForeignFunction)) {
+                    if (!Std.isOfType(func, Program.ForeignFunction)) {
                         final arity = func.arity();
                         if (args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
                     }
