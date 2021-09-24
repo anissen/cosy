@@ -119,7 +119,17 @@ class Compiler {
         typer.type(statements, strict);
         endMeasure('Typer');
 
+        if (hadError) return null;
+        if (validateOnly) return null;
+
         return statements;
+    }
+
+    @:expose
+    public function runStatements(statements: Array<Stmt>): Void {
+        if (statements == null) return Cosy.println('Statements list is null.');
+        if (statements.length == 0) return Cosy.println('Statements list is empty.');
+        interpreter.run(statements, this);
     }
 
     @:expose
