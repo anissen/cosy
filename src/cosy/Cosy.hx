@@ -1,6 +1,5 @@
 package cosy;
 
-import cosy.phases.*;
 import haxe.Timer;
 #if (sys || nodejs)
 import sys.FileSystem;

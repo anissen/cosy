@@ -1,7 +1,15 @@
 package cosy;
 
+import cosy.phases.AstPrinter;
+import cosy.phases.Interpreter;
+import cosy.phases.JavaScriptPrinter;
+import cosy.phases.MarkdownPrinter;
+import cosy.phases.Optimizer;
+import cosy.phases.Parser;
+import cosy.phases.Resolver;
+import cosy.phases.Scanner;
+import cosy.phases.Typer;
 import haxe.Timer;
-import cosy.phases.*;
 #if (sys || nodejs)
 import sys.io.File;
 #end

@@ -1,7 +1,5 @@
 package cosy.phases;
 
-import cosy.Compiler.ForeignFunction;
-
 class Interpreter {
     final globals: Environment;
     final locals = new Locals();
