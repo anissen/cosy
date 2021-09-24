@@ -24,9 +24,7 @@ class Cosy {
         if (usedAsModule) return;
         #end
 
-        // final compiler = new Compiler();
-
-        #if sys
+        #if (sys || nodejs)
         var args = Sys.args();
         var argErrors = [];
         for (i in 0...args.length - 1) {
