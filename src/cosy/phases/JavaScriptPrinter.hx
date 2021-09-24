@@ -92,7 +92,7 @@ class JavaScriptPrinter {
                     }
                 ].join('') + '`';
             case StructInit(name, decls):
-                var init = [for (decl in decls) StringTools.replace(printExpr(decl), ' = ', ': ')];
+                var init = [for (decl in decls) printExpr(decl).replace(' = ', ': ')];
                 '{ ${init.join(", ")} }';
             case Unary(op, right): '${op.lexeme}${printExpr(right)}';
             case Variable(name): name.lexeme;

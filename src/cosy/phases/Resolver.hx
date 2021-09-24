@@ -135,7 +135,7 @@ class Resolver {
             case Variable(name):
                 if (scopes.peek().exists(name.lexeme)
                     && scopes.peek().get(name.lexeme).state.match(Declared)) Cosy.error(name, 'Cannot read local variable in its own initializer');
-                if (StringTools.startsWith(name.lexeme, '_')) Cosy.error(name, 'Variables starting with _ are considered unused.');
+                if (name.lexeme.startsWith('_')) Cosy.error(name, 'Variables starting with _ are considered unused.');
                 resolveLocal(expr, name, true);
             case Binary(left, _, right) | Logical(left, _, right):
                 resolveExpr(left);

@@ -101,9 +101,9 @@ class Scanner {
             // 		(String)
             if (peek() == '{'.code) {
                 var value = source.substring(start + 1, current);
-                value = StringTools.replace(value, '\\n', '\n');
-                value = StringTools.replace(value, '\\t', '\t');
-                value = StringTools.replace(value, '\\\'', '\'');
+                value = value.replace('\\n', '\n');
+                value = value.replace('\\t', '\t');
+                value = value.replace('\\\'', '\'');
                 addToken(String, value);
 
                 start = current;

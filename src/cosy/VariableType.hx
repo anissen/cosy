@@ -25,7 +25,7 @@ class VariableTypeTools {
             case Function(paramTypes, returnType):
                 var paramStr = [for (paramType in paramTypes) formatType(paramType)];
                 'Fn(${paramStr.join(", ")}) ${formatType(returnType, hideUnknown)}';
-            case Array(t): StringTools.trim('Array ' + formatType(t));
+            case Array(t): 'Array ' + formatType(t).trim();
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';

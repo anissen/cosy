@@ -55,7 +55,7 @@ class Parser {
             var name = null;
             if (check(Identifier)) {
                 name = consume(Identifier, 'Expect variable name.');
-                if (StringTools.startsWith(name.lexeme, '_')) error(name, 'Loop counters cannot be marked as unused. Use `for min...max` syntax instead.');
+                if (name.lexeme.startsWith('_')) error(name, 'Loop counters cannot be marked as unused. Use `for min...max` syntax instead.');
                 consume(In, 'Expect "in" after for loop identifier.');
             }
 
