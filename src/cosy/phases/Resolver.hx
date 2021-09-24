@@ -9,7 +9,7 @@ typedef Variable = {
 
 class Resolver {
     final interpreter: Interpreter;
-    final program: Program;
+    final compiler: Compiler;
 
     final snakeCaseRegex = ~/^[_a-z0-9]*$/;
 
@@ -17,9 +17,9 @@ class Resolver {
     var currentFunction: FunctionType = None;
     var currentStruct: StructType = None;
 
-    public function new(interpreter, program) {
+    public function new(interpreter, compiler) {
         this.interpreter = interpreter;
-        this.program = program;
+        this.compiler = compiler;
     }
 
     public inline function resolve(s) {
@@ -55,7 +55,7 @@ class Resolver {
             case Break(keyword):
             case Continue(keyword):
             case Var(name, type, init, mut, foreign):
-                if (foreign && !program.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
+                if (foreign && !compiler.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
                 if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Variable names must use snake_case.');
                 var member = currentStruct.match(Struct);
                 markTypeAsRead(type);
@@ -91,7 +91,7 @@ class Resolver {
                 resolveStmts(body);
                 endScope();
             case Function(name, params, body, returnType, foreign):
-                if (foreign && !program.foreignFunctions.exists(name.lexeme)) Cosy.error(name, 'Foreign function not set.');
+                if (foreign && !compiler.foreignFunctions.exists(name.lexeme)) Cosy.error(name, 'Foreign function not set.');
                 if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Function names must use snake_case.');
                 declare(name);
                 define(name);

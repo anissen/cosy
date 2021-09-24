@@ -7,6 +7,10 @@ import sys.io.File;
 #end
 
 class Compiler {
+    public final foreignFunctions: Map<String, ForeignFunction> = new Map();
+    public final foreignVariables: Map<String, Any> = new Map();
+
+    // public var statements: Array<Stmt> = new Array();
     final interpreter = new Interpreter();
 
     // TODO: All these properties should not be publically available to get/set
@@ -23,7 +27,26 @@ class Compiler {
     public var noColors = false;
     public var strict = false;
 
-    public function new() {}
+    public function new() {
+        setFunction('random_int', (args) -> return Std.random(args[0]));
+        setFunction('floor', (args) -> return Math.floor(args[0]));
+        setFunction('string_to_number', (args) -> {
+            // TODO: Should return an error if failing to parse. For now, it simply returns zero.
+            final value = Std.parseInt(args[0]);
+            return (value != null ? value : 0);
+        });
+        setFunction('string_from_char_code', (args) -> String.fromCharCode(args[0]));
+
+        #if (sys || nodejs)
+        setFunction('read_input', (args) -> Sys.stdin().readLine());
+        setFunction('read_lines', (args) -> {
+            var lines = File.getContent(args[0]).split('\n');
+            lines.pop(); // remove last line (assuming empty line)
+            return lines;
+        });
+        setFunction('read_file', (args) -> File.getContent(args[0]));
+        #end
+    }
 
     #if (sys || nodejs)
     @:expose // TODO: This probably only works on static fields!
@@ -41,17 +64,17 @@ class Compiler {
     public function validate(source: String): Bool {
         hadError = false;
 
-        var scanner = new Scanner(source);
-        var tokens = scanner.scanTokens();
-        var parser = new Parser(tokens);
-        var statements = parser.parse();
+        final scanner = new Scanner(source);
+        final tokens = scanner.scanTokens();
+        final parser = new Parser(tokens);
+        final statements = parser.parse();
 
         if (hadError) return false;
 
-        var resolver = new Resolver(interpreter, new Program());
+        final resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
 
-        var typer = new Typer();
+        final typer = new Typer();
         typer.type(statements, strict);
 
         if (hadError) return false;
@@ -60,7 +83,7 @@ class Compiler {
     }
 
     @:expose
-    public function parse(source: String, program: Program): Array<Stmt> {
+    public function parse(source: String): Array<Stmt> {
         startMeasure('Scanner');
         var scanner = new Scanner(source);
         var tokens = scanner.scanTokens();
@@ -79,7 +102,7 @@ class Compiler {
         endMeasure('Optimizer');
 
         startMeasure('Resolver');
-        var resolver = new Resolver(interpreter, program);
+        var resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
         endMeasure('Resolver');
 
@@ -97,13 +120,10 @@ class Compiler {
         measureOutput = Cosy.color('Times:', Misc);
 
         var start = Timer.stamp();
-        var program = new Program();
-        program.statements = parse(source, program);
+        final statements = parse(source);
 
         if (hadError) return;
         if (validateOnly) return;
-
-        var statements = program.statements;
 
         if (outputPrettyPrint) {
             var printer = new AstPrinter();
@@ -134,35 +154,35 @@ class Compiler {
             return;
         }
 
-        if (outputBytecode || outputDisassembly) {
-            startMeasure('Code generator');
-            var codeGenerator = new CodeGenerator();
-            var bytecodeOutput = codeGenerator.generate(statements);
-            // var bytecode = bytecodeOutput.bytecode;
-            endMeasure('Code generator');
+        // if (outputBytecode || outputDisassembly) {
+        //     startMeasure('Code generator');
+        //     var codeGenerator = new CodeGenerator();
+        //     var bytecodeOutput = codeGenerator.generate(statements);
+        //     // var bytecode = bytecodeOutput.bytecode;
+        //     endMeasure('Code generator');
 
-            if (outputDisassembly) {
-                startMeasure('Disassembler');
-                var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-                endMeasure('Disassembler');
-                Cosy.printlines([disassembly]);
-            }
+        //     if (outputDisassembly) {
+        //         startMeasure('Disassembler');
+        //         var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
+        //         endMeasure('Disassembler');
+        //         Cosy.printlines([disassembly]);
+        //     }
 
-            if (outputBytecode) {
-                trace('-------------');
-                trace('VM interpreter');
-                startMeasure('VM interpreter');
-                var vm = new VM();
-                vm.run(bytecodeOutput);
-                endMeasure('VM interpreter');
-                trace('-------------');
-            }
-        }
+        //     if (outputBytecode) {
+        //         trace('-------------');
+        //         trace('VM interpreter');
+        //         startMeasure('VM interpreter');
+        //         var vm = new VM();
+        //         vm.run(bytecodeOutput);
+        //         endMeasure('VM interpreter');
+        //         trace('-------------');
+        //     }
+        // }
 
         // trace('AST interpreter');
         startMeasure('AST interpreter');
         // trace('AST output:');
-        interpreter.run(program);
+        interpreter.run(statements, this);
         endMeasure('AST interpreter');
         // trace('-------------');
 
@@ -173,6 +193,16 @@ class Compiler {
             var totalDuration = (end - start) * 1000;
             Cosy.println(Cosy.color('Total: ${round2(totalDuration, 3)} ms', Misc));
         }
+    }
+
+    // @:expose // TODO: Expose only works with static fields
+    public function setFunction(name: String, func: Array<Any>->Any) {
+        foreignFunctions[name] = new ForeignFunction(func);
+    }
+
+    // @:expose
+    public function setVariable(name: String, variable: Any) {
+        foreignVariables[name] = variable;
     }
 
     // Measurement stuff...
@@ -200,4 +230,19 @@ class Compiler {
         measureOutput += '\n· ';
         measureOutput += Cosy.color('$phase took\t${round2(duration, 3)} ms', Misc);
     }
+}
+
+// TODO: Should probably be in it's own class
+class ForeignFunction implements Callable {
+    final method: (args: Array<Any>) -> Any;
+
+    public function new(method: (args: Array<Any>) -> Any) {
+        this.method = method;
+    }
+
+    public function arity(): Int return 0; // never called
+
+    public function call(interpreter: Interpreter, args: Array<Any>): Any return method(args);
+
+    public function toString(): String return '<foreign fn>';
 }

@@ -25,6 +25,8 @@ class Cosy {
         if (usedAsModule) return;
         #end
 
+        // final compiler = new Compiler();
+
         #if sys
         var args = Sys.args();
         var argErrors = [];
@@ -167,31 +169,18 @@ Options:
     @:expose
     public static function runFile(path: String) {
         var source = File.getContent(path);
-        runSource(source);
+        compiler.run(source);
     }
     #end
 
     @:expose
     public static function runSource(source: String) {
-        var program = createProgram();
-        runProgram(program);
+        compiler.run(source);
     }
 
     @:expose
-    public static function createProgram(): Program {
-        return new Program();
-    }
-
-    // @:expose
-    // public static function createProgram(source: String): Null<Program> {
-    //     return compiler.createProgram(source);
-    // }
-
-    @:expose
-    public static function runProgram(program: Program) {
-        // program.statements = parse(program);
-        var interpreter = new Interpreter();
-        interpreter.run(program);
+    public static function createCompiler(): Compiler {
+        return new Compiler();
     }
 
     /*

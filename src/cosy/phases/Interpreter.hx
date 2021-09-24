@@ -1,6 +1,6 @@
 package cosy.phases;
 
-import cosy.Program.ForeignFunction;
+import cosy.Compiler.ForeignFunction;
 
 class Interpreter {
     final globals: Environment;
@@ -8,7 +8,7 @@ class Interpreter {
 
     var environment: Environment;
 
-    var program: Program;
+    var compiler: Compiler = null;
 
     static final uninitialized: Any = {};
 
@@ -19,9 +19,9 @@ class Interpreter {
         environment = globals;
     }
 
-    public function run(program: Program) {
-        this.program = program;
-        interpret(program.statements);
+    public function run(statements: Array<Stmt>, compiler: Compiler) {
+        this.compiler = compiler;
+        interpret(statements);
     }
 
     function interpret(statements: Array<Stmt>) {
@@ -87,7 +87,7 @@ class Interpreter {
                 }
             case Function(name, params, body, returnType, foreign):
                 if (foreign) {
-                    environment.define(name.lexeme, program.foreignFunctions[name.lexeme]);
+                    environment.define(name.lexeme, compiler.foreignFunctions[name.lexeme]);
                     return;
                 }
 
@@ -113,7 +113,7 @@ class Interpreter {
                 environment.assign(name, struct);
             case Var(name, type, init, mut, foreign):
                 if (foreign) {
-                    environment.define(name.lexeme, program.foreignVariables[name.lexeme]);
+                    environment.define(name.lexeme, compiler.foreignVariables[name.lexeme]);
                     return;
                 }
 
@@ -264,7 +264,7 @@ class Interpreter {
                     throw new RuntimeError(paren, 'Can only call functions.');
                 } else {
                     final func: Callable = callee;
-                    if (!Std.isOfType(func, Program.ForeignFunction)) {
+                    if (!Std.isOfType(func, Compiler.ForeignFunction)) {
                         final arity = func.arity();
                         if (args.length != arity) throw new RuntimeError(paren, 'Expected $arity argument(s) but got ${args.length}.');
                     }
