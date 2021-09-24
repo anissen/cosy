@@ -1,6 +1,8 @@
 package cosy;
 
 import cosy.phases.AstPrinter;
+import cosy.phases.CodeGenerator;
+import cosy.phases.Disassembler;
 import cosy.phases.Interpreter;
 import cosy.phases.JavaScriptPrinter;
 import cosy.phases.MarkdownPrinter;
@@ -9,6 +11,7 @@ import cosy.phases.Parser;
 import cosy.phases.Resolver;
 import cosy.phases.Scanner;
 import cosy.phases.Typer;
+import cosy.phases.VM;
 import haxe.Timer;
 #if (sys || nodejs)
 import sys.io.File;
@@ -172,30 +175,30 @@ class Compiler {
             return;
         }
 
-        // if (outputBytecode || outputDisassembly) {
-        //     startMeasure('Code generator');
-        //     var codeGenerator = new CodeGenerator();
-        //     var bytecodeOutput = codeGenerator.generate(statements);
-        //     // var bytecode = bytecodeOutput.bytecode;
-        //     endMeasure('Code generator');
+        if (outputBytecode || outputDisassembly) {
+            startMeasure('Code generator');
+            var codeGenerator = new CodeGenerator();
+            var bytecodeOutput = codeGenerator.generate(statements);
+            // var bytecode = bytecodeOutput.bytecode;
+            endMeasure('Code generator');
 
-        //     if (outputDisassembly) {
-        //         startMeasure('Disassembler');
-        //         var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-        //         endMeasure('Disassembler');
-        //         Cosy.printlines([disassembly]);
-        //     }
+            if (outputDisassembly) {
+                startMeasure('Disassembler');
+                var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
+                endMeasure('Disassembler');
+                Cosy.printlines([disassembly]);
+            }
 
-        //     if (outputBytecode) {
-        //         trace('-------------');
-        //         trace('VM interpreter');
-        //         startMeasure('VM interpreter');
-        //         var vm = new VM();
-        //         vm.run(bytecodeOutput);
-        //         endMeasure('VM interpreter');
-        //         trace('-------------');
-        //     }
-        // }
+            if (outputBytecode) {
+                trace('-------------');
+                trace('VM interpreter');
+                startMeasure('VM interpreter');
+                var vm = new VM();
+                vm.run(bytecodeOutput);
+                endMeasure('VM interpreter');
+                trace('-------------');
+            }
+        }
 
         // trace('AST interpreter');
         startMeasure('AST interpreter');
