@@ -29,11 +29,7 @@ fun x() { print "hej" }
   - [ ] Optimize e.g. `x + 2 + 3 + 4 + 5 + 6` to `x + 20`
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
-- [ ] Replace classes with 
-  - [x] structs
-  - [ ] interfaces
-  - [ ] traits 
-  - [ ] member-functions
+- [x] Replace classes with structs
 - [ ] Modules
 - [ ] Experiment with bytecode
 - [x] Support for arrays
@@ -120,9 +116,14 @@ fun x() { print "hej" }
 - [ ] Split Cosy.hx into Cosy.hx and Compiler.hx
 - [ ] Make embedded execution be two-part: scanning, parsing, typing, optimizing + interpreting. The first part should return an AST that can be handed to the interpreter. See https://github.com/HaxeFoundation/hscript/#example
 - [ ] Show a stack trace on exceptions
+- [ ] Rename Resolver to StaticAnalyzer
+- [ ] Make Typer return a typed AST (otherwise rename to TypeChecker)
+- [ ] Typer: Variables multiplied, divided or subtracted must be numbers
+- [ ] Add a colored dot (●) in the error output to indicate which phases reported the error?
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
+- [ ] Add a "Why" section to the readme
 - [ ] Enable null-safety feature for Haxe
 - [ ] Unit tests
 - [ ] Make a Haxe-based test runner á la https://github.com/munificent/craftinginterpreters/blob/master/tool/bin/test.dart (see https://github.com/munificent/craftinginterpreters#testing). Alternatively, make built-in support for tests in Cosy.
