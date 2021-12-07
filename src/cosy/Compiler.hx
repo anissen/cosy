@@ -47,6 +47,9 @@ class Compiler {
             return (value != null ? value : 0);
         });
         setFunction('string_from_char_code', (args) -> String.fromCharCode(args[0]));
+        setFunction('cos', (args) -> Math.cos(args[0]));
+        setFunction('sin', (args) -> Math.sin(args[0]));
+        setFunction('atan2', (args) -> Math.atan2(args[0], args[1]));
 
         #if (sys || nodejs)
         setFunction('read_input', (args) -> Sys.stdin().readLine());
