@@ -13,7 +13,7 @@ class Resolver {
 
     final snakeCaseRegex = ~/^[_a-z0-9]*$/;
 
-    final scopes = new cosy.Stack<Map<String, Variable>>();
+    final scopes = new cosy.Stack<Map<String, Variable>>(); // TODO: Could we make do with a single map because variables cannot be shadowed?
     var currentFunction: FunctionType = None;
     var currentStruct: StructType = None;
 

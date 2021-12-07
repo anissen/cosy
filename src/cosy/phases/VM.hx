@@ -1,7 +1,6 @@
 package cosy.phases;
 
 import cosy.phases.CodeGenerator.ByteCodeOpValue;
-import haxe.ds.GenericStack;
 
 enum Value {
     Text(s: String);
@@ -21,8 +20,6 @@ class VM {
         // TODO: The global environment should also be treated like a function to get consistent behavior (see http://www.craftinginterpreters.com/calls-and-functions.html)
 
         var constantStrings = bytecode.strings;
-        var constantFunctions = bytecode.functions;
-        var x: GenericStack<Int>;
         var program = bytecode.bytecode;
         stack = [];
         ip = 0;
@@ -31,19 +28,19 @@ class VM {
         var pos = 0;
         var output = '';
 
-        function readFloat() {
+        function readFloat(): Float {
             final value = program.getFloat(pos);
             pos += sizeFloat;
             return value;
         }
 
-        function readInt() {
+        function readInt(): Int {
             final value = program.getInt32(pos);
             pos += sizeInt;
             return value;
         }
 
-        function readByte() {
+        function readByte(): Int {
             return program.get(pos++);
         }
 
@@ -190,7 +187,7 @@ class VM {
     // }
 
     inline function opAdd() {
-        return push(switch [pop(), pop()] {
+        push(switch [pop(), pop()] {
             case [Number(n1), Number(n2)]: Number(n1 + n2);
             case [Text(s1), Text(s2)]: Text(s1 + s2);
             case [Number(n1), Text(s2)]: Text(n1 + s2);
@@ -200,7 +197,7 @@ class VM {
     }
 
     inline function push(value: Value) {
-        return stack.push(value);
+        stack.push(value);
     }
 
     inline function pop(): Value {

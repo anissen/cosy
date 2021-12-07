@@ -24,8 +24,9 @@ class Interpreter {
 
     function interpret(statements: Array<Stmt>) {
         try {
-            for (statement in statements)
+            for (statement in statements) {
                 execute(statement);
+            }
         } catch (e: RuntimeError) {
             Cosy.runtimeError(e);
         }
@@ -44,6 +45,7 @@ class Interpreter {
                 if (!Std.isOfType(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 try {
+                    // TODO: Handle the case where fromVal is bigger than toVal
                     for (counter in (fromVal: Int)...(toVal: Int)) {
                         if (name != null) env.define(name.lexeme, counter);
                         try {

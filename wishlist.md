@@ -70,7 +70,7 @@ fun x() { print "hej" }
 - [ ] Switch/match functionality
 - [ ] Pure functions as default (cannot modify variables outside scope, must be deterministic, can only call other pure functions)
 - [ ] "Transform" functions that promote data-oriented design; must be pure, must not include `if` + called functions must satify the same constraints. Could be done with annotations, e.g. `[transform] fn trans() { ... }`
-- [ ] Better error position reporting with character from-to indexes
+- [ ] Better error position reporting with character from-to indexes [check the "Better error messages" stash]
 - [ ] A target that outputs code + documentation as markdown
 - [x] `for 0..10` syntax, instead of `for _i in 0..10`
 - [ ] Make a `strict` mode that requires specifying type information for function parameters and return values. It also requires functions to only access argument variables and local variables and non-mutable variables of outer scopes. I.e. it is not allowed to access mutable outer variables.

@@ -39,8 +39,8 @@ class Compiler {
     public var strict = false;
 
     public function new() {
-        setFunction('random_int', (args) -> return Std.random(args[0]));
-        setFunction('floor', (args) -> return Math.floor(args[0]));
+        setFunction('random_int', (args) -> Std.random(args[0]));
+        setFunction('floor', (args) -> Math.floor(args[0]));
         setFunction('string_to_number', (args) -> {
             // TODO: Should return an error if failing to parse. For now, it simply returns zero.
             final value = Std.parseInt(args[0]);

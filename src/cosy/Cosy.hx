@@ -203,7 +203,7 @@ Options:
     static function report(line: Int, where: String, message: String) {
         var msg = '[line $line] Error $where: $message';
         println(color(msg, Error));
-        compiler.hadError = true;
+        compiler.hadError = true; // TODO: This does not work when the compiler is instantiated.
     }
 
     public static function error(data: ErrorData, message: String) {
