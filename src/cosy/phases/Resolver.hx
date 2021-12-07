@@ -240,7 +240,7 @@ class Resolver {
         var scope = scopes.peek();
         if (scope.exists(name.lexeme)) {
             Cosy.error(name, 'Variable with this name already declared in this scope.');
-        } else {
+        } else if (!member) { // members are allowed to shadow variables in scope
             var variable = findInScopes(name);
             if (variable != null) Cosy.error(name, 'Shadows existing variable.');
         }

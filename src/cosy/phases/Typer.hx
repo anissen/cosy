@@ -344,7 +344,7 @@ class Typer {
                 switch objType {
                     case Array(t): Cosy.error(op, 'Cannot set value on immutable array.');
                     case Mutable(Array(t)): if (!matchType(valueType, t)) Cosy.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(t)}');
-                    case _: throw 'unexpected';
+                    case _: throw 'unexpected SetIndex on type ${objType} at line ${op.line}';
                 }
                 typeExpr(value);
             case StringInterpolation(exprs): Text; // TODO: Is this good enough?
