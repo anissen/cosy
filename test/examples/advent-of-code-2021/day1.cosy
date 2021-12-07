@@ -1,0 +1,36 @@
+// https://adventofcode.com/2021/day/1
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['199', '200', '208', '210', '200', '207', '240', '269', '260', '263']
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day1.txt')
+}
+
+var measurements = input.map(string_to_number)
+
+{ // Part 1
+    mut increases = 0
+    for i in 1..measurements.length {
+        if measurements[i] > measurements[i - 1] {
+            increases += 1
+        }
+    }
+    print '# PART 1: Number of increases in values: {increases}'
+}
+
+{ // Part 2
+    mut increases = 0
+    for i in 3..measurements.length {
+        var last_sum = measurements[i - 3] + measurements[i - 2] + measurements[i - 1]
+        var current_sum = measurements[i - 2] + measurements[i - 1] + measurements[i]
+        if current_sum > last_sum {
+            increases += 1
+        }
+    }
+    print '# PART 2: Number of increases in sum of sliding window: {increases}'
+}

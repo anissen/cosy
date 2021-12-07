@@ -1,0 +1,76 @@
+// https://adventofcode.com/2021/day/3
+
+foreign fn read_lines(path Str) Array Str
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['00100', '11110', '10110', '10111', '10101', '01111', '00111', '11100', '10000', '11001', '00010', '01010']
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day3.txt')
+}
+
+mut most_common_bits Array Num = []
+mut least_common_bits Array Num = []
+
+var number_of_bits = input[0].length
+for i in 0..number_of_bits {
+    mut high_bits = 0
+    mut low_bits = 0
+    for  bits in input {
+        var bit = bits.char_at(i)
+        if bit == '0' {
+            low_bits += 1
+        } else {
+            high_bits += 1
+        }
+    }
+    if high_bits > low_bits {
+        most_common_bits.push(1)
+        least_common_bits.push(0)
+    } else {
+        most_common_bits.push(0)
+        least_common_bits.push(1)
+    }
+}
+
+fn binary_to_decimal(bits Array Num) Num {
+    mut result = 0
+    for bit in bits {
+        result = result * 2 + bit
+    }
+    return result
+}
+var most_common_bits_value = binary_to_decimal(most_common_bits)
+var least_common_bits_value = binary_to_decimal(least_common_bits)
+
+{ // Part 1
+    print '# PART 1: Submarine power: {most_common_bits_value * least_common_bits_value}'
+}
+
+// mut oxygen_rating = input
+// mut co2_rating = input
+
+// for i in 0..number_of_bits {
+//     mut high_bits = 0
+//     mut low_bits = 0
+//     for  bits in input {
+//         var bit = bits.char_at(i)
+//         if bit == '0' {
+//             low_bits += 1
+//         } else {
+//             high_bits += 1
+//         }
+//     }
+//     if high_bits > low_bits {
+//         most_common_bits.push(1)
+//         least_common_bits.push(0)
+//     } else {
+//         most_common_bits.push(0)
+//         least_common_bits.push(1)
+//     }
+// }
+
+{ // Part 2
+    // print '# PART 2: Submarine position value: {result}'
+}

@@ -1,0 +1,70 @@
+// https://adventofcode.com/2021/day/2
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = [
+        'forward 5',
+        'down 5',
+        'forward 8',
+        'up 3',
+        'down 8',
+        'forward 2',
+    ]
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day2.txt')
+}
+
+struct Instruction {
+    var direction Str
+    var distance Num
+}
+mut instructions Array Instruction = []
+for i in input {
+    var instruction = i.split(' ')
+    var direction = instruction[0]
+    var distance = string_to_number(instruction[1])
+    instructions.push(Instruction {
+        direction = direction,
+        distance = distance,
+    })
+}
+
+{ // Part 1
+    mut horizontal_pos = 0
+    mut depth = 0
+    for i in instructions {
+        if i.direction == 'forward' {
+            horizontal_pos += i.distance
+        } else if i.direction == 'up' {
+            depth -= i.distance
+        } else if i.direction == 'down' {
+            depth += i.distance
+        }
+    }
+    var result = depth * horizontal_pos
+    print '# PART 1: Submarine position value: {result}'
+}
+
+{ // Part 2
+    mut horizontal_pos = 0
+    mut depth = 0
+    mut aim = 0
+    for i in instructions {
+        if i.direction == 'forward' {
+            horizontal_pos += i.distance
+            depth += aim * i.distance
+        } else if i.direction == 'up' {
+            aim -= i.distance
+        } else if i.direction == 'down' {
+            aim += i.distance
+        } else {
+            print 'unknown direction: {i.direction}'
+        }
+    }
+    var result = depth * horizontal_pos
+    print '# PART 2: Submarine position value: {result}'
+}

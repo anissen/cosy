@@ -1,0 +1,133 @@
+// https://adventofcode.com/2021/day/4
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = '7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+
+22 13 17 11  0
+ 8  2 23  4 24
+21  9 14 16  7
+ 6 10  3 18  5
+ 1 12 20 15 19
+
+ 3 15  0  2 22
+ 9 18 13 17  5
+19  8  7 25 23
+20 11 10 24  4
+14 21 16 12  6
+
+14 21 17 24  4
+10 16 15  9 19
+18  8 23 26 20
+22 11 13  6  5
+ 2  0 12  3  7'.split('\n')
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day4.txt')
+}
+
+struct Board {
+    mut rows Array Array Num
+}
+
+var numbers Array Num = input[0].split(',').map(string_to_number)
+mut all_boards Array Board = []
+{
+    mut rows = []
+    for i in 2..input.length {
+        if input[i].length == 0 {
+            all_boards.push(Board { rows = rows })
+            rows = []
+            continue
+        }
+        rows.push(input[i].split(' ').filter(fn(x) { return x.length > 0 }).map(string_to_number))
+    }
+    if rows.length > 0 {
+        all_boards.push(Board { rows = rows })
+    }
+}
+
+fn mark_boards(boards Array Board, n Num) {
+    for board in boards {
+        for row_index in 0..5 {
+            mut row Array Num = board.rows[row_index]
+            for column in 0..5 {
+                var cell = row[column]
+                if cell == n {
+                    row[column] = -1
+                }
+            }
+        }
+    }   
+}
+ fn all_marked(arr Array Num) Bool {
+    return arr.filter(fn(cell) { return cell != -1 }).length == 0
+}
+
+fn has_won(board Board) Bool {
+    for row in board.rows {
+        if all_marked(row) {
+            return true
+        }
+    }
+
+    for column in 0..5 {
+        mut arr = []
+        for row in board.rows {
+            arr.push(row[column])
+        }
+        if all_marked(arr) {
+            return true
+        }
+    }
+    return false
+}
+
+fn find_sum_of_unmarked_numbers_on_board(board Board) Num {
+    mut sum = 0
+    for row in board.rows {
+        for column in 0..5 {
+            var cell = row[column]
+            if cell != -1 {
+                sum += cell
+            }
+        }
+    }
+    return sum
+}
+
+{ // Part 1
+    mut done = false
+    for n in numbers {
+        mark_boards(all_boards, n)
+        for board in all_boards {
+            if has_won(board) {
+                var sum = find_sum_of_unmarked_numbers_on_board(board)
+                print '# PART 1: First bingo score: {sum * n}'
+                done = true
+                break
+            }
+        }
+        if done {
+            break
+        }
+    }
+}
+
+{ // Part 2
+    mut boards_left Array Board = all_boards
+    for n in numbers {
+        mark_boards(boards_left, n)
+        if boards_left.length == 1 {
+            var board = boards_left[0]
+            if has_won(board) {
+                var sum = find_sum_of_unmarked_numbers_on_board(board)
+                print '# PART 2: Last bingo score: {sum * n}'
+            }
+        }
+        boards_left = boards_left.filter(fn(board) { return !has_won(board) })
+    }
+}
