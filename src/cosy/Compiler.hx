@@ -139,6 +139,12 @@ class Compiler {
     }
 
     @:expose
+    public function runFunction(name: String) {
+        //    interpreter.run([Expr.Call(Expr.Variable(Token()))])
+        interpreter.runFunction(name);
+    }
+
+    @:expose
     public function run(source: String) {
         hadError = false;
         measureOutput = Cosy.color('Times:', Misc);
@@ -227,6 +233,7 @@ class Compiler {
     // @:expose
     public function setVariable(name: String, variable: Any) {
         foreignVariables[name] = variable;
+        interpreter.setForeignVariable(name, variable);
     }
 
     // Measurement stuff...

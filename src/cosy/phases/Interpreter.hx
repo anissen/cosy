@@ -32,6 +32,21 @@ class Interpreter {
         }
     }
 
+    public function runFunction(name: String) {
+        final func: Callable = environment.getAt(0, name); // globals.getAt(0, name);
+        // trace('runFunction: $func');
+        if (func != null) {
+            // trace('before');
+            func.call(this, [] /* no args for now */);
+            // trace('after');
+        }
+    }
+
+    public function setForeignVariable(name: String, value: Any) {
+        // globals.setAt(0, name, value);
+        environment.define(name, value);
+    }
+
     function execute(statement: Stmt) {
         switch statement {
             case Block(statements): executeBlock(statements, new Environment(environment));
