@@ -300,8 +300,10 @@ class Typer {
             case GetIndex(obj, index):
                 var objType = typeExpr(obj);
                 return switch objType {
-                    case Mutable(Array(t)) | Array(t): t;
-                    case _: throw 'Get index of unknown type ${objType}';
+                    case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
+                    case Mutable(Array(t)): Mutable(t);
+                    case Array(t): t;
+                    case _: throw 'Get index of unknown type ${objType} with index ${index}';
                 }
             case MutArgument(keyword, name):
                 var type = Mutable(variableTypes.get(name.lexeme));
@@ -439,6 +441,7 @@ class Typer {
             case [Unknown, _]: true;
             case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
             case [NamedStruct(name1), NamedStruct(name2)]: matchType(variableTypes.get(name1), variableTypes.get(name2));
+            case [NamedStruct(name1), t2]: matchType(variableTypes.get(name1), t2);
             case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
             case [Mutable(t1), t2]: matchType(t1, t2);
             case [Function(params1, v1), Function(params2, v2)]:

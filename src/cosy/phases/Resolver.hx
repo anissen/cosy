@@ -80,8 +80,8 @@ class Resolver {
                 resolveExpr(array);
 
                 beginScope();
-                declare(name);
-                define(name);
+                declare(name, true); // TODO: Should array entries e mutable by default??!
+                define(name, true);
                 if (body.length == 0) Cosy.error(name, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
