@@ -1,6 +1,7 @@
 // https://adventofcode.com/2021/day/3
 
 foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
 
 mut input Array Str
 var test_mode = true
@@ -10,28 +11,40 @@ if test_mode {
     input = read_lines('test/examples/advent-of-code-2021/data/day3.txt')
 }
 
+mut bit_input Array Array Num = input.map(fn (bits Str) Array Num {
+    return bits.split('').map(string_to_number)
+})
+
 mut most_common_bits Array Num = []
 mut least_common_bits Array Num = []
 
-var number_of_bits = input[0].length
-for i in 0..number_of_bits {
-    mut high_bits = 0
-    mut low_bits = 0
-    for  bits in input {
-        var bit = bits.char_at(i)
-        if bit == '0' {
-            low_bits += 1
-        } else {
-            high_bits += 1
+fn count_at_index(bit_arr Array Array Num, c Num, i Num) Num {
+    mut count = 0
+    for bits in bit_arr {
+        var bit = bits[i]
+        if bit == c {
+            count += 1
         }
     }
+    return count
+}
+
+fn most_common_bit_at_index(bit_arr Array Array Num,i Num) Num {
+    var high_bits = count_at_index(bit_arr, 1, i)
+    var low_bits = count_at_index(bit_arr, 0, i)
     if high_bits > low_bits {
-        most_common_bits.push(1)
-        least_common_bits.push(0)
+        return 1
     } else {
-        most_common_bits.push(0)
-        least_common_bits.push(1)
+        return 0
     }
+}
+
+var number_of_bits = bit_input[0].length
+for i in 0..number_of_bits {
+    var most_common = most_common_bit_at_index(bit_input, i)
+    var least_common = 1 - most_common
+    most_common_bits.push(most_common)
+    least_common_bits.push(least_common)
 }
 
 fn binary_to_decimal(bits Array Num) Num {
@@ -41,36 +54,46 @@ fn binary_to_decimal(bits Array Num) Num {
     }
     return result
 }
-var most_common_bits_value = binary_to_decimal(most_common_bits)
-var least_common_bits_value = binary_to_decimal(least_common_bits)
 
 { // Part 1
+    var most_common_bits_value = binary_to_decimal(most_common_bits)
+    var least_common_bits_value = binary_to_decimal(least_common_bits)
     print '# PART 1: Submarine power: {most_common_bits_value * least_common_bits_value}'
 }
 
-// mut oxygen_rating = input
-// mut co2_rating = input
-
-// for i in 0..number_of_bits {
-//     mut high_bits = 0
-//     mut low_bits = 0
-//     for  bits in input {
-//         var bit = bits.char_at(i)
-//         if bit == '0' {
-//             low_bits += 1
-//         } else {
-//             high_bits += 1
-//         }
-//     }
-//     if high_bits > low_bits {
-//         most_common_bits.push(1)
-//         least_common_bits.push(0)
-//     } else {
-//         most_common_bits.push(0)
-//         least_common_bits.push(1)
-//     }
-// }
-
 { // Part 2
-    // print '# PART 2: Submarine position value: {result}'
+    mut oxygen_rating_bits Array Array Num = bit_input
+    for i in 0..number_of_bits {
+        var low_count  = count_at_index(oxygen_rating_bits, 0, i)
+        var high_count = count_at_index(oxygen_rating_bits, 1, i)
+        mut most_common = 0
+        if high_count >= low_count {
+            most_common = 1
+        }
+        if oxygen_rating_bits.length == 1 {
+            break
+        }
+        oxygen_rating_bits = oxygen_rating_bits.filter(fn(bits Array Num) Bool {
+            return bits[i] == most_common
+        })
+    }
+
+    mut co2_rating_bits Array Array Num = bit_input
+    for i in 0..number_of_bits {
+        var low_count  = count_at_index(co2_rating_bits, 0, i)
+        var high_count = count_at_index(co2_rating_bits, 1, i)
+        mut least_common = 1
+        if low_count <= high_count {
+            least_common = 0
+        }
+        if co2_rating_bits.length == 1 {
+            break
+        }
+        co2_rating_bits = co2_rating_bits.filter(fn(bits Array Num) Bool {
+            return bits[i] == least_common
+        })
+    }
+    var oxygen_rating = binary_to_decimal(oxygen_rating_bits[0])
+    var co2_rating = binary_to_decimal(co2_rating_bits[0])
+    print '# PART 2: Life support rating: {oxygen_rating * co2_rating}'
 }
