@@ -51,13 +51,15 @@ class Typer {
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: Cosy.warning(keyword, '"From" clause has type Unknown');
-                    case Number:
+                    case Mutable(Number) | Number:
                     case _: Cosy.error(keyword, '"From" clause must evaluate to a number');
                 }
                 switch typeExpr(to) {
                     case Unknown: Cosy.warning(keyword, '"To" clause has type Unknown');
-                    case Number:
-                    case _: Cosy.error(keyword, '"To" clause must evaluate to a number');
+                    case Mutable(Number) | Number:
+                    case _:
+                        trace(typeExpr(to));
+                        Cosy.error(keyword, '"To" clause must evaluate to a number');
                 }
                 if (name != null) variableTypes.set(name.lexeme, Number);
                 typeStmts(body);
