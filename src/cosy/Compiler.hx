@@ -50,6 +50,8 @@ class Compiler {
         setFunction('cos', (args) -> Math.cos(args[0]));
         setFunction('sin', (args) -> Math.sin(args[0]));
         setFunction('atan2', (args) -> Math.atan2(args[0], args[1]));
+        setFunction('min', (args) -> Math.min(args[0], args[1]));
+        setFunction('max', (args) -> Math.max(args[0], args[1]));
 
         #if (sys || nodejs)
         setFunction('read_input', (args) -> Sys.stdin().readLine());
