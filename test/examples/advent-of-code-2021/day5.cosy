@@ -1,0 +1,130 @@
+// https://adventofcode.com/2021/day/5
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+foreign fn min(a Num, b Num) Num
+foreign fn max(a Num, b Num) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = '0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2'.split('\n')
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day5.txt')
+}
+
+struct Line {
+    mut x1 Num
+    mut y1 Num
+    mut x2 Num
+    mut y2 Num
+}
+
+mut input_lines Array Line = []
+for line in input {
+    var coords = line.split(' -> ')
+    var start = coords[0].split(',')
+    var end = coords[1].split(',')
+    input_lines.push(Line {
+        x1 = string_to_number(start[0]),
+        y1 = string_to_number(start[1]),
+        x2 = string_to_number(end[0]),
+        y2 = string_to_number(end[1]),
+    })
+}
+// print lines
+struct Point {
+    mut x Num = 0
+    mut y Num = 0
+}
+fn find_max(lines Array Line) Point {
+    mut dim = Point {}
+    for line in lines {
+        if line.x1 > dim.x {
+            dim.x = line.x1
+        }
+        if line.x2 > dim.x {
+            dim.x = line.x2
+        }
+        if line.y1 > dim.y {
+            dim.y = line.y1
+        }
+        if line.y2 > dim.y {
+            dim.y = line.y2
+        }
+    }
+    return dim
+}
+
+var max_dimensions = find_max(input_lines)
+mut grid Array Array Num = []
+for 0..max_dimensions.y + 1 {
+    mut row Array Num = []   
+    for 0..max_dimensions.x + 1 {
+        row.push(0)
+    }
+    grid.push(row)
+}
+
+mut non_diagonal_lines Array Line = input_lines.filter(fn(line Line) { 
+    return line.x1 == line.x2 or line.y1 == line.y2
+})
+
+fn get_line_coords(line Line) Array Point {
+    mut coords Array Point = []
+    if (line.x1 != line.x2) {
+        for x in min(line.x1, line.x2)..max(line.x1, line.x2)+1 {
+            coords.push(Point { x = x, y = line.y1 })
+        }
+    }
+    if (line.y1 != line.y2) {
+        for y in min(line.y1, line.y2)..max(line.y1, line.y2)+1 {
+            coords.push(Point { x = line.x1, y = y })
+        }
+    }
+    return coords
+}
+
+for line in non_diagonal_lines {
+    for point in get_line_coords(line) {
+        grid[point.y][point.x] += 1
+    }
+}
+
+fn count_overlap(max_overlap Num) Num {
+    mut count Num = 0
+    for row in grid {
+        for value in row {
+            if value >= max_overlap {
+                count += 1
+            }
+        }
+    }
+    return count
+}
+
+// print values in grid
+// for row in grid {
+//     mut s = ''
+//     for value in row {
+//         s += '{value}'
+//     }
+//     print s
+// }
+
+{ // Part 1
+    print '# PART 1: Overlap: {count_overlap(2)}'
+}
+
+{ // Part 2
+    print '# PART 2: '
+}
