@@ -57,9 +57,7 @@ class Typer {
                 switch typeExpr(to) {
                     case Unknown: Cosy.warning(keyword, '"To" clause has type Unknown');
                     case Mutable(Number) | Number:
-                    case _:
-                        trace(typeExpr(to));
-                        Cosy.error(keyword, '"To" clause must evaluate to a number');
+                    case _: Cosy.error(keyword, '"To" clause must evaluate to a number');
                 }
                 if (name != null) variableTypes.set(name.lexeme, Number);
                 typeStmts(body);
