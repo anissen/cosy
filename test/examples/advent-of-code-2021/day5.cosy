@@ -4,6 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 foreign fn min(a Num, b Num) Num
 foreign fn max(a Num, b Num) Num
+foreign fn abs(v Num) Num
 
 mut input Array Str
 var test_mode = true
@@ -66,15 +67,20 @@ fn find_max(lines Array Line) Point {
     return dim
 }
 
-var max_dimensions = find_max(input_lines)
-mut grid Array Array Num = []
-for 0..max_dimensions.y + 1 {
-    mut row Array Num = []   
-    for 0..max_dimensions.x + 1 {
-        row.push(0)
+fn make_grid(dim Point) {
+    mut tmp_grid Array Array Num = []
+    for 0..dim.y + 1 {
+        mut row Array Num = []
+        for 0..dim.x + 1 {
+            row.push(0)
+        }
+        tmp_grid.push(row)
     }
-    grid.push(row)
+    return tmp_grid
 }
+
+var max_dimensions = find_max(input_lines)
+mut grid Array Array Num = make_grid(max_dimensions)
 
 mut non_diagonal_lines Array Line = input_lines.filter(fn(line Line) { 
     return line.x1 == line.x2 or line.y1 == line.y2
@@ -82,16 +88,33 @@ mut non_diagonal_lines Array Line = input_lines.filter(fn(line Line) {
 
 fn get_line_coords(line Line) Array Point {
     mut coords Array Point = []
-    if (line.x1 != line.x2) {
+    if (line.x1 != line.x2 and line.y1 != line.y2) { // diagonal lines
+        mut x = line.x1
+        mut y = line.y1
+        mut step_x = 1
+        if line.x2 < x {
+            step_x = -1
+        }
+        mut step_y = 1
+        if line.y2 < y {
+            step_y = -1
+        }
+        var steps = max(abs(line.x2 - line.x1), abs(line.y2 - line.y1)) + 1
+        for 0..steps {
+            coords.push(Point { x = x, y = y })
+            x += step_x
+            y += step_y
+        }
+    } else if (line.x1 != line.x2) { // horizontal lines
         for x in min(line.x1, line.x2)..max(line.x1, line.x2)+1 {
             coords.push(Point { x = x, y = line.y1 })
         }
-    }
-    if (line.y1 != line.y2) {
+    } else if (line.y1 != line.y2) { // vertical lines
         for y in min(line.y1, line.y2)..max(line.y1, line.y2)+1 {
             coords.push(Point { x = line.x1, y = y })
         }
     }
+    
     return coords
 }
 
@@ -113,19 +136,24 @@ fn count_overlap(max_overlap Num) Num {
     return count
 }
 
-// print values in grid
-// for row in grid {
-//     mut s = ''
-//     for value in row {
-//         s += '{value}'
-//     }
-//     print s
-// }
-
 { // Part 1
-    print '# PART 1: Overlap: {count_overlap(2)}'
+    print '# PART 1: Non-diagonal overlap: {count_overlap(2)}'
+}
+
+// reset grid values
+for y in 0..grid.length {
+    var row = grid[y]
+    for x in 0..row.length {
+        grid[y][x] = 0
+    }
+}
+
+for line in input_lines {
+    for point in get_line_coords(line) {
+        grid[point.y][point.x] += 1
+    }
 }
 
 { // Part 2
-    print '# PART 2: '
+    print '# PART 2: Overlap: {count_overlap(2)}'
 }
