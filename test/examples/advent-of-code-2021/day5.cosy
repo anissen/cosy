@@ -41,11 +41,12 @@ for line in input {
         y2 = string_to_number(end[1]),
     })
 }
-// print lines
+
 struct Point {
     mut x Num = 0
     mut y Num = 0
 }
+
 fn find_max(lines Array Line) Point {
     mut dim = Point {}
     for line in lines {
