@@ -12,8 +12,6 @@ class Interpreter {
 
     public function new() {
         globals = new Environment();
-        globals.define('clock', new ClockCallable());
-        globals.define('random', new RandomCallable());
         environment = globals;
     }
 
@@ -463,26 +461,6 @@ class Interpreter {
         if (v == null) return 'nil';
         return '$v';
     }
-}
-
-private class ClockCallable implements Callable {
-    public function new() {}
-
-    public function arity(): Int return 0;
-
-    public function call(interpreter: Interpreter, args: Array<Any>): Any return haxe.Timer.stamp() * 1000;
-
-    public function toString(): String return '<native fn>';
-}
-
-private class RandomCallable implements Callable {
-    public function new() {}
-
-    public function arity(): Int return 0;
-
-    public function call(interpreter: Interpreter, args: Array<Any>): Any return Math.random();
-
-    public function toString(): String return '<native fn>';
 }
 
 private class CustomCallable implements Callable {

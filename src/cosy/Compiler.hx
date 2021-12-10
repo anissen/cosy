@@ -53,6 +53,9 @@ class Compiler {
         setFunction('min', (args) -> Math.min(args[0], args[1]));
         setFunction('max', (args) -> Math.max(args[0], args[1]));
         setFunction('abs', (args) -> Math.abs(args[0]));
+        setFunction('clock', (args) -> haxe.Timer.stamp() * 1000);
+        setFunction('random', (args) -> Math.random());
+        setFunction('random_int', (args) -> Std.random(args[0]));
 
         #if (sys || nodejs)
         setFunction('read_input', (args) -> Sys.stdin().readLine());
