@@ -1,0 +1,44 @@
+// https://adventofcode.com/2021/day/6
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['3,4,3,1,2']
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day6.txt')
+}
+mut intervals = input[0].split(',').map(string_to_number)
+mut interval_sums Array Num = []
+
+fn reset_interval_sums() {
+    interval_sums = []
+    for 0..9 {
+        interval_sums.push(0)
+    }
+    for i in intervals {
+        interval_sums[i] += 1
+    }
+}
+
+fn count_lanternfish(days Num) Num {
+    reset_interval_sums()
+    mut lanternfish = intervals.length
+    for 0..days {
+        var new_intervals = interval_sums.shift()
+        interval_sums[6] += new_intervals
+        interval_sums.push(new_intervals)
+        lanternfish += new_intervals
+    }
+    return lanternfish
+}
+
+{ // Part 1
+    print '# PART 1: Laternfish after 80 days: {count_lanternfish(80)}'
+}
+
+{ // Part 2
+    print '# PART 2: Laternfish after 256 days: {count_lanternfish(256)}'
+}
