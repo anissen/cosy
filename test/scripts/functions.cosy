@@ -6,7 +6,6 @@ f('Hello', 'World')
 
 //fn x(a, b, c, d, e, f, g, h, i, h, j) { print 'too many parameters!' }
 
-print clock
 print f
 
 fn h() {
