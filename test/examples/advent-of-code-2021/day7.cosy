@@ -1,0 +1,54 @@
+// https://adventofcode.com/2021/day/7
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+foreign fn abs(val Num) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = ['16,1,2,0,4,2,7,1,2,14']
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day7.txt')
+}
+mut positions = input[0].split(',').map(string_to_number)
+
+mut min_position = 10000
+mut max_position = 0
+for pos in positions {
+    if pos < min_position {
+        min_position = pos
+    }
+    if pos > max_position {
+        max_position = pos
+    }
+}
+
+fn calc_min_fuel(distance_func Fn(Num) Num) Num {
+    mut min_fuel_cost = 0
+    for destination_pos in min_position..max_position + 1 {
+        mut fuel_cost = 0
+        for pos in positions {
+            var distance = abs(destination_pos - pos)
+            fuel_cost += distance_func(distance)
+        }
+        if fuel_cost < min_fuel_cost or min_fuel_cost == 0 {
+            min_fuel_cost = fuel_cost
+        }
+    }
+    return min_fuel_cost
+}
+
+{ // Part 1
+    mut min_fuel_cost = calc_min_fuel(fn(distance Num) { 
+        return distance
+    })
+    print '# PART 1: Minimum fuel cost is {min_fuel_cost}'
+}
+
+{ // Part 2
+    mut min_fuel_cost = calc_min_fuel(fn(distance Num) { 
+        return distance * (distance + 1) / 2
+    })
+    print '# PART 2: Minimum fuel cost is {min_fuel_cost}'
+}
