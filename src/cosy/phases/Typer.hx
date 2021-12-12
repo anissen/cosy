@@ -236,6 +236,7 @@ class Typer {
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case 'shift': Function([], t);
+                            case 'join': Function([Text], Text);
                             case _:
                                 Cosy.error(name, 'Unknown array property or function.');
                                 Void;
@@ -258,6 +259,7 @@ class Typer {
                             case 'shift':
                                 Cosy.error(name, 'Cannot call mutating method on immutable array.');
                                 Void;
+                            case 'join': Function([Text], Text);
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case _:
