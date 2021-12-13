@@ -1,0 +1,71 @@
+// https://adventofcode.com/2021/day/9
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = '2199943210
+3987894921
+9856789892
+8767896789
+9899965678'.split('\n')
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day9.txt')
+}
+
+mut grid Array Array Num = []
+for i in input {
+    mut row Array Num = []
+    for c in i.split('') {
+        row.push(string_to_number(c))
+    }
+    grid.push(row)
+}
+
+fn get_adjacent(x Num, y Num) Array Num {
+    mut adjacent = []
+    if x > 0 {
+        adjacent.push(grid[y][x - 1])
+    }
+    if x < grid[y].length - 1 {
+        adjacent.push(grid[y][x + 1])
+    }
+    if y > 0 {
+        adjacent.push(grid[y - 1][x])
+    }
+    if y < grid.length - 1 {
+        adjacent.push(grid[y + 1][x])
+    }
+    return adjacent
+}
+
+struct Point {
+    mut x Num
+    mut y Num
+}
+
+fn get_low_points() Array Point {
+    mut low_points = []
+    for y in 0..grid.length {
+        for x in 0..grid[y].length {
+            if get_adjacent(x, y).count(fn(a Num) { return grid[y][x] >= a }) == 0 {
+                low_points.push(Point { x = x, y = y })
+            }
+        }
+    }
+    return low_points
+}
+
+{ // Part 1
+    mut sum_of_low_points = 0
+    for p in get_low_points() {
+        sum_of_low_points += 1 + grid[p.y][p.x]
+    }
+    print '# PART 1: Sum of low points: {sum_of_low_points}'
+}
+
+{ // Part 2
+    print '# PART 2: '
+}
