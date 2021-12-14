@@ -15,42 +15,43 @@ if test_mode {
     input = read_lines('test/examples/advent-of-code-2021/data/day9.txt')
 }
 
-mut grid Array Array Num = []
-for i in input {
-    mut row Array Num = []
-    for c in i.split('') {
-        row.push(string_to_number(c))
-    }
-    grid.push(row)
-}
-
-fn get_adjacent(x Num, y Num) Array Num {
-    mut adjacent = []
-    if x > 0 {
-        adjacent.push(grid[y][x - 1])
-    }
-    if x < grid[y].length - 1 {
-        adjacent.push(grid[y][x + 1])
-    }
-    if y > 0 {
-        adjacent.push(grid[y - 1][x])
-    }
-    if y < grid.length - 1 {
-        adjacent.push(grid[y + 1][x])
-    }
-    return adjacent
-}
-
 struct Point {
     mut x Num
     mut y Num
+}
+
+mut grid Array Array Num = input.map(fn(row Str) {
+    return row.split('').map(string_to_number)
+})
+
+fn get_adjacent_points(x Num, y Num) Array Point {
+    mut points Array Point = []
+    if x > 0 {
+        points.push(Point { x = x - 1, y = y })
+    }
+    if x < grid[y].length - 1 {
+        points.push(Point { x = x + 1, y = y })
+    }
+    if y > 0 {
+        points.push(Point { x = x, y = y - 1 })
+    }
+    if y < grid.length - 1 {
+        points.push(Point { x = x, y = y + 1 })
+    }
+    return points
+}
+
+fn get_adjacent_values(x Num, y Num) Array Num {
+    return get_adjacent_points(x, y).map(fn(p Point) {
+        return grid[p.y][p.x]
+    })
 }
 
 fn get_low_points() Array Point {
     mut low_points = []
     for y in 0..grid.length {
         for x in 0..grid[y].length {
-            if get_adjacent(x, y).count(fn(a Num) { return grid[y][x] >= a }) == 0 {
+            if get_adjacent_values(x, y).count(fn(a Num) { return grid[y][x] >= a }) == 0 {
                 low_points.push(Point { x = x, y = y })
             }
         }
@@ -58,14 +59,25 @@ fn get_low_points() Array Point {
     return low_points
 }
 
-{ // Part 1
-    mut sum_of_low_points = 0
-    for p in get_low_points() {
-        sum_of_low_points += 1 + grid[p.y][p.x]
+fn get_basin_size(x Num, y Num) Num {
+    if grid[y][x] == 9 {
+        return 0
     }
+    grid[y][x] = 9
+    return 1 + get_adjacent_points(x, y).sum(fn(p Point) { return get_basin_size(p.x, p.y) })
+}
+
+{ // Part 1
+    mut sum_of_low_points = get_low_points().sum(fn(p Point) { return 1 + grid[p.y][p.x] })
     print '# PART 1: Sum of low points: {sum_of_low_points}'
 }
 
 { // Part 2
-    print '# PART 2: '
+    mut basin_sizes Array Num = get_low_points().map(fn(p Point) { return get_basin_size(p.x, p.y) })
+    basin_sizes.sort(fn(a Num, b Num) { return b - a })
+    mut multiple_of_basin_sizes = 1
+    for i in 0..3 {
+        multiple_of_basin_sizes *= basin_sizes[i]
+    }
+    print '# PART 2: Multiple of basin sizes: {multiple_of_basin_sizes}'
 }
