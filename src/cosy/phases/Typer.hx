@@ -241,6 +241,7 @@ class Typer {
                             case 'last': Function([], t);
                             case 'contains': Function([t], Boolean);
                             case 'index_of': Function([t], Number);
+                            case 'reverse': Function([], Array(t));
                             case _:
                                 Cosy.error(name, 'Unknown array property or function.');
                                 Void;
@@ -270,6 +271,7 @@ class Typer {
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case 'contains': Function([t], Boolean);
                             case 'index_of': Function([t], Number);
+                            case 'reverse': Function([], Array(t));
                             case _:
                                 Cosy.error(name, 'Unknown array property or function.');
                                 Void;

@@ -375,6 +375,11 @@ class Interpreter {
             case 'join': new CustomCallable(1, (args -> array.join(args[0])));
             case 'is_empty': new CustomCallable(0, _ -> array.length == 0);
             case 'last': new CustomCallable(0, _ -> array[array.length - 1]);
+            case 'reverse': new CustomCallable(0, _ -> {
+                    final tmp = array.copy();
+                    tmp.reverse();
+                    return tmp;
+                });
             case 'remove': new CustomCallable(1,
                     (args -> (array.length == 0?throw new RuntimeError(name, 'Cannot remove from empty array.'): array.splice(args[0], 1))));
             case 'map': new CustomCallable(1, function(args) {
