@@ -1,0 +1,60 @@
+// https://adventofcode.com/2021/day/10
+
+foreign fn read_lines(path Str) Array Str
+
+mut input Array Str
+var test_mode = false
+if test_mode {
+    input = "[({(<(())[]>[[{[]{<()<>>
+[(()[<>])]({[<{<<[]>>(
+{([(<{}[<>[]}>{[]{[(<()>
+(((({<>}<{<{<>}{[]{[]{}
+[[<[([]))<([[{}[[()]]]
+[{[{({}]{}}([{[{{{}}([]
+{<[[]]>}<{[{[{[]{()[[[]
+[<(<(<(<{}))><([]([]()
+<{([([[(<>()){}]>(<<{{
+<{([{{}}[<[[[<>{}]]]>[]]".split('\n')
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day10.txt')
+}
+
+var openers = ["(", "[", "{", "<"]
+var closers = [")", "]", "}", ">"]
+var points  = [3, 57, 1197, 25137]
+
+fn get_first_syntax_error(line Str) Str {
+    mut stack Array Str = []
+    for c in line.split('') {
+        var index = closers.index_of(c)
+        if (index != -1) { // closing
+            if stack.is_empty() or stack.last() != openers[index] {
+                return c
+            }
+            stack.pop()
+        } else { // opening
+            stack.push(c)
+        }
+    }
+    return '' // ignore incomplete syntax for now
+    // if stack.is_empty() {
+    //     return ''
+    // } else {
+    //     return stack.last()
+    // }
+}
+
+{ // Part 1
+    mut point_sum = 0
+    for line in input {
+        var error = get_first_syntax_error(line)
+        if error != '' {
+            point_sum += points[closers.index_of(error)]
+        }
+    }
+    print '# PART 1: Syntax error points: {point_sum}'
+}
+
+{ // Part 2
+    // print '# PART 2: '
+}
