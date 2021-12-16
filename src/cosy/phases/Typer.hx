@@ -237,6 +237,10 @@ class Typer {
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case 'shift': Function([], t);
                             case 'join': Function([Text], Text);
+                            case 'is_empty': Function([], Boolean);
+                            case 'last': Function([], t);
+                            case 'contains': Function([t], Boolean);
+                            case 'index_of': Function([t], Number);
                             case _:
                                 Cosy.error(name, 'Unknown array property or function.');
                                 Void;
@@ -260,8 +264,12 @@ class Typer {
                                 Cosy.error(name, 'Cannot call mutating method on immutable array.');
                                 Void;
                             case 'join': Function([Text], Text);
+                            case 'is_empty': Function([], Boolean);
+                            case 'last': Function([], t);
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
+                            case 'contains': Function([t], Boolean);
+                            case 'index_of': Function([t], Number);
                             case _:
                                 Cosy.error(name, 'Unknown array property or function.');
                                 Void;
@@ -275,7 +283,7 @@ class Typer {
                             case 'char_code_at': Function([Number], Number);
                             case 'substr': Function([Number, Number], Text);
                             case _:
-                                Cosy.error(name, 'Unknown array property or function.');
+                                Cosy.error(name, 'Unknown text property or function.');
                                 Void;
                         }
                     case NamedStruct(structName) | Mutable(NamedStruct(structName)):

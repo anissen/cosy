@@ -369,9 +369,12 @@ class Interpreter {
             case 'push': new CustomCallable(1, (args->args.map(array.push)));
             case 'concat': new CustomCallable(1, (args -> (args[0]: Array<Any>).map(array.push)));
             case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
+            case 'index_of': new CustomCallable(1, args -> array.indexOf(args[0]));
             case 'pop': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot pop from empty array.'): array.pop())));
             case 'shift': new CustomCallable(0, (_ -> (array.length == 0?throw new RuntimeError(name, 'Cannot shift from empty array.'): array.shift())));
             case 'join': new CustomCallable(1, (args -> array.join(args[0])));
+            case 'is_empty': new CustomCallable(0, _ -> array.length == 0);
+            case 'last': new CustomCallable(0, _ -> array[array.length - 1]);
             case 'remove': new CustomCallable(1,
                     (args -> (array.length == 0?throw new RuntimeError(name, 'Cannot remove from empty array.'): array.splice(args[0], 1))));
             case 'map': new CustomCallable(1, function(args) {
