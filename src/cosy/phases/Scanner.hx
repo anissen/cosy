@@ -21,7 +21,7 @@ class Scanner {
         this.source = source;
     }
 
-    public function scanTokens() {
+    public function scanTokens(): Array<Token> {
         while (!isAtEnd()) {
             start = current;
             scanToken();
@@ -66,6 +66,7 @@ class Scanner {
             case ' '.code | '\r'.code | '\t'.code: // Ignore whitespace.
             case '\n'.code: line++;
             case '\''.code: string();
+            case '"'.code: rawString();
             case _:
                 if (isDigit(c)) {
                     number();
@@ -126,9 +127,27 @@ class Scanner {
         advance();
 
         var value = source.substring(start + 1, current - 1);
-        value = StringTools.replace(value, '\\n', '\n');
-        value = StringTools.replace(value, '\\t', '\t');
-        value = StringTools.replace(value, '\\\'', '\'');
+        value = value.replace('\\n', '\n');
+        value = value.replace('\\t', '\t');
+        value = value.replace('\\\'', '\'');
+        addToken(String, value);
+    }
+
+    function rawString() {
+        while (peek() != '"'.code && !isAtEnd()) {
+            if (peek() == '\n'.code) line++;
+            advance();
+        }
+
+        if (isAtEnd()) {
+            Cosy.error(line, 'Unterminated raw string.');
+            return;
+        }
+
+        // The closing "
+        advance();
+
+        var value = source.substring(start + 1, current - 1);
         addToken(String, value);
     }
 
