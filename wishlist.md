@@ -146,7 +146,7 @@ fun x() { print "hej" }
 - [ ] Make a Cosy language server (see https://code.visualstudio.com/api/language-extensions/language-server-extension-guide, https://github.com/vshaxe/language-server-protocol-haxe, https://github.com/vshaxe/vscode-extern)
 - [ ] Do some benchmarks (see https://github.com/hamaluik/benched)
 - [x] Improve project build setup (see https://haxe.org/manual/compiler-usage-hxml.html)
-- [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument)
+- [ ] Add coverage and profiling (https://github.com/AlexHaxe/haxe-instrument, see https://github.com/cedx/setup-hashlink/blob/main/example/workflow.yaml#L20-L27 for usage)
 - [x] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting)
 - [x] Use a code linter (https://github.com/HaxeCheckstyle/haxe-checkstyle)
 - [ ] Put on Haxelib
