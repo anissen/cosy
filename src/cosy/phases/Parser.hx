@@ -315,9 +315,9 @@ class Parser {
     function multiplication(): Expr {
         var expr = unary();
 
-        while (match([Star, Slash, Percent])) {
+        while (match([Slash, Percent, Star])) {
             var op = previous();
-            var right = multiplication();
+            var right = unary();
             expr = Binary(expr, op, right);
         }
 
