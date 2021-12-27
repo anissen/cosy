@@ -132,9 +132,10 @@ class Interpreter {
 
                 var value: Any = uninitialized;
                 if (init != null) value = evaluate(init);
-                if (Std.isOfType(value, StructInstance)) {
-                    value = (value: StructInstance).clone();
-                }
+                // Uncomment this if you want structs to be be passed by value instead of by reference
+                // if (Std.isOfType(value, StructInstance)) {
+                //     value = (value: StructInstance).clone();
+                // }
                 environment.define(name.lexeme, value);
         }
     }

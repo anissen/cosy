@@ -28,5 +28,5 @@
     peter.sizes.height = peter.sizes.height + 10
     print peter // height: 206
     
-    print john  // height: 196
+    print john  // height: 206
 }

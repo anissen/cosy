@@ -1,0 +1,133 @@
+// https://adventofcode.com/2021/day/11
+
+foreign fn read_lines(path Str) Array Str
+foreign fn string_to_number(input Str) Num
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+//     input = '5483143223
+// 2745854711
+// 5264556173
+// 6141336146
+// 6357385478
+// 4167524645
+// 2176841721
+// 6882881134
+// 4846848554
+// 5283751526'.split('\n')
+    
+    // fake test input to make keep execution fast
+    input = '5483
+2745
+5264
+6141'.split('\n')
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day11.txt')
+}
+
+mut grid Array Array Num = input.map(fn(s Str) {
+    return s.split('').map(string_to_number)
+})
+
+struct Point {
+    mut x Num
+    mut y Num
+}
+
+fn each_cell(func Fn(Num, Num, Num)) {
+    for row in 0..grid.length {
+        for column in 0..grid[row].length {
+            func(grid[row][column], row, column)
+        }
+    }
+}
+
+fn get_adjacent_points(x Num, y Num) Array Point {
+    mut points Array Point = []
+    if x > 0 { // left
+        points.push(Point { x = x - 1, y = y })
+    }
+    if x < grid[y].length - 1 { // right
+        points.push(Point { x = x + 1, y = y })
+    }
+    if y > 0 { // up
+        points.push(Point { x = x, y = y - 1 })
+    }
+    if y < grid.length - 1 { // down
+        points.push(Point { x = x, y = y + 1 })
+    }
+    if x > 0 and y > 0 { // top left
+        points.push(Point { x = x - 1, y = y - 1 })
+    }
+    if x < grid[y].length - 1 and y < grid.length - 1 { // bottom right
+        points.push(Point { x = x + 1, y = y + 1 })
+    }
+    if x > 0 and y < grid.length - 1 { // bottom left
+        points.push(Point { x = x - 1, y = y + 1 })
+    }
+    if x < grid[y].length - 1 and y > 0 { // top right
+        points.push(Point { x = x + 1, y = y - 1 })
+    }
+    return points
+}
+
+fn simulate_step() {
+    each_cell(fn(_energy Num, row Num, column Num) {
+        grid[row][column] += 1
+    })
+    for {
+        mut flashed_cells = []
+        each_cell(fn(energy Num, row Num, column Num) {
+            if energy > 9 {
+                flashed_cells.push(Point { x = column, y = row })
+                for p in get_adjacent_points(column, row) {
+                    if grid[p.y][p.x] > 0 {
+                        grid[p.y][p.x] += 1
+                    }
+                }
+            }
+        })
+        if flashed_cells.is_empty() {
+            break
+        }
+        for p in flashed_cells {
+            grid[p.y][p.x] = 0
+        }
+    }
+}
+
+{ // Part 1
+    mut total_flashes = 0
+    var max_steps = 100
+    for 0..max_steps {
+        simulate_step()
+        each_cell(fn(energy Num, _row Num, _column Num) {
+            if energy == 0 {
+                total_flashes += 1
+            }
+        })
+    }
+    print '# PART 1: Total flashes after {max_steps} steps: {total_flashes}'
+}
+
+{ // Part 2
+    grid = input.map(fn(s Str) {
+        return s.split('').map(string_to_number)
+    })
+    mut step = 0
+    for {
+        mut all_flashes = true
+        step += 1
+        simulate_step()
+        each_cell(fn(energy Num, _row Num, _column Num) {
+            if energy != 0 {
+                all_flashes = false
+            }
+        })
+        if all_flashes {
+            break
+        }
+    }
+    print '# PART 2: All octopuses flash after {step} steps'
+}
