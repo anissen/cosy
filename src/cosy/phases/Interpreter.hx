@@ -354,19 +354,6 @@ class Interpreter {
         // TODO: Argument types must match! Change arity to array of types, e.g. 'get' has Number
         return switch name.lexeme {
             case 'length': array.length;
-            case 'get': new CustomCallable(1, function(args) {
-                    var arg: Int = args[0];
-                    if (arg < 0 && arg >= array.length) throw new RuntimeError(name, 'Array out of bounds (index $arg in array of length ${array.length}).');
-                    return array[arg];
-                });
-            case 'set': new CustomCallable(2, function(args) {
-                    var index: Int = args[0];
-                    var value: Any = args[1];
-                    if (index < 0 && index >= array.length) throw new RuntimeError(name,
-                        'Array out of bounds (index $index in array of length ${array.length}).');
-                    array[index] = value;
-                    return value;
-                });
             case 'push': new CustomCallable(1, (args->args.map(array.push)));
             case 'concat': new CustomCallable(1, (args -> (args[0]: Array<Any>).map(array.push)));
             case 'contains': new CustomCallable(1, (args -> array.indexOf(args[0]) != -1));
