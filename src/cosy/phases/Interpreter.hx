@@ -300,10 +300,13 @@ class Interpreter {
                 final obj = evaluate(obj);
 
                 if (Std.isOfType(obj, Array)) {
-                    var idx = evaluate(index);
-                    if (!Std.isOfType(idx, Int)) throw 'Index must be an Int.';
-                    // if (arg < 0 && arg >= array.length) throw new RuntimeError(Token(), 'Array out of bounds (index $arg in array of length ${array.length}).');
-                    return (obj: Array<Any>)[(idx: Int)];
+                    var indexEval = evaluate(index);
+                    if (!Std.isOfType(indexEval, Int)) throw 'Index must be an Int.';
+                    var arr = (obj: Array<Any>);
+                    var idx = (indexEval: Int);
+                    if (idx < 0 && idx >= arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', idx, -1),
+                        'Array out of bounds (index $idx in array of length ${arr.length}).');
+                    return arr[idx];
                 }
                 // else throw new RuntimeError(name, 'Bracket operator can only be used on arrays.');
                 else throw 'Bracket operator can only be used on arrays.'; // TODO: Use RuntimeError with keyword
