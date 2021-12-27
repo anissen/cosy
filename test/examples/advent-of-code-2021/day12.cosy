@@ -1,0 +1,98 @@
+// https://adventofcode.com/2021/day/12
+
+foreign fn read_lines(path Str) Array Str
+
+mut input Array Str
+var test_mode = true
+if test_mode {
+    input = 'start-A
+start-b
+A-c
+A-b
+b-d
+A-end
+b-end'.split('\n')
+} else {
+    input = read_lines('test/examples/advent-of-code-2021/data/day12.txt')
+}
+
+struct Cave {
+    var name Str
+    mut connections Array Str // TODO: Cannot reference Cave here :(
+    var big Bool
+    mut visited Num = 0
+}
+mut caves Array Cave = []
+
+mut cave_names Array Str = []
+for path in input {
+    for part in path.split('-') {
+        if !cave_names.contains(part) {
+            cave_names.push(part)
+            caves.push(Cave { 
+                name = part, 
+                connections = [], 
+                big = (part.char_code_at(0) < 'a'.char_code_at(0))
+            })
+        }
+    }
+}
+
+fn get_cave(name Str) Cave {
+    for cave in caves {
+        if cave.name == name {
+            return cave
+        }
+    }
+    print 'Could not find cave with name {name}'
+    return Cave { name = name, connections = [], big = false }
+}
+
+for path in input {
+    var parts = path.split('-')
+    var start = parts[0]
+    var end = parts[1]
+    get_cave(start).connections.push(end)
+    get_cave(end).connections.push(start)
+}
+
+fn find_paths(mut cave Cave, pathStr Str) Array Str { // TODO: Typer needs to save return type as soon as function is entered
+    cave.visited += 1
+    mut paths Array Str = []
+    for connection in cave.connections {
+        mut next = get_cave(connection)
+        if next.name == 'end' {
+            paths.push('{pathStr},{cave.name},end')
+        } else if next.big or next.visited <= 0 {
+            var next_paths Array Str = find_paths(next, '{pathStr},{cave.name}')
+            paths.concat(next_paths)
+        }
+    }
+    cave.visited -= 1
+    return paths
+}
+
+{ // Part 1
+    mut start = get_cave('start')
+    var paths = find_paths(start, "")
+    print '# PART 1: Number of distinct one-direcitonal paths in caves: {paths.length}'
+}
+
+{ // Part 2
+    mut distinct_paths = []
+    mut start = get_cave('start')
+    for cave in caves {
+        for c in caves {
+            c.visited = 0
+        }
+        if !cave.big and cave != start {
+            cave.visited = -1
+        }
+        for path in find_paths(start, '') {
+            if !distinct_paths.contains(path) {
+                distinct_paths.push(path)
+            }
+        }
+    }
+    print '# PART 2: Number of distinct multi-directional paths in caves: {distinct_paths.length}'
+}
