@@ -60,7 +60,6 @@ struct Point {
     print entity
 }
 
-
 {
 	struct S {
 		mut x Num
@@ -73,4 +72,15 @@ struct Point {
 	print s
 	s.x -= 25
 	print s
+}
+
+{
+    struct Obj {
+        mut x Num
+    }
+    mut arr = [Obj { x = 1}]
+    print arr
+    mut element = arr[0]
+    element.x = 45
+    print arr
 }
