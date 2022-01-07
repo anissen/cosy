@@ -442,8 +442,6 @@ class Interpreter {
     }
 
     inline function isEqual(a: Any, b: Any): Bool {
-        if (a == null && b == null) return true;
-        if (a == null) return false;
         return a == b;
     }
 
