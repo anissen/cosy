@@ -1,4 +1,4 @@
-# @install: lix --silent download "haxelib:/dox#1.5.0" into dox/1.5.0/haxelib
-# @run: haxelib run-dir dox ${HAXE_LIBCACHE}/dox/1.5.0/haxelib
--cp ${HAXE_LIBCACHE}/dox/1.5.0/haxelib/src
--D dox=1.5.0
+# @install: lix --silent download "gh://github.com/HaxeFoundation/dox#33370929f3100ea4e94b3b071cdb5947a3c27a52" into dox/1.6.0/github/33370929f3100ea4e94b3b071cdb5947a3c27a52
+# @run: haxelib run-dir dox ${HAXE_LIBCACHE}/dox/1.6.0/github/33370929f3100ea4e94b3b071cdb5947a3c27a52
+-cp ${HAXE_LIBCACHE}/dox/1.6.0/github/33370929f3100ea4e94b3b071cdb5947a3c27a52/src
+-D dox=1.6.0

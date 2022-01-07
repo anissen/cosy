@@ -6,6 +6,8 @@ haxe \
     -xml docs/docs.xml \
     -D doc-gen
 
+rm -rf docs/api
+
 haxelib run dox \
     --input-path docs/docs.xml \
     --output-path docs/api \
