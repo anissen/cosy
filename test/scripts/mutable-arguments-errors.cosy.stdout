@@ -1,1 +1,8 @@
-[line 4] Error at "s2": Only struct and array parameters can be marked as `mut`.
+■ test/scripts/mutable-arguments-errors.cosy, line 4:
+2 | {
+3 |     mut sss = 12
+4 |     fn mutable_param2(mut s2 Num) {
+                              ^^ Only struct and array parameters can be marked as `mut`.
+5 |         s2 = 666
+6 |         print s2
+

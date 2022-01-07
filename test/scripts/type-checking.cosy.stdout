@@ -1,22 +1,176 @@
-[line 247] Error at "s": Cannot reassign properties on non-mutable struct.
-[line 4] Error at "i": Cannot assign Num to Str
-[line 14] Error at "i": Cannot assign Str to Num
-[line 26] Error at "i": Cannot assign Str to Num
-[line 34] Error at "x": Cannot assign Fn() to Num
-[line 47] Error at "x": Cannot assign (Fn() -> Num) to (Fn() -> Str)
-[line 51] Error at "x": Cannot assign (Fn() -> Bool) to (Fn() -> Str)
-[line 66] Error at "x": Cannot assign Void to a variable
-[line 85] Error at "for": "From" clause must evaluate to a number
-[line 85] Error at "for": "To" clause must evaluate to a number
-[line 95] Error at "j": Cannot assign Str to Num
-[line 109] Error at ")": Expected argument 1 to be Num but got Str.
-[line 120] Error at ")": Expected argument 1 to be Str but got Num.
-[line 133] Error at "f": Cannot assign Fn(Str, Num) to Fn(Num, Str)
-[line 136] Error at ")": Expected argument 1 to be Num but got Str.
-[line 136] Error at ")": Expected argument 2 to be Str but got Num.
-[line 164] Error at "x": Cannot assign (Fn(Str) -> Str) to (Fn(Num) -> Num)
-[line 165] Error at ")": Expected argument 1 to be Num but got Str.
-[line 189] Error at "s": Cannot assign Str to Num
-[line 198] Error at "return": Function expected to return Str but got Num
-[line 202] Error at "return": Function expected to return Str but got Num
-[line 257] Error at "x": Cannot assign Num to Bool
+■ test/scripts/type-checking.cosy, line 247:
+245 |     struct S { mut s Num }
+246 |     fn mutate_struct(s) {
+247 |         s.s = 666
+                ^ Cannot reassign properties on non-mutable struct.
+248 |     }
+249 |     mutate_struct(S { s = 3 })
+
+■ test/scripts/type-checking.cosy, line 4:
+2 |     mut i = '{42 + 1 + 0 + 1}'
+3 |     print i
+4 |     i = 22
+        ^ Cannot assign Num to Str
+5 |     print i
+6 | }
+
+■ test/scripts/type-checking.cosy, line 14:
+12 |     print i
+13 |     i = 3
+14 |     i = 'hej'
+         ^ Cannot assign Str to Num
+15 |     print i
+16 | }
+
+■ test/scripts/type-checking.cosy, line 26:
+24 |     i = 33
+25 |     print i
+26 |     i = s
+         ^ Cannot assign Str to Num
+27 |     print i
+28 | }
+
+■ test/scripts/type-checking.cosy, line 34:
+32 | {
+33 |     mut x = 2
+34 |     x = fn() {
+         ^ Cannot assign Fn() to Num
+35 |         print 'blah'
+36 |     }
+
+■ test/scripts/type-checking.cosy, line 47:
+45 |     }
+46 |     print 'x() = ' + x()
+47 |     x = fn() {
+         ^ Cannot assign (Fn() -> Num) to (Fn() -> Str)
+48 |         return 12
+49 |     }
+
+■ test/scripts/type-checking.cosy, line 51:
+49 |     }
+50 |     print x()
+51 |     x = fn() {
+         ^ Cannot assign (Fn() -> Bool) to (Fn() -> Str)
+52 |         fn z() {
+53 |             return true
+
+■ test/scripts/type-checking.cosy, line 66:
+64 |         return _
+65 |     }
+66 |     mut x = f()
+             ^ Cannot assign Void to a variable
+67 |     print x
+68 | }
+
+■ test/scripts/type-checking.cosy, line 85:
+83 | 
+84 | {
+85 |     for i in '0'..'3' {
+         ^^^ "From" clause must evaluate to a number
+86 |         print i
+87 |     }
+
+■ test/scripts/type-checking.cosy, line 85:
+83 | 
+84 | {
+85 |     for i in '0'..'3' {
+         ^^^ "To" clause must evaluate to a number
+86 |         print i
+87 |     }
+
+■ test/scripts/type-checking.cosy, line 95:
+93 |     for i in 0..3 {
+94 |         mut j = i
+95 |         j = 'hej'
+             ^ Cannot assign Str to Num
+96 |         print j
+97 |     }
+
+■ test/scripts/type-checking.cosy, line 109:
+107 |     mut x = f(12)
+108 |     print x
+109 |     x = f('hej')
+                     ^ Expected argument 1 to be Num but got Str.
+110 |     print x
+111 | }
+
+■ test/scripts/type-checking.cosy, line 120:
+118 |     }
+119 | 
+120 |     mut x = f(12)
+                      ^ Expected argument 1 to be Str but got Num.
+121 |     print x
+122 |     x = f('hej')
+
+■ test/scripts/type-checking.cosy, line 133:
+131 |     }
+132 |     f(4, 'hej')
+133 |     f = fn(x Str, y Num) {
+          ^ Cannot assign Fn(Str, Num) to Fn(Num, Str)
+134 |         print '{x}{y}'
+135 |     }
+
+■ test/scripts/type-checking.cosy, line 136:
+134 |         print '{x}{y}'
+135 |     }
+136 |     f('dav', 5)
+                    ^ Expected argument 1 to be Num but got Str.
+137 | }
+138 | 
+
+■ test/scripts/type-checking.cosy, line 136:
+134 |         print '{x}{y}'
+135 |     }
+136 |     f('dav', 5)
+                    ^ Expected argument 2 to be Str but got Num.
+137 | }
+138 | 
+
+■ test/scripts/type-checking.cosy, line 164:
+162 |     mut x = f
+163 |     print x(3)
+164 |     x = f2
+          ^ Cannot assign (Fn(Str) -> Str) to (Fn(Num) -> Num)
+165 |     print x('d')
+166 | }
+
+■ test/scripts/type-checking.cosy, line 165:
+163 |     print x(3)
+164 |     x = f2
+165 |     print x('d')
+                     ^ Expected argument 1 to be Num but got Str.
+166 | }
+167 | 
+
+■ test/scripts/type-checking.cosy, line 189:
+187 |     }
+188 |     mut s = square(5)
+189 |     s = foo(s)
+          ^ Cannot assign Str to Num
+190 |     print s
+191 | }
+
+■ test/scripts/type-checking.cosy, line 198:
+196 |     fn gamble(x Num) Str {
+197 |         if x < 5 {
+198 |             return 5
+                  ^^^^^^ Function expected to return Str but got Num
+199 |         } else if x < 7 {
+200 |             return 'hej'
+
+■ test/scripts/type-checking.cosy, line 202:
+200 |             return 'hej'
+201 |         } else {
+202 |             return 8
+                  ^^^^^^ Function expected to return Str but got Num
+203 |         }
+204 |     }
+
+■ test/scripts/type-checking.cosy, line 257:
+255 |     mut x = 4 < 5
+256 |     print x
+257 |     x = 6 // fails
+          ^ Cannot assign Num to Bool
+258 |     print x
+259 | }
+

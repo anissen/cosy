@@ -306,7 +306,7 @@ class Interpreter {
                     if (!Std.isOfType(indexEval, Int)) throw 'Index must be an Int.';
                     var arr = (obj: Array<Any>);
                     var idx = (indexEval: Int);
-                    if (idx < 0 && idx >= arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', idx, -1),
+                    if (idx < 0 && idx >= arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', idx, -1, -1),
                         'Array out of bounds (index $idx in array of length ${arr.length}).');
                     return arr[idx];
                 }

@@ -10,6 +10,9 @@ import haxe.io.Path;
 class Cosy {
     static var compiler: Compiler = new Compiler();
 
+    static var fileName: String;
+    static var sourceCode: String;
+
     static function main() {
         #if (cpp && static_link)
         return;
@@ -95,6 +98,9 @@ Options:
             Sys.exit(64);
         }
 
+        // TODO: File name and source code should be part of `compiler`
+        fileName = file;
+        sourceCode = File.getContent(file);
         compiler.runFile(file);
 
         if (compiler.watch) {
@@ -149,7 +155,7 @@ Options:
             println(e);
     }
 
-    public static function println(v: Any) {
+    public static function println(v: Dynamic = '') {
         #if (sys || nodejs)
         Sys.println(v);
         #elseif js
@@ -165,13 +171,16 @@ Options:
     #if (sys || nodejs)
     @:expose
     public static function runFile(path: String) {
+        fileName = path;
         var source = File.getContent(path);
+        sourceCode = source;
         compiler.run(source);
     }
     #end
 
     @:expose
     public static function runSource(source: String) {
+        sourceCode = source;
         compiler.run(source);
     }
 
@@ -200,18 +209,45 @@ Options:
         }
     }
 
-    static function report(line: Int, where: String, message: String) {
-        var msg = '[line $line] Error $where: $message';
-        println(color(msg, Error));
+    static function report(line: Int, token: Null<Token>, message: String) {
+        println('■' + color(' $fileName, line $line:', Misc));
+
+        final linesBefore = 2;
+        final linesAfter = 2;
+        final fromLine = line - linesBefore;
+        final toLine = line + linesAfter + 1;
+
+        var codeLines = sourceCode.split('\n');
+        for (lineNumber in fromLine...toLine) {
+            if (lineNumber <= 0 || lineNumber > codeLines.length) continue;
+            var lpad = '$toLine'.length > '$lineNumber'.length;
+            var lineDecoration = (lpad ? ' ' : '') + '$lineNumber | ';
+            var codeLine = codeLines[lineNumber - 1];
+            if (lineNumber == line && token != null) {
+                final pos = token.position;
+                final lexeme = token.lexeme;
+                println(color(lineDecoration, Error) + replaceSubstring(codeLine, pos, lexeme.length, color(lexeme, Error)));
+                var s = [for (i in 0...(lineDecoration.length + pos)) ' '].join('');
+                s += color([for (i in 0...lexeme.length) '^'].join('') + ' $message', Error);
+                println(s);
+            } else {
+                if (lineNumber == line) lineDecoration = color(lineDecoration, Error);
+                println(lineDecoration + codeLine);
+            }
+        }
+        println();
         compiler.hadError = true; // TODO: This does not work when the compiler is instantiated.
     }
 
     public static function error(data: ErrorData, message: String) {
         switch data {
-            case Line(line): report(line, '', message);
-            case Token(token) if (token.type == Eof): report(token.line, 'at end', message);
-            case Token(token): report(token.line, 'at "${token.lexeme}"', message);
+            case Line(line): report(line, null, message);
+            case Token(token): report(token.line, token, message);
         }
+    }
+
+    static function replaceSubstring(str: String, start: Int, length: Int, replaceWith: String) {
+        return str.substr(0, start) + replaceWith + str.substr(start + length);
     }
 
     public static function hint(token: Token, message: String) {

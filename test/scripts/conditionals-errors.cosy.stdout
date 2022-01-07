@@ -1,1 +1,6 @@
-[line 1] Error at "if": The condition must evaluate to a be boolean value (instead of Num).
+■ test/scripts/conditionals-errors.cosy, line 1:
+1 | if 4 {
+    ^^ The condition must evaluate to a be boolean value (instead of Num).
+2 |     print 'this does not have a boolean condition'
+3 | }
+

@@ -1,1 +1,5 @@
-[line 1] Error at "return": Cannot return from top-level code.
+■ test/scripts/top-level-return.cosy, line 1:
+1 | return 'hello'
+    ^^^^^^ Cannot return from top-level code.
+2 | 
+

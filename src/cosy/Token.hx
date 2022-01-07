@@ -5,12 +5,14 @@ class Token {
     public final lexeme: String;
     public final literal: Any;
     public final line: Int;
+    public final position: Int;
 
-    public function new(type, lexeme, literal, line) {
+    public function new(type, lexeme, literal, line, position) {
         this.type = type;
         this.lexeme = lexeme;
         this.literal = literal;
         this.line = line;
+        this.position = position;
     }
 
     public function toString(): String {

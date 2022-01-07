@@ -1,5 +1,40 @@
-[line 5] Error at "return": Unreachable code after return statement.
-[line 13] Error at "break": Unreachable code after return statement.
-[line 19] Error at "continue": Unreachable code after return statement.
-[line 23] Error at "if": This condition is always false.
-[line 25] Error at "if": This condition is always true.
+■ test/scripts/dead-code-detection.cosy, line 5:
+3 |     if (false) return _
+4 |     print 'after first return'
+5 |     return _
+        ^^^^^^ Unreachable code after return statement.
+6 |     print 'after second return'
+7 | }
+
+■ test/scripts/dead-code-detection.cosy, line 13:
+11 | for true {
+12 |     print 'before break'
+13 |     break
+         ^^^^^ Unreachable code after return statement.
+14 |     print 'after break'
+15 | }
+
+■ test/scripts/dead-code-detection.cosy, line 19:
+17 | for 0..3 {
+18 |     print 'before continue'
+19 |     continue
+         ^^^^^^^^ Unreachable code after return statement.
+20 |     print 'after continue'
+21 | }
+
+■ test/scripts/dead-code-detection.cosy, line 23:
+21 | }
+22 | 
+23 | if 5 < 4 {
+     ^^ This condition is always false.
+24 |     print 'always false'
+25 | } else if 4 < 5 {
+
+■ test/scripts/dead-code-detection.cosy, line 25:
+23 | if 5 < 4 {
+24 |     print 'always false'
+25 | } else if 4 < 5 {
+            ^^ This condition is always true.
+26 |     print 'always true'
+27 | } else {
+

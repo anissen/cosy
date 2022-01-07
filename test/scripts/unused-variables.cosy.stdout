@@ -1,4 +1,32 @@
-[line 6] Error at "c": Local variable is not used.
-[line 12] Error at "local1": Local variable is not used.
-[line 16] Error at "arg2": Local variable is not used.
-[line 29] Error at "_z": Variables starting with _ are considered unused.
+■ test/scripts/unused-variables.cosy, line 6:
+4 | 
+5 | {
+6 |     var c = 5 // c: unused variable
+            ^ Local variable is not used.
+7 |     var d = 6
+8 |     print d
+
+■ test/scripts/unused-variables.cosy, line 12:
+10 | 
+11 | fn x(arg1) {
+12 |     var local1 = 2 // local1: unused variable
+             ^^^^^^ Local variable is not used.
+13 |     print arg1
+14 | }
+
+■ test/scripts/unused-variables.cosy, line 16:
+14 | }
+15 | 
+16 | fn y(arg2) { // arg2: unused variable
+          ^^^^ Local variable is not used.
+17 |     var local2 = 2
+18 |     print local2
+
+■ test/scripts/unused-variables.cosy, line 29:
+27 |     var _y = 2 // no error for unused variable
+28 |     var _z = 5
+29 |     print _z // error for used variable starting with _
+               ^^ Variables starting with _ are considered unused.
+30 | }
+31 | 
+

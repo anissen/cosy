@@ -1,1 +1,8 @@
-[line 8] Error at "a": Shadows existing variable.
+■ test/scripts/variable-resolution.cosy, line 8:
+ 6 | 
+ 7 |   show_a()
+ 8 |   var a = 'block'
+           ^ Shadows existing variable.
+ 9 |   print a
+10 |   show_a()
+

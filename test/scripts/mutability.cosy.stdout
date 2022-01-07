@@ -1,2 +1,16 @@
-[line 9] Error at "b": Cannot reassign non-mutable variable.
-[line 13] Error at "arg": Cannot reassign non-mutable variable.
+■ test/scripts/mutability.cosy, line 9:
+ 7 | var b = 3
+ 8 | print b
+ 9 | b = 7
+     ^ Cannot reassign non-mutable variable.
+10 | print b
+11 | 
+
+■ test/scripts/mutability.cosy, line 13:
+11 | 
+12 | fn f(arg) {
+13 |     arg = 5
+         ^^^ Cannot reassign non-mutable variable.
+14 |     print arg
+15 | }
+

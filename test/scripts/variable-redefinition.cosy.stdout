@@ -1,1 +1,8 @@
-[line 3] Error at "a": Variable with this name already declared in this scope.
+■ test/scripts/variable-redefinition.cosy, line 3:
+1 | fn bad() {
+2 |   var a = 'first'
+3 |   var a = 'second' // redefinition: should throw an error
+          ^ Variable with this name already declared in this scope.
+4 |   print a
+5 | }
+

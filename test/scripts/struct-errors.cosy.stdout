@@ -1,8 +1,64 @@
-[line 19] Error at "x": Member already assigned in initializer.
-[line 24] Error at "Point": Member "a" not initialized.
-[line 31] Error at "y": Member is not mutable.
-[line 32] Error at "z": No member named "z" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
-[line 33] Error at "w": No member named "w" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
-[line 42] Error at "p": Cannot assign Struct { a Mut(Str), x Mut(Num) } to Struct { a Array(Num), x Mut(Num), y Num }
-[line 49] Error at "Point": Member "a" not initialized.
-[line 52] Error at "Point": Member "a" not initialized.
+■ test/scripts/struct-errors.cosy, line 19:
+17 | 
+18 | {
+19 |     mut point = Point { x = 5, y = 13, a = [], x = 3 } // fails (x initialized twice)
+                                                    ^ Member already assigned in initializer.
+20 |     print point
+21 | }
+
+■ test/scripts/struct-errors.cosy, line 24:
+22 | 
+23 | {
+24 |     mut point = Point { x = 5, y = 13 } // fails (a is not initialized)
+                     ^^^^^ Member "a" not initialized.
+25 |     print point
+26 | }
+
+■ test/scripts/struct-errors.cosy, line 31:
+29 |     mut point = Point { a = [] } // ok
+30 |     point.x = 555
+31 |     point.y = 7 // fails (y is not mut)
+               ^ Member is not mutable.
+32 |     point.z = 8 // fails (z is not a member)
+33 |     point.w = fn() { // fails (w is not a member)
+
+■ test/scripts/struct-errors.cosy, line 32:
+30 |     point.x = 555
+31 |     point.y = 7 // fails (y is not mut)
+32 |     point.z = 8 // fails (z is not a member)
+               ^ No member named "z" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
+33 |     point.w = fn() { // fails (w is not a member)
+34 |     	print 'hello'
+
+■ test/scripts/struct-errors.cosy, line 33:
+31 |     point.y = 7 // fails (y is not mut)
+32 |     point.z = 8 // fails (z is not a member)
+33 |     point.w = fn() { // fails (w is not a member)
+               ^ No member named "w" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
+34 |     	print 'hello'
+35 |     }
+
+■ test/scripts/struct-errors.cosy, line 42:
+40 | {
+41 |     mut p = Point { a = [] }
+42 |     p = Fake {} // fails (Point type != Fake type)
+         ^ Cannot assign Struct { a Mut(Str), x Mut(Num) } to Struct { a Array(Num), x Mut(Num), y Num }
+43 |     print p
+44 | }
+
+■ test/scripts/struct-errors.cosy, line 49:
+47 |     struct Test {
+48 |         var a Array Num
+49 |         var p = Point { x = 4, y = 12 }
+                     ^^^^^ Member "a" not initialized.
+50 |     }
+51 | 
+
+■ test/scripts/struct-errors.cosy, line 52:
+50 |     }
+51 | 
+52 |     var test = Test { a = [], p = Point { x = 5, y = 13 } }
+                                       ^^^^^ Member "a" not initialized.
+53 |     print test
+54 | }
+

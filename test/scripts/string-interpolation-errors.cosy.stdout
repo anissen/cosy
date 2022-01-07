@@ -1,3 +1,11 @@
-[line 1] Error at "+": Values of type Str and Num cannot be concatinated.
+■ test/scripts/string-interpolation-errors.cosy, line 1:
+1 | print 'answer: ' + 3
+                     ^ Values of type Str and Num cannot be concatinated.
+2 | print 42 + true
+
 [line 1] Hint: Use string interpolation, e.g. {value}, to add non-string types to a string.
-[line 2] Error at "+": Values of types Num and Bool cannot be added.
+■ test/scripts/string-interpolation-errors.cosy, line 2:
+1 | print 'answer: ' + 3
+2 | print 42 + true
+             ^ Values of types Num and Bool cannot be added.
+

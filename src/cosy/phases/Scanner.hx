@@ -15,6 +15,7 @@ class Scanner {
     var start = 0;
     var current = 0;
     var line = 1;
+    var position = 0;
     var interpolationMode = false;
 
     public function new(source: String) {
@@ -26,7 +27,7 @@ class Scanner {
             start = current;
             scanToken();
         }
-        tokens.push(new Token(Eof, '', null, line));
+        tokens.push(new Token(Eof, '', null, line, position));
         return tokens;
     }
 
@@ -64,7 +65,9 @@ class Scanner {
                     addToken(match('='.code) ? SlashEqual : Slash);
                 }
             case ' '.code | '\r'.code | '\t'.code: // Ignore whitespace.
-            case '\n'.code: line++;
+            case '\n'.code:
+                line++;
+                position = 0;
             case '\''.code: string();
             case '"'.code: rawString();
             case _:
@@ -178,6 +181,7 @@ class Scanner {
         if (isAtEnd()) return false;
         if (source.charCodeAt(current) != expected) return false;
         current++;
+        position++;
         return true;
     }
 
@@ -198,11 +202,12 @@ class Scanner {
 
     function advance(): Int {
         current++;
+        position++;
         return source.charCodeAt(current - 1);
     }
 
     inline function addToken(type: TokenType, ?literal: Any) {
-        tokens.push(new Token(type, source.substring(start, current), literal, line));
+        tokens.push(new Token(type, source.substring(start, current), literal, line, position - (current - start)));
     }
 
     inline function isAtEnd() {
