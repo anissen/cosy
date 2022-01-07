@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+./scripts/all_validate.sh && ./scripts/docs.sh && ./scripts/update_playground.sh
+exit $?
