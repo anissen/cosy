@@ -30,12 +30,12 @@ class Interpreter {
         }
     }
 
-    public function runFunction(name: String) {
+    public function runFunction(name: String, args: Array<Any>) {
         final func: Callable = environment.getAt(0, name); // globals.getAt(0, name);
         // trace('runFunction: $func');
         if (func != null) {
             // trace('before');
-            func.call(this, [] /* no args for now */);
+            func.call(this, args);
             // trace('after');
         }
     }

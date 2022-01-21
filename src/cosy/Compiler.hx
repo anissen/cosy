@@ -145,9 +145,9 @@ class Compiler {
     }
 
     @:expose
-    public function runFunction(name: String) {
+    public function runFunction(name: String, ...args: Any) {
         //    interpreter.run([Expr.Call(Expr.Variable(Token()))])
-        interpreter.runFunction(name);
+        interpreter.runFunction(name, args);
     }
 
     @:expose
