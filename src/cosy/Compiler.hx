@@ -138,12 +138,12 @@ class Compiler {
     }
 
     @:expose
-    public function runStatements(statements: Array<Stmt>): Void {
+    public function runStatements(statements: Array<Stmt>, hotReload = false): Void {
         if (statements == null) return Cosy.println('Statements list is null.');
         if (statements.length == 0) return Cosy.println('Statements list is empty.');
-        interpreter.run(statements, this);
+        interpreter.run(statements, this, hotReload);
     }
-
+    
     @:expose
     public function runFunction(name: String, ...args: Any) {
         //    interpreter.run([Expr.Call(Expr.Variable(Token()))])
@@ -218,7 +218,7 @@ class Compiler {
         // trace('AST interpreter');
         startMeasure('AST interpreter');
         // trace('AST output:');
-        interpreter.run(statements, this);
+        interpreter.run(statements, this, false);
         endMeasure('AST interpreter');
         // trace('-------------');
 

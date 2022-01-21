@@ -7,6 +7,7 @@ class Interpreter {
     var environment: Environment;
 
     var compiler: Compiler = null;
+    var hotReload = false;
 
     static final uninitialized: Any = {};
 
@@ -15,8 +16,9 @@ class Interpreter {
         environment = globals;
     }
 
-    public function run(statements: Array<Stmt>, compiler: Compiler) {
+    public function run(statements: Array<Stmt>, compiler: Compiler, hotReload: Bool) {
         this.compiler = compiler;
+        this.hotReload = hotReload;
         interpret(statements);
     }
 
@@ -138,7 +140,12 @@ class Interpreter {
                 // if (Std.isOfType(value, StructInstance)) {
                 //     value = (value: StructInstance).clone();
                 // }
-                environment.define(name.lexeme, value);
+                if (!hotReload) {
+                    environment.define(name.lexeme, value);
+                } else {
+                    // Hack for hot reload to disregard already setup variables
+                    if (init != null) environment.define(name.lexeme, value);
+                }
         }
     }
 
