@@ -111,7 +111,7 @@ class Interpreter {
                 environment.define(name.lexeme, new Function(name, params, body, environment, false));
             case If(keyword, cond, then, el): if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
-            case Print(keyword, e): Cosy.println(stringify(evaluate(e)));
+            case Print(keyword, e): Logging.println(stringify(evaluate(e)));
             case Return(keyword, value):
                 var value = if (value == null) null else evaluate(value);
                 throw new Return(value);

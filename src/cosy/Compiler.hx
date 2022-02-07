@@ -17,11 +17,44 @@ import haxe.Timer;
 import sys.io.File;
 #end
 
+// Stuff related to error logging
+enum ErrorType {
+    Error;
+    RuntimeError;
+    Warning;
+    Hint;
+}
+
+enum Phase {
+    Scanner;
+    Parser;
+    Resolver;
+    Typer;
+    Optimizer;
+    AstPrinter;
+    Disassembler;
+    Interpreter;
+    MarkdownPrinter;
+    JavaScriptPrinter;
+    CodeGenerator;
+    VM;
+    None;
+}
+
+typedef ScriptError = {
+    var pos: Logging.ErrorData;
+    var message: String;
+    var type: ErrorType;
+    var phase: Phase;
+}
+
 class Compiler {
+    var fileName: String;
+    var sourceCode: String;
+
     public final foreignFunctions: Map<String, ForeignFunction> = new Map();
     public final foreignVariables: Map<String, Any> = new Map();
 
-    // public var statements: Array<Stmt> = new Array();
     final interpreter = new Interpreter();
 
     // TODO: All these properties should not be publically available to get/set
@@ -37,6 +70,8 @@ class Compiler {
     public var outputTimes = false;
     public var noColors = false;
     public var strict = false;
+
+    public var errors: Array<ScriptError> = [];
 
     public function new() {
         setFunction('random_int', (args) -> Std.random(args[0]));
@@ -71,7 +106,9 @@ class Compiler {
     #if (sys || nodejs)
     @:expose // TODO: This probably only works on static fields!
     public function runFile(path: String) {
+        fileName = path;
         var content = File.getContent(path);
+        sourceCode = content;
         run(content);
         if (!watch) {
             if (hadError) Sys.exit(65);
@@ -104,32 +141,32 @@ class Compiler {
 
     @:expose
     public function parse(source: String): Array<Stmt> {
-        startMeasure('Scanner');
+        Logging.startMeasure('Scanner');
         var scanner = new Scanner(source);
         var tokens = scanner.scanTokens();
-        endMeasure('Scanner');
+        Logging.endMeasure('Scanner');
 
-        startMeasure('Parser');
+        Logging.startMeasure('Parser');
         var parser = new Parser(tokens);
         var statements = parser.parse();
-        endMeasure('Parser');
+        Logging.endMeasure('Parser');
 
         if (hadError) return null;
 
-        startMeasure('Optimizer');
+        Logging.startMeasure('Optimizer');
         var optimizer = new Optimizer();
         statements = optimizer.optimize(statements);
-        endMeasure('Optimizer');
+        Logging.endMeasure('Optimizer');
 
-        startMeasure('Resolver');
+        Logging.startMeasure('Resolver');
         var resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
-        endMeasure('Resolver');
+        Logging.endMeasure('Resolver');
 
-        startMeasure('Typer');
+        Logging.startMeasure('Typer');
         var typer = new Typer();
         typer.type(statements, strict);
-        endMeasure('Typer');
+        Logging.endMeasure('Typer');
 
         if (hadError) return null;
         if (validateOnly) return null;
@@ -139,21 +176,20 @@ class Compiler {
 
     @:expose
     public function runStatements(statements: Array<Stmt>, hotReload = false): Void {
-        if (statements == null) return Cosy.println('Statements list is null.');
-        if (statements.length == 0) return Cosy.println('Statements list is empty.');
+        if (statements == null) return Logging.println('Statements list is null.');
+        if (statements.length == 0) return Logging.println('Statements list is empty.');
         interpreter.run(statements, this, hotReload);
     }
-    
+
     @:expose
     public function runFunction(name: String, ...args: Any) {
-        //    interpreter.run([Expr.Call(Expr.Variable(Token()))])
         interpreter.runFunction(name, args);
     }
 
     @:expose
     public function run(source: String) {
         hadError = false;
-        measureOutput = Cosy.color('Times:', Misc);
+        Logging.println(Logging.color('Times:', Logging.Color.Misc));
 
         var start = Timer.stamp();
         final statements = parse(source);
@@ -164,7 +200,7 @@ class Compiler {
         if (outputPrettyPrint) {
             var printer = new AstPrinter();
             for (stmt in statements)
-                Cosy.println(printer.printStmt(stmt));
+                Logging.println(printer.printStmt(stmt));
             return;
         }
 
@@ -173,61 +209,59 @@ class Compiler {
             var stdLib = '// standard library\n';
             stdLib += 'const clock = Date.now;\n';
             stdLib += 'const string_from_char_code = String.fromCharCode;';
-            Cosy.println(stdLib);
+            Logging.println(stdLib);
 
             var printer = new JavaScriptPrinter();
             for (stmt in statements)
-                Cosy.println(printer.printStmt(stmt));
+                Logging.println(printer.printStmt(stmt));
             return;
         }
 
         if (outputMarkdown) {
-            Cosy.println('# Cosy file');
-            Cosy.println('## Functions');
+            Logging.println('# Cosy file');
+            Logging.println('## Functions');
 
             var printer = new MarkdownPrinter();
-            Cosy.println(printer.printStatements(statements));
+            Logging.println(printer.printStatements(statements));
             return;
         }
 
         if (outputBytecode || outputDisassembly) {
-            startMeasure('Code generator');
+            Logging.startMeasure('Code generator');
             var codeGenerator = new CodeGenerator();
             var bytecodeOutput = codeGenerator.generate(statements);
             // var bytecode = bytecodeOutput.bytecode;
-            endMeasure('Code generator');
+            Logging.endMeasure('Code generator');
 
             if (outputDisassembly) {
-                startMeasure('Disassembler');
-                var disassembly = Disassembler.disassemble(bytecodeOutput, !noColors);
-                endMeasure('Disassembler');
-                Cosy.printlines([disassembly]);
+                Logging.startMeasure('Disassembler');
+                var disassembly = cosy.phases.Disassembler.disassemble(bytecodeOutput, !noColors);
+                Logging.endMeasure('Disassembler');
+                Logging.printlines([disassembly]);
             }
 
             if (outputBytecode) {
                 trace('-------------');
                 trace('VM interpreter');
-                startMeasure('VM interpreter');
+                Logging.startMeasure('VM interpreter');
                 var vm = new VM();
                 vm.run(bytecodeOutput);
-                endMeasure('VM interpreter');
+                Logging.endMeasure('VM interpreter');
                 trace('-------------');
             }
         }
 
         // trace('AST interpreter');
-        startMeasure('AST interpreter');
+        Logging.startMeasure('AST interpreter');
         // trace('AST output:');
         interpreter.run(statements, this, false);
-        endMeasure('AST interpreter');
+        Logging.endMeasure('AST interpreter');
         // trace('-------------');
 
         if (outputTimes) {
-            Cosy.println('\n$measureOutput');
-
             var end = Timer.stamp();
             var totalDuration = (end - start) * 1000;
-            Cosy.println(Cosy.color('Total: ${round2(totalDuration, 3)} ms', Misc));
+            Logging.println(Logging.color('Total: ${Logging.round2(totalDuration, 3)} ms', Logging.Color.Misc));
         }
     }
 
@@ -242,31 +276,36 @@ class Compiler {
         interpreter.setForeignVariable(name, variable);
     }
 
-    // Measurement stuff...
-    static function round2(number: Float, precision: Int): Float {
-        var num = number;
-        num = num * Math.pow(10, precision);
-        num = Math.round(num) / Math.pow(10, precision);
-        return num;
+    // error handling stuff...
+    public function error(pos: Logging.ErrorData, message: String) {
+        errors.push({
+            pos: pos,
+            type: Error,
+            message: message,
+            phase: None
+        });
     }
 
-    var measureStarts: Map<String, Float> = new Map();
-    var measureOutput = '';
-
-    function startMeasure(phase: String) {
-        if (!outputTimes) return;
-        measureStarts[phase] = Timer.stamp();
+    public function hint(pos: Logging.ErrorData, message: String) {
+        errors.push({
+            pos: pos,
+            type: Hint,
+            message: message,
+            phase: None
+        });
     }
 
-    function endMeasure(phase: String) {
-        if (!outputTimes) return;
-        if (!measureStarts.exists(phase)) throw 'Measurement for $phase has not been started';
-        var end = Timer.stamp();
-        var duration = (end - measureStarts[phase]) * 1000;
-        while (phase.length < 15) phase += ' ';
-        measureOutput += '\n· ';
-        measureOutput += Cosy.color('$phase took\t${round2(duration, 3)} ms', Misc);
+    public function runtimeError(e: RuntimeError) {
+        errors.push({
+            pos: e.token,
+            type: RuntimeError,
+            message: e.message,
+            phase: None
+        });
+        hadRuntimeError = true;
     }
+
+    // ...end of error handling stuff
 }
 
 // TODO: Should probably be in it's own class

@@ -1,6 +1,5 @@
 package cosy;
 
-import haxe.Timer;
 #if (sys || nodejs)
 import sys.FileSystem;
 import sys.io.File;
@@ -9,9 +8,6 @@ import haxe.io.Path;
 
 class Cosy {
     static var compiler: Compiler = new Compiler();
-
-    static var fileName: String;
-    static var sourceCode: String;
 
     static function main() {
         #if (cpp && static_link)
@@ -82,7 +78,7 @@ Options:
 
         var file = args[args.length - 1];
         if (!sys.FileSystem.exists(file)) {
-            println(color('Source file not found: "$file".', Error));
+            Logging.println(Logging.color('Source file not found: "$file".', Error));
 
             var dir = Path.directory(file);
             var filename = Path.withoutDirectory(file);
@@ -92,17 +88,15 @@ Options:
                 bestMatches = bestMatches.map(m -> '"${Path.join([dir, m])}"');
                 var lastMatch = bestMatches.pop();
                 var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
-                println(color('Did you mean $formattedMatches?', Hint));
+                Logging.println(Logging.color('Did you mean $formattedMatches?', Logging.Color.Hint));
             }
 
             Sys.exit(64);
         }
 
-        // TODO: File name and source code should be part of `compiler`
-        fileName = file;
-        sourceCode = File.getContent(file);
-        compiler.runFile(file);
+        runFile(file);
 
+        // TODO: Move file watching into its own file?
         if (compiler.watch) {
             var stat = FileSystem.stat(file);
             function has_file_changed(): Bool {
@@ -121,12 +115,13 @@ Options:
                     compiler.runFile(file);
                 }
             }
-            var timer = new Timer(1000);
+            var timer = new haxe.Timer(1000);
             timer.run = watch_file;
         }
         #end
     }
 
+    // TODO: Move macros into their own file?
     static macro function getBuildDate(): haxe.macro.Expr {
         #if !display
         return macro $v{Date.now().toString()};
@@ -150,19 +145,6 @@ Options:
         #end
     }
 
-    public static function printlines(a: Array<Any>) {
-        for (e in a)
-            println(e);
-    }
-
-    public static function println(v: Dynamic = '') {
-        #if (sys || nodejs)
-        Sys.println(v);
-        #elseif js
-        js.Browser.console.log(v);
-        #end
-    }
-
     @:expose
     public static function validate(source: String): Bool {
         return compiler.validate(source);
@@ -171,121 +153,46 @@ Options:
     #if (sys || nodejs)
     @:expose
     public static function runFile(path: String) {
-        fileName = path;
-        var source = File.getContent(path);
-        sourceCode = source;
-        compiler.run(source);
+        compiler.runFile(path);
     }
     #end
 
     @:expose
     public static function runSource(source: String) {
-        sourceCode = source;
         compiler.run(source);
     }
 
     @:expose
     public static function createCompiler(): Compiler {
-        return new Compiler();
+        compiler = new Compiler(); // HACK to replace the static compiler instance to be able to capture errors etc. with the correct context
+        return compiler;
     }
 
-    /*
-        Cosy.hx should be split into:
-        - Cosy.hx (main interface for CLI and embedding)
-        - Compiler.hx (compiler-specific stuff; parse(), validate(), run() etc.)
-        - Program.hx (abstraction of an executable; can set variables/functions and run specific functions, e.g. run_function('draw'))
-        - [Some utility class? Logging, measurements, printing, macros]
-     */
-    static function reportWarning(line: Int, where: String, message: String) {
-        var msg = '[line $line] Warning $where: $message';
-        println(color(msg, Warning));
-    }
-
-    public static function warning(data: ErrorData, message: String) {
+    public static function warning(data: Logging.ErrorData, message: String) {
         switch data {
-            case Line(line): reportWarning(line, '', message);
-            case Token(token) if (token.type == Eof): reportWarning(token.line, 'at end', message);
-            case Token(token): reportWarning(token.line, 'at "${token.lexeme}"', message);
+            case Logging.ErrorDataType.Line(line): Logging.reportWarning(line, '', message);
+            case Logging.ErrorDataType.Token(token) if (token.type == Eof): Logging.reportWarning(token.line, 'at end', message);
+            case Logging.ErrorDataType.Token(token): Logging.reportWarning(token.line, 'at "${token.lexeme}"', message);
         }
     }
 
-    static function report(line: Int, token: Null<Token>, message: String) {
-        println('■' + color(' $fileName, line $line:', Misc));
-
-        final linesBefore = 2;
-        final linesAfter = 2;
-        final fromLine = line - linesBefore;
-        final toLine = line + linesAfter + 1;
-
-        var codeLines = sourceCode.split('\n');
-        for (lineNumber in fromLine...toLine) {
-            if (lineNumber <= 0 || lineNumber > codeLines.length) continue;
-            var lpad = '$toLine'.length > '$lineNumber'.length;
-            var lineDecoration = (lpad ? ' ' : '') + '$lineNumber | ';
-            var codeLine = codeLines[lineNumber - 1];
-            if (lineNumber == line && token != null) {
-                final pos = token.position;
-                final lexeme = token.lexeme;
-                println(color(lineDecoration, Error) + replaceSubstring(codeLine, pos, lexeme.length, color(lexeme, Error)));
-                var s = [for (i in 0...(lineDecoration.length + pos)) ' '].join('');
-                s += color([for (i in 0...lexeme.length) '^'].join('') + ' $message', Error);
-                println(s);
-            } else {
-                if (lineNumber == line) lineDecoration = color(lineDecoration, Error);
-                println(lineDecoration + codeLine);
-            }
-        }
-        println();
-        compiler.hadError = true; // TODO: This does not work when the compiler is instantiated.
-    }
-
-    public static function error(data: ErrorData, message: String) {
+    public static function error(data: Logging.ErrorData, message: String) {
+        compiler.error(data, message);
         switch data {
-            case Line(line): report(line, null, message);
-            case Token(token): report(token.line, token, message);
+            case Logging.ErrorDataType.Line(line): Logging.report(line, null, message);
+            case Logging.ErrorDataType.Token(token): Logging.report(token.line, token, message);
         }
-    }
-
-    static function replaceSubstring(str: String, start: Int, length: Int, replaceWith: String) {
-        return str.substr(0, start) + replaceWith + str.substr(start + length);
     }
 
     public static function hint(token: Token, message: String) {
         var msg = '[line ${token.line}] Hint: $message';
-        println(color(msg, Hint));
+        Logging.println(Logging.color(msg, Hint));
     }
 
     public static function runtimeError(e: RuntimeError) {
         var msg = '[line ${e.token.line}] Runtime Error: ${e.message}';
-        println(color(msg, Error));
+        Logging.println(Logging.color(msg, Error));
+        trace(msg);
         compiler.hadRuntimeError = true;
     }
-
-    public static function color(text: String, color: Color): String {
-        if (compiler.noColors) return text;
-        return switch color {
-            case Error: '\033[1;31m$text\033[0m';
-            case Warning: '\033[0;33m$text\033[0m';
-            case Hint: '\033[0;36m$text\033[0m';
-            case Misc: '\033[0;35m$text\033[0m';
-        }
-    }
-}
-
-enum Color {
-    Error;
-    Warning;
-    Hint;
-    Misc;
-}
-
-enum ErrorDataType {
-    Line(v: Int);
-    Token(v: Token);
-}
-
-abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
-    @:from static inline function line(v: Int): ErrorData return Line(v);
-
-    @:from static inline function token(v: Token): ErrorData return Token(v);
 }
