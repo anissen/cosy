@@ -3,7 +3,7 @@
                      ^ Values of type Str and Num cannot be concatinated.
 2 | print 42 + true
 
-[line 1] Hint: Use string interpolation, e.g. {value}, to add non-string types to a string.
+Hint: Use string interpolation, e.g. {value}, to add non-string types to a string.
 ■ test/scripts/string-interpolation-errors.cosy, line 2:
 1 | print 'answer: ' + 3
 2 | print 42 + true

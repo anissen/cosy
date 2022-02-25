@@ -86,9 +86,6 @@ class Compiler {
 
     @:expose
     public function validate(source: String): Bool {
-        // TODO: This is a hack
-        fileName = '<script>';
-        sourceCode = source;
         logger.hadError = false;
         logger.hadRuntimeError = false;
         logger.log = [];
@@ -113,9 +110,6 @@ class Compiler {
 
     @:expose
     public function parse(source: String): Array<Stmt> {
-        // TODO: This is a hack
-        fileName = '<script>';
-        sourceCode = source;
         logger.hadError = false;
         logger.hadRuntimeError = false;
         logger.log = [];
