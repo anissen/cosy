@@ -5,6 +5,7 @@ import cosy.TokenType;
 class Scanner {
     final source: String;
     final tokens: Array<Token> = [];
+    var logger: cosy.Logging.Logger;
 
     static final keywords = [
         'and' => And, 'break' => Break, 'continue' => Continue, 'else' => Else, 'false' => False, 'for' => For, 'foreign' => Foreign, 'fn' => Fn, 'in' => In,
@@ -18,8 +19,9 @@ class Scanner {
     var position = 0;
     var interpolationMode = false;
 
-    public function new(source: String) {
+    public function new(source: String, logger: cosy.Logging.Logger) {
         this.source = source;
+        this.logger = logger;
     }
 
     public function scanTokens(): Array<Token> {
@@ -76,7 +78,7 @@ class Scanner {
                 } else if (isAlpha(c)) {
                     identifier();
                 } else {
-                    Cosy.error(line, 'Unexpected character: ${std.String.fromCharCode(c)}');
+                    logger.error({line: line, col: position - (current - start), len: std.String.fromCharCode(c).length}, 'Unexpected character.');
                 }
         }
     }
@@ -122,7 +124,7 @@ class Scanner {
         }
 
         if (isAtEnd()) {
-            Cosy.error(line, 'Unterminated string.');
+            logger.error(line, 'Unterminated string.');
             return;
         }
 
@@ -143,7 +145,7 @@ class Scanner {
         }
 
         if (isAtEnd()) {
-            Cosy.error(line, 'Unterminated raw string.');
+            logger.error(line, 'Unterminated raw string.');
             return;
         }
 

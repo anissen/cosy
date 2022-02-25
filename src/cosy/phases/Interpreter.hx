@@ -7,6 +7,7 @@ class Interpreter {
     var environment: Environment;
 
     var compiler: Compiler = null;
+    var logger: cosy.Logging.Logger = null;
     var hotReload = false;
 
     static final uninitialized: Any = {};
@@ -18,6 +19,7 @@ class Interpreter {
 
     public function run(statements: Array<Stmt>, compiler: Compiler, hotReload: Bool) {
         this.compiler = compiler;
+        this.logger = compiler.logger;
         this.hotReload = hotReload;
         interpret(statements);
     }
@@ -28,7 +30,7 @@ class Interpreter {
                 execute(statement);
             }
         } catch (e: RuntimeError) {
-            Cosy.runtimeError(e);
+            logger.runtimeError(e);
         }
     }
 
@@ -55,9 +57,9 @@ class Interpreter {
             case Expression(e): evaluate(e);
             case For(keyword, name, from, to, body):
                 final fromVal = evaluate(from);
-                if (!Std.isOfType(fromVal, Float)) Cosy.error(keyword, 'Number expected in "from" clause of loop.');
+                if (!Std.isOfType(fromVal, Float)) logger.error(keyword, 'Number expected in "from" clause of loop.');
                 final toVal = evaluate(to);
-                if (!Std.isOfType(toVal, Float)) Cosy.error(keyword, 'Number expected in "to" clause of loop.');
+                if (!Std.isOfType(toVal, Float)) logger.error(keyword, 'Number expected in "to" clause of loop.');
                 var env = new Environment(environment);
                 try {
                     final step = ((fromVal: Int) < (toVal: Int)) ? 1 : -1;
@@ -108,7 +110,7 @@ class Interpreter {
                     return;
                 }
 
-                environment.define(name.lexeme, new Function(name, params, body, environment, false));
+                environment.define(name.lexeme, new Function(name, params, body, environment, false, logger));
             case If(keyword, cond, then, el): if (isTruthy(evaluate(cond))) execute(then);
                 else if (el != null) execute(el);
             case Print(keyword, e): Logging.println(stringify(evaluate(e)));
@@ -126,7 +128,7 @@ class Interpreter {
                         case _: // should never happen
                     }
                 environment = previousEnv;
-                final struct = new StructInstance(name, fields);
+                final struct = new StructInstance(name, fields, logger);
                 environment.assign(name, struct);
             case Var(name, type, init, mut, foreign):
                 if (foreign) {
@@ -357,7 +359,7 @@ class Interpreter {
                 }
                 structObj;
             case AnonFunction(params, body, returnType):
-                new Function(null, params, body, environment, false);
+                new Function(null, params, body, environment, false, logger);
         }
     }
 

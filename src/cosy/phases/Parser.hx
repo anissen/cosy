@@ -4,9 +4,11 @@ class Parser {
     final tokens: Array<Token>;
     var structNames = new Array<String>();
     var current = 0;
+    final logger: cosy.Logging.Logger;
 
-    public function new(tokens: Array<Token>) {
+    public function new(tokens: Array<Token>, logger: cosy.Logging.Logger) {
         this.tokens = tokens;
+        this.logger = logger;
     }
 
     public function parse() {
@@ -147,7 +149,7 @@ class Parser {
             if (match([Var])) declarations.push(varDeclaration(false, false));
             else if (match([Mut])) declarations.push(varDeclaration(true, false));
             else {
-                Cosy.error(tokens[current], 'Structs can only contain variable definitions.');
+                logger.error(tokens[current], 'Structs can only contain variable definitions.');
                 break;
             }
         }
@@ -487,7 +489,7 @@ class Parser {
     }
 
     function error(token: Token, message: String) {
-        Cosy.error(token, message);
+        logger.error(token, message);
         return new ParseError();
     }
 

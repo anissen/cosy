@@ -3,10 +3,12 @@ package cosy;
 class StructInstance {
     final structName: Token;
     final fields: Map<String, Any>;
+    final logger: cosy.Logging.Logger;
 
-    public function new(name: Token, fields: Map<String, Any>) {
+    public function new(name: Token, fields: Map<String, Any>, logger: cosy.Logging.Logger) {
         this.structName = name;
         this.fields = fields;
+        this.logger = logger;
     }
 
     public function clone() { // Make a deep copy of fields
@@ -15,7 +17,7 @@ class StructInstance {
             if (Std.isOfType(value, StructInstance)) clonedFields[key] = (value: StructInstance).clone();
             else clonedFields[key] = value;
         }
-        return new StructInstance(structName, clonedFields);
+        return new StructInstance(structName, clonedFields, logger);
     }
 
     public function get(name: Token): Any {
@@ -24,7 +26,7 @@ class StructInstance {
     }
 
     public function set(name: Token, value: Any) {
-        if (!fields.exists(name.lexeme)) return Cosy.error(name, '${name.lexeme} is not a property of ${name.lexeme}');
+        if (!fields.exists(name.lexeme)) return logger.error(name, '${name.lexeme} is not a property of ${name.lexeme}');
         fields.set(name.lexeme, value);
     }
 

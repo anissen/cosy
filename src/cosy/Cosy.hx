@@ -88,7 +88,7 @@ Options:
                 bestMatches = bestMatches.map(m -> '"${Path.join([dir, m])}"');
                 var lastMatch = bestMatches.pop();
                 var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
-                Logging.println(Logging.color('Did you mean $formattedMatches?', Logging.Color.Hint));
+                Logging.println(Logging.color('Did you mean $formattedMatches?', Logging.LogType.Hint));
             }
 
             Sys.exit(64);
@@ -164,35 +164,7 @@ Options:
 
     @:expose
     public static function createCompiler(): Compiler {
-        compiler = new Compiler(); // HACK to replace the static compiler instance to be able to capture errors etc. with the correct context
+        // compiler = new Compiler(); // HACK to replace the static compiler instance to be able to capture errors etc. with the correct context
         return compiler;
-    }
-
-    public static function warning(data: Logging.ErrorData, message: String) {
-        switch data {
-            case Logging.ErrorDataType.Line(line): Logging.reportWarning(line, '', message);
-            case Logging.ErrorDataType.Token(token) if (token.type == Eof): Logging.reportWarning(token.line, 'at end', message);
-            case Logging.ErrorDataType.Token(token): Logging.reportWarning(token.line, 'at "${token.lexeme}"', message);
-        }
-    }
-
-    public static function error(data: Logging.ErrorData, message: String) {
-        compiler.error(data, message);
-        switch data {
-            case Logging.ErrorDataType.Line(line): Logging.report(line, null, message);
-            case Logging.ErrorDataType.Token(token): Logging.report(token.line, token, message);
-        }
-    }
-
-    public static function hint(token: Token, message: String) {
-        var msg = '[line ${token.line}] Hint: $message';
-        Logging.println(Logging.color(msg, Hint));
-    }
-
-    public static function runtimeError(e: RuntimeError) {
-        var msg = '[line ${e.token.line}] Runtime Error: ${e.message}';
-        Logging.println(Logging.color(msg, Error));
-        trace(msg);
-        compiler.hadRuntimeError = true;
     }
 }

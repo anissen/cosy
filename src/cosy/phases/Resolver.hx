@@ -10,6 +10,7 @@ typedef Variable = {
 class Resolver {
     final interpreter: Interpreter;
     final compiler: Compiler;
+    final logger: cosy.Logging.Logger;
 
     final snakeCaseRegex = ~/^[_a-z0-9]*$/;
 
@@ -20,6 +21,7 @@ class Resolver {
     public function new(interpreter, compiler) {
         this.interpreter = interpreter;
         this.compiler = compiler;
+        this.logger = compiler.logger;
     }
 
     public inline function resolve(s) {
@@ -38,7 +40,7 @@ class Resolver {
                 case _:
                     if (returnToken != null) {
                         // We cannot report the correct token so we simply report the return token
-                        Cosy.error(returnToken, 'Unreachable code after return statement.');
+                        logger.error(returnToken, 'Unreachable code after return statement.');
                         returnToken = null;
                     }
             }
@@ -55,13 +57,13 @@ class Resolver {
             case Break(keyword):
             case Continue(keyword):
             case Var(name, type, init, mut, foreign):
-                if (foreign && !compiler.foreignVariables.exists(name.lexeme)) Cosy.error(name, 'Foreign variable not set.');
-                if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Variable names must use snake_case.');
+                if (foreign && !compiler.foreignVariables.exists(name.lexeme)) logger.error(name, 'Foreign variable not set.');
+                if (!snakeCaseRegex.match(name.lexeme)) logger.error(name, 'Variable names must use snake_case.');
                 var member = currentStruct.match(Struct);
                 markTypeAsRead(type);
                 declare(name, mut, member);
                 if (init != null) resolveExpr(init);
-                else if (!foreign && !mut && !member) Cosy.error(name, 'Non-mutable variables must be initialized.');
+                else if (!foreign && !mut && !member) logger.error(name, 'Non-mutable variables must be initialized.');
                 define(name, mut, member);
             case For(keyword, name, from, to, body):
                 resolveExpr(from);
@@ -69,11 +71,11 @@ class Resolver {
 
                 beginScope();
                 if (name != null) {
-                    if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Loop variable names must use snake_case.');
+                    if (!snakeCaseRegex.match(name.lexeme)) logger.error(name, 'Loop variable names must use snake_case.');
                     declare(name);
                     define(name);
                 }
-                if (body.length == 0) Cosy.error(keyword, 'Loop body is empty.');
+                if (body.length == 0) logger.error(keyword, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
             case ForArray(name, array, body):
@@ -82,7 +84,7 @@ class Resolver {
                 beginScope();
                 declare(name, true); // TODO: Should array entries e mutable by default??!
                 define(name, true);
-                if (body.length == 0) Cosy.error(name, 'Loop body is empty.');
+                if (body.length == 0) logger.error(name, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
             case ForCondition(keyword, cond, body):
@@ -91,8 +93,8 @@ class Resolver {
                 resolveStmts(body);
                 endScope();
             case Function(name, params, body, returnType, foreign):
-                if (foreign && !compiler.foreignFunctions.exists(name.lexeme)) Cosy.error(name, 'Foreign function not set.');
-                if (!snakeCaseRegex.match(name.lexeme)) Cosy.error(name, 'Function names must use snake_case.');
+                if (foreign && !compiler.foreignFunctions.exists(name.lexeme)) logger.error(name, 'Foreign function not set.');
+                if (!snakeCaseRegex.match(name.lexeme)) logger.error(name, 'Function names must use snake_case.');
                 declare(name);
                 define(name);
                 resolveFunction(name, params, body, Function, foreign);
@@ -100,16 +102,16 @@ class Resolver {
             case Print(keyword, e): resolveExpr(e);
             case If(keyword, cond, then, el):
                 switch cond {
-                    case Literal(v) if (Std.isOfType(v, Bool)): Cosy.error(keyword, 'This condition is always $v.');
+                    case Literal(v) if (Std.isOfType(v, Bool)): logger.error(keyword, 'This condition is always $v.');
                     case _:
                 }
                 resolveExpr(cond);
                 resolveStmt(then);
                 if (el != null) resolveStmt(el);
             case Return(kw, val):
-                if (currentFunction == None) Cosy.error(kw, 'Cannot return from top-level code.');
+                if (currentFunction == None) logger.error(kw, 'Cannot return from top-level code.');
                 if (val != null) {
-                    if (currentFunction == Initializer) Cosy.error(kw, 'Cannot return value from an initializer.');
+                    if (currentFunction == Initializer) logger.error(kw, 'Cannot return value from an initializer.');
                     resolveExpr(val);
                 }
             case Struct(name, declarations):
@@ -129,13 +131,13 @@ class Resolver {
                     resolveExpr(expr);
             case Assign(name, op, value):
                 var variable = findInScopes(name);
-                if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign non-mutable variable.');
+                if (variable != null && !variable.mutable) logger.error(name, 'Cannot reassign non-mutable variable.');
                 resolveExpr(value);
                 resolveLocal(expr, name, false);
             case Variable(name):
                 if (scopes.peek().exists(name.lexeme)
-                    && scopes.peek().get(name.lexeme).state.match(Declared)) Cosy.error(name, 'Cannot read local variable in its own initializer');
-                if (name.lexeme.startsWith('_')) Cosy.error(name, 'Variables starting with _ are considered unused.');
+                    && scopes.peek().get(name.lexeme).state.match(Declared)) logger.error(name, 'Cannot read local variable in its own initializer');
+                if (name.lexeme.startsWith('_')) logger.error(name, 'Variables starting with _ are considered unused.');
                 resolveLocal(expr, name, true);
             case Binary(left, _, right) | Logical(left, _, right):
                 resolveExpr(left);
@@ -160,7 +162,7 @@ class Resolver {
                 switch obj {
                     case Variable(objName):
                         var variable = findInScopes(objName);
-                        if (variable != null && !variable.mutable) Cosy.error(name, 'Cannot reassign properties on non-mutable struct.');
+                        if (variable != null && !variable.mutable) logger.error(name, 'Cannot reassign properties on non-mutable struct.');
                     case Get(getObj, getName): // ignore???
                     case _:
                         trace(obj);
@@ -232,17 +234,17 @@ class Resolver {
 
         for (name => variable in scope) {
             if (StringTools.startsWith(variable.name.lexeme, '_')) continue; // ignore variables starting with underscore
-            if (!variable.member && variable.state.match(Defined)) Cosy.error(variable.name, 'Local variable is not used.');
+            if (!variable.member && variable.state.match(Defined)) logger.error(variable.name, 'Local variable is not used.');
         }
     }
 
     function declare(name: Token, mutable: Bool = false, member: Bool = false) {
         var scope = scopes.peek();
         if (scope.exists(name.lexeme)) {
-            Cosy.error(name, 'Variable with this name already declared in this scope.');
+            logger.error(name, 'Variable with this name already declared in this scope.');
         } else if (!member) { // members are allowed to shadow variables in scope
             var variable = findInScopes(name);
-            if (variable != null) Cosy.error(name, 'Shadows existing variable.');
+            if (variable != null) logger.error(name, 'Shadows existing variable.');
         }
         scope.set(name.lexeme, {
             name: name,
@@ -282,12 +284,12 @@ class Resolver {
         if (name.lexeme == 'clock' || name.lexeme == 'random') return; // TODO: Hack to handle standard library function only defined in interpreter.globals
 
         var bestMatches = EditDistance.bestMatches(name.lexeme, names);
-        Cosy.error(name, 'Variable not declared in this scope.');
+        logger.error(name, 'Variable not declared in this scope.');
         if (bestMatches.length > 0) {
             bestMatches = bestMatches.map(m -> '"$m"');
             var lastMatch = bestMatches.pop();
             var formattedMatches = (bestMatches.length > 0 ? bestMatches.join(', ') + ' or ' + lastMatch : lastMatch);
-            Cosy.hint(name, 'Did you mean $formattedMatches?');
+            logger.hint(name, 'Did you mean $formattedMatches?');
         }
     }
 

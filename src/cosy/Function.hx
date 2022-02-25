@@ -6,13 +6,15 @@ class Function implements Callable {
     final body: Array<Stmt>;
     final closure: Environment;
     final isInitializer: Bool;
+    final logger: Logging.Logger;
 
-    public function new(name, params, body, closure, isInitializer) {
+    public function new(name, params, body, closure, isInitializer, logger) {
         this.name = name;
         this.params = params;
         this.body = body;
         this.closure = closure;
         this.isInitializer = isInitializer;
+        this.logger = logger;
     }
 
     public function arity() return params.length;

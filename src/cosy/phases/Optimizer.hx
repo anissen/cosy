@@ -1,7 +1,11 @@
 package cosy.phases;
 
 class Optimizer {
-    public function new() {}
+    final logger: cosy.Logging.Logger;
+
+    public function new(logger: cosy.Logging.Logger) {
+        this.logger = logger;
+    }
 
     public inline function optimize(stmts: Array<Stmt>): Array<Stmt> {
         return optimizeStmts(stmts);
@@ -48,7 +52,7 @@ class Optimizer {
                                 case EqualEqual: (v1: Float) == (v2: Float);
                                 case BangEqual: (v1: Float) != (v2: Float);
                                 case _:
-                                    Cosy.error(op, 'Invalid operator.');
+                                    logger.error(op, 'Invalid operator.');
                                     return Expr.Binary(l, op, r);
                             });
                         } else if (Std.isOfType(v1, String) && Std.isOfType(v2, String)) {
@@ -67,7 +71,7 @@ class Optimizer {
                             case And: (v1: Bool) && (v2: Bool);
                             case Or: (v1: Bool) || (v2: Bool);
                             case _:
-                                Cosy.error(op, 'Invalid operator.');
+                                logger.error(op, 'Invalid operator.');
                                 return Expr.Binary(l, op, r);
                         });
                     case _: Expr.Logical(l, op, r);
