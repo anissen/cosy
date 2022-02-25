@@ -421,6 +421,15 @@ class Interpreter {
                     array_copy.sort((a, b) -> f.call(this, [a, b]));
                     return array_copy;
                 });
+            case 'reduce': new CustomCallable(2, (args) -> {
+                    final f: Callable = args[0];
+                    final first: Any = args[1];
+                    var acc = first;
+                    for (v in array) {
+                        acc = f.call(this, [acc, v]);
+                    }
+                    return acc;
+                });
             case _: throw new RuntimeError(name, 'Undefined method "${name.lexeme}".');
         }
     }

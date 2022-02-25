@@ -239,6 +239,7 @@ class Typer {
                             case 'count': Function([Function([t], Boolean)], Number);
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
+                            case 'reduce': Function([Function([t, t], t), t], t);
                             case 'shift': Function([], t);
                             case 'join': Function([Text], Text);
                             case 'is_empty': Function([], Boolean);
@@ -273,6 +274,7 @@ class Typer {
                             case 'last': Function([], t);
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
+                            case 'reduce': Function([Function([t, t], t), t], t);
                             case 'contains': Function([t], Boolean);
                             case 'index_of': Function([t], Number);
                             case 'reverse': Function([], Array(t));
