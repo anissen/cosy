@@ -3,6 +3,8 @@
 //     print test()
 // }
 
+// @test('max of two positive numbers')
+// test.eq(max(5, 6), 6)
 
 // {
 //     struct Point {   // Struct
@@ -58,6 +60,14 @@
 //     print 'Time spend: {(t1 - t0) / 1000} seconds'
 // }
 
+// fn reduce(arr Array Num, f Fn(Num, Num) Num, init Num) Num {
+//     mut acc = init
+//     for a in arr {
+//         acc = f(acc, a)
+//     }
+//     return acc
+// }
+
 {
     // testing the bytecode code generator + disassembler + vm
     print 'before function'
@@ -68,4 +78,10 @@
     print 'before call'
     hello(4)
     print 'after call'
+
+    // var sum = reduce([1, 2, 3, 4, 5], fn(a, b) { return a + b }, 0)
+    // var sum = [1, 2, 3, 4, 5].reduce(fn(a, b) { return a + b }, 0)
+    // print sum
+   
+    // print 'answer: ' + 3
 }

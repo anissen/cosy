@@ -303,7 +303,9 @@ class Typer {
                                     logger.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                                     return Unknown;
                                 }
-                            case _: throw 'Get on unknown type ${objType}';
+                            case _:
+                                trace(name);
+                                throw 'Get on unknown type ${objType}';
                         }
                     case Struct(structType) | Mutable(Struct(structType)):
                         if (structType.exists(name.lexeme)) {
@@ -312,8 +314,10 @@ class Typer {
                             logger.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                             return Unknown;
                         }
-                    case _: throw 'Get "${name.lexeme}" on unknown type ${objType}';
-                        // case _: Cosy.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
+                    case _:
+                        trace(name);
+                        throw 'Get "${name.lexeme}" on unknown type ${objType}';
+                        // case _: logger.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
             case GetIndex(obj, index):
                 var objType = typeExpr(obj);

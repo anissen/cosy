@@ -30,6 +30,8 @@ class Function implements Callable {
             interpreter.executeBlock(body, environment);
         } catch (ret: Return) {
             if (!isInitializer) return ret.value;
+        } catch (err: Any) {
+            logger.runtimeError(err);
         }
 
         return (isInitializer ? closure.getAt(0, 'this') : null);

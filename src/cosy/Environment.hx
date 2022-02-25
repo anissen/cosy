@@ -20,7 +20,7 @@ class Environment {
         throw new RuntimeError(name, 'Undefined variable "${name.lexeme}".');
     }
 
-    public function getAt(distance: Int, name: String) {
+    public function getAt(distance: Int, name: String) { // TODO: the distance is MAYBE not relevant because shadowing is disallowed
         return ancestor(distance).values.get(name);
     }
 
@@ -34,7 +34,7 @@ class Environment {
         return ancestor(distance).values.set(name.lexeme, value);
     }
 
-    public function ancestor(distance: Int) {
+    public function ancestor(distance: Int) { // TODO: the distance is MAYBE not relevant because shadowing is disallowed
         var env = this;
         for (_ in 0...distance)
             env = env.enclosing;

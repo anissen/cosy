@@ -309,6 +309,8 @@ class Interpreter {
                 // var k = new KeywordVisitor();
                 // trace(k.getExprKeywords([obj]));
                 final obj = evaluate(obj);
+                // trace('obj:');
+                // trace(obj);
 
                 if (Std.isOfType(obj, Array)) {
                     var indexEval = evaluate(index);
@@ -320,7 +322,13 @@ class Interpreter {
                     return arr[idx];
                 }
                 // else throw new RuntimeError(name, 'Bracket operator can only be used on arrays.');
-                else throw 'Bracket operator can only be used on arrays.'; // TODO: Use RuntimeError with keyword
+                else {
+                    // var a = new AstPrinter();
+                    // trace(a.printExpr(obj));
+                    // var k = new KeywordVisitor();
+                    // trace(k.getExprKeywords([obj]));
+                    throw 'Bracket operator can only be used on arrays.'; // TODO: Use RuntimeError with keywo
+                }
             case Set(obj, name, op, value):
                 final obj = evaluate(obj);
                 if (Std.isOfType(obj, StructInstance)) {
