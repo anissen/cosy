@@ -1,11 +1,3 @@
-■ test/scripts/type-checking.cosy, line 247:
-245 |     struct S { mut s Num }
-246 |     fn mutate_struct(s) {
-247 |         s.s = 666
-                ^ Cannot reassign properties on non-mutable struct.
-248 |     }
-249 |     mutate_struct(S { s = 3 })
-
 ■ test/scripts/type-checking.cosy, line 4:
 2 |     mut i = '{42 + 1 + 0 + 1}'
 3 |     print i
@@ -165,6 +157,14 @@
                   ^^^^^^ Function expected to return Str but got Num
 203 |         }
 204 |     }
+
+■ test/scripts/type-checking.cosy, line 247:
+245 |     struct S { mut s Num }
+246 |     fn mutate_struct(s) {
+247 |         s.s = 666
+                ^ Cannot reassign properties on non-mutable struct.
+248 |     }
+249 |     mutate_struct(S { s = 3 })
 
 ■ test/scripts/type-checking.cosy, line 257:
 255 |     mut x = 4 < 5

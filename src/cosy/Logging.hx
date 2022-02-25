@@ -1,19 +1,33 @@
 package cosy;
 
-import haxe.ds.Either;
-
-enum ErrorDataType {
+enum LogDataType {
     Line(v: Int);
     Pos(line: Int, col: Int, len: Int);
     Token(v: Token);
 }
 
-abstract ErrorData(ErrorDataType) from ErrorDataType to ErrorDataType {
-    @:from inline static function line(v: Int): ErrorData return Line(v);
+abstract LogData(LogDataType) from LogDataType to LogDataType {
+    @:from inline static function line(v: Int): LogData return Line(v);
 
-    @:from inline static function pos(v: {line: Int, col: Int, len: Int}): ErrorData return Pos(v.line, v.col, v.len);
+    @:from inline static function pos(v: {line: Int, col: Int, len: Int}): LogData return Pos(v.line, v.col, v.len);
 
-    @:from inline static function token(v: Token): ErrorData return Token(v);
+    @:from inline static function token(v: Token): LogData return Token(v);
+
+    public function getLine(): Int {
+        return switch this {
+            case LogDataType.Line(v): return v;
+            case LogDataType.Pos(line, _, _): return line;
+            case LogDataType.Token(v): return v.line;
+        };
+    }
+
+    public function getCol(): Int {
+        return switch this {
+            case LogDataType.Line(_): return -1;
+            case LogDataType.Pos(_, col, _): return col;
+            case LogDataType.Token(v): return v.position;
+        };
+    }
 }
 
 enum LogType {
@@ -25,7 +39,7 @@ enum LogType {
 }
 
 typedef ScriptError = {
-    var pos: Logging.ErrorData;
+    var pos: LogData;
     var message: String;
     var type: LogType;
 }
@@ -37,7 +51,7 @@ class Logger {
 
     public function new() {}
 
-    function report(type: LogType, pos: Logging.ErrorData, message: String) {
+    function report(type: LogType, pos: LogData, message: String) {
         log.push({
             pos: pos,
             type: type,
@@ -45,16 +59,16 @@ class Logger {
         });
     }
 
-    public function error(pos: Logging.ErrorData, message: String) {
+    public function error(pos: LogData, message: String) {
         report(Error, pos, message);
         hadError = true;
     }
 
-    public function warning(pos: Logging.ErrorData, message: String) {
+    public function warning(pos: LogData, message: String) {
         report(Warning, pos, message);
     }
 
-    public function hint(pos: Logging.ErrorData, message: String) {
+    public function hint(pos: LogData, message: String) {
         report(Hint, pos, message);
     }
 
@@ -78,6 +92,12 @@ function println(v: Dynamic = '') {
 }
 
 function reportAll(fileName: String, sourceCode: String, log: Array<ScriptError>) {
+    log.sort((a, b) -> {
+        if (a.pos.getLine() == b.pos.getLine()) {
+            return a.pos.getCol() - b.pos.getCol();
+        }
+        return a.pos.getLine() - b.pos.getLine();
+    });
     for (l in log) {
         switch l.type {
             case Hint:
@@ -122,10 +142,8 @@ function getReport(fileName: String, sourceCode: String, error: ScriptError): St
                 case Token(token): token.lexeme.length;
                 case Pos(line, col, len): len;
             };
-            report += color(lineDecoration, errorType)
-                + codeLine.substr(0, col)
-                + color(codeLine.substr(col, len), errorType)
-                + codeLine.substr(col + len) + '\n';
+            report += color(lineDecoration, errorType) + codeLine.substr(0, col) + color(codeLine.substr(col, len), errorType) + codeLine.substr(col + len)
+                + '\n';
             var s = [for (i in 0...(lineDecoration.length + col)) ' '].join('');
             s += color([for (i in 0...len) '^'].join('') + ' ${error.message}', errorType);
             report += s + '\n';
