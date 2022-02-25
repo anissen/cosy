@@ -20,7 +20,7 @@ class StructInstance {
         return new StructInstance(structName, clonedFields, logger);
     }
 
-    public function get(name: Token): Any {
+    public function get(name: Token): Null<Any> {
         if (fields.exists(name.lexeme)) return fields.get(name.lexeme);
         throw new RuntimeError(name, 'Undefined property "${name.lexeme}".');
     }

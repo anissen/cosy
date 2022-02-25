@@ -4,7 +4,7 @@ using cosy.VariableType.VariableTypeTools;
 
 class MarkdownPrinter {
     var astPrinter: AstPrinter;
-    var result: String;
+    var result: String = '';
 
     public function new() {
         astPrinter = new AstPrinter();

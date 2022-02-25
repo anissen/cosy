@@ -493,7 +493,7 @@ private class CustomCallable implements Callable {
     final arityValue: Int;
     final method: (args: Array<Any>) -> Any;
 
-    public function new(arityValue: Int, method: (args: Array<Any>) -> Any) {
+    public function new(arityValue: Int, method: (args: Array<Any>) -> Null<Any>) {
         this.arityValue = arityValue;
         this.method = method;
     }

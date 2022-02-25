@@ -205,7 +205,7 @@ class Scanner {
     function advance(): Int {
         current++;
         position++;
-        return source.charCodeAt(current - 1);
+        return source.charCodeAt(current - 1) ??0;
     }
 
     inline function addToken(type: TokenType, ?literal: Any) {

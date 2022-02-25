@@ -21,7 +21,7 @@ class Parser {
         return assignment();
     }
 
-    function declaration() {
+    function declaration(): Stmt {
         try {
             if (match([Struct])) return structDeclaration();
             var foreign = match([Foreign]);

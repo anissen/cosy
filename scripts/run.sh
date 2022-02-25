@@ -4,4 +4,5 @@
 # haxe -cp src -D no-inline --run cosy.Cosy $@
 
 # haxe scripts/node.hxml && node bin/node/cosy.js $@
-haxe -cp src --run cosy.Cosy $@
+# haxe -cp src --run cosy.Cosy $@
+haxe scripts/eval_debug.hxml $@

@@ -1,4 +1,3 @@
--cp src
+scripts/common.hxml
 -debug
 --run cosy.Cosy
-test/Testbed.cosy

@@ -18,8 +18,8 @@ import sys.io.File;
 #end
 
 class Compiler {
-    var fileName: String;
-    var sourceCode: String;
+    var fileName: String = 'N/A';
+    var sourceCode: String = 'N/A';
 
     public final logger = new Logging.Logger();
 
@@ -125,7 +125,7 @@ class Compiler {
         Logging.endMeasure('Parser');
 
         Logging.reportAll(fileName, sourceCode, logger.log);
-        if (logger.hadError) return null;
+        if (logger.hadError) return [];
 
         Logging.startMeasure('Optimizer');
         var optimizer = new Optimizer(logger);
@@ -143,8 +143,8 @@ class Compiler {
         Logging.endMeasure('Typer');
 
         Logging.reportAll(fileName, sourceCode, logger.log);
-        if (logger.hadError) return null;
-        if (validateOnly) return null;
+        if (logger.hadError) return [];
+        if (validateOnly) return [];
         return statements;
     }
 

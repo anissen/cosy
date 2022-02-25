@@ -23,6 +23,7 @@ class EditDistance {
 
         var quoted = matches.map(m -> '"$m"');
         var lastMatch = quoted.pop();
+        if (lastMatch == null) return '';
         var formattedMatches = (quoted.length > 0 ? quoted.join(', ') + ' or ' + lastMatch : lastMatch);
         return formattedMatches;
     }

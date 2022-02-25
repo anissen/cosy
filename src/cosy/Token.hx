@@ -3,7 +3,7 @@ package cosy;
 class Token {
     public final type: TokenType;
     public final lexeme: String;
-    public final literal: Any;
+    public final literal: Null<Any>;
     public final line: Int;
     public final position: Int;
 
