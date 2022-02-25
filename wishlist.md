@@ -113,9 +113,9 @@ fun x() { print "hej" }
 - [ ] Make `--times` show how many lines/second was processed (scanner + parser)
 - [ ] Replace `var` with `let` (because they're constants, not variables)
 - [ ] Replace `print` with `log` (shorter, more concise)
-- [ ] Improve error messages
-- [ ] Split Cosy.hx into Cosy.hx and Compiler.hx
-- [ ] Make embedded execution be two-part: scanning, parsing, typing, optimizing + interpreting. The first part should return an AST that can be handed to the interpreter. See https://github.com/HaxeFoundation/hscript/#example
+- [x] Improve error messages
+- [x] Split Cosy.hx into Cosy.hx and Compiler.hx
+- [x] Make embedded execution be two-part: scanning, parsing, typing, optimizing + interpreting. The first part should return an AST that can be handed to the interpreter. See https://github.com/HaxeFoundation/hscript/#example
 - [ ] Show a stack trace on exceptions
 - [ ] Rename Resolver to StaticAnalyzer
 - [ ] Make Typer return a typed AST (otherwise rename to TypeChecker)
@@ -123,6 +123,7 @@ fun x() { print "hej" }
 - [ ] Add a colored dot (●) in the error output to indicate which phases reported the error?
 - [ ] MAYBE serialize function arguments coming from other languages and deserialize on the Cosy-side? It could be a way to avoid dealing with complex function arguments but it probably won't work.
 - [ ] Make more of the standard library be implemented in Cosy (see https://oaklang.org/lib/std)
+- [ ] Use ??, ?. and local static variables from Haxe nightly
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
