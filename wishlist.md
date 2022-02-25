@@ -24,6 +24,7 @@ fun x() { print "hej" }
   - [ ] Struct names uses PascalCase (??)
   - [ ] All paths not returning a value if the function has a return value
   - [ ] Ensure correct number of arguments at compile time instead of at runtime
+  - [ ] Checking that if a function returns a value, the invoking code uses (or discards) that value 
 - [ ] Optimizer
   - [ ] Optimize usages of literals in `var`'s. They're constants in pratice.
   - [ ] Optimize e.g. `x + 2 + 3 + 4 + 5 + 6` to `x + 20`
@@ -120,6 +121,8 @@ fun x() { print "hej" }
 - [ ] Make Typer return a typed AST (otherwise rename to TypeChecker)
 - [ ] Typer: Variables multiplied, divided or subtracted must be numbers
 - [ ] Add a colored dot (●) in the error output to indicate which phases reported the error?
+- [ ] MAYBE serialize function arguments coming from other languages and deserialize on the Cosy-side? It could be a way to avoid dealing with complex function arguments but it probably won't work.
+- [ ] Make more of the standard library be implemented in Cosy (see https://oaklang.org/lib/std)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
@@ -150,6 +153,7 @@ fun x() { print "hej" }
 - [x] Use a code formatter (https://github.com/vshaxe/vshaxe/wiki/Formatting)
 - [x] Use a code linter (https://github.com/HaxeCheckstyle/haxe-checkstyle)
 - [ ] Put on Haxelib
+- [ ] Make auto-generated documentation for the Cosy standard library (see https://oaklang.org/lib)
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
