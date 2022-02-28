@@ -18,8 +18,8 @@ import sys.io.File;
 #end
 
 class Compiler {
-    var fileName: String = 'N/A';
-    var sourceCode: String = 'N/A';
+    var fileName: String = '???';
+    var sourceCode: String = '';
 
     public final logger = new Logging.Logger();
 
@@ -113,6 +113,7 @@ class Compiler {
         logger.hadError = false;
         logger.hadRuntimeError = false;
         logger.log = [];
+        sourceCode = source;
 
         Logging.startMeasure('Scanner');
         var scanner = new Scanner(source, logger);
