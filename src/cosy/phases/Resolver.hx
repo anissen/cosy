@@ -151,9 +151,10 @@ class Resolver {
                 for (arg in arguments)
                     resolveExpr(arg);
             case Get(obj, name): resolveExpr(obj);
-            case GetIndex(obj, index):
+            case GetIndex(obj, from, to):
                 resolveExpr(obj);
-                resolveExpr(index);
+                resolveExpr(from);
+                if (to != null) resolveExpr(to);
             case MutArgument(keyword, name): resolveLocal(expr, name, true);
             case Set(obj, name, op, value):
                 resolveExpr(value);
@@ -168,9 +169,10 @@ class Resolver {
                         trace(obj);
                         throw 'this is unexpected';
                 }
-            case SetIndex(obj, index, op, value):
+            case SetIndex(obj, from, to, op, value):
                 resolveExpr(obj);
-                resolveExpr(index);
+                resolveExpr(from);
+                if (to != null) resolveExpr(to);
                 resolveExpr(value);
             case StringInterpolation(exprs): for (e in exprs)
                     resolveExpr(e);

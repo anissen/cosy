@@ -303,7 +303,7 @@ class Interpreter {
                         name); else if (Std.isOfType(obj,
                     StructInstance)) (obj: StructInstance).get(name); else if (Std.isOfType(obj,
                     String)) return stringGet(obj, name); else throw new RuntimeError(name, 'Only instances have properties');
-            case GetIndex(obj, index):
+            case GetIndex(obj, from, to):
                 // var a = new AstPrinter();
                 // trace(a.printExpr(obj));
                 // var k = new KeywordVisitor();
@@ -313,13 +313,36 @@ class Interpreter {
                 // trace(obj);
 
                 if (Std.isOfType(obj, Array)) {
-                    var indexEval = evaluate(index);
-                    if (!Std.isOfType(indexEval, Int)) throw 'Index must be an Int.';
+                    final fromValue = evaluate(from);
+                    if (!Std.isOfType(fromValue, Int)) throw 'From index in slice range must be an Int.';
                     var arr = (obj: Array<Any>);
-                    var idx = (indexEval: Int);
-                    if (idx < 0 && idx >= arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', idx, -1, -1),
-                        'Array out of bounds (index $idx in array of length ${arr.length}).');
-                    return arr[idx];
+                    var fromIndex: Int = fromValue;
+                    if (fromIndex < 0) fromIndex = arr.length + fromIndex;
+                    if (fromIndex < 0 && fromIndex >= arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', fromIndex, -1, -1),
+                        'Array out of bounds (index $fromIndex in array of length ${arr.length}).');
+                    if (to == null) {
+                        return arr[fromIndex];
+                    } else {
+                        var toValue = evaluate(to);
+                        if (!Std.isOfType(toValue, Int)) throw 'To index in slice range must be an Int.';
+                        var toIndex: Int = toValue;
+                        if (toIndex < 0) toIndex = arr.length + toIndex;
+                        var reversed = false;
+                        if (fromIndex > toIndex) {
+                            reversed = true;
+                            var tmp = fromIndex;
+                            fromIndex = toIndex;
+                            toIndex = tmp;
+                        }
+                        // trace('fromIndex: $fromIndex, toIndex: $toIndex');
+                        if (!Std.isOfType(toIndex, Int)) throw 'To index slice range must be an Int.';
+                        var endIdx = (toIndex: Int);
+                        if (endIdx < 0 && endIdx >= arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', endIdx, -1, -1),
+                            'Array out of bounds (index $endIdx in array of length ${arr.length}).'); // TODO: Improve this!
+                        var result = arr.slice(fromIndex, toIndex);
+                        if (reversed) result.reverse();
+                        return result;
+                    }
                 }
                 // else throw new RuntimeError(name, 'Bracket operator can only be used on arrays.');
                 else {
@@ -337,14 +360,78 @@ class Interpreter {
                     instance.set(name, resultingValue(instance.get(name), op, value));
                 } else throw new RuntimeError(name, 'Only instances have fields');
                 value;
-            case SetIndex(obj, index, op, value):
+            case SetIndex(obj, from, to, op, value):
                 final obj = evaluate(obj);
                 if (Std.isOfType(obj, Array)) {
                     final arr: Array<Any> = obj;
-                    final index: Int = evaluate(index);
-                    final element: Any = arr[index];
+                    var fromIndex: Int = evaluate(from);
+                    if (fromIndex < 0) fromIndex = arr.length - 1 + fromIndex;
+                    // if (!Std.isOfType(fromIndex, Int)) throw 'From index in slice range must be an Int.';
                     final value = evaluate(value);
-                    arr[index] = resultingValue(element, op, value);
+                    if (to == null) {
+                        final element: Any = arr[fromIndex];
+                        arr[fromIndex] = resultingValue(element, op, value);
+                    } else {
+                        var toIndex: Int = evaluate(to);
+                        if (toIndex < 0) toIndex = arr.length + toIndex;
+                        // if (!Std.isOfType(toIndex, Int)) throw 'To index slice range must be an Int.';
+
+                        if (fromIndex > toIndex) {
+                            var tmp = fromIndex;
+                            fromIndex = toIndex;
+                            toIndex = tmp + 1;
+                        }
+
+                        if (toIndex > arr.length) throw new RuntimeError(new Token(LeftBracket, 'x', toIndex, -1, -1),
+                            'Array out of bounds (index $toIndex in array of length ${arr.length}).'); // TODO: Improve this!
+
+                        // TODO: Handle the case where x[y..z] = [1,2,3] and z - y != 3
+                        // TODO: Handle the case where x[y..z] += 3
+                        // TODO: Handle the case where x[z..y] = ...
+                        // TODO: Handle the case where x[y..y] = ...
+                        // arr.splice(fromIndex, toIndex - fromIndex);
+                        if (Std.isOfType(value, Array)) {
+                            final valueArr: Array<Any> = value;
+                            // TODO: Handle newLength < arr.length
+                            // e.g. [2,3,4,5,6,7][2..5] = [8,9] => [2,3,8,9,7]
+                            final newLength = fromIndex + valueArr.length + (arr.length - toIndex);
+                            if (newLength > arr.length) {
+                                final lengthDiff = (newLength - arr.length);
+                                arr.resize(newLength);
+                                for (i in 0...lengthDiff) {
+                                    arr[arr.length - lengthDiff + i] = arr[toIndex + i];
+                                }
+                                for (i => v in valueArr) {
+                                    arr[fromIndex + i] = v;
+                                }
+                            } else {
+                                // e.g. [2,3,4,5,6,7][1..5] = [8] => [2,8,7]
+                                for (i => v in valueArr) {
+                                    arr[fromIndex + i] = v;
+                                }
+                                arr.splice(fromIndex + valueArr.length, toIndex - fromIndex - valueArr.length);
+                            }
+                            // trace(valueArr);
+                            // trace(arr);
+                            // for (i => v in valueArr) {
+                            //     // trace('i: ' + i + ', ' + valueArr[i - fromIndex]);
+                            //     arr[fromIndex + i] = v;
+                            // }
+                            // trace(arr);
+
+                            // final newArr = arr.slice(0, fromIndex).concat(valueArr).concat(arr.slice(toIndex));
+                            // arr.resize(newArr.length);
+                            // for (i => e in newArr) {
+                            //     arr[i] = e;
+                            // }
+                        } else if (op.type == PlusEqual) {
+                            for (i in fromIndex...toIndex) {
+                                arr[i] = resultingValue(arr[i], op, value);
+                            }
+                        } else {
+                            throw 'error!'; // TODO: Handle this case
+                        }
+                    }
                 } else throw new RuntimeError(op, 'Bracket notion is only allowed on arrays');
                 value;
             case StringInterpolation(exprs):
@@ -469,7 +556,16 @@ class Interpreter {
         return true;
     }
 
-    inline function isEqual(a: Any, b: Any): Bool {
+    function isEqual(a: Any, b: Any): Bool {
+        if (Std.isOfType(a, Array) && Std.isOfType(b, Array)) { // deep equals for arrays
+            var a_array = (a: Array<Any>);
+            var b_array = (b: Array<Any>);
+            if (a_array.length != b_array.length) return false;
+            for (i in 0...a_array.length) {
+                if (!isEqual(a_array[i], b_array[i])) return false;
+            }
+            return true;
+        }
         return a == b;
     }
 

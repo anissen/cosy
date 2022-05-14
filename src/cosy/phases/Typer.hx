@@ -319,13 +319,22 @@ class Typer {
                         throw 'Get "${name.lexeme}" on unknown type ${objType}';
                         // case _: logger.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
-            case GetIndex(obj, index):
+            case GetIndex(obj, from, to):
                 var objType = typeExpr(obj);
-                return switch objType {
-                    case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
-                    case Mutable(Array(t)): Mutable(t);
-                    case Array(t): t;
-                    case _: throw 'Get index of unknown type ${objType} with index ${index}';
+                if (to == null) {
+                    return switch objType {
+                        case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
+                        case Mutable(Array(t)): Mutable(t);
+                        case Array(t): t;
+                        case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
+                    }
+                } else {
+                    return switch objType {
+                        case Mutable(Mutable(Array(t))): Mutable(Array(t)); // TODO: This should be done for arbitrarily nested arrays!
+                        case Mutable(Array(t)): Mutable(Array(t));
+                        case Array(t): Array(t);
+                        case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
+                    }
                 }
             case MutArgument(keyword, name):
                 var type = Mutable(variableTypes.get(name.lexeme));
@@ -362,13 +371,19 @@ class Typer {
                     case _: // trace(objType); TODO: throw 'unexpected';
                 }
                 typeExpr(value);
-            case SetIndex(obj, index, op, value):
+            case SetIndex(obj, from, to, op, value):
                 var objType = typeExpr(obj);
                 var valueType = typeExpr(value);
-                switch objType {
-                    case Array(t): logger.error(op, 'Cannot set value on immutable array.');
-                    case Mutable(Array(t)): if (!matchType(valueType, t)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(t)}');
-                    case _: throw 'unexpected SetIndex on type ${objType} at line ${op.line}';
+                if (op.type == TokenType.PlusEqual) {
+                    // check that array is of number type
+                } else {
+                    switch objType {
+                        case Array(t): logger.error(op, 'Cannot set value on immutable array.');
+                        case Mutable(Array(t)):
+                            final type = (to == null) ? t : Array(t);
+                            if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
+                        case _: throw 'unexpected SetIndex on type ${objType} at line ${op.line}';
+                    }
                 }
                 typeExpr(value);
             case StringInterpolation(exprs): Text; // TODO: Is this good enough?

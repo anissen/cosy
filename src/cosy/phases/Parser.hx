@@ -244,7 +244,7 @@ class Parser {
             switch expr {
                 case Variable(name): return Assign(name, op, value);
                 case Get(obj, name): return Set(obj, name, op, value);
-                case GetIndex(obj, index): return SetIndex(obj, index, op, value);
+                case GetIndex(obj, from, to): return SetIndex(obj, from, to, op, value);
                 case _:
             }
 
@@ -346,8 +346,13 @@ class Parser {
                 var name = consume(Identifier, 'Expect property name after ".".');
                 expr = Get(expr, name);
             } else if (match([LeftBracket])) {
-                var index = expression();
-                expr = GetIndex(expr, index); // TODO: How to find a token as keyword?
+                var from = expression();
+                var to = null;
+                if (check(DotDot)) {
+                    consume(DotDot, 'Expect ".." after "from" in slice range.');
+                    to = expression();
+                }
+                expr = GetIndex(expr, from, to); // TODO: How to find a token as keyword?
                 consume(RightBracket, 'Expect "}" after array indexing.');
             } else {
                 break;
