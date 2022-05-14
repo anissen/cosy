@@ -326,6 +326,7 @@ class Typer {
                         case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
                         case Mutable(Array(t)): Mutable(t);
                         case Array(t): t;
+                        case Text: Text;
                         case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
                     }
                 } else {
@@ -333,6 +334,7 @@ class Typer {
                         case Mutable(Mutable(Array(t))): Mutable(Array(t)); // TODO: This should be done for arbitrarily nested arrays!
                         case Mutable(Array(t)): Mutable(Array(t));
                         case Array(t): Array(t);
+                        case Mutable(Text) | Text: Text;
                         case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
                     }
                 }
@@ -375,14 +377,14 @@ class Typer {
                 var objType = typeExpr(obj);
                 var valueType = typeExpr(value);
                 if (op.type == TokenType.PlusEqual) {
-                    // check that array is of number type
+                    // TODO: check that array is of number type
                 } else {
                     switch objType {
                         case Array(t): logger.error(op, 'Cannot set value on immutable array.');
                         case Mutable(Array(t)):
                             final type = (to == null) ? t : Array(t);
                             if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
-                        case _: throw 'unexpected SetIndex on type ${objType} at line ${op.line}';
+                        case _: logger.error(op, 'Can only set index on array (not on type ${formatType(objType, false)}).');
                     }
                 }
                 typeExpr(value);
