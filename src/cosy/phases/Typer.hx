@@ -376,17 +376,22 @@ class Typer {
             case SetIndex(obj, from, to, op, value):
                 var objType = typeExpr(obj);
                 var valueType = typeExpr(value);
-                if (op.type == TokenType.PlusEqual) {
-                    // TODO: check that array is of number type
-                } else {
-                    switch objType {
-                        case Array(t): logger.error(op, 'Cannot set value on immutable array.');
-                        case Mutable(Array(t)):
-                            final type = (to == null) ? t : Array(t);
-                            if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
-                        case _: logger.error(op, 'Can only set index on array (not on type ${formatType(objType, false)}).');
-                    }
+                // if (op.type == TokenType.PlusEqual) {
+                //     // TODO: check that array is of number type
+                // } else {
+                switch objType {
+                    case Array(t): logger.error(op, 'Cannot set value on immutable array.');
+                    case Mutable(Array(t)):
+                        final type = (to == null) ? t : Array(t);
+                        switch op.type {
+                            case Equal: if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
+                            case PlusEqual | MinusEqual | StarEqual | SlashEqual | PercentEqual | EqualEqual | BangEqual: if (!matchType(valueType,
+                                    t)) logger.error(op, 'Cannot add ${formatType(valueType)} to ${formatType(t)}');
+                            case _: logger.error(op, 'Unsupported operator ${op.type} for set index.');
+                        }
+                    case _: logger.error(op, 'Can only set index on array (not on type ${formatType(objType, false)}).');
                 }
+                // }
                 typeExpr(value);
             case StringInterpolation(exprs): Text; // TODO: Is this good enough?
             case Grouping(e): typeExpr(e);

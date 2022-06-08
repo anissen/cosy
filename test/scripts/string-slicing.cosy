@@ -1,6 +1,7 @@
-mut s = 'hello'
-print s[1..4]
-print s[4..1]
-// s[1..4] = '??'
-// print s
-print 'done'
+{
+    mut s = 'hello'
+    print s
+    print s[1..4]
+    print s[4..1]
+    // s[1..4] = '??'
+}

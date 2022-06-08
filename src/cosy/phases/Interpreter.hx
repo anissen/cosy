@@ -363,7 +363,7 @@ class Interpreter {
                     final arr: Array<Any> = obj;
                     return switch getIndexRange(fromValue, toValue, arr.length) {
                         case Single(index):
-                            arr[index] = value; // TODO: Check that the types match
+                            arr[index] = resultingValue(arr[index], op, value); // TODO: Check that the types match
                         case Range(fromIndex, toIndex, reversed):
                             // TODO: Handle the case where x[y..z] = [1,2,3] and z - y != 3
                             // TODO: Handle the case where x[y..z] += 3
@@ -394,13 +394,12 @@ class Interpreter {
                                         arr.splice(fromIndex + valueArr.length, toIndex - fromIndex - valueArr.length);
                                     }
                                     return arr;
-                                case PlusEqual:
+                                case _:
                                     // TODO: Check that the types match
                                     for (i in fromIndex...toIndex) {
                                         arr[i] = resultingValue(arr[i], op, value);
                                     }
                                     return arr;
-                                case _: throw 'error!'; // TODO: Handle other cases
                             }
                     }
                 } else throw new RuntimeError(op, 'Bracket notion is only allowed on arrays');
