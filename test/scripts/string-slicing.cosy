@@ -1,7 +1,15 @@
 {
-    mut s = 'hello'
+    var s = 'hello'
     print s
     print s[1..4]
     print s[4..1]
-    // s[1..4] = '??'
+}
+
+{
+    var s = 'hello'
+    print s[1..]
+    print s[2..]
+    print s[..3]
+    print s[..4]
+    print s[..]
 }

@@ -319,13 +319,14 @@ class Typer {
                         throw 'Get "${name.lexeme}" on unknown type ${objType}';
                         // case _: logger.error(name, 'Attempting to get "${name.lexeme}" from unsupported type.'); Void;
                 }
-            case GetIndex(obj, from, to):
+            case GetIndex(obj, ranged, from, to):
                 var objType = typeExpr(obj);
                 if (to == null) {
                     return switch objType {
                         case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
                         case Mutable(Array(t)): Mutable(t);
                         case Array(t): t;
+                        case Mutable(Text): Text;
                         case Text: Text;
                         case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
                     }
@@ -373,7 +374,7 @@ class Typer {
                     case _: // trace(objType); TODO: throw 'unexpected';
                 }
                 typeExpr(value);
-            case SetIndex(obj, from, to, op, value):
+            case SetIndex(obj, ranged, from, to, op, value):
                 var objType = typeExpr(obj);
                 var valueType = typeExpr(value);
                 // if (op.type == TokenType.PlusEqual) {

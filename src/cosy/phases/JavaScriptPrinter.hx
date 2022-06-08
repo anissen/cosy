@@ -72,7 +72,7 @@ class JavaScriptPrinter {
                 var calleeName = std_function_map(printExpr(callee));
                 '$calleeName(${arguments.map(printExpr).join(',')})';
             case Get(obj, name): '${printExpr(obj)}.${std_function_get_map(name)}';
-            case GetIndex(obj, from, to): '${printExpr(obj)}[${printExpr(from)}]'; // TODO: handle `to`
+            case GetIndex(obj, ranged, from, to): '${printExpr(obj)}[${printExpr(from)}]'; // TODO: handle `to`
             case Grouping(e): '(${printExpr(e)})';
             case MutArgument(keyword, name): name.lexeme;
             case Literal(v): if (v == null) {
@@ -84,7 +84,7 @@ class JavaScriptPrinter {
                 };
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
             case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
-            case SetIndex(obj, from, to, op, value): '${printExpr(obj)}[${printExpr(from)}] ${op.lexeme} ${printExpr(value)}'; // TODO: handle `to`
+            case SetIndex(obj, ranged, from, to, op, value): '${printExpr(obj)}[${printExpr(from)}] ${op.lexeme} ${printExpr(value)}'; // TODO: handle `to`
             case StringInterpolation(exprs): '`' + [
                     for (i => expr in exprs) {
                         var e = printExpr(expr);

@@ -309,20 +309,20 @@ class Interpreter {
                         name); else if (Std.isOfType(obj,
                     StructInstance)) (obj: StructInstance).get(name); else if (Std.isOfType(obj,
                     String)) return stringGet(obj, name); else throw new RuntimeError(name, 'Only instances have properties');
-            case GetIndex(obj, from, to):
+            case GetIndex(obj, ranged, from, to):
                 // var a = new AstPrinter();
                 // trace(a.printExpr(obj));
                 // var k = new KeywordVisitor();
                 // trace(k.getExprKeywords([obj]));
                 final obj = evaluate(obj);
-                final from = evaluate(from);
+                final from = (from != null ? evaluate(from) : null);
                 final to = (to != null ? evaluate(to) : null);
                 // trace('obj:');
                 // trace(obj);
 
                 if (Std.isOfType(obj, Array)) {
                     final arr: Array<Any> = obj;
-                    return switch getIndexRange(from, to, arr.length) {
+                    return switch getIndexRange(ranged, from, to, arr.length) {
                         case Single(index): arr[index];
                         case Range(fromIndex, toIndex, reversed):
                             var result = arr.slice(fromIndex, toIndex);
@@ -331,7 +331,7 @@ class Interpreter {
                     }
                 } else if (Std.isOfType(obj, String)) {
                     final str: String = obj;
-                    return switch getIndexRange(from, to, str.length) {
+                    return switch getIndexRange(ranged, from, to, str.length) {
                         case Single(index): str.charAt(index);
                         case Range(fromIndex, toIndex, reversed):
                             var result = str.substring(fromIndex, toIndex);
@@ -352,7 +352,7 @@ class Interpreter {
                     instance.set(name, resultingValue(instance.get(name), op, value));
                 } else throw new RuntimeError(name, 'Only instances have fields');
                 value;
-            case SetIndex(obj, from, to, op, value):
+            case SetIndex(obj, ranged, from, to, op, value):
                 final obj = evaluate(obj);
                 final fromValue = evaluate(from);
                 final toValue = (to != null ? evaluate(to) : null);
@@ -361,7 +361,7 @@ class Interpreter {
                     final value = evaluate(value);
                     final valueArr: Array<Any> = value;
                     final arr: Array<Any> = obj;
-                    return switch getIndexRange(fromValue, toValue, arr.length) {
+                    return switch getIndexRange(ranged, fromValue, toValue, arr.length) {
                         case Single(index):
                             arr[index] = resultingValue(arr[index], op, value); // TODO: Check that the types match
                         case Range(fromIndex, toIndex, reversed):
@@ -533,18 +533,17 @@ class Interpreter {
         return a == b;
     }
 
-    function getIndexRange(from: Any, to: Any, arrayLength: Int): IndexRange {
-        if (!Std.isOfType(from, Int)) throw 'From index in slice range must be an Int.';
-        var fromIndex: Int = from;
+    function getIndexRange(ranged: Bool, from: Any, to: Any, arrayLength: Int): IndexRange {
+        if (from != null && !Std.isOfType(from, Int)) throw 'From index in slice range must be an Int.';
+        if (!ranged) return Single((from: Int));
+
+        var fromIndex: Int = (from != null ? from : 0);
         if (fromIndex < 0) fromIndex = arrayLength + fromIndex;
         if (fromIndex < 0 && fromIndex >= arrayLength) throw new RuntimeError(new Token(LeftBracket, 'x', fromIndex, -1, -1),
             'Array out of bounds (index $fromIndex in array of length ${arrayLength}).');
-        if (to == null) {
-            return Single(fromIndex);
-        }
 
-        if (!Std.isOfType(to, Int)) throw 'To index in slice range must be an Int.';
-        var toIndex: Int = to;
+        if (to != null && !Std.isOfType(to, Int)) throw 'To index in slice range must be an Int.';
+        var toIndex: Int = (to != null ? to : arrayLength);
         if (toIndex < 0) toIndex = arrayLength + toIndex;
         var reversed = false;
         if (fromIndex > toIndex) {

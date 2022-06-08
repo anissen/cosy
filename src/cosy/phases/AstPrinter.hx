@@ -68,7 +68,7 @@ class AstPrinter {
             case Binary(left, op, right): '${printExpr(left)} ${op.lexeme} ${printExpr(right)}';
             case Call(callee, paren, arguments): '${printExpr(callee)}(${[for (arg in arguments) printExpr(arg)].join(', ')})';
             case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
-            case GetIndex(obj, from, to): '${printExpr(obj)}[${printExpr(from)}]'; // TODO: handle `to`
+            case GetIndex(obj, ranged, from, to): '${printExpr(obj)}[${printExpr(from)}]'; // TODO: handle `to`
             case Grouping(e): '(${printExpr(e)})';
             case Literal(v): if (Std.isOfType(v, String)) {
                     '\'$v\'';
@@ -78,7 +78,7 @@ class AstPrinter {
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
             case MutArgument(keyword, name): 'mut ${name.lexeme}';
             case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
-            case SetIndex(obj, from, to, op, value): '${printExpr(obj)}[${printExpr(from)}] ${op.lexeme} ${printExpr(value)}'; // TODO: handle `to`
+            case SetIndex(obj, ranged, from, to, op, value): '${printExpr(obj)}[${printExpr(from)}] ${op.lexeme} ${printExpr(value)}'; // TODO: handle `to`
             case StringInterpolation(exprs): "'" + [
                     for (i => expr in exprs) {
                         var e = printExpr(expr);
