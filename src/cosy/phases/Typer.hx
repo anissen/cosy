@@ -387,7 +387,7 @@ class Typer {
                         switch op.type {
                             case Equal: if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
                             case PlusEqual | MinusEqual | StarEqual | SlashEqual | PercentEqual | EqualEqual | BangEqual: if (!matchType(valueType,
-                                    t)) logger.error(op, 'Cannot add ${formatType(valueType)} to ${formatType(t)}');
+                                    t)) logger.error(op, 'Expected value of type ${formatType(t)} but got ${formatType(valueType)}');
                             case _: logger.error(op, 'Unsupported operator ${op.type} for set index.');
                         }
                     case _: logger.error(op, 'Can only set index on array (not on type ${formatType(objType, false)}).');
