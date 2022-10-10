@@ -231,6 +231,7 @@ class Compiler {
         Logging.startMeasure('AST interpreter');
         // trace('AST output:');
         interpreter.run(statements, this, false);
+        // Logging.reportAll(fileName, sourceCode, logger.log);
         Logging.endMeasure('AST interpreter');
         // trace('-------------');
 

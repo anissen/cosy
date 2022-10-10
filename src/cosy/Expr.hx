@@ -2,6 +2,10 @@ package cosy;
 
 import cosy.VariableType;
 
+// enum IndexRange {
+//     Single(index: Int);
+//     Range(start: Null<Int>, end: Null<Int>);
+// }
 enum Expr {
     ArrayLiteral(keyword: Token, exprs: Array<Expr>);
     Assign(name: Token, op: Token, value: Expr);

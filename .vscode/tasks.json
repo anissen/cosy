@@ -6,7 +6,7 @@
 		{
 			"label": "Run",
 			"type": "shell",
-			"command": "./scripts/run.sh --bytecode --disassembly test/Testbed.cosy",
+			"command": "./scripts/run.sh test/Testbed.cosy",
 			// "command": "./scripts/run.sh --times test/examples/misc/fibonacci.cosy",
 			"problemMatcher": [
 				"$haxe-absolute",

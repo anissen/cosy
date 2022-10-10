@@ -70,14 +70,14 @@
 
 {
     // testing the bytecode code generator + disassembler + vm
-    print 'before function'
-    fn hello(x Num) {
-        print 'hello from function'
-        print x * x
-    }
-    print 'before call'
-    hello(4)
-    print 'after call'
+    // print 'before function'
+    // fn hello(x Num) {
+    //     print 'hello from function'
+    //     print x * x
+    // }
+    // print 'before call'
+    // hello(4)
+    // print 'after call'
 
     // var sum = reduce([1, 2, 3, 4, 5], fn(a, b) { return a + b }, 0)
     // var sum = [1, 2, 3, 4, 5].reduce(fn(a, b) { return a + b }, 0)
@@ -85,27 +85,71 @@
    
     // print 'answer: ' + 3
 }
-// mut x = [5,4,2,62,1]
-// print x
-// print x[2..4]
-// x[2..4] = [9]
-// print x
-// print x[2..4]
 
-// mut x = [2,3,4,5,6,7]
-mut x = [2,3,4,5]
-// x[1..2] = [6,7,8]
-// x[-1..1] = [6,7,8]
-// x[1..5] = [8,9]
-// x[0..1] += 10
-print x[1..3]
-print x[3..1]
-print x[-1..1]
-print x == [2,6,7,8,9,5] // TODO: Fix array equality comparison
+// {
+//     struct Node {
+//         var value Str = ''
+//         var left
+//         var right
+//     }
+   
+//     fn serialize(node Node) Str {
+//         if node == '' or node.value == '' return '-,'
+//         mut s = node.value + ','
+//         s += serialize(node.left)
+//         s += serialize(node.right)
+//         return s
+//     }
+    
+//     fn deserialize(s Str) Node {
+//         var parts = s.split(',')
+//         mut index = 0
+        
+//         fn do_deserialize() {
+//             // print 'do_deserialize'
+//             if index >= parts.length return ''
+//             var value = parts[index]
+//             index += 1
+//             if value == '-' return ''
+//             return Node { value = value, left = do_deserialize(), right = do_deserialize() }
+//         }
+        
+//         return do_deserialize()
+//     }
 
-mut s = 'hello'
-print s[1..4]
-print s[4..1]
-// s[1..4] = '??'
-// print s
+//     // The following test should pass:
+
+//     var node = Node {
+//         value = 'root',
+//         left = Node {
+//             value = 'left',
+//             left = Node { 
+//                 value = 'left.left',
+//                 left = '',
+//                 right = '',
+//             },
+//             right = '',
+//         }, 
+//         right = Node {
+//             value = 'right',
+//             left = '',
+//             right = '',
+//         }
+//     }
+//     print serialize(node)
+//     var n Node = deserialize(serialize(node))
+//     var n1 Node = n.left
+//     var n2 Node = n1.left
+//     print n2.value
+//     //#assert deserialize(serialize(node)).left.left.val == 'left.left'
+// }
+
+print 'start'
+mut s = ['h', 'e', 'l', 'l', 'o']
+print '1'
+// s[2..] = 'world' // TODO: What should happen here? Type error?
+// print s[2..]
+print '2'
+// s[2..] = ['world']
+print s
 print 'done'
