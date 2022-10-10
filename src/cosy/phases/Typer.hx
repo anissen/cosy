@@ -321,14 +321,14 @@ class Typer {
                 }
             case GetIndex(obj, ranged, from, to):
                 var objType = typeExpr(obj);
-                if (to == null) {
+                if (!ranged) {
                     return switch objType {
                         case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
                         case Mutable(Array(t)): Mutable(t);
                         case Array(t): t;
                         case Mutable(Text): Text;
                         case Text: Text;
-                        case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
+                        case _: throw 'Get index of unknown type ${objType} with index $from';
                     }
                 } else {
                     return switch objType {
@@ -336,7 +336,7 @@ class Typer {
                         case Mutable(Array(t)): Mutable(Array(t));
                         case Array(t): Array(t);
                         case Mutable(Text) | Text: Text;
-                        case _: throw 'Get index of unknown type ${objType} with index ${from}'; // TODO: handle `to`
+                        case _: throw 'Get index of unknown type ${objType} with start index $from and end index $to';
                     }
                 }
             case MutArgument(keyword, name):
