@@ -383,11 +383,9 @@ class Typer {
                 switch objType {
                     case Array(t): logger.error(op, 'Cannot set value on immutable array.');
                     case Mutable(Array(t)):
-                        final type = Array(t); // (to == null) ? t : Array(t);
+                        final type = (ranged ? Array(t) : t);
                         switch op.type {
                             case Equal:
-                                trace(valueType);
-                                trace(type);
                                 if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
                             case PlusEqual | MinusEqual | StarEqual | SlashEqual | PercentEqual | EqualEqual | BangEqual: if (!matchType(valueType,
                                     t)) logger.error(op, 'Expected value of type ${formatType(t)} but got ${formatType(valueType)}');
