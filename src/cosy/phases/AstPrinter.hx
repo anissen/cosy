@@ -68,7 +68,7 @@ class AstPrinter {
             case Binary(left, op, right): '${printExpr(left)} ${op.lexeme} ${printExpr(right)}';
             case Call(callee, paren, arguments): '${printExpr(callee)}(${[for (arg in arguments) printExpr(arg)].join(', ')})';
             case Get(obj, name): '${printExpr(obj)}.${name.lexeme}';
-            case GetIndex(obj, index): '${printExpr(obj)}[${printExpr(index)}]';
+            case GetIndex(obj, ranged, from, to): '${printExpr(obj)}[${formatIndexRange(ranged, from, to)}]';
             case Grouping(e): '(${printExpr(e)})';
             case Literal(v): if (Std.isOfType(v, String)) {
                     '\'$v\'';
@@ -78,7 +78,7 @@ class AstPrinter {
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
             case MutArgument(keyword, name): 'mut ${name.lexeme}';
             case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
-            case SetIndex(obj, index, op, value): '${printExpr(obj)}[${printExpr(index)}] ${op.lexeme} ${printExpr(value)}';
+            case SetIndex(obj, ranged, from, to, op, value): '${printExpr(obj)}[${formatIndexRange(ranged, from, to)}] ${op.lexeme} ${printExpr(value)}';
             case StringInterpolation(exprs): "'" + [
                     for (i => expr in exprs) {
                         var e = printExpr(expr);
@@ -95,6 +95,11 @@ class AstPrinter {
                 if (retType != '') retType = ' $retType';
                 'fn($parameters)$retType $block';
         }
+    }
+
+    function formatIndexRange(ranged: Bool, from: Expr, to: Expr): String {
+        if (!ranged) return printExpr(from);
+        return (from != null ? printExpr(from) : '') + '..' + (to != null ? printExpr(to) : '');
     }
 
     function formatParams(params: Array<Param>): String {

@@ -244,7 +244,7 @@ class Parser {
             switch expr {
                 case Variable(name): return Assign(name, op, value);
                 case Get(obj, name): return Set(obj, name, op, value);
-                case GetIndex(obj, index): return SetIndex(obj, index, op, value);
+                case GetIndex(obj, ranged, from, to): return SetIndex(obj, ranged, from, to, op, value);
                 case _:
             }
 
@@ -346,8 +346,24 @@ class Parser {
                 var name = consume(Identifier, 'Expect property name after ".".');
                 expr = Get(expr, name);
             } else if (match([LeftBracket])) {
-                var index = expression();
-                expr = GetIndex(expr, index); // TODO: How to find a token as keyword?
+                // cases: x[5], x[..], x[3..], x[..5], x[3..5]
+                var from = null;
+                var to = null;
+                if (!check(DotDot)) {
+                    from = expression();
+                }
+                var ranged = false;
+                if (check(DotDot)) {
+                    ranged = true;
+                    consume(DotDot, 'Expect ".." after "from" in slice range.');
+                    if (!check(RightBracket)) {
+                        to = expression();
+                    }
+                }
+                if (!ranged && to == null && from == null) {
+                    error(peek(), 'Expect index for random access or ".." for slice range.');
+                }
+                expr = GetIndex(expr, ranged, from, to); // TODO: How to find a token as keyword?
                 consume(RightBracket, 'Expect "}" after array indexing.');
             } else {
                 break;

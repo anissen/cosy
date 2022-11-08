@@ -124,6 +124,9 @@ fun x() { print "hej" }
 - [ ] MAYBE serialize function arguments coming from other languages and deserialize on the Cosy-side? It could be a way to avoid dealing with complex function arguments but it probably won't work.
 - [ ] Make more of the standard library be implemented in Cosy (see https://oaklang.org/lib/std)
 - [ ] Use ??, ?. and local static variables from Haxe nightly
+- [ ] Make an annotation for pure functions
+- [ ] Make an annotation for memorizing a function (i.e. cache inputs => output)
+- [ ] A way to initialize a list with a size (like in C++; `vector<int>(height, vector<int>(width, 0)))`)
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
