@@ -1,6 +1,7 @@
 package cosy.phases;
 
 using cosy.VariableType.VariableTypeTools;
+using StringTools;
 
 class MarkdownPrinter {
     var astPrinter: AstPrinter;
@@ -15,7 +16,13 @@ class MarkdownPrinter {
     }
 
     public function printStatements(statements: Array<Stmt>): String {
-        result = '';
+        result += '
+# Cosy file
+
+Auto-generated at ${Date.now()}.
+
+';
+
         for (stmt in statements) {
             printStmt(stmt);
         }
@@ -27,11 +34,11 @@ class MarkdownPrinter {
             case Function(name, params, body, returnType, foreign):
                 if (foreign) return;
 
-                var params = [for (param in params) '${param.name.lexeme} ${param.type.formatType()}'].join(", ");
+                var params = [for (param in params) '${param.name.lexeme} ${param.type.formatType()}'.rtrim()].join(", ");
                 print('### `${name.lexeme}($params) ${returnType.computed.formatType()}`'); // TODO: This ignores the actual types found in the typer phase :/
 
-                print('Annotated return type: ${returnType.annotated.formatType()}\n');
-                print('Computed return type: ${returnType.computed.formatType()}\n');
+                // print('Annotated return type: ${returnType.annotated.formatType()}\n');
+                // print('Computed return type: ${returnType.computed.formatType()}\n');
 
                 // if (params.length > 0) {
                 //     s += 'Parameters:\n';
@@ -51,11 +58,24 @@ ${astPrinter.printStmts(body)}
 ```
 </details>
 
+---
 ');
 
             // case Block(statements): Lambda.foreach(statements, printStmt);
             case Block(statements): for (stmt in statements)
                     printStmt(stmt);
+            case Struct(name, declarations):
+                print('### `${name.lexeme}` struct');
+                for (decl in declarations) {
+                    var res = '- ';
+                    switch decl {
+                        case Var(name, type, init, mut, foreign):
+                            res += '`${name.lexeme}` ${type.formatType()} ${(init != null ? "= " + printExpr(init) : "")}';
+                        case _:
+                    }
+                    print(res);
+                }
+                print('\n---\n');
             case _:
         }
     }

@@ -194,9 +194,6 @@ class Compiler {
         }
 
         if (outputMarkdown) {
-            Logging.println('# Cosy file');
-            Logging.println('## Functions');
-
             var printer = new MarkdownPrinter();
             Logging.println(printer.printStatements(statements));
             return;
