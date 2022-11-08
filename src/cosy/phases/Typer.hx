@@ -153,13 +153,25 @@ class Typer {
                     return Unknown;
                 }
             case Binary(left, op, right):
+                var leftType = typeExpr(left);
+                var rightType = typeExpr(right);
                 switch op.type {
-                    case Star | Slash | Minus | Percent: Number;
-                    case Bang | BangEqual | Equal | EqualEqual | Greater | GreaterEqual | Less | LessEqual: Boolean;
-                    case Plus:
-                        var leftType = typeExpr(left);
-                        var rightType = typeExpr(right);
+                    case Star | Slash | Minus | Percent:
+                        if (strict) {
+                            var isLeftNumber = leftType.match(Number) || leftType.match(Mutable(Number)); // TODO: Remove Mutable
+                            if (!isLeftNumber) logger.error(op, 'Left side of "${op.lexeme}" must be a number.');
 
+                            var isRightNumber = rightType.match(Number) || rightType.match(Mutable(Number));
+                            if (!isRightNumber) logger.error(op, 'Right side of "${op.lexeme}" must be a number.');
+                        }
+
+                        Number;
+                    case BangEqual | EqualEqual | Greater | GreaterEqual | Less | LessEqual:
+                        // trace(leftType);
+                        // trace(rightType);
+                        // if (!leftType.equals(rightType)) logger.error(op, 'Both sides of "${op.lexeme}" must have the same type.');
+                        Boolean;
+                    case Plus:
                         var isLeftNumber = leftType.match(Number) || leftType.match(Mutable(Number));
                         var isRightNumber = rightType.match(Number) || rightType.match(Mutable(Number));
                         if (isLeftNumber && isRightNumber) return Number;
@@ -212,7 +224,7 @@ class Typer {
                             logger.error(paren, 'Expected ${paramTypes.length} argument(s) but got ${arguments.length}.');
                         } else {
                             for (i in 0...paramTypes.length) {
-                                if (argumentTypes[i].match(Unknown)) logger.warning(paren, 'Argument ${i + 1} has type Unknown.');
+                                if (strict && argumentTypes[i].match(Unknown)) logger.error(paren, 'Argument ${i + 1} has type Unknown.');
                                 if (!matchType(argumentTypes[i], paramTypes[i])) {
                                     logger.error(paren,
                                         'Expected argument ${i + 1} to be ${formatType(paramTypes[i])} but got ${formatType(argumentTypes[i])}.');
@@ -314,6 +326,9 @@ class Typer {
                             logger.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                             return Unknown;
                         }
+                    case Unknown:
+                        if (strict) logger.error(name, 'has unknown type.');
+                        Unknown;
                     case _:
                         trace(name);
                         throw 'Get "${name.lexeme}" on unknown type ${objType}';
@@ -398,9 +413,14 @@ class Typer {
             case StringInterpolation(exprs): Text; // TODO: Is this good enough?
             case Grouping(e): typeExpr(e);
             case Unary(op, e):
+                final exprType = typeExpr(e);
                 switch op.type {
-                    case Bang: Boolean;
-                    case Minus: Number;
+                    case Bang:
+                        if (strict && !exprType.match(Boolean)) logger.error(op, '"!" expects a boolean type');
+                        Boolean;
+                    case Minus:
+                        if (strict && !exprType.match(Number)) logger.error(op, '"-" expects a number type');
+                        Number;
                     case _: throw 'should never happen';
                 }
             case StructInit(structName, decls):

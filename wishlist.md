@@ -119,7 +119,7 @@ fun x() { print "hej" }
 - [ ] Show a stack trace on exceptions
 - [ ] Rename Resolver to StaticAnalyzer
 - [ ] Make Typer return a typed AST (otherwise rename to TypeChecker)
-- [ ] Typer: Variables multiplied, divided or subtracted must be numbers
+- [x] Typer: Variables multiplied, divided or subtracted must be numbers
 - [ ] Add a colored dot (●) in the error output to indicate which phases reported the error?
 - [ ] MAYBE serialize function arguments coming from other languages and deserialize on the Cosy-side? It could be a way to avoid dealing with complex function arguments but it probably won't work.
 - [ ] Make more of the standard library be implemented in Cosy (see https://oaklang.org/lib/std)
