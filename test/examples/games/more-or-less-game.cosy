@@ -3,11 +3,11 @@ foreign fn read_input() Str
 foreign fn string_to_number(input Str) Num
 
 print 'More-or-Less game! Guess a number between 0 and 100.'
-var number = random_int(100)
+let number = random_int(100)
 mut guesses = 0
 for {
     print 'Input a numeric value: '
-    var guess = string_to_number(read_input())
+    let guess = string_to_number(read_input())
     guesses += 1
     if guess < number {
         print 'More!'

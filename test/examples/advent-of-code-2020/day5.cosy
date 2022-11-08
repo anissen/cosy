@@ -3,7 +3,7 @@
 foreign fn read_lines(path Str) Array Str
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['FBFBBFFRLR', 'BFFFBBFRRR', 'FFFBBBFRRR', 'BBFFBBFRLL']
 } else {
@@ -43,13 +43,13 @@ fn bsp(bsp_input Array Bool, max Num) {
 
 mut seat_ids Array Num = []
 for l in input {
-    var input_array = l.split('')
-    var row = bsp(get_row_partioning(input_array), 127)
-    var col = bsp(get_col_partioning(input_array), 7)
-    var seat_id = row * 8 + col
+    let input_array = l.split('')
+    let row = bsp(get_row_partioning(input_array), 127)
+    let col = bsp(get_col_partioning(input_array), 7)
+    let seat_id = row * 8 + col
     seat_ids.push(seat_id)
 }
-var sorted_seat_ids = seat_ids.sort(fn(a Num, b Num) { return a - b })
+let sorted_seat_ids = seat_ids.sort(fn(a Num, b Num) { return a - b })
 
 // Part 1
 {
@@ -62,7 +62,7 @@ fn part_2() {
     mut value = sorted_seat_ids[0]
     for i in 1..sorted_seat_ids.length {
         value += 1
-        var v = sorted_seat_ids[i]
+        let v = sorted_seat_ids[i]
         if v != value {
             print '# PART 2: Empty seat at seat ID: {value}'
             return _

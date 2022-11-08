@@ -1,16 +1,16 @@
 // Mandelbrot, adapted from https://github.com/wren-lang/wren/blob/main/example/mandelbrot.wren
 foreign fn floor(v Num) Num
 
-var y_min = -0.2
-var y_max = 0.1
-var x_min = -1.5
-var x_max = -1.1
+let y_min = -0.2
+let y_max = 0.1
+let x_min = -1.5
+let x_max = -1.1
 
 for y_pixel in 0..24 {
-    var y = (y_pixel / 24) * (y_max - y_min) + y_min
+    let y = (y_pixel / 24) * (y_max - y_min) + y_min
     mut pixels = ''
     for x_pixel in 0..80 {
-        var x = (x_pixel / 79) * (x_max - x_min) + x_min
+        let x = (x_pixel / 79) * (x_max - x_min) + x_min
         mut pixel = ' '
         mut x0 = x
         mut y0 = y
@@ -26,7 +26,7 @@ for y_pixel in 0..24 {
             y0 = y1
 
             // Stop if the point escaped.
-            var d = (x0 * x0) + (y0 * y0)
+            let d = (x0 * x0) + (y0 * y0)
             if d > 4 {
                 pixel = ' .:;+=xX$&'.split('')[floor(iter / 8)]
                 break

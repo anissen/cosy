@@ -9,7 +9,7 @@ class Scanner {
 
     static final keywords = [
         'and' => And, 'break' => Break, 'continue' => Continue, 'else' => Else, 'false' => False, 'for' => For, 'foreign' => Foreign, 'fn' => Fn, 'in' => In,
-        'if' => If, 'mut' => Mut, 'or' => Or, 'print' => Print, 'return' => Return, 'struct' => Struct, 'true' => True, 'var' => Var, 'Bool' => BooleanType,
+        'if' => If, 'mut' => Mut, 'or' => Or, 'print' => Print, 'return' => Return, 'struct' => Struct, 'true' => True, 'let' => Let, 'Bool' => BooleanType,
         'Num' => NumberType, 'Str' => StringType, 'Void' => VoidType, 'Fn' => FunctionType, 'Array' => ArrayType,
     ];
 

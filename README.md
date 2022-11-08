@@ -61,22 +61,22 @@ print 'hello world!'
 
 
 // variables and types
-var a = true     // Boolean
-var b = 1.2      // Number
-var c = 'hello'  // String
-var d = [3, 4]   // Array
+let a = true     // Boolean
+let b = 1.2      // Number
+let c = 'hello'  // String
+let d = [3, 4]   // Array
 
 struct Point {   // Struct
-    var x
-    var y
-    var text = 'default value'
+    let x
+    let y
+    let text = 'default value'
 }
 // instantiate struct
-var point = Point { x = 3, y = 5 }
+let point = Point { x = 3, y = 5 }
 print point
 
 // variables are immutable by default
-var immutable = 42
+let immutable = 42
 // immutable = 24 // error
 
 // use the `mut` keyword to create a mutable variable
@@ -122,7 +122,7 @@ fn say(name) {
 say('world')
 
 // lambda functions
-var square = fn(value Num) {
+let square = fn(value Num) {
     return value * value
 }
 print '5 * 5 = ' + square(5)
@@ -133,7 +133,7 @@ fn say_with_extra_text(extra_text Str) {
         print text + extra_text
     }
 }
-var print_courteously = say_with_extra_text(', please!')
+let print_courteously = say_with_extra_text(', please!')
 print_courteously('make me a sandwich')
 
 // functions can tage functions as arguments
@@ -153,7 +153,7 @@ fn counter(start, increment) Fn() Num {
     }
 }
 print 'counting down...'
-var count_down = counter(3, -1)
+let count_down = counter(3, -1)
 print count_down()
 print count_down()
 print count_down()
@@ -170,16 +170,16 @@ dead_code()
 
 // shadowing of variables are not allowed
 {
-    var unique = true
+    let unique = true
     {
-        //var unique = 3 // error
+        //let unique = 3 // error
     }
     print unique
 }
 
 
 // unused variables are not allowed
-var unused = 42 // error if the line below is removed
+let unused = 42 // error if the line below is removed
 print unused
 // because of this, we also have to use the variables defined at the top
 if !a print b + c + d + immutable + mutable

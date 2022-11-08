@@ -15,5 +15,5 @@ enum Stmt {
     Print(keyword: Token, e: Expr);
     Return(keyword: Token, value: Expr);
     Struct(name: Token, declarations: Array<Stmt>);
-    Var(name: Token, type: VariableType, init: Expr, mut: Bool, foreign: Bool); // TODO: `type` should be ComputedVariableType
+    Let(name: Token, type: VariableType, init: Expr, mut: Bool, foreign: Bool); // TODO: `type` should be ComputedVariableType
 }

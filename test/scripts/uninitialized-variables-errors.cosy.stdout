@@ -1,5 +1,5 @@
 ■ test/scripts/uninitialized-variables-errors.cosy, line 1:
-1 | var a
+1 | let a
         ^ Non-mutable variables must be initialized.
 2 | print a
 3 | 

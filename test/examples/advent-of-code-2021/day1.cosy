@@ -4,14 +4,14 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['199', '200', '208', '210', '200', '207', '240', '269', '260', '263']
 } else {
     input = read_lines('test/examples/advent-of-code-2021/data/day1.txt')
 }
 
-var measurements = input.map(string_to_number)
+let measurements = input.map(string_to_number)
 
 { // Part 1
     mut increases = 0
@@ -26,8 +26,8 @@ var measurements = input.map(string_to_number)
 { // Part 2
     mut increases = 0
     for i in 3..measurements.length {
-        var last_sum = measurements[i - 3] + measurements[i - 2] + measurements[i - 1]
-        var current_sum = measurements[i - 2] + measurements[i - 1] + measurements[i]
+        let last_sum = measurements[i - 3] + measurements[i - 2] + measurements[i - 1]
+        let current_sum = measurements[i - 2] + measurements[i - 1] + measurements[i]
         if current_sum > last_sum {
             increases += 1
         }

@@ -117,7 +117,7 @@ class CodeGenerator {
                 add_token(keyword);
                 genExpr(expr);
                 emit(Print);
-            case Var(name, type, init, mut, foreign):
+            case Let(name, type, init, mut, foreign):
                 add_token(name);
                 genExpr(init);
                 localIndexes[name.lexeme] = localsCounter++;

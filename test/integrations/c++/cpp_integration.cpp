@@ -24,7 +24,7 @@ int main() {
 	// Foreign variable works somewhat (int and bool works, string does not)
     // cosy::Cosy_obj::setVariable("x", 42);
     // cosy::Cosy_obj::setVariable("x", "asdf".c_str());
-    // cosy::Cosy_obj::run("foreign var x\nprint 'foreign variable: {x}'");
+    // cosy::Cosy_obj::run("foreign let x\nprint 'foreign variable: {x}'");
 	
 	// Foreign function callbacks do not work:
     // cosy::Cosy_obj::setFunction("f", &func);

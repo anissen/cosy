@@ -18,7 +18,7 @@
 // -----------
 
 {
-    var s = 'hej'
+    let s = 'hej'
     mut i
     print i
     i = 33
@@ -71,7 +71,7 @@
 
 {
     fn f(arg) {
-        var a = arg + 1
+        let a = arg + 1
         print 'printing f arg: "' + a + '"'
     }
     f(12)
@@ -234,7 +234,7 @@
     fn f(param Num) {
         print param * param
     }
-    var param = 'hej'
+    let param = 'hej'
     print param
     f(5)
 }
@@ -307,9 +307,9 @@
 // -----------
 
 {
-    var f = fn(z) {
+    let f = fn(z) {
         return z
     }
-    var x Num = f(true)
+    let x Num = f(true)
     print x
 }

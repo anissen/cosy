@@ -4,7 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = 'be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
 edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
@@ -26,7 +26,7 @@ struct Data {
 }
 mut all_data Array Data = []
 for i in input {
-    var parts = i.split(' | ')
+    let parts = i.split(' | ')
     all_data.push(Data {
         segments = parts[0].split(' ').map(fn(s Str) {
             return s.split('').sort(fn(a Str, b Str) Num {
@@ -87,7 +87,7 @@ fn determine_output_digits(data Data) Str {
         }
     }
 
-    var digit_0_6_9 = data.segments.filter(fn(s Array Str) { return s.length == 6 }) // digit is 0, 6 or 9
+    let digit_0_6_9 = data.segments.filter(fn(s Array Str) { return s.length == 6 }) // digit is 0, 6 or 9
     for digit in digit_0_6_9 {
         if get_matches(digit, 1) == 1 { // digit has 1 match with 1, must be 6
             deduced[6] = digit
@@ -98,7 +98,7 @@ fn determine_output_digits(data Data) Str {
         }
     }
 
-    var digit_2_3_5 = data.segments.filter(fn(s Array Str) { return s.length == 5 }) // digit is 2, 3 or 5
+    let digit_2_3_5 = data.segments.filter(fn(s Array Str) { return s.length == 5 }) // digit is 2, 3 or 5
     for digit in digit_2_3_5 {
         if get_matches(digit, 7) == 3 { // digit has 3 matches with 7, must be 3
             deduced[3] = digit
@@ -113,7 +113,7 @@ fn determine_output_digits(data Data) Str {
     for output_digit in data.output {
         for i in 0..deduced.length {
             mut match = true
-            var deduced_arr = deduced[i]
+            let deduced_arr = deduced[i]
             if output_digit.length != deduced_arr.length {
                 continue
             }
@@ -136,7 +136,7 @@ fn determine_output_digits(data Data) Str {
 { // Part 1
     mut digits_1_4_7_8 = 0
     for data in all_data {
-        var digits = determine_output_digits(data)
+        let digits = determine_output_digits(data)
         digits_1_4_7_8 += digits.split('').map(string_to_number).count(fn(digit Num) { return digit == 1 or digit == 4 or digit == 7 or digit == 8 })
     }
     print '# PART 1: Digits 1, 4, 7 and 8 appear {digits_1_4_7_8} times'
@@ -145,8 +145,8 @@ fn determine_output_digits(data Data) Str {
 { // Part 2
     mut sum = 0
     for data in all_data {
-        var digits = determine_output_digits(data)
-        var value = string_to_number(digits)
+        let digits = determine_output_digits(data)
+        let value = string_to_number(digits)
         sum += value
     }
     print '# PART 2: Sum of all output values is {sum}'

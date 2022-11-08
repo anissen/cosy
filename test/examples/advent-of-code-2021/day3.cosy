@@ -4,7 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['00100', '11110', '10110', '10111', '10101', '01111', '00111', '11100', '10000', '11001', '00010', '01010']
 } else {
@@ -21,7 +21,7 @@ mut least_common_bits Array Num = []
 fn count_at_index(bit_arr Array Array Num, c Num, i Num) Num {
     mut count = 0
     for bits in bit_arr {
-        var bit = bits[i]
+        let bit = bits[i]
         if bit == c {
             count += 1
         }
@@ -30,8 +30,8 @@ fn count_at_index(bit_arr Array Array Num, c Num, i Num) Num {
 }
 
 fn most_common_bit_at_index(bit_arr Array Array Num,i Num) Num {
-    var high_bits = count_at_index(bit_arr, 1, i)
-    var low_bits = count_at_index(bit_arr, 0, i)
+    let high_bits = count_at_index(bit_arr, 1, i)
+    let low_bits = count_at_index(bit_arr, 0, i)
     if high_bits > low_bits {
         return 1
     } else {
@@ -39,10 +39,10 @@ fn most_common_bit_at_index(bit_arr Array Array Num,i Num) Num {
     }
 }
 
-var number_of_bits = bit_input[0].length
+let number_of_bits = bit_input[0].length
 for i in 0..number_of_bits {
-    var most_common = most_common_bit_at_index(bit_input, i)
-    var least_common = 1 - most_common
+    let most_common = most_common_bit_at_index(bit_input, i)
+    let least_common = 1 - most_common
     most_common_bits.push(most_common)
     least_common_bits.push(least_common)
 }
@@ -56,16 +56,16 @@ fn binary_to_decimal(bits Array Num) Num {
 }
 
 { // Part 1
-    var most_common_bits_value = binary_to_decimal(most_common_bits)
-    var least_common_bits_value = binary_to_decimal(least_common_bits)
+    let most_common_bits_value = binary_to_decimal(most_common_bits)
+    let least_common_bits_value = binary_to_decimal(least_common_bits)
     print '# PART 1: Submarine power: {most_common_bits_value * least_common_bits_value}'
 }
 
 { // Part 2
     mut oxygen_rating_bits Array Array Num = bit_input
     for i in 0..number_of_bits {
-        var low_count  = count_at_index(oxygen_rating_bits, 0, i)
-        var high_count = count_at_index(oxygen_rating_bits, 1, i)
+        let low_count  = count_at_index(oxygen_rating_bits, 0, i)
+        let high_count = count_at_index(oxygen_rating_bits, 1, i)
         mut most_common = 0
         if high_count >= low_count {
             most_common = 1
@@ -80,8 +80,8 @@ fn binary_to_decimal(bits Array Num) Num {
 
     mut co2_rating_bits Array Array Num = bit_input
     for i in 0..number_of_bits {
-        var low_count  = count_at_index(co2_rating_bits, 0, i)
-        var high_count = count_at_index(co2_rating_bits, 1, i)
+        let low_count  = count_at_index(co2_rating_bits, 0, i)
+        let high_count = count_at_index(co2_rating_bits, 1, i)
         mut least_common = 1
         if low_count <= high_count {
             least_common = 0
@@ -93,7 +93,7 @@ fn binary_to_decimal(bits Array Num) Num {
             return bits[i] == least_common
         })
     }
-    var oxygen_rating = binary_to_decimal(oxygen_rating_bits[0])
-    var co2_rating = binary_to_decimal(co2_rating_bits[0])
+    let oxygen_rating = binary_to_decimal(oxygen_rating_bits[0])
+    let co2_rating = binary_to_decimal(co2_rating_bits[0])
     print '# PART 2: Life support rating: {oxygen_rating * co2_rating}'
 }

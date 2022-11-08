@@ -5,12 +5,12 @@
     }
 
     struct Person {
-        var age Num
+        let age Num
         mut name Str
-        var sizes Sizes // TODO: This is immutable and should be const!
+        let sizes Sizes // TODO: This is immutable and should be const!
     }
 
-    var john = Person {
+    let john = Person {
         age = 42,
         name = 'John',
         sizes = Sizes {

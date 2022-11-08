@@ -1,22 +1,22 @@
 {
-	var i = 4 + 3 + 2 + 1
+	let i = 4 + 3 + 2 + 1
 	print i
 }
 
 {
-	var i = 10
+	let i = 10
 	if i > 3 + 4 {
 		print 'yes'
 	}
 }
 
 {
-	var j = 'hello' + ' ' + 'world'
+	let j = 'hello' + ' ' + 'world'
 	print j
 }
 
 {
-	var i = '{4 + 3} hello' + ' ' + 'world {2 + 1}'
+	let i = '{4 + 3} hello' + ' ' + 'world {2 + 1}'
 	print i
 }
 

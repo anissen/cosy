@@ -1,5 +1,5 @@
 ■ test/scripts/mutability.cosy, line 9:
- 7 | var b = 3
+ 7 | let b = 3
  8 | print b
  9 | b = 7
      ^ Cannot reassign non-mutable variable.

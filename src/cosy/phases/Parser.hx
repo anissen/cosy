@@ -26,8 +26,8 @@ class Parser {
             if (match([Struct])) return structDeclaration();
             var foreign = match([Foreign]);
             if (match([Fn])) return func('function', foreign);
-            if (match([Var])) return varDeclaration(false, foreign);
-            if (match([Mut])) return varDeclaration(true, foreign);
+            if (match([Let])) return letDeclaration(false, foreign);
+            if (match([Mut])) return letDeclaration(true, foreign);
             return statement();
         } catch (e: ParseError) {
             synchronize();
@@ -130,14 +130,14 @@ class Parser {
         return statements;
     }
 
-    function varDeclaration(mut: Bool, foreign: Bool): Stmt {
+    function letDeclaration(mut: Bool, foreign: Bool): Stmt {
         var name = consume(Identifier, 'Expect variable name.');
         var type = paramType();
 
         var initializer = null;
         if (!foreign && match([Equal])) initializer = expression();
 
-        return Var(name, type, initializer, mut, foreign);
+        return Let(name, type, initializer, mut, foreign);
     }
 
     function structDeclaration(): Stmt {
@@ -146,8 +146,8 @@ class Parser {
 
         var declarations = [];
         while (!check(RightBrace) && !isAtEnd()) {
-            if (match([Var])) declarations.push(varDeclaration(false, false));
-            else if (match([Mut])) declarations.push(varDeclaration(true, false));
+            if (match([Let])) declarations.push(letDeclaration(false, false));
+            else if (match([Mut])) declarations.push(letDeclaration(true, false));
             else {
                 logger.error(tokens[current], 'Structs can only contain variable definitions.');
                 break;
@@ -513,7 +513,7 @@ class Parser {
         advance();
         while (!isAtEnd()) {
             switch peek().type {
-                case Break | Continue | Fn | Var | Foreign | For | If | Print | Return | Struct: return;
+                case Break | Continue | Fn | Let | Foreign | For | If | Print | Return | Struct: return;
                 case _: advance();
             }
         }

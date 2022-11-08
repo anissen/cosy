@@ -1,5 +1,5 @@
-var b=3{
-var a=b+4
+let b=3{
+let a=b+4
 fn g(){return fn(x){return(a+x)*2}}print g()(2)}
-var f = fn()Fn(Num)Num{return fn(x Num)Num{return x+2}}
+let f = fn()Fn(Num)Num{return fn(x Num)Num{return x+2}}
 f()

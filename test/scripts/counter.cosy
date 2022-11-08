@@ -8,6 +8,6 @@ fn make_counter() {
   return count
 }
 
-var counter = make_counter()
+let counter = make_counter()
 counter() // 1
 counter() // 2

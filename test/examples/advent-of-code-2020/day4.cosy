@@ -4,7 +4,7 @@ foreign fn string_to_number(input Str) Num
 foreign fn read_file(path Str) Str
 
 mut input Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = 'ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 byr:1937 iyr:2017 cid:147 hgt:183cm
@@ -24,27 +24,27 @@ iyr:2011 ecl:brn hgt:59in'
 }
 
 struct Field {
-    var name Str
-    var value Str
+    let name Str
+    let value Str
 }
 
 struct Passport {
-    var fields Array Field
+    let fields Array Field
 }
 
-var passport_list = input.replace('\n\n', '$').replace('\n', ' ').split('$')
+let passport_list = input.replace('\n\n', '$').replace('\n', ' ').split('$')
 
 fn parse(passport Str) {
-    var parts = passport.split(' ')
+    let parts = passport.split(' ')
     mut fields Array Field = []
     for part in parts {
-        var components = part.split(':')
+        let components = part.split(':')
         fields.push(Field { name = components[0], value = components[1] })
     }
     return Passport { fields = fields }
 }
 
-var passports = passport_list.map(parse)
+let passports = passport_list.map(parse)
 
 fn has_required_fields(passport Passport) Bool {
     for required_field_name in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'] {
@@ -94,16 +94,16 @@ fn has_valid_values(passport Passport) Bool {
             }
         } else if field.name == 'hgt' {
             // hgt (Height) - a number followed by either cm or in:
-            var height_unit = field.value.substr(field.value.length - 2, 2)
+            let height_unit = field.value.substr(field.value.length - 2, 2)
             if height_unit == 'cm' {
                 // If cm, the number must be at least 150 and at most 193.
-                var height_cm = field.value.substr(0, field.value.length - 2)
+                let height_cm = field.value.substr(0, field.value.length - 2)
                 if !value_in_range(string_to_number(height_cm), 150, 193) {
                     return false
                 }
             } else if height_unit == 'in' {
                 // If in, the number must be at least 59 and at most 76.
-                var height_in = field.value.substr(0, field.value.length - 2)
+                let height_in = field.value.substr(0, field.value.length - 2)
                 if !value_in_range(string_to_number(height_in), 59, 76) {
                     return false
                 }
@@ -116,7 +116,7 @@ fn has_valid_values(passport Passport) Bool {
                 return false
             }
             for i in 1..6 {
-                var char = field.value.char_at(i)
+                let char = field.value.char_at(i)
                 if char != '0' and char != '1' and char != '2' and char != '3' and char != '4' and char != '5' and char != '6' and char != '7' and char != '8' and char != '9' and char != 'a' and char != 'b' and char != 'c' and char != 'd' and char != 'e' and char != 'f' {
                     return false
                 }
@@ -139,7 +139,7 @@ fn has_valid_values(passport Passport) Bool {
                 return false
             }
             for i in 0..field.value.length {
-                var char = field.value.char_at(i)
+                let char = field.value.char_at(i)
                 if char != '0' and char != '1' and char != '2' and char != '3' and char != '4' and char != '5' and char != '6' and char != '7' and char != '8' and char != '9' {
                     return false
                 }

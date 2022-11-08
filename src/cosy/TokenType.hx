@@ -50,7 +50,7 @@ enum TokenType {
     Return;
     Struct;
     True;
-    Var;
+    Let;
     BooleanType;
     NumberType;
     StringType;

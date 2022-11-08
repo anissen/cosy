@@ -4,7 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = '7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
@@ -33,7 +33,7 @@ struct Board {
     mut rows Array Array Num
 }
 
-var numbers Array Num = input[0].split(',').map(string_to_number)
+let numbers Array Num = input[0].split(',').map(string_to_number)
 mut all_boards Array Board = []
 {
     mut rows = []
@@ -55,7 +55,7 @@ fn mark_boards(boards Array Board, n Num) {
         for row_index in 0..5 {
             mut row Array Num = board.rows[row_index]
             for column in 0..5 {
-                var cell = row[column]
+                let cell = row[column]
                 if cell == n {
                     row[column] = -1
                 }
@@ -90,7 +90,7 @@ fn find_sum_of_unmarked_numbers_on_board(board Board) Num {
     mut sum = 0
     for row in board.rows {
         for column in 0..5 {
-            var cell = row[column]
+            let cell = row[column]
             if cell != -1 {
                 sum += cell
             }
@@ -105,7 +105,7 @@ fn find_sum_of_unmarked_numbers_on_board(board Board) Num {
         mark_boards(all_boards, n)
         for board in all_boards {
             if has_won(board) {
-                var sum = find_sum_of_unmarked_numbers_on_board(board)
+                let sum = find_sum_of_unmarked_numbers_on_board(board)
                 print '# PART 1: First bingo score: {sum * n}'
                 done = true
                 break
@@ -122,9 +122,9 @@ fn find_sum_of_unmarked_numbers_on_board(board Board) Num {
     for n in numbers {
         mark_boards(boards_left, n)
         if boards_left.length == 1 {
-            var board = boards_left[0]
+            let board = boards_left[0]
             if has_won(board) {
-                var sum = find_sum_of_unmarked_numbers_on_board(board)
+                let sum = find_sum_of_unmarked_numbers_on_board(board)
                 print '# PART 2: Last bingo score: {sum * n}'
             }
         }

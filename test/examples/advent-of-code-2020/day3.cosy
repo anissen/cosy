@@ -3,7 +3,7 @@
 foreign fn read_lines(path Str) Array Str
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = [
         '..##.......',
@@ -32,7 +32,7 @@ fn count_trees(slope_x Num, slope_y Num) Num {
         if y >= input.length {
             break
         }
-        var row = input[y]
+        let row = input[y]
         if x >= row.length {
             x -= row.length
         }

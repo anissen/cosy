@@ -3,7 +3,7 @@
 foreign fn read_lines(path Str) Array Str
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = 'start-A
 start-b
@@ -17,9 +17,9 @@ b-end'.split('\n')
 }
 
 struct Cave {
-    var name Str
+    let name Str
     mut connections Array Str // TODO: Cannot reference Cave here :(
-    var big Bool
+    let big Bool
     mut visited Num = 0
 }
 mut caves Array Cave = []
@@ -49,9 +49,9 @@ fn get_cave(name Str) Cave {
 }
 
 for path in input {
-    var parts = path.split('-')
-    var start = parts[0]
-    var end = parts[1]
+    let parts = path.split('-')
+    let start = parts[0]
+    let end = parts[1]
     get_cave(start).connections.push(end)
     get_cave(end).connections.push(start)
 }
@@ -64,7 +64,7 @@ fn find_paths(mut cave Cave, pathStr Str) Array Str { // TODO: Typer needs to sa
         if next.name == 'end' {
             paths.push('{pathStr},{cave.name},end')
         } else if next.big or next.visited <= 0 {
-            var next_paths Array Str = find_paths(next, '{pathStr},{cave.name}')
+            let next_paths Array Str = find_paths(next, '{pathStr},{cave.name}')
             paths.concat(next_paths)
         }
     }
@@ -74,7 +74,7 @@ fn find_paths(mut cave Cave, pathStr Str) Array Str { // TODO: Typer needs to sa
 
 { // Part 1
     mut start = get_cave('start')
-    var paths = find_paths(start, "")
+    let paths = find_paths(start, "")
     print '# PART 1: Number of distinct one-direcitonal paths in caves: {paths.length}'
 }
 

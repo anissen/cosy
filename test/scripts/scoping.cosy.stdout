@@ -1,23 +1,23 @@
 ■ test/scripts/scoping.cosy, line 5:
-3 | var c = 'global c'
+3 | let c = 'global c'
 4 | {
-5 |   var a = 'outer a'
+5 |   let a = 'outer a'
           ^ Shadows existing variable.
-6 |   var b = 'outer b'
+6 |   let b = 'outer b'
 7 |   {
 
 ■ test/scripts/scoping.cosy, line 6:
 4 | {
-5 |   var a = 'outer a'
-6 |   var b = 'outer b'
+5 |   let a = 'outer a'
+6 |   let b = 'outer b'
           ^ Shadows existing variable.
 7 |   {
-8 |     var a = 'inner a'
+8 |     let a = 'inner a'
 
 ■ test/scripts/scoping.cosy, line 8:
- 6 |   var b = 'outer b'
+ 6 |   let b = 'outer b'
  7 |   {
- 8 |     var a = 'inner a'
+ 8 |     let a = 'inner a'
              ^ Shadows existing variable.
  9 |     print a
 10 |     print b

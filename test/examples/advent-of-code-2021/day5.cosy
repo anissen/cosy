@@ -7,7 +7,7 @@ foreign fn max(a Num, b Num) Num
 foreign fn abs(v Num) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = '0,9 -> 5,9
 8,0 -> 0,8
@@ -32,9 +32,9 @@ struct Line {
 
 mut input_lines Array Line = []
 for line in input {
-    var coords = line.split(' -> ')
-    var start = coords[0].split(',')
-    var end = coords[1].split(',')
+    let coords = line.split(' -> ')
+    let start = coords[0].split(',')
+    let end = coords[1].split(',')
     input_lines.push(Line {
         x1 = string_to_number(start[0]),
         y1 = string_to_number(start[1]),
@@ -79,7 +79,7 @@ fn make_grid(dim Point) {
     return tmp_grid
 }
 
-var max_dimensions = find_max(input_lines)
+let max_dimensions = find_max(input_lines)
 mut grid Array Array Num = make_grid(max_dimensions)
 
 mut non_diagonal_lines Array Line = input_lines.filter(fn(line Line) { 
@@ -99,7 +99,7 @@ fn get_line_coords(line Line) Array Point {
         if line.y2 < y {
             step_y = -1
         }
-        var steps = max(abs(line.x2 - line.x1), abs(line.y2 - line.y1)) + 1
+        let steps = max(abs(line.x2 - line.x1), abs(line.y2 - line.y1)) + 1
         for 0..steps {
             coords.push(Point { x = x, y = y })
             x += step_x
@@ -142,7 +142,7 @@ fn count_overlap(max_overlap Num) Num {
 
 // reset grid values
 for y in 0..grid.length {
-    var row = grid[y]
+    let row = grid[y]
     for x in 0..row.length {
         grid[y][x] = 0
     }

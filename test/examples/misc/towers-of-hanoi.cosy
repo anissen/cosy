@@ -1,5 +1,5 @@
 mut a = [1, 2, 3, 4, 5]
-var b = []
+let b = []
 mut c = []
 
 fn move(n Num, mut source Array Num, mut target Array Num, auxiliary Array Num) {
