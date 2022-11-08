@@ -1,7 +1,7 @@
 ■ test/scripts/variable-resolution.cosy, line 8:
  6 | 
  7 |   show_a()
- 8 |   var a = 'block'
+ 8 |   let a = 'block'
            ^ Shadows existing variable.
  9 |   print a
 10 |   show_a()

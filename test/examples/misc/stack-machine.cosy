@@ -1,22 +1,22 @@
-var push = 0
-var add = 1
-var sub = 2
+let push = 0
+let add = 1
+let sub = 2
 
 fn eval(code Array Num) {
     mut stack Array Num = []
     mut ip = 0
     for ip < code.length {
-        var op = code[ip]
+        let op = code[ip]
         if op == push {
             ip += 1
             stack.push(code[ip])
         } else if op == add {
-            var right = stack.pop()
-            var left = stack.pop()
+            let right = stack.pop()
+            let left = stack.pop()
             stack.push(left + right)
         } else if op == sub {
-            var right = stack.pop()
-            var left = stack.pop()
+            let right = stack.pop()
+            let left = stack.pop()
             stack.push(left - right)
         } 
         ip += 1
@@ -24,7 +24,7 @@ fn eval(code Array Num) {
     if stack.length > 0 print stack.pop()
 }
 
-var code = [ // (2 + 3) - 8
+let code = [ // (2 + 3) - 8
     push, 2,
     push, 3,
     add,

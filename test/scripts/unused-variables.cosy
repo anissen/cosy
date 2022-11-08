@@ -1,20 +1,20 @@
-// var a = 5 // not reported unused because its top-level
-var b = 6
+// let a = 5 // not reported unused because its top-level
+let b = 6
 print b
 
 {
-    var c = 5 // c: unused variable
-    var d = 6
+    let c = 5 // c: unused variable
+    let d = 6
     print d
 }
 
 fn x(arg1) {
-    var local1 = 2 // local1: unused variable
+    let local1 = 2 // local1: unused variable
     print arg1
 }
 
 fn y(arg2) { // arg2: unused variable
-    var local2 = 2
+    let local2 = 2
     print local2
 }
 
@@ -24,8 +24,8 @@ y(false)
 // ----------
 
 fn f(_x) { // no error for unused argument
-    var _y = 2 // no error for unused variable
-    var _z = 5
+    let _y = 2 // no error for unused variable
+    let _z = 5
     print _z // error for used variable starting with _
 }
 

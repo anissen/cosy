@@ -8,7 +8,7 @@ fn format_bottles(count Num) Str {
 
 mut bottles = 99
 for bottles > 0 {
-    var bottle_text = format_bottles(bottles)
+    let bottle_text = format_bottles(bottles)
     print '{bottle_text} of beer on the wall, {bottle_text} of beer.'
     bottles -= 1
     print 'Take one down and pass it around, {format_bottles(bottles)} of beer on the wall.\n'

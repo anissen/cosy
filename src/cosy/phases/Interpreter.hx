@@ -130,13 +130,13 @@ class Interpreter {
                 final fields: Map<String, Any> = new Map();
                 for (decl in declarations)
                     switch decl {
-                        case Var(name, type, init, mut, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                        case Let(name, type, init, mut, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
                         case _: // should never happen
                     }
                 environment = previousEnv;
                 final struct = new StructInstance(name, fields, logger);
                 environment.assign(name, struct);
-            case Var(name, type, init, mut, foreign):
+            case Let(name, type, init, mut, foreign):
                 if (foreign) {
                     environment.define(name.lexeme, compiler.foreignVariables[name.lexeme]);
                     return;

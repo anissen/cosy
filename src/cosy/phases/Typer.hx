@@ -48,7 +48,7 @@ class Typer {
             case Block(statements): typeStmts(statements);
             case Break(keyword):
             case Continue(keyword):
-            case Var(name, type, init, mut, foreign):
+            case Let(name, type, init, mut, foreign):
                 var computedType = typeVar(name, type, init);
                 if (mut) computedType = Mutable(computedType);
                 variableTypes.set(name.lexeme, computedType);
@@ -101,12 +101,12 @@ class Typer {
                 var decls: Map<String, VariableType> = new Map();
                 for (decl in declarations) {
                     switch decl {
-                        case Var(name, type, init, mut, foreign):
+                        case Let(name, type, init, mut, foreign):
                             structMeta.members.set(name.lexeme, {mutable: mut, initialized: (init != null)});
                             var computedType = typeVar(name, type, init);
                             if (mut) computedType = Mutable(computedType);
                             decls.set(name.lexeme, computedType);
-                        case _: throw 'structs can only have var and mut'; // should never happen
+                        case _: throw 'structs can only have let and mut'; // should never happen
                     }
                 }
                 structsMeta.set(name.lexeme, structMeta);
@@ -496,7 +496,7 @@ class Typer {
                     if (!matchType(params1[i], params2[i])) return false;
                 }
                 matchType(v1, v2);
-            case [Array(Unknown), Array(_)]: true; // handle case where e.g. var a Array Num = []
+            case [Array(Unknown), Array(_)]: true; // handle case where e.g. let a Array Num = []
             case [Array(t1), Array(t2)]: matchType(t1, t2);
             case [Struct(v1), Struct(v2)]:
                 for (key => value in v1) {

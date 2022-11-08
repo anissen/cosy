@@ -11,8 +11,8 @@
 
 struct Point {
 	mut x Num = 2
-    var y = 4
-    var a Array Num
+    let y = 4
+    let a Array Num
 }
 
 {
@@ -22,8 +22,8 @@ struct Point {
 
 {
     struct Test {
-        var a Point
-        var b Str
+        let a Point
+        let b Str
     }
 
     print Test { a = Point { x = 666, y = 777, a = [] }, b = 'hej' }
@@ -31,11 +31,11 @@ struct Point {
 
 {
     struct Test2 {
-        var a Array Num
-        var p Point = Point { x = 4, y = 12, a = [] }
+        let a Array Num
+        let p Point = Point { x = 4, y = 12, a = [] }
     }
 
-    var test = Test2 { a = [3, 4, 5] }
+    let test = Test2 { a = [3, 4, 5] }
     print test
 }
 
@@ -48,9 +48,9 @@ struct Point {
 
 {
     struct Entity {
-        var x Num
-        var y Num
-        var text = 'default value'
+        let x Num
+        let y Num
+        let text = 'default value'
         mut arr Array Num = []
     }
 

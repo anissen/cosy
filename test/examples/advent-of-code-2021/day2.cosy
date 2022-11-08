@@ -4,7 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = [
         'forward 5',
@@ -19,14 +19,14 @@ if test_mode {
 }
 
 struct Instruction {
-    var direction Str
-    var distance Num
+    let direction Str
+    let distance Num
 }
 mut instructions Array Instruction = []
 for i in input {
-    var instruction = i.split(' ')
-    var direction = instruction[0]
-    var distance = string_to_number(instruction[1])
+    let instruction = i.split(' ')
+    let direction = instruction[0]
+    let distance = string_to_number(instruction[1])
     instructions.push(Instruction {
         direction = direction,
         distance = distance,
@@ -45,7 +45,7 @@ for i in input {
             depth += i.distance
         }
     }
-    var result = depth * horizontal_pos
+    let result = depth * horizontal_pos
     print '# PART 1: Submarine position value: {result}'
 }
 
@@ -65,6 +65,6 @@ for i in input {
             print 'unknown direction: {i.direction}'
         }
     }
-    var result = depth * horizontal_pos
+    let result = depth * horizontal_pos
     print '# PART 2: Submarine position value: {result}'
 }

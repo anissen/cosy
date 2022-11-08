@@ -24,7 +24,7 @@ print 'result: {h()}'
         return say_hi
     }
 
-    var say_hi_to = make_hi_func()
+    let say_hi_to = make_hi_func()
     print say_hi_to('John')
 }
 
@@ -46,6 +46,6 @@ print 'result: {h()}'
         return do_add
     }
 
-    var add5 = make_add_func(5)
+    let add5 = make_add_func(5)
     print(add5(2)) // 7
 }

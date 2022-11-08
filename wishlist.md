@@ -13,10 +13,10 @@ fun x() { print "hej" }
 - [ ] Change assignment to be a statement instead of an expression?
 - [ ] Change more statements into expressions
 - [x] No variable shadowing
-- [x] Avoid local function variables overwriting function arguments (e.g. `var a = "local"`)
+- [x] Avoid local function variables overwriting function arguments (e.g. `let a = "local"`)
 - [x] Static analysis for
   - [x] Simple dead code
-  - [x] Using uninitialized variables (`var`)
+  - [x] Using uninitialized variables (`let`)
   - [x] Using uninitialized variables (`mut`)
   - [x] `if` with constant conditional expression
   - [ ] Useless expressions, e.g. `'hello world'`
@@ -26,7 +26,7 @@ fun x() { print "hej" }
   - [ ] Ensure correct number of arguments at compile time instead of at runtime
   - [ ] Checking that if a function returns a value, the invoking code uses (or discards) that value 
 - [ ] Optimizer
-  - [ ] Optimize usages of literals in `var`'s. They're constants in pratice.
+  - [ ] Optimize usages of literals in `let`'s. They're constants in pratice.
   - [ ] Optimize e.g. `x + 2 + 3 + 4 + 5 + 6` to `x + 20`
 - [x] for-loop without sugaring (makes output code ugly)
 - [x] Strong types by requiring variables to be initialized (later this may be handle by static analysis)
@@ -79,7 +79,7 @@ fun x() { print "hej" }
 - [x] Change `fun` to `fn`
 - [x] Change `"` to `'`
 - [x] Consider integrations
-- [x] Merge `Mut` into `Var`
+- [x] Merge `Mut` into `Let`
 - [ ] Need to take line breaks into account to avoid cases where parsing fails because it "continues" on the next line, e.g. `mut b\nb = '2'`
 - [x] Remove unused testing code (Cosy.hx + tests/)
 - [ ] Make array concat be simply `+` (or `++` like in Haskell?)
@@ -111,7 +111,7 @@ fun x() { print "hej" }
 - [x] Make the CLI write out Cosy version and/or git commit
 - [x] Detect invalid concatinations (+) in the Typer (and show a hint about string interpolation if one of the types is a string)
 - [ ] Make `--times` show how many lines/second was processed (scanner + parser)
-- [ ] Replace `var` with `let` (because they're constants, not variables)
+- [x] Replace `var` with `let` (because they're constants, not variables)
 - [ ] Replace `print` with `log` (shorter, more concise)
 - [x] Improve error messages
 - [x] Split Cosy.hx into Cosy.hx and Compiler.hx

@@ -4,7 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['3,4,3,1,2']
 } else {
@@ -27,7 +27,7 @@ fn count_lanternfish(days Num) Num {
     reset_interval_sums()
     mut lanternfish = intervals.length
     for 0..days {
-        var new_intervals = interval_sums.shift()
+        let new_intervals = interval_sums.shift()
         interval_sums[6] += new_intervals
         interval_sums.push(new_intervals)
         lanternfish += new_intervals

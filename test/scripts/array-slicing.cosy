@@ -27,7 +27,7 @@ print [5,4,2,62,1][2..4] == [2, 62]
 }
 
 {
-    var x = ['h', 'e', 'l', 'l', 'o']
+    let x = ['h', 'e', 'l', 'l', 'o']
     print x[1..]
     print x[2..]
     print x[..3]

@@ -1,6 +1,6 @@
 ■ test/scripts/array-errors.cosy, line 3:
 1 | {
-2 |     var arr = ['5','6','7']
+2 |     let arr = ['5','6','7']
 3 |     arr.push('8') // fails because arr is not mut
             ^^^^ Cannot call mutating method on immutable array.
 4 | 

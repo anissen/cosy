@@ -1,6 +1,6 @@
-var b = 3
+let b = 3
 {
-    var a = b + 4
+    let a = b + 4
     fn g() {
         return fn(x) {
             return (a + x) * 2
@@ -8,7 +8,7 @@ var b = 3
     }
     print g()(2)
 }
-var f = fn() Fn(Num) Num {
+let f = fn() Fn(Num) Num {
     return fn(x Num) Num {
         return x + 2
     }

@@ -14,7 +14,7 @@ struct HasSomeTag
 struct SomeOtherTag
 // registry world
 
-var particle = Entity() // or world.entity()
+let particle = Entity() // or world.entity()
 particle.add(Position { x = 42, y = 45 })
 // particle += Position { x = 42, y = 45 }
 particle.add(Velocity { x = 10, y = 0 })

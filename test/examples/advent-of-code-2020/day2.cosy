@@ -4,7 +4,7 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['1-3 a: abcde','1-3 b: cdefg','2-9 c: ccccccccc']
 } else {
@@ -12,48 +12,48 @@ if test_mode {
 }
 
 struct Password {
-    var min Num
-    var max Num
-    var char Str
-    var pass Array Str
+    let min Num
+    let max Num
+    let char Str
+    let pass Array Str
 }
 
 fn parse(str Str) Password {
-    var parts = str.split(' ')  // ['1-3', 'a:', 'abcde'] from '1-3 a: abcde'
-	var min_max = parts[0].split('-') // [1, 3] from '1-3
-    var min = string_to_number(min_max[0])
-    var max = string_to_number(min_max[1])
-    var char = parts[1].split(':')[0] // 'a' from 'a:'
-    var pass = parts[2]
+    let parts = str.split(' ')  // ['1-3', 'a:', 'abcde'] from '1-3 a: abcde'
+	let min_max = parts[0].split('-') // [1, 3] from '1-3
+    let min = string_to_number(min_max[0])
+    let max = string_to_number(min_max[1])
+    let char = parts[1].split(':')[0] // 'a' from 'a:'
+    let pass = parts[2]
     return Password { min = min, max = max, char = char, pass = pass.split('') }
 }
 
 fn validate_part_1(p Password) {
-    var char_count = p.pass.count(fn (char Str) {
+    let char_count = p.pass.count(fn (char Str) {
         return char == p.char
     })
     return char_count >= p.min and char_count <= p.max
 }
 
 fn validate_part_2(p Password) {
-    var first_char_matches = p.pass[p.min - 1] == p.char
-    var second_char_matches = p.pass[p.max - 1] == p.char
+    let first_char_matches = p.pass[p.min - 1] == p.char
+    let second_char_matches = p.pass[p.max - 1] == p.char
     if first_char_matches and second_char_matches {
         return false
     }
     return first_char_matches or second_char_matches
 }
 
-var parsed_input = input.map(parse)
+let parsed_input = input.map(parse)
 
 // Part 1
 {
-    var valid_count_part_1 = parsed_input.filter(validate_part_1)
+    let valid_count_part_1 = parsed_input.filter(validate_part_1)
     print '# PART 1: {valid_count_part_1.length} valid passwords'
 }
 
 // Part 2
 {
-    var valid_count_part_2 = parsed_input.filter(validate_part_2)
+    let valid_count_part_2 = parsed_input.filter(validate_part_2)
     print '# PART 2: {valid_count_part_2.length} valid passwords'
 }

@@ -4,21 +4,21 @@ foreign fn read_lines(path Str) Array Str
 foreign fn string_to_number(input Str) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['1721', '979', '366', '299', '675', '1456']
 } else {
     input = read_lines('test/examples/advent-of-code-2020/data/day1.txt')
 }
 
-var numbers = input.map(string_to_number)
+let numbers = input.map(string_to_number)
 
 // Part 1: Find two numbers that sum to 2020.
 fn part_1() {
     for i in 0..numbers.length {
         for i2 in i..numbers.length {
-            var a = numbers[i]
-            var b = numbers[i2]
+            let a = numbers[i]
+            let b = numbers[i2]
             if a + b == 2020 {
                 print '# PART 1: {a * b}'
                 return _
@@ -33,9 +33,9 @@ fn part_2() {
     for i in 0..numbers.length {
         for i2 in i..numbers.length {
             for i3 in i2..numbers.length {
-                var a = numbers[i]
-                var b = numbers[i2]
-                var c = numbers[i3]
+                let a = numbers[i]
+                let b = numbers[i2]
+                let c = numbers[i3]
                 if a + b + c == 2020 {
                     print '# PART 2: {a * b * c}'
                     return _

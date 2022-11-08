@@ -5,7 +5,7 @@ foreign fn string_to_number(input Str) Num
 foreign fn abs(val Num) Num
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['16,1,2,0,4,2,7,1,2,14']
 } else {
@@ -29,7 +29,7 @@ fn calc_min_fuel(distance_func Fn(Num) Num) Num {
     for destination_pos in min_position..max_position + 1 {
         mut fuel_cost = 0
         for pos in positions {
-            var distance = abs(destination_pos - pos)
+            let distance = abs(destination_pos - pos)
             fuel_cost += distance_func(distance)
         }
         if fuel_cost < min_fuel_cost or min_fuel_cost == 0 {

@@ -2,7 +2,7 @@
 {
     struct S {
         mut x = 0
-        var y = 1
+        let y = 1
     }
     // print S {}
 
@@ -11,7 +11,7 @@
     // }
     // print S2 {}
 
-    // var s = S { x = 1 }
+    // let s = S { x = 1 }
     mut s = S { x = 2, y = 3 }
     mut s2
     s2 = s
@@ -30,8 +30,8 @@
 {
     struct Point {   // Struct
         mut x
-        var y // TODO: What to do about struct members of unknown type?
-        var text = 'default value'
+        let y // TODO: What to do about struct members of unknown type?
+        let text = 'default value'
     }
     // instantiate struct
     mut point = Point { x = 3, y = 4 }

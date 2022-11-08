@@ -48,8 +48,8 @@
 
 ■ test/scripts/struct-errors.cosy, line 49:
 47 |     struct Test {
-48 |         var a Array Num
-49 |         var p = Point { x = 4, y = 12 }
+48 |         let a Array Num
+49 |         let p = Point { x = 4, y = 12 }
                      ^^^^^ Member "a" not initialized.
 50 |     }
 51 | 
@@ -57,7 +57,7 @@
 ■ test/scripts/struct-errors.cosy, line 52:
 50 |     }
 51 | 
-52 |     var test = Test { a = [], p = Point { x = 5, y = 13 } }
+52 |     let test = Test { a = [], p = Point { x = 5, y = 13 } }
                                        ^^^^^ Member "a" not initialized.
 53 |     print test
 54 | }

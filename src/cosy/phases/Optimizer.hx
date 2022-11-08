@@ -25,7 +25,7 @@ class Optimizer {
             case Expression(e): Expression(optimizeExpr(e));
             case If(keyword, cond, then, el): If(keyword, optimizeExpr(cond), optimizeStmt(then), (el != null ? optimizeStmt(el) : null));
             case Print(keyword, e): Print(keyword, optimizeExpr(e));
-            case Var(name, type, init, mut, foreign): Var(name, type, (init != null ? optimizeExpr(init) : init), mut, foreign);
+            case Let(name, type, init, mut, foreign): Let(name, type, (init != null ? optimizeExpr(init) : init), mut, foreign);
             case Return(keyword, value): Return(keyword, (value != null ? optimizeExpr(value) : null));
             case _: stmt;
         }

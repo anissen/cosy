@@ -3,7 +3,7 @@
 foreign fn read_lines(path Str) Array Str
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = "[({(<(())[]>[[{[]{<()<>>
 [(()[<>])]({[<{<<[]>>(
@@ -19,21 +19,21 @@ if test_mode {
     input = read_lines('test/examples/advent-of-code-2021/data/day10.txt')
 }
 
-var openers = ["(", "[", "{", "<"]
-var closers = [")", "]", "}", ">"]
-var error_values  = [3, 57, 1197, 25137]
-var autocomplete_values = [1, 2, 3, 4]
+let openers = ["(", "[", "{", "<"]
+let closers = [")", "]", "}", ">"]
+let error_values  = [3, 57, 1197, 25137]
+let autocomplete_values = [1, 2, 3, 4]
 
 struct Result {
-    var errors Array Str
-    var stack Array Str
+    let errors Array Str
+    let stack Array Str
 }
 
 fn parse(line Str) Result {
     mut errors Array Str = []
     mut stack Array Str = []
     for c in line.split('') {
-        var index = closers.index_of(c)
+        let index = closers.index_of(c)
         if (index != -1) { // closing
             if stack.is_empty() or stack.last() != openers[index] {
                 errors.push(c)
@@ -50,7 +50,7 @@ mut error_points = 0
 mut autocomplete_points_list = []
 for line in input {
     mut autocomplete_points = 0
-    var result = parse(line)
+    let result = parse(line)
     if !result.errors.is_empty() {
         error_points += error_values[closers.index_of(result.errors[0])]
     } else {
@@ -67,7 +67,7 @@ for line in input {
 }
 
 { // Part 2
-    var sorted_point_list = autocomplete_points_list.sort(fn(a Num, b Num) { return a - b })
-    var total_points = sorted_point_list[(sorted_point_list.length - 1) / 2]
+    let sorted_point_list = autocomplete_points_list.sort(fn(a Num, b Num) { return a - b })
+    let total_points = sorted_point_list[(sorted_point_list.length - 1) / 2]
     print '# PART 2: Autocomplete points: {total_points}'
 }

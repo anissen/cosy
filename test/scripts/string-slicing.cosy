@@ -1,12 +1,12 @@
 {
-    var s = 'hello'
+    let s = 'hello'
     print s
     print s[1..4]
     print s[4..1]
 }
 
 {
-    var s = 'hello'
+    let s = 'hello'
     print s[1..]
     print s[2..]
     print s[..3]

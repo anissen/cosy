@@ -4,7 +4,7 @@ foreign fn string_from_char_code(c Num) Str
 fn brainfuck(program Str, input_str Str) {
     mut input = input_str.split('')
     mut mem Array Num = []
-    var mem_size = 1000
+    let mem_size = 1000
     for 0..mem_size {
         mem.push(0)
     }
@@ -13,7 +13,7 @@ fn brainfuck(program Str, input_str Str) {
     mut out = ''
 
     for ip < program.length {
-        var code = program.char_at(ip)
+        let code = program.char_at(ip)
         if code == '>' {
             dp += 1
         } else if code == '<' {

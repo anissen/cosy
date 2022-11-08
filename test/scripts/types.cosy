@@ -1,17 +1,17 @@
-var b1 = true
+let b1 = true
 print b1
-var b2 = false
+let b2 = false
 print b2
 
-var i1 = 100
+let i1 = 100
 print i1
-var i2 = -7.5
+let i2 = -7.5
 print i2
 
-var s1 = 'hello'
+let s1 = 'hello'
 print s1
 
-var f1 = fn () {}
+let f1 = fn () {}
 print f1
-var f2 = fn (xyz) { print xyz }
+let f2 = fn (xyz) { print xyz }
 print f2

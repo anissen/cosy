@@ -1,19 +1,19 @@
 {
-    var i = 10
+    let i = 10
     print i
 }
 {
-    var i = 10
+    let i = 10
     if i > 7 {
         print 'yes'
     }
 }
 {
-    var j = 'hello world'
+    let j = 'hello world'
     print j
 }
 {
-    var i = '{7} hello' + ' ' + 'world {3}'
+    let i = '{7} hello' + ' ' + 'world {3}'
     print i
 }
 {

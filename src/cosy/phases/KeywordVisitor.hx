@@ -55,7 +55,7 @@ class KeywordVisitor {
             case Struct(name, declarations):
                 keywords.push(name);
                 getStmtKeywords(declarations);
-            case Var(name, type, init, mut, foreign):
+            case Let(name, type, init, mut, foreign):
                 keywords.push(name);
                 if (init != null) getExprKeyword(init);
         }

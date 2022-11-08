@@ -12,11 +12,11 @@ fn square(v Num) {
 print '5 squared is {square(5)}'
 
 struct Test {
-    var value Str
+    let value Str
 }
-var t = Test { value = 'hello' }
+let t = Test { value = 'hello' }
 print 'Test struct: {t}'
 
 // raw string literal
-// var raw = "4 * 5 = {4 * 5}"
+// let raw = "4 * 5 = {4 * 5}"
 // raw strings must be checked to see that they *cannot* be normal strings

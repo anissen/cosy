@@ -3,7 +3,7 @@
 foreign fn read_lines(path Str) Array Str
 
 mut input Array Str
-var test_mode = true
+let test_mode = true
 if test_mode {
     input = ['abc', '', 'a', 'b', 'c', '', 'ab', 'ac', '', 'a', 'a', 'a', 'a', '', 'b']
 } else {
@@ -55,7 +55,7 @@ fn did_everyone_answer_question(group Array Str, question Str) Bool {
 }
 
 fn group_answer_count(group Array Str, func Fn(Array Str, Str) Bool) {
-    var questions = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    let questions = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
     mut question_count = 0
     for question in questions {
         if func(group, question) {
@@ -65,17 +65,17 @@ fn group_answer_count(group Array Str, func Fn(Array Str, Str) Bool) {
     return question_count
 }
 
-var groups = get_groups()
+let groups = get_groups()
 
 { // Part 1
-    var total_questions_answered = groups.sum(fn(group Array Str) {
+    let total_questions_answered = groups.sum(fn(group Array Str) {
         return group_answer_count(group, did_anyone_answer_question)
     })
     print '# PART 1: {total_questions_answered} questions answered'
 }
 
 { // Part 2
-    var total_questions_answered = groups.sum(fn(group Array Str) {
+    let total_questions_answered = groups.sum(fn(group Array Str) {
         return group_answer_count(group, did_everyone_answer_question)
     })
     print '# PART 2: {total_questions_answered} questions answered'
