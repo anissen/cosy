@@ -26,7 +26,7 @@
 30 |     point.x = 555
 31 |     point.y = 7 // fails (y is not mut)
 32 |     point.z = 8 // fails (z is not a member)
-               ^ No member named "z" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
+               ^ No member named "z" in struct of type Struct { a Array(Num), x Num, y Num }
 33 |     point.w = fn() { // fails (w is not a member)
 34 |     	print 'hello'
 
@@ -34,7 +34,7 @@
 31 |     point.y = 7 // fails (y is not mut)
 32 |     point.z = 8 // fails (z is not a member)
 33 |     point.w = fn() { // fails (w is not a member)
-               ^ No member named "w" in struct of type Struct { a Array(Num), x Mut(Num), y Num }
+               ^ No member named "w" in struct of type Struct { a Array(Num), x Num, y Num }
 34 |     	print 'hello'
 35 |     }
 
@@ -42,7 +42,7 @@
 40 | {
 41 |     mut p = Point { a = [] }
 42 |     p = Fake {} // fails (Point type != Fake type)
-         ^ Cannot assign Struct { a Mut(Str), x Mut(Num) } to Struct { a Array(Num), x Mut(Num), y Num }
+         ^ Cannot assign Struct { a Str, x Num } to Struct { a Array(Num), x Num, y Num }
 43 |     print p
 44 | }
 

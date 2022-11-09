@@ -137,7 +137,12 @@ class Parser {
         var initializer = null;
         if (!foreign && match([Equal])) initializer = expression();
 
-        return Let(name, type, initializer, mut, foreign);
+        return Let({
+            name: name,
+            type: type,
+            mut: mut,
+            foreign: foreign
+        }, initializer);
     }
 
     function structDeclaration(): Stmt {
@@ -215,9 +220,8 @@ class Parser {
                         case Array(_):
                         case _: error(name, 'Only struct and array parameters can be marked as `mut`.');
                     }
-                    type = Mutable(type);
                 }
-                params.push({name: name, type: type});
+                params.push({name: name, type: type, mut: mutable});
             } while (match([Comma]));
         }
 

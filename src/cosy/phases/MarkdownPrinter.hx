@@ -69,8 +69,8 @@ ${astPrinter.printStmts(body)}
                 for (decl in declarations) {
                     var res = '- ';
                     switch decl {
-                        case Let(name, type, init, mut, foreign):
-                            res += '`${name.lexeme}` ${type.formatType()} ${(init != null ? "= " + printExpr(init) : "")}';
+                        case Let(v, init):
+                            res += '`${v.name.lexeme}` ${v.type.formatType()} ${(init != null ? "= " + printExpr(init) : "")}';
                         case _:
                     }
                     print(res);

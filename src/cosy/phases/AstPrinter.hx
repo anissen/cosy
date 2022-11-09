@@ -56,8 +56,7 @@ class AstPrinter {
             case Print(keyword, e): '${keyword.lexeme} ${printExpr(e)}';
             case Return(keyword, value): keyword.lexeme + (value != null ? ' ${printExpr(value)}' : '');
             case Struct(name, declarations): 'struct ${name.lexeme} ${printBlock(declarations)}';
-            case Let(name, type, init, mut, foreign): '${foreign ? "foreign " : ""}${mut ? "mut" : "let"} ${name.lexeme}'
-                + (init != null ? ' = ${printExpr(init)}' : '');
+            case Let(v, init): '${v.foreign ? "foreign " : ""}${v.mut ? "mut" : "let"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
         }
     }
 

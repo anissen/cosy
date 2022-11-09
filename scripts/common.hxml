@@ -4,4 +4,6 @@
 -dce full
 -D analyzer-optimize
 
+# -D warn_var_shadowing
+
 # --macro nullSafety("cosy", Strict)

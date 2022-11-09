@@ -13,7 +13,7 @@ typedef StructMeta = {
 
 class Typer {
     var structsMeta: Map<String, StructMeta> = new Map();
-    var variableTypes: Map<String, VariableType> = new Map();
+    var variableTypes: Map<String, Variable> = new Map();
     var currentFunctionReturnType = new Stack<ComputedVariableType>();
     var strict: Bool;
 
@@ -22,8 +22,8 @@ class Typer {
     public function new(logger: cosy.Logging.Logger) {
         this.logger = logger;
 
-        variableTypes.set('clock', Function([], Number));
-        variableTypes.set('random', Function([], Number));
+        // variableTypes.set('clock', Function([], Number));
+        // variableTypes.set('random', Function([], Number));
     }
 
     public inline function type(stmts: Array<Stmt>, strict: Bool): Void {
@@ -43,33 +43,51 @@ class Typer {
         }
     }
 
+    function setVariableType(name: Token, type: VariableType) {
+        variableTypes.set(name.lexeme, {
+            name: name,
+            type: type,
+            mut: false,
+            foreign: false
+        });
+    }
+
+    function getVariableType(lexeme: String) {
+        return variableTypes.get(lexeme).type;
+    }
+
     function typeStmt(stmt: Stmt) {
         switch stmt {
             case Block(statements): typeStmts(statements);
             case Break(keyword):
             case Continue(keyword):
-            case Let(name, type, init, mut, foreign):
-                var computedType = typeVar(name, type, init);
-                if (mut) computedType = Mutable(computedType);
-                variableTypes.set(name.lexeme, computedType);
+            case Let(v, init):
+                var computedType = typeVar(v.name, v.type, init);
+                // if (mut) computedType = Mutable(computedType); // TODO: We need to save the `mut` flag
+                variableTypes.set(v.name.lexeme, {
+                    name: v.name,
+                    type: computedType,
+                    mut: v.mut,
+                    foreign: v.foreign
+                }); // TODO: Should have both annotated and computed types
             case For(keyword, name, from, to, body):
                 switch typeExpr(from) {
                     case Unknown: logger.warning(keyword, '"From" clause has type Unknown');
-                    case Mutable(Number) | Number:
+                    case Number:
                     case _: logger.error(keyword, '"From" clause must evaluate to a number');
                 }
                 switch typeExpr(to) {
                     case Unknown: logger.warning(keyword, '"To" clause has type Unknown');
-                    case Mutable(Number) | Number:
+                    case Number:
                     case _: logger.error(keyword, '"To" clause must evaluate to a number');
                 }
-                if (name != null) variableTypes.set(name.lexeme, Number);
+                if (name != null) setVariableType(name, Number);
                 typeStmts(body);
             case ForArray(name, array, body):
                 var arrayType = typeExpr(array);
                 switch arrayType {
-                    case Array(t) | Mutable(Array(t)): variableTypes.set(name.lexeme, t);
-                    case Unknown: variableTypes.set(name.lexeme, Unknown);
+                    case Array(t): setVariableType(name, t);
+                    case Unknown: setVariableType(name, Unknown);
                     case _: logger.error(name, 'Can only loop over value of type array.');
                 }
                 typeStmts(body);
@@ -83,7 +101,7 @@ class Typer {
             case If(keyword, cond, then, el):
                 var condType = typeExpr(cond);
                 switch condType {
-                    case Boolean | Mutable(Boolean):
+                    case Boolean:
                     case _: logger.error(keyword, 'The condition must evaluate to a be boolean value (instead of ${formatType(condType)}).');
                 }
                 typeStmt(then);
@@ -98,19 +116,28 @@ class Typer {
                 }
             case Struct(name, declarations):
                 var structMeta: StructMeta = {members: new Map()};
-                var decls: Map<String, VariableType> = new Map();
+                var decls: Map<String, Variable> = new Map();
                 for (decl in declarations) {
                     switch decl {
-                        case Let(name, type, init, mut, foreign):
-                            structMeta.members.set(name.lexeme, {mutable: mut, initialized: (init != null)});
-                            var computedType = typeVar(name, type, init);
-                            if (mut) computedType = Mutable(computedType);
-                            decls.set(name.lexeme, computedType);
+                        case Let(v, init):
+                            structMeta.members.set(v.name.lexeme, {mutable: v.mut, initialized: (init != null)});
+                            var computedType = typeVar(v.name, v.type, init);
+                            decls.set(v.name.lexeme, {
+                                name: v.name,
+                                type: computedType,
+                                mut: v.mut,
+                                foreign: v.foreign
+                            });
                         case _: throw 'structs can only have let and mut'; // should never happen
                     }
                 }
                 structsMeta.set(name.lexeme, structMeta);
-                variableTypes.set(name.lexeme, Struct(decls));
+                variableTypes.set(name.lexeme, {
+                    name: name,
+                    type: Struct(decls),
+                    mut: false,
+                    foreign: false
+                });
         }
     }
 
@@ -138,17 +165,18 @@ class Typer {
                 }
                 return Array(arrayType);
             case Assign(name, op, value):
-                var assigningType = typeExpr(value);
-                var varType = variableTypes.get(name.lexeme);
-                if (varType.match(Unknown) || varType.match(Mutable(Unknown))) {
-                    variableTypes.set(name.lexeme, assigningType);
+                final assigningType = typeExpr(value);
+                final v = variableTypes.get(name.lexeme);
+                final varType = v.type;
+                if (varType.match(Unknown)) {
+                    v.type = assigningType;
                 } else if (!matchType(varType, assigningType)) {
                     logger.error(name, 'Cannot assign ${formatType(assigningType)} to ${formatType(varType, false)}');
                 }
                 return assigningType;
             case Variable(name):
                 if (variableTypes.exists(name.lexeme)) {
-                    return variableTypes.get(name.lexeme);
+                    return getVariableType(name.lexeme);
                 } else { // can happen for recursive function calls
                     return Unknown;
                 }
@@ -158,10 +186,10 @@ class Typer {
                 switch op.type {
                     case Star | Slash | Minus | Percent:
                         if (strict) {
-                            var isLeftNumber = leftType.match(Number) || leftType.match(Mutable(Number)); // TODO: Remove Mutable
+                            var isLeftNumber = leftType.match(Number);
                             if (!isLeftNumber) logger.error(op, 'Left side of "${op.lexeme}" must be a number.');
 
-                            var isRightNumber = rightType.match(Number) || rightType.match(Mutable(Number));
+                            var isRightNumber = rightType.match(Number);
                             if (!isRightNumber) logger.error(op, 'Right side of "${op.lexeme}" must be a number.');
                         }
 
@@ -172,12 +200,12 @@ class Typer {
                         // if (!leftType.equals(rightType)) logger.error(op, 'Both sides of "${op.lexeme}" must have the same type.');
                         Boolean;
                     case Plus:
-                        var isLeftNumber = leftType.match(Number) || leftType.match(Mutable(Number));
-                        var isRightNumber = rightType.match(Number) || rightType.match(Mutable(Number));
+                        var isLeftNumber = leftType.match(Number);
+                        var isRightNumber = rightType.match(Number);
                         if (isLeftNumber && isRightNumber) return Number;
 
-                        var isLeftText = leftType.match(Text) || leftType.match(Mutable(Text));
-                        var isRightText = rightType.match(Text) || rightType.match(Mutable(Text));
+                        var isLeftText = leftType.match(Text);
+                        var isRightText = rightType.match(Text);
                         if (isLeftText && isRightText) return Text;
 
                         var isLeftTyped = !leftType.match(Unknown);
@@ -203,10 +231,6 @@ class Typer {
             case Logical(left, _, right): Boolean;
             case Call(callee, paren, arguments):
                 var calleeType = typeExpr(callee);
-                calleeType = switch (calleeType) {
-                    case Mutable(f): f;
-                    case _: calleeType;
-                }
                 var type = Unknown;
                 // trace(callee);
                 // trace(calleeType);
@@ -238,55 +262,37 @@ class Typer {
                 }
                 type;
             case Get(obj, name):
+                final mut = switch obj {
+                    case Variable(n): variableTypes.get(n.lexeme).mut;
+                    case _: false; // TODO: Return values can never be modified as the logic is now. The issue is that we don't have meta data for the return types of functions like we do for variables.
+                }
                 var objType = typeExpr(obj);
                 return switch objType {
-                    case Mutable(Array(t)):
-                        return switch name.lexeme {
-                            case 'length': Number;
-                            case 'push': Function([t], Void);
-                            case 'concat': Function([Array(t)], Void);
-                            case 'pop': Function([], t);
-                            case 'map': Function([Function([t], Unknown)], Array(Unknown));
-                            case 'filter': Function([Function([t], Boolean)], Array(t));
-                            case 'count': Function([Function([t], Boolean)], Number);
-                            case 'sum': Function([Function([t], Number)], Number);
-                            case 'sort': Function([Function([t, t], Number)], Array(t));
-                            case 'reduce': Function([Function([t, t], t), t], t);
-                            case 'shift': Function([], t);
-                            case 'join': Function([Text], Text);
-                            case 'is_empty': Function([], Boolean);
-                            case 'last': Function([], t);
-                            case 'contains': Function([t], Boolean);
-                            case 'index_of': Function([t], Number);
-                            case 'reverse': Function([], Array(t));
-                            case _:
-                                logger.error(name, 'Unknown array property or function.');
-                                Void;
-                        }
                     case Array(t):
+                        final errorMsg = 'Cannot call mutating method on immutable array.';
                         return switch name.lexeme {
                             case 'length': Number;
                             case 'push':
-                                logger.error(name, 'Cannot call mutating method on immutable array.');
-                                Void;
+                                if (!mut) logger.error(name, errorMsg);
+                                Function([t], Void);
                             case 'concat':
-                                logger.error(name, 'Cannot call mutating method on immutable array.');
-                                Void;
+                                if (!mut) logger.error(name, errorMsg);
+                                Function([Array(t)], Void);
                             case 'pop':
-                                logger.error(name, 'Cannot call mutating method on immutable array.');
-                                Void;
+                                if (!mut) logger.error(name, errorMsg);
+                                Function([], t);
                             case 'map': Function([Function([t], Unknown)], Array(Unknown));
                             case 'filter': Function([Function([t], Boolean)], Array(t));
                             case 'count': Function([Function([t], Boolean)], Number);
-                            case 'shift':
-                                logger.error(name, 'Cannot call mutating method on immutable array.');
-                                Void;
-                            case 'join': Function([Text], Text);
-                            case 'is_empty': Function([], Boolean);
-                            case 'last': Function([], t);
                             case 'sum': Function([Function([t], Number)], Number);
                             case 'sort': Function([Function([t, t], Number)], Array(t));
                             case 'reduce': Function([Function([t, t], t), t], t);
+                            case 'shift':
+                                if (!mut) logger.error(name, errorMsg);
+                                Function([], t);
+                            case 'join': Function([Text], Text);
+                            case 'is_empty': Function([], Boolean);
+                            case 'last': Function([], t);
                             case 'contains': Function([t], Boolean);
                             case 'index_of': Function([t], Number);
                             case 'reverse': Function([], Array(t));
@@ -294,7 +300,7 @@ class Typer {
                                 logger.error(name, 'Unknown array property or function.');
                                 Void;
                         }
-                    case Text | Mutable(Text):
+                    case Text:
                         return switch name.lexeme {
                             case 'length': Number;
                             case 'split': Function([Text], Array(Text));
@@ -306,11 +312,11 @@ class Typer {
                                 logger.error(name, 'Unknown text property or function.');
                                 Void;
                         }
-                    case NamedStruct(structName) | Mutable(NamedStruct(structName)):
-                        return switch variableTypes.get(structName) {
-                            case Struct(structType) | Mutable(Struct(structType)):
+                    case NamedStruct(structName):
+                        return switch getVariableType(structName) {
+                            case Struct(structType):
                                 if (structType.exists(name.lexeme)) {
-                                    return structType[name.lexeme];
+                                    return structType[name.lexeme].type;
                                 } else {
                                     logger.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                                     return Unknown;
@@ -319,9 +325,9 @@ class Typer {
                                 trace(name);
                                 throw 'Get on unknown type ${objType}';
                         }
-                    case Struct(structType) | Mutable(Struct(structType)):
+                    case Struct(structType):
                         if (structType.exists(name.lexeme)) {
-                            return structType[name.lexeme];
+                            return structType[name.lexeme].type;
                         } else {
                             logger.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                             return Unknown;
@@ -338,36 +344,26 @@ class Typer {
                 var objType = typeExpr(obj);
                 if (!ranged) {
                     return switch objType {
-                        case Mutable(Mutable(Array(t))): Mutable(t); // TODO: This should be done for arbitrarily nested arrays!
-                        case Mutable(Array(t)): Mutable(t);
                         case Array(t): t;
-                        case Mutable(Text): Text;
                         case Text: Text;
                         case _: throw 'Get index of unknown type ${objType} with index $from';
                     }
                 } else {
                     return switch objType {
-                        case Mutable(Mutable(Array(t))): Mutable(Array(t)); // TODO: This should be done for arbitrarily nested arrays!
-                        case Mutable(Array(t)): Mutable(Array(t));
                         case Array(t): Array(t);
-                        case Mutable(Text) | Text: Text;
+                        case Text: Text;
                         case _: throw 'Get index of unknown type ${objType} with start index $from and end index $to';
                     }
                 }
             case MutArgument(keyword, name):
-                var type = Mutable(variableTypes.get(name.lexeme));
-                switch type {
-                    // case Mutable(Struct(_)):
-                    case Mutable(Mutable(Struct(_))):
-                    case Mutable(Mutable(Array(_))):
-                    case _: logger.error(name, 'Only mutable structs and arrays can be passed as "mut". You passed ${formatType(type, false)}.');
-                }
-                type;
+                // TODO: Handle this
+                var v = variableTypes.get(name.lexeme);
+                if (!v.mut) logger.error(name, 'Only mutable structs and arrays can be passed as "mut". You passed ${formatType(v.type, false)}.');
+                v.type;
             case Set(obj, name, op, value):
                 var objType = typeExpr(obj);
                 objType = switch objType {
-                    case Mutable(NamedStruct(n)) | NamedStruct(n): variableTypes.get(n);
-                    case Mutable(Struct(v)): Struct(v);
+                    case NamedStruct(n): getVariableType(n);
                     case _: objType; // TODO: throw 'unexpected';
                 }
                 switch objType {
@@ -375,14 +371,9 @@ class Typer {
                         if (v.exists(name.lexeme)) {
                             var valueType = typeExpr(value);
                             var structDeclType = v[name.lexeme];
-                            var nonMutableStructDeclType = switch structDeclType {
-                                case Mutable(t): t;
-                                case t: t;
-                            }
-                            if (!structDeclType.match(Mutable(_))) logger.error(name, 'Member is not mutable.');
-                            else if (!matchType(valueType,
-                                nonMutableStructDeclType)) logger.error(name,
-                                    'Expected value of type ${formatType(nonMutableStructDeclType)} but got ${formatType(valueType)}');
+                            if (!structDeclType.mut) logger.error(name, 'Member is not mutable.');
+                            else if (!matchType(valueType, structDeclType.type))
+                                logger.error(name, 'Expected value of type ${formatType(structDeclType.type)} but got ${formatType(valueType)}');
                         } else {
                             logger.error(name, 'No member named "${name.lexeme}" in struct of type ${formatType(objType, false)}');
                         }
@@ -391,14 +382,18 @@ class Typer {
                 typeExpr(value);
             case SetIndex(obj, ranged, from, to, op, value):
                 var objType = typeExpr(obj);
-                var valueType = typeExpr(value);
+                final mut = switch obj {
+                    case Variable(name): variableTypes.get(name.lexeme).mut;
+                    case _: true;
+                }
                 // if (op.type == TokenType.PlusEqual) {
                 //     // TODO: check that array is of number type
                 // } else {
                 switch objType {
-                    case Array(t): logger.error(op, 'Cannot set value on immutable array.');
-                    case Mutable(Array(t)):
+                    case Array(t):
+                        if (!mut) logger.error(op, 'Cannot set value on immutable array.');
                         final type = (ranged ? Array(t) : t);
+                        var valueType = typeExpr(value);
                         switch op.type {
                             case Equal:
                                 if (!matchType(valueType, type)) logger.error(op, 'Cannot assign ${formatType(valueType)} to ${formatType(type)}');
@@ -426,7 +421,7 @@ class Typer {
             case StructInit(structName, decls):
                 var structType = variableTypes.get(structName.lexeme);
                 var assignedMembers = [];
-                var structMembers = switch structType {
+                var structMembers = switch structType.type {
                     case Struct(variables): variables;
                     case _: throw 'unexpected';
                 }
@@ -443,13 +438,11 @@ class Typer {
                                 break;
                             }
                             var valueType = typeExpr(value);
-                            var memberType = switch structMembers[name.lexeme] { // get the non-mutable type version of the struct member (for comparison reasons)
-                                case Mutable(t): t;
-                                case t: t;
-                            }
+                            var memberType = structMembers[name.lexeme];
                             assignedMembers.push(name.lexeme);
                             if (!matchType(valueType,
-                                memberType)) logger.error(name, 'Expected value to be of type ${formatType(memberType)} but got ${formatType(valueType)}');
+                                memberType.type)) logger.error(name,
+                                    'Expected value to be of type ${formatType(memberType.type)} but got ${formatType(valueType)}');
                         case _: throw 'unexpected';
                     }
                 }
@@ -458,7 +451,7 @@ class Typer {
                         if (assignedMembers.indexOf(memberName) == -1) logger.error(structName, 'Member "$memberName" not initialized.');
                     }
                 }
-                structType;
+                structType.type;
             case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType, false);
             case Literal(v) if (Std.isOfType(v, Float)): Number;
             case Literal(v) if (Std.isOfType(v, String)): Text;
@@ -480,10 +473,14 @@ class Typer {
                 if (params[i].type.match(Unknown)) logger.error(params[i].name, '[strict] Parameter has unknown type.');
             }
         }
-        var types = [for (param in params) param.type];
         for (param in params)
             variableTypes.set(param.name.lexeme,
-                param.type); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
+                {
+                    name: param.name,
+                    type: param.type,
+                    mut: param.mut,
+                    foreign: false,
+                }); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
 
         currentFunctionReturnType.push({annotated: returnType.annotated, computed: Void});
         typeStmts(body);
@@ -493,8 +490,8 @@ class Typer {
             case Unknown if (!foreign): computedReturnType;
             case _: returnType.annotated;
         }
-
-        if (name != null) variableTypes.set(name.lexeme, Function(types, returnType.computed));
+        var types = [for (param in params) param.type];
+        if (name != null) setVariableType(name, Function(types, returnType.computed));
         return Function(types, returnType.computed);
     }
 
@@ -505,11 +502,11 @@ class Typer {
         return switch [valueType, expectedType] {
             case [_, Unknown]: true;
             case [Unknown, _]: true;
-            case [Mutable(t1), Mutable(t2)]: matchType(t1, t2);
-            case [NamedStruct(name1), NamedStruct(name2)]: matchType(variableTypes.get(name1), variableTypes.get(name2));
-            case [NamedStruct(name1), t2]: matchType(variableTypes.get(name1), t2);
-            case [t1, NamedStruct(name)]: matchType(t1, variableTypes.get(name));
-            case [Mutable(t1), t2]: matchType(t1, t2);
+            // case [Mutable(t1), Mutable(t2)]: matchType(t1, t2); // TODO: Probably handle this!
+            case [NamedStruct(name1), NamedStruct(name2)]: matchType(getVariableType(name1), getVariableType(name2));
+            case [NamedStruct(name1), t2]: matchType(getVariableType(name1), t2);
+            case [t1, NamedStruct(name)]: matchType(t1, getVariableType(name));
+            // case [Mutable(t1), t2]: matchType(t1, t2); // TODO: Probably handle this!
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
                 for (i in 0...params1.length) {
@@ -544,10 +541,10 @@ class Typer {
             case Text: 'Str';
             case Number: 'Num';
             case Boolean: 'Bool';
-            case Mutable(t): showMutable ? 'Mut(${formatType(t)})' : formatType(t);
-            case NamedStruct(name): formatType(variableTypes.get(name));
+            // case Mutable(t): showMutable ? 'Mut(${formatType(t)})' : formatType(t);
+            case NamedStruct(name): formatType(getVariableType(name));
             case Struct(decls):
-                var declsStr = [for (name => type in decls) '$name ${formatType(type)}'];
+                var declsStr = [for (name => type in decls) '$name ${formatType(type.type)}'];
                 declsStr.sort(function(a, b) {
                     if (a < b) return -1;
                     if (b < a) return 1;

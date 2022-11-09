@@ -130,15 +130,15 @@ class Interpreter {
                 final fields: Map<String, Any> = new Map();
                 for (decl in declarations)
                     switch decl {
-                        case Let(name, type, init, mut, foreign): fields.set(name.lexeme, init != null ? evaluate(init) : null);
+                        case Let(v, init): fields.set(v.name.lexeme, init != null ? evaluate(init) : null);
                         case _: // should never happen
                     }
                 environment = previousEnv;
                 final struct = new StructInstance(name, fields, logger);
                 environment.assign(name, struct);
-            case Let(name, type, init, mut, foreign):
-                if (foreign) {
-                    environment.define(name.lexeme, compiler.foreignVariables[name.lexeme]);
+            case Let(v, init):
+                if (v.foreign) {
+                    environment.define(v.name.lexeme, compiler.foreignVariables[v.name.lexeme]);
                     return;
                 }
 
@@ -149,10 +149,10 @@ class Interpreter {
                 //     value = (value: StructInstance).clone();
                 // }
                 if (!hotReload) {
-                    environment.define(name.lexeme, value);
+                    environment.define(v.name.lexeme, value);
                 } else {
                     // Hack for hot reload to disregard already setup variables
-                    if (init != null) environment.define(name.lexeme, value);
+                    if (init != null) environment.define(v.name.lexeme, value);
                 }
         }
     }

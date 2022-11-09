@@ -56,15 +56,15 @@ class Resolver {
                 endScope();
             case Break(keyword):
             case Continue(keyword):
-            case Let(name, type, init, mut, foreign):
-                if (foreign && !compiler.foreignVariables.exists(name.lexeme)) logger.error(name, 'Foreign variable not set.');
-                if (!snakeCaseRegex.match(name.lexeme)) logger.error(name, 'Variable names must use snake_case.');
+            case Let(v, init):
+                if (v.foreign && !compiler.foreignVariables.exists(v.name.lexeme)) logger.error(v.name, 'Foreign variable not set.');
+                if (!snakeCaseRegex.match(v.name.lexeme)) logger.error(v.name, 'Variable names must use snake_case.');
                 var member = currentStruct.match(Struct);
-                markTypeAsRead(type);
-                declare(name, mut, member);
+                markTypeAsRead(v.type);
+                declare(v.name, v.mut, member);
                 if (init != null) resolveExpr(init);
-                else if (!foreign && !mut && !member) logger.error(name, 'Non-mutable variables must be initialized.');
-                define(name, mut, member);
+                else if (!v.foreign && !v.mut && !member) logger.error(v.name, 'Non-mutable variables must be initialized.');
+                define(v.name, v.mut, member);
             case For(keyword, name, from, to, body):
                 resolveExpr(from);
                 resolveExpr(to);
@@ -165,6 +165,10 @@ class Resolver {
                         var variable = findInScopes(objName);
                         if (variable != null && !variable.mutable) logger.error(name, 'Cannot reassign properties on non-mutable struct.');
                     case Get(getObj, getName): // ignore???
+                    case Call(callee, paren, arguments):
+                        resolveExpr(callee);
+                        for (arg in arguments)
+                            resolveExpr(arg);
                     case _:
                         trace(obj);
                         throw 'this is unexpected';
@@ -218,9 +222,8 @@ class Resolver {
         currentFunction = type;
         beginScope();
         for (param in params) {
-            var mutable = param.type.match(Mutable(_));
-            declare(param.name, mutable);
-            if (!foreign) define(param.name, mutable);
+            declare(param.name, param.mut);
+            if (!foreign) define(param.name, param.mut);
         }
         resolveStmts(body);
         endScope();

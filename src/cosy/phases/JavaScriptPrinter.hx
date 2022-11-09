@@ -42,9 +42,9 @@ class JavaScriptPrinter {
             case Print(keyword, e): 'console.log(${printExpr(e)});';
             case Struct(name, declarations): '// ${name.lexeme} struct';
             case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-            case Let(name, type, init, mut, foreign):
-                if (foreign) return ''; // TODO: Is this correct behavior?
-                '${mut ? "var" : "const"} ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+            case Let(v, init):
+                if (v.foreign) return ''; // TODO: Is this correct behavior?
+                '${v.mut ? "var" : "const"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
         }
     }
 
