@@ -201,7 +201,7 @@ class Resolver {
         // var f Array Field = []
         // trace(type);
         switch type {
-            case NamedStruct(structName):
+            case NamedStruct(structName, mut):
                 var i = scopes.length - 1;
                 while (i >= 0) {
                     var scope = scopes.get(i);

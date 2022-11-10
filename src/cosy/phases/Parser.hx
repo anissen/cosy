@@ -174,7 +174,7 @@ class Parser {
         }
     }
 
-    function paramType(): VariableType {
+    function paramType(mutable: Bool = false): VariableType {
         return if (match([BooleanType])) {
             Boolean;
         } else if (match([NumberType])) {
@@ -187,21 +187,20 @@ class Parser {
             consume(LeftParen, 'Expect "(" after Fun.');
             var funcParamTypes = [];
             while (!check(RightParen)) {
-                funcParamTypes.push(paramType());
+                final mutable = match([Mut]);
+                funcParamTypes.push(paramType(mutable));
                 if (!match([Comma])) break;
             }
             consume(RightParen, 'Expect ")" after parameters.');
-            var returnType = paramType();
+            final mutable = match([Mut]);
+            var returnType = paramType(mutable);
             if (returnType.match(Unknown)) returnType = Void; // implicit Void
             Function(funcParamTypes, returnType);
         } else if (match([ArrayType])) {
             Array(paramType());
-        } else if (match([Mut]) && check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
-            var identifier = advance();
-            NamedStruct(identifier.lexeme, true);
         } else if (check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
             var identifier = advance();
-            NamedStruct(identifier.lexeme, false);
+            NamedStruct(identifier.lexeme, mutable);
         } else {
             Unknown;
         }
@@ -215,7 +214,7 @@ class Parser {
                 if (params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
                 var mutable = match([Mut]);
                 var name = consume(Identifier, 'Expect parameter name.');
-                var type = paramType();
+                var type = paramType(mutable);
                 if (mutable) {
                     switch type {
                         case NamedStruct(_):
@@ -229,7 +228,8 @@ class Parser {
         }
 
         consume(RightParen, 'Expect ")" after parameters.');
-        var returnType = paramType();
+        final mutable = match([Mut]);
+        var returnType = paramType(mutable);
         // if (returnType.match(Unknown)) returnType = Void; // implicit Void
 
         if (foreign) {

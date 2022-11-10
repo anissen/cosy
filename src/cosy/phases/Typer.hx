@@ -147,7 +147,7 @@ class Typer {
                     name: name,
                     type: Struct(decls),
                     mut: false,
-                    foreign: false
+                    foreign: false,
                 });
         }
     }
@@ -391,7 +391,7 @@ class Typer {
             case Set(obj, name, op, value):
                 var objType = typeExpr(obj);
                 objType = switch objType {
-                    case NamedStruct(n): getVariableType(n);
+                    case NamedStruct(n, mut): getVariableType(n);
                     case _: objType; // TODO: throw 'unexpected';
                 }
                 switch objType {
@@ -501,7 +501,7 @@ class Typer {
                 if (params[i].type.match(Unknown)) logger.error(params[i].name, '[strict] Parameter has unknown type.');
             }
         }
-        for (param in params)
+        for (param in params) {
             variableTypes.set(param.name.lexeme,
                 {
                     name: param.name,
@@ -509,7 +509,7 @@ class Typer {
                     mut: param.mut,
                     foreign: false,
                 }); // TODO: These parameter names may be overwritten in later code, and thus be invalid when we enter this function. The solution is probably to have a scope associated with each function or block.
-
+        }
         currentFunctionReturnType.push({annotated: returnType.annotated, computed: Void});
         typeStmts(body);
         var computedReturnType = currentFunctionReturnType.pop().computed;
@@ -531,9 +531,9 @@ class Typer {
             case [_, Unknown]: true;
             case [Unknown, _]: true;
             // case [Mutable(t1), Mutable(t2)]: matchType(t1, t2); // TODO: Probably handle this!
-            case [NamedStruct(name1), NamedStruct(name2)]: matchType(getVariableType(name1), getVariableType(name2));
-            case [NamedStruct(name1), t2]: matchType(getVariableType(name1), t2);
-            case [t1, NamedStruct(name)]: matchType(t1, getVariableType(name));
+            case [NamedStruct(name1, mut1), NamedStruct(name2, mut2)]: mut1 == mut2 && matchType(getVariableType(name1), getVariableType(name2));
+            case [NamedStruct(name1, mut), t2]: matchType(getVariableType(name1), t2);
+            case [t1, NamedStruct(name, mut)]: matchType(t1, getVariableType(name));
             // case [Mutable(t1), t2]: matchType(t1, t2); // TODO: Probably handle this!
             case [Function(params1, v1), Function(params2, v2)]:
                 if (params1.length != params2.length) return false;
@@ -570,7 +570,7 @@ class Typer {
             case Number: 'Num';
             case Boolean: 'Bool';
             // case Mutable(t): showMutable ? 'Mut(${formatType(t)})' : formatType(t);
-            case NamedStruct(name): formatType(getVariableType(name));
+            case NamedStruct(name, mut): (mut ? 'mut ' : '') + formatType(getVariableType(name));
             case Struct(decls):
                 var declsStr = [for (name => type in decls) '$name ${formatType(type.type)}'];
                 declsStr.sort(function(a, b) {
