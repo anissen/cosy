@@ -114,6 +114,17 @@ class Typer {
                 if (!matchType(functionReturnType.computed, annotatedReturnType)) {
                     logger.error(kw, 'Function expected to return ${formatType(annotatedReturnType)} but got ${formatType(functionReturnType.computed)}');
                 }
+                switch functionReturnType.annotated {
+                    case NamedStruct(name, mutable):
+                        if (mutable) {
+                            switch val {
+                                case Variable(name): if (!variableTypes.get(name.lexeme)
+                                        .mut) logger.error(name, 'Attempting to return immutable value as a mutable value.');
+                                case _:
+                            }
+                        }
+                    case _:
+                }
             case Struct(name, declarations):
                 var structMeta: StructMeta = {members: new Map()};
                 var decls: Map<String, Variable> = new Map();
@@ -147,6 +158,27 @@ class Typer {
         if (init != null && !matchType(initType,
             type)) logger.error(name, 'Expected variable to have type ${formatType(type)} but got ${formatType(initType)}.');
         return (!type.match(Unknown) ? type : initType);
+    }
+
+    function isMutatable(expr: Expr): Bool {
+        return switch expr {
+            case Variable(name): variableTypes.get(name.lexeme).mut;
+            case Get(obj, name): // isMutatable(obj); // TODO: What about `name`?
+                switch typeExpr(obj) {
+                    case NamedStruct(structName, mutable): mutable && structsMeta.get(structName).members.get(name.lexeme).mutable;
+                    case _: isMutatable(obj);
+                }
+            case Call(callee, paren, arguments):
+                switch typeExpr(callee) {
+                    case Function(paramTypes, returnType):
+                        switch returnType {
+                            case NamedStruct(name, mutable): mutable;
+                            case _: false;
+                        }
+                    case _: false;
+                }
+            case _: false;
+        }
     }
 
     function typeExpr(expr: Expr): VariableType {
@@ -232,15 +264,10 @@ class Typer {
             case Call(callee, paren, arguments):
                 var calleeType = typeExpr(callee);
                 var type = Unknown;
-                // trace(callee);
-                // trace(calleeType);
-                // trace(arguments);
                 switch calleeType {
                     case Function(paramTypes, returnType):
                         type = returnType;
                         var argumentTypes = [for (arg in arguments) typeExpr(arg)];
-                        // trace(paramTypes);
-                        // trace(argumentTypes);
                         if (arguments.length != paramTypes.length) {
                             // var k = new KeywordVisitor();
                             // var keywords = k.getExprKeywords([callee]);
@@ -262,10 +289,11 @@ class Typer {
                 }
                 type;
             case Get(obj, name):
-                final mut = switch obj {
-                    case Variable(n): variableTypes.get(n.lexeme).mut;
-                    case _: false; // TODO: Return values can never be modified as the logic is now. The issue is that we don't have meta data for the return types of functions like we do for variables.
-                }
+                // final mut = switch obj {
+                //     case Variable(n): variableTypes.get(n.lexeme).mut;
+                //     case _: false; // TODO: Return values can never be modified as the logic is now. The issue is that we don't have meta data for the return types of functions like we do for variables.
+                // }
+                final mut = isMutatable(obj);
                 var objType = typeExpr(obj);
                 return switch objType {
                     case Array(t):
@@ -312,7 +340,7 @@ class Typer {
                                 logger.error(name, 'Unknown text property or function.');
                                 Void;
                         }
-                    case NamedStruct(structName):
+                    case NamedStruct(structName, mut):
                         return switch getVariableType(structName) {
                             case Struct(structType):
                                 if (structType.exists(name.lexeme)) {

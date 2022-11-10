@@ -196,9 +196,12 @@ class Parser {
             Function(funcParamTypes, returnType);
         } else if (match([ArrayType])) {
             Array(paramType());
+        } else if (match([Mut]) && check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
+            var identifier = advance();
+            NamedStruct(identifier.lexeme, true);
         } else if (check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
             var identifier = advance();
-            NamedStruct(identifier.lexeme);
+            NamedStruct(identifier.lexeme, false);
         } else {
             Unknown;
         }
