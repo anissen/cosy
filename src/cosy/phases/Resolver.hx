@@ -78,7 +78,7 @@ class Resolver {
                 if (body.length == 0) logger.error(keyword, 'Loop body is empty.');
                 resolveStmts(body);
                 endScope();
-            case ForArray(name, array, body):
+            case ForArray(name, mut, array, body):
                 resolveExpr(array);
 
                 beginScope();

@@ -83,11 +83,27 @@ class Typer {
                 }
                 if (name != null) setVariableType(name, Number);
                 typeStmts(body);
-            case ForArray(name, array, body):
+            case ForArray(name, mut, array, body):
                 var arrayType = typeExpr(array);
                 switch arrayType {
-                    case Array(t): setVariableType(name, t);
-                    case Unknown: setVariableType(name, Unknown);
+                    case Array(t):
+                        variableTypes.set(name.lexeme, {
+                            name: name,
+                            type: switch t {
+                                case NamedStruct(name,
+                                    mutable): NamedStruct(name, mut); // HACK to ensure that NamedStructs are set as mutable when the loop variable is
+                                case _: t;
+                            },
+                            mut: mut,
+                            foreign: false,
+                        });
+                    case Unknown:
+                        variableTypes.set(name.lexeme, {
+                            name: name,
+                            type: Unknown,
+                            mut: mut,
+                            foreign: false,
+                        });
                     case _: logger.error(name, 'Can only loop over value of type array.');
                 }
                 typeStmts(body);

@@ -8,7 +8,7 @@ enum Stmt {
     Continue(keyword: Token);
     Expression(e: Expr);
     For(keyword: Token, name: Token, from: Expr, to: Expr, body: Array<Stmt>);
-    ForArray(name: Token, array: Expr, body: Array<Stmt>);
+    ForArray(name: Token, mut: Bool, array: Expr, body: Array<Stmt>);
     ForCondition(keyword: Token, ?cond: Expr, body: Array<Stmt>);
     Function(name: Token, params: Array<Param>, body: Array<Stmt>, returnType: ComputedVariableType, foreign: Bool);
     If(keyword: Token, cond: Expr, then: Stmt, el: Null<Stmt>);

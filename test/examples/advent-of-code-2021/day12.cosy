@@ -38,8 +38,8 @@ for path in input {
     }
 }
 
-fn get_cave(name Str) Cave {
-    for cave in caves {
+fn get_cave(name Str) mut Cave {
+    for mut cave in caves {
         if cave.name == name {
             return cave
         }

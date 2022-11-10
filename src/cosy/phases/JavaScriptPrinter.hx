@@ -30,7 +30,7 @@ class JavaScriptPrinter {
             case For(keyword, name, from, to, body):
                 var counter = (name != null ? name.lexeme : '__i');
                 'for (var $counter = ${printExpr(from)}; $counter < ${printExpr(to)}; $counter++) ${printBlock(body)}';
-            case ForArray(name, array, body): 'for (${name.lexeme} of ${printExpr(array)}) ${printBlock(body)}';
+            case ForArray(name, mut, array, body): 'for (${name.lexeme} of ${printExpr(array)}) ${printBlock(body)}';
             case ForCondition(keyword, cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
             case Function(name, params, body, returnType, foreign):
                 if (foreign) return ''; // TODO: Is this correct behavior?

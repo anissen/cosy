@@ -72,6 +72,7 @@ class Parser {
         } else if (checkUntil(In, LeftBrace)) {
             // ForArray:
             // for i in [3,4,5]
+            final mutable = match([Mut]);
             var name = consume(Identifier, 'Expect variable name.');
             consume(In, 'Expect "in" after for loop identifier.');
 
@@ -80,7 +81,7 @@ class Parser {
             consume(LeftBrace, 'Expect "{" before loop body.');
             var body = block();
 
-            ForArray(name, array, body);
+            ForArray(name, mutable, array, body);
         } else {
             // ForCondition:
             // for i < 10

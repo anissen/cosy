@@ -82,7 +82,7 @@ class Interpreter {
                 } catch (err: Break) {
                     // do nothing
                 }
-            case ForArray(name, array, body):
+            case ForArray(name, mut, array, body):
                 final arr: Array<Any> = evaluate(array); // TODO: Implicit cast to array :(
                 final env = new Environment(environment);
                 try {
