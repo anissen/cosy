@@ -203,7 +203,7 @@ function report(fileName: String, sourceCode: String, error: ScriptError) {
 }
 
 function color(text: String, type: LogType): String {
-    // return text; // TODO: Temp!
+    return text; // TODO: Temp!
     // if (noColors) return text;
     return switch type {
         case RuntimeError: '\033[1;31m$text\033[0m';
