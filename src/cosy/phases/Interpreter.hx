@@ -154,6 +154,23 @@ class Interpreter {
                     // Hack for hot reload to disregard already setup variables
                     if (init != null) environment.define(v.name.lexeme, value);
                 }
+            case Query(keyword, queryArgs, body):
+                Logging.println('doing some query stuff!'); // TODO: Implement
+                // TODO: Do the following for each entity returned by the query
+                var env = new Environment(environment);
+                // TODO: Get component from Entity
+                // for (arg in queryArgs) {
+                //     env.define(arg.name.lexeme, ???);
+                // }
+                try {
+                    try {
+                        executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                    } catch (err: Continue) {
+                        // do nothing
+                    }
+                } catch (err: Break) {
+                    // do nothing
+                }
         }
     }
 
@@ -419,6 +436,7 @@ class Interpreter {
                 }
                 structObj;
             case AnonFunction(params, body, returnType): new Function(null, params, body, environment, false, logger);
+            case Spawn(keyword, params): 42; // TODO: Implement
         }
     }
 

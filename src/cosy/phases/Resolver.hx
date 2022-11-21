@@ -122,6 +122,15 @@ class Resolver {
                 resolveStmts(declarations);
                 endScope();
                 currentStruct = None;
+            case Query(keyword, queryArgs, body):
+                beginScope();
+                for (arg in queryArgs) {
+                    declare(arg.name, false); // TODO: Handle `mut`
+                    define(arg.name, false); // TODO: Handle `mut`
+                }
+                if (body.length == 0) logger.error(keyword, 'Query body is empty.');
+                resolveStmts(body);
+                endScope();
         }
     }
 
@@ -191,8 +200,8 @@ class Resolver {
                     }
                 }
                 resolveLocal(expr, name, true);
-            case Literal(_):
-            // skip
+            case Spawn(keyword, args): resolveExprs(args);
+            case Literal(_): // skip
             case AnonFunction(params, body, returnType): resolveFunction(null, params, body, Function, false);
         }
     }

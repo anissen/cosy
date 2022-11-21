@@ -1,2 +1,19 @@
+struct Position {
+    mut x Num
+    mut y Num
+}
+// struct Velocity {
+//     mut x Num
+//     mut y Num
+// }
+
+print Position { x = 0, y = 0 }
+
+let e = spawn(Position { x = 3.5, y = 2.1 })
+print e
+
+query Position p {
+	print p
+}
 
 print 'done'

@@ -165,6 +165,14 @@ class Typer {
                     mut: false,
                     foreign: false,
                 });
+            case Query(keyword, queryArgs, body):
+                // for (arg in queryArgs) {
+                //     final argType = typeExpr(arg);
+                //     if (!argType.match(NamedStruct)) {
+                //         logger.error(keyword, 'Expected variable to be a named struct but got ${formatType(argType)}.');
+                //     }
+                // }
+                typeStmts(body);
         }
     }
 
@@ -498,6 +506,7 @@ class Typer {
                 }
                 structType.type;
             case AnonFunction(params, body, returnType): handleFunc(null, params, body, returnType, false);
+            case Spawn(keyword, params): Entity;
             case Literal(v) if (Std.isOfType(v, Float)): Number;
             case Literal(v) if (Std.isOfType(v, String)): Text;
             case Literal(v) if (Std.isOfType(v, Bool)): Boolean;

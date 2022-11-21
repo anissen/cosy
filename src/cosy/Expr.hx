@@ -24,4 +24,6 @@ enum Expr {
     Unary(op: Token, right: Expr);
     Variable(name: Token);
     AnonFunction(params: Array<Param>, body: Array<Stmt>, returnType: ComputedVariableType);
+
+    Spawn(keyword: Token, args: Array<Expr>);
 }

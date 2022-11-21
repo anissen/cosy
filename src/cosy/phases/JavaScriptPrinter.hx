@@ -45,6 +45,8 @@ class JavaScriptPrinter {
             case Let(v, init):
                 if (v.foreign) return ''; // TODO: Is this correct behavior?
                 '${v.mut ? "var" : "const"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+
+            case Query(keyword, queryArgs, body): throw 'not implemented'; // TODO: Implement
         }
     }
 
@@ -104,6 +106,7 @@ class JavaScriptPrinter {
                 var parameters = [for (token in params) token.name.lexeme].join(', ');
                 var block = printStmt(Block(body));
                 'function ($parameters) $block';
+            case Spawn(keyword, args): 'SPAWN!';
         }
     }
 }
