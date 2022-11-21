@@ -103,10 +103,11 @@ class Parser {
         // query Entity e, Position p, Velocity _, not Health { ... }
         final queryArgs: Array<QueryArg> = [];
         while (!check(LeftBrace)) {
-            var structName = consume(Identifier, 'Expect struct name.');
+            final mut = match([Mut]);
+            final structName = consume(Identifier, 'Expect struct name.');
             if (!isValidNamedStruct(structName)) error(structName, '"${structName.lexeme}" does not name a struct.');
-            var name = consume(Identifier, 'Expect variable name.');
-            queryArgs.push({structName: structName, name: name});
+            final name = consume(Identifier, 'Expect variable name.');
+            queryArgs.push({structName: structName, name: name, mut: mut});
         }
 
         consume(LeftBrace, 'Expect "{" before loop body.');

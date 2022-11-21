@@ -125,8 +125,8 @@ class Resolver {
             case Query(keyword, queryArgs, body):
                 beginScope();
                 for (arg in queryArgs) {
-                    declare(arg.name, false); // TODO: Handle `mut`
-                    define(arg.name, false); // TODO: Handle `mut`
+                    declare(arg.name, arg.mut);
+                    define(arg.name, arg.mut);
                 }
                 if (body.length == 0) logger.error(keyword, 'Query body is empty.');
                 resolveStmts(body);
@@ -175,7 +175,7 @@ class Resolver {
                 switch obj {
                     case Variable(objName):
                         var variable = findInScopes(objName);
-                        if (variable != null && !variable.mutable) logger.error(name, 'Cannot reassign properties on non-mutable struct.');
+                        if (variable != null && !variable.mutable) logger.error(name, 'Cannot set properties on non-mutable struct.');
                     case Get(getObj, getName): // ignore???
                     case Call(callee, paren, arguments):
                         resolveExpr(callee);
