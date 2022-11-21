@@ -300,7 +300,6 @@ class Typer {
                         }
                     case Unknown: if (strict) logger.error(paren, '[strict] Undefined type.');
                     case Void: // TODO: what?
-                    case Instance: // TODO: remove
                     case _: // TODO: maybe throw 'unexpected';
                 }
                 type;

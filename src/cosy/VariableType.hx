@@ -6,7 +6,6 @@ enum VariableType {
     Boolean;
     Number;
     Text;
-    Instance;
     Function(paramTypes: Array<VariableType>, returnType: VariableType);
     Array(type: VariableType);
     Struct(variables: Map<String, Variable>);
