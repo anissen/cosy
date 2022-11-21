@@ -30,7 +30,7 @@ class JavaScriptPrinter {
             case For(keyword, name, from, to, body):
                 var counter = (name != null ? name.lexeme : '__i');
                 'for (var $counter = ${printExpr(from)}; $counter < ${printExpr(to)}; $counter++) ${printBlock(body)}';
-            case ForArray(name, array, body): 'for (${name.lexeme} of ${printExpr(array)}) ${printBlock(body)}';
+            case ForArray(name, mut, array, body): 'for (${name.lexeme} of ${printExpr(array)}) ${printBlock(body)}';
             case ForCondition(keyword, cond, body): 'while (${cond != null ? printExpr(cond) : "true"}) ${printBlock(body)}';
             case Function(name, params, body, returnType, foreign):
                 if (foreign) return ''; // TODO: Is this correct behavior?
@@ -42,9 +42,9 @@ class JavaScriptPrinter {
             case Print(keyword, e): 'console.log(${printExpr(e)});';
             case Struct(name, declarations): '// ${name.lexeme} struct';
             case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
-            case Let(name, type, init, mut, foreign):
-                if (foreign) return ''; // TODO: Is this correct behavior?
-                '${mut ? "var" : "const"} ${name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
+            case Let(v, init):
+                if (v.foreign) return ''; // TODO: Is this correct behavior?
+                '${v.mut ? "var" : "const"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
         }
     }
 

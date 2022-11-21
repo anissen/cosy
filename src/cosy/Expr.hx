@@ -11,7 +11,7 @@ enum Expr {
     Assign(name: Token, op: Token, value: Expr);
     Binary(left: Expr, op: Token, right: Expr);
     Call(callee: Expr, paren: Token, arguments: Array<Expr>);
-    Get(obj: Expr, name: Token);
+    Get(obj: Expr, name: Token); // TODO: `name` should be the first argument
     GetIndex(obj: Expr, ranged: Bool, from: Null<Expr>, to: Null<Expr>);
     Grouping(e: Expr);
     Literal(v: Any);

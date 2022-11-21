@@ -84,7 +84,7 @@ fun x() { print "hej" }
 - [x] Remove unused testing code (Cosy.hx + tests/)
 - [ ] Make array concat be simply `+` (or `++` like in Haskell?)
 - [ ] Perserve ordering of members when printing a struct
-- [ ] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
+- [x] Remove `Mutable` as a type in Typer and try an alternative implemention (e.g. metadata)
 - [x] Make a new and improved Hangman example with properly typed code, structs and arrays
 - [ ] Update Cosy basics example with structs, functions taking mut struct, string functions
 - [ ] Submit Cosy example to "99 bottles" site (http://www.99-bottles-of-beer.net/submitnewlanguage.html)
@@ -127,6 +127,7 @@ fun x() { print "hej" }
 - [ ] Make an annotation for pure functions
 - [ ] Make an annotation for memorizing a function (i.e. cache inputs => output)
 - [ ] A way to initialize a list with a size (like in C++; `vector<int>(height, vector<int>(width, 0)))`)
+- [ ] Find a more elegant way of handling variable/parameter/return type/loop variable/named struct mutability. I may have to replace some enums with structures.
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode

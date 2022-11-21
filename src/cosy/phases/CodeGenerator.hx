@@ -117,10 +117,10 @@ class CodeGenerator {
                 add_token(keyword);
                 genExpr(expr);
                 emit(Print);
-            case Let(name, type, init, mut, foreign):
-                add_token(name);
+            case Let(v, init):
+                add_token(v.name);
                 genExpr(init);
-                localIndexes[name.lexeme] = localsCounter++;
+                localIndexes[v.name.lexeme] = localsCounter++;
             case Block(statements):
                 var previousLocalsCounter = localsCounter;
                 genStmts(statements);

@@ -54,6 +54,14 @@
 67 |     print x
 68 | }
 
+■ test/scripts/type-checking.cosy, line 67:
+65 |     }
+66 |     mut x = f()
+67 |     print x
+         ^^^^^ Cannot print values of type void.
+68 | }
+69 | 
+
 ■ test/scripts/type-checking.cosy, line 85:
 83 | 
 84 | {

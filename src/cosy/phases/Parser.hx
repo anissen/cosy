@@ -72,6 +72,7 @@ class Parser {
         } else if (checkUntil(In, LeftBrace)) {
             // ForArray:
             // for i in [3,4,5]
+            final mutable = match([Mut]);
             var name = consume(Identifier, 'Expect variable name.');
             consume(In, 'Expect "in" after for loop identifier.');
 
@@ -80,7 +81,7 @@ class Parser {
             consume(LeftBrace, 'Expect "{" before loop body.');
             var body = block();
 
-            ForArray(name, array, body);
+            ForArray(name, mutable, array, body);
         } else {
             // ForCondition:
             // for i < 10
@@ -137,7 +138,12 @@ class Parser {
         var initializer = null;
         if (!foreign && match([Equal])) initializer = expression();
 
-        return Let(name, type, initializer, mut, foreign);
+        return Let({
+            name: name,
+            type: type,
+            mut: mut,
+            foreign: foreign
+        }, initializer);
     }
 
     function structDeclaration(): Stmt {
@@ -169,7 +175,7 @@ class Parser {
         }
     }
 
-    function paramType(): VariableType {
+    function paramType(mutable: Bool = false): VariableType {
         return if (match([BooleanType])) {
             Boolean;
         } else if (match([NumberType])) {
@@ -182,18 +188,20 @@ class Parser {
             consume(LeftParen, 'Expect "(" after Fun.');
             var funcParamTypes = [];
             while (!check(RightParen)) {
-                funcParamTypes.push(paramType());
+                final mutable = match([Mut]);
+                funcParamTypes.push(paramType(mutable));
                 if (!match([Comma])) break;
             }
             consume(RightParen, 'Expect ")" after parameters.');
-            var returnType = paramType();
+            final mutable = match([Mut]);
+            var returnType = paramType(mutable);
             if (returnType.match(Unknown)) returnType = Void; // implicit Void
             Function(funcParamTypes, returnType);
         } else if (match([ArrayType])) {
             Array(paramType());
         } else if (check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
             var identifier = advance();
-            NamedStruct(identifier.lexeme);
+            NamedStruct(identifier.lexeme, mutable);
         } else {
             Unknown;
         }
@@ -207,7 +215,7 @@ class Parser {
                 if (params.length >= 255) error(peek(), 'Cannot have more than 255 parameters.');
                 var mutable = match([Mut]);
                 var name = consume(Identifier, 'Expect parameter name.');
-                var type = paramType();
+                var type = paramType(mutable);
                 if (mutable) {
                     switch type {
                         case NamedStruct(_):
@@ -215,14 +223,14 @@ class Parser {
                         case Array(_):
                         case _: error(name, 'Only struct and array parameters can be marked as `mut`.');
                     }
-                    type = Mutable(type);
                 }
-                params.push({name: name, type: type});
+                params.push({name: name, type: type, mut: mutable});
             } while (match([Comma]));
         }
 
         consume(RightParen, 'Expect ")" after parameters.');
-        var returnType = paramType();
+        final mutable = match([Mut]);
+        var returnType = paramType(mutable);
         // if (returnType.match(Unknown)) returnType = Void; // implicit Void
 
         if (foreign) {

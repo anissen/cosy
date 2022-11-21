@@ -42,7 +42,7 @@ class AstPrinter {
             case Continue(keyword): keyword.lexeme;
             case Expression(e): '${printExpr(e)}';
             case For(keyword, name, from, to, body): 'for ${name != null ? name.lexeme + " in " : ""}${printExpr(from)}..${printExpr(to)} ${printBlock(body)}';
-            case ForArray(name, array, body): 'for ${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
+            case ForArray(name, mut, array, body): 'for ${mut ? "mut " : ""}${name.lexeme} in ${printExpr(array)} ${printBlock(body)}';
             case ForCondition(keyword, cond, body): '${keyword.lexeme} ${cond != null ? printExpr(cond) : ""} ${printBlock(body)}';
             case Function(name, params, body, returnType, foreign):
                 var declaration = '${foreign ? "foreign fn" : "fn"} ${name.lexeme}';
@@ -56,8 +56,7 @@ class AstPrinter {
             case Print(keyword, e): '${keyword.lexeme} ${printExpr(e)}';
             case Return(keyword, value): keyword.lexeme + (value != null ? ' ${printExpr(value)}' : '');
             case Struct(name, declarations): 'struct ${name.lexeme} ${printBlock(declarations)}';
-            case Let(name, type, init, mut, foreign): '${foreign ? "foreign " : ""}${mut ? "mut" : "let"} ${name.lexeme}'
-                + (init != null ? ' = ${printExpr(init)}' : '');
+            case Let(v, init): '${v.foreign ? "foreign " : ""}${v.mut ? "mut" : "let"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
         }
     }
 

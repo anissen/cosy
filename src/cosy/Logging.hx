@@ -36,6 +36,7 @@ enum LogType {
     Warning;
     Hint;
     Misc;
+    Gray;
 }
 
 typedef ScriptError = {
@@ -195,7 +196,7 @@ function report(fileName: String, sourceCode: String, error: ScriptError) {
             s += color([for (i in 0...len) '^'].join('') + ' ${error.message}', errorType);
             println(s);
         } else {
-            println(lineDecoration + codeLine);
+            println(color(lineDecoration + codeLine, Gray));
         }
     }
     println();
@@ -210,6 +211,7 @@ function color(text: String, type: LogType): String {
         case Warning: '\033[0;33m$text\033[0m';
         case Hint: '\033[0;36m$text\033[0m';
         case Misc: '\033[0;35m$text\033[0m';
+        case Gray: '\u001b[38;5;240m${text}';
     }
 }
 
