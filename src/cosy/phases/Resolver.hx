@@ -125,10 +125,14 @@ class Resolver {
         }
     }
 
+    function resolveExprs(exprs: Array<Expr>) {
+        for (expr in exprs)
+            resolveExpr(expr);
+    }
+
     function resolveExpr(expr: Expr) {
         switch expr {
-            case ArrayLiteral(keyword, exprs): for (expr in exprs)
-                    resolveExpr(expr);
+            case ArrayLiteral(keyword, exprs): resolveExprs(exprs);
             case Assign(name, op, value):
                 var variable = findInScopes(name);
                 if (variable != null && !variable.mutable) logger.error(name, 'Cannot reassign non-mutable variable.');
@@ -148,8 +152,7 @@ class Resolver {
                 // trace(arguments);
 
                 resolveExpr(callee);
-                for (arg in arguments)
-                    resolveExpr(arg);
+                resolveExprs(arguments);
             case Get(obj, name): resolveExpr(obj);
             case GetIndex(obj, ranged, from, to):
                 resolveExpr(obj);
@@ -167,8 +170,7 @@ class Resolver {
                     case Get(getObj, getName): // ignore???
                     case Call(callee, paren, arguments):
                         resolveExpr(callee);
-                        for (arg in arguments)
-                            resolveExpr(arg);
+                        resolveExprs(arguments);
                     case _:
                         trace(obj);
                         throw 'this is unexpected';

@@ -199,7 +199,7 @@ class Parser {
             Function(funcParamTypes, returnType);
         } else if (match([ArrayType])) {
             Array(paramType());
-        } else if (check(Identifier) && structNames.indexOf(peek().lexeme) != -1) {
+        } else if (check(Identifier) && isValidNamedStruct(peek())) {
             var identifier = advance();
             NamedStruct(identifier.lexeme, mutable);
         } else {
@@ -433,7 +433,7 @@ class Parser {
 
     function identifier(): Expr {
         var variable = previous();
-        if (check(LeftBrace) && structNames.indexOf(variable.lexeme) != -1) {
+        if (check(LeftBrace) && isValidNamedStruct(variable)) {
             consume(LeftBrace, 'Expect "{" after struct name.');
             var decls = [];
             while (!match([RightBrace]) && !isAtEnd()) {
@@ -464,6 +464,10 @@ class Parser {
         } else {
             return expr;
         }
+    }
+
+    function isValidNamedStruct(token: Token): Bool {
+        return (structNames.indexOf(token.lexeme) != -1);
     }
 
     function consume(type: TokenType, message: String): Token {
