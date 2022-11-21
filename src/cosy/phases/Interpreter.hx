@@ -163,11 +163,12 @@ class Interpreter {
                 final include: Array<Composite.Expression> = [];
                 for (arg in queryArgs) {
                     final componentId = structIds.get(arg.structName.lexeme);
-                    include.push(Include(componentId));
+                    include.push(arg.not ? Exclude(componentId) : Include(componentId));
                 }
                 context.queryEach(Group(include), (entity, components) -> {
                     var env = new Environment(environment);
                     for (i => arg in queryArgs) {
+                        if (arg.name == null) continue;
                         env.define(arg.name.lexeme, components[i]);
                     }
                     try {

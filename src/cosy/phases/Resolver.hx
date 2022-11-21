@@ -125,6 +125,7 @@ class Resolver {
             case Query(keyword, queryArgs, body):
                 beginScope();
                 for (arg in queryArgs) {
+                    if (arg.name == null) continue;
                     declare(arg.name, arg.mut);
                     define(arg.name, arg.mut);
                 }

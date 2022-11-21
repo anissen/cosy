@@ -2,7 +2,7 @@ package cosy;
 
 typedef QueryArg = {
     structName: Token,
-    name: Token,
+    name: Null<Token>,
     mut: Bool,
-    // not: Bool,
+    not: Bool,
 }
