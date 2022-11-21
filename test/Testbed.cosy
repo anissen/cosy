@@ -2,18 +2,26 @@ struct Position {
     mut x Num
     mut y Num
 }
-// struct Velocity {
-//     mut x Num
-//     mut y Num
-// }
+struct Velocity {
+    mut x Num
+    mut y Num
+}
 
-print Position { x = 0, y = 0 }
-
-let e = spawn(Position { x = 3.5, y = 2.1 })
+let e = spawn(Position { x = 3.5, y = 2.1 }, Velocity { x = 1.0, y = -3.2 })
 print e
 
-query Position p {
+query mut Position p, Velocity v {
+    print 'Printing p and v:'
 	print p
+	print v
+	p.x += v.x
+    p.y += v.y
+}
+query Position p, Velocity v {
+    print 'Printing p and v:'
+	print p
+	print v
+    print '!!!'
 }
 
 print 'done'

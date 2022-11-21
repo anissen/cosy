@@ -102,13 +102,13 @@ class Parser {
 
         // query Entity e, Position p, Velocity _, not Health { ... }
         final queryArgs: Array<QueryArg> = [];
-        while (!check(LeftBrace)) {
+        do {
             final mut = match([Mut]);
             final structName = consume(Identifier, 'Expect struct name.');
             if (!isValidNamedStruct(structName)) error(structName, '"${structName.lexeme}" does not name a struct.');
             final name = consume(Identifier, 'Expect variable name.');
             queryArgs.push({structName: structName, name: name, mut: mut});
-        }
+        } while (match([Comma]));
 
         consume(LeftBrace, 'Expect "{" before loop body.');
         var body = block();
@@ -494,7 +494,7 @@ class Parser {
         if (!check(RightParen)) {
             do {
                 if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
-                args.push(expression()); // TODO: Add a way to validate that this is a named struct?
+                args.push(expression()); // TODO: Add a way to validate that this is a named struct at this point?
             } while (match([Comma]));
         }
         consume(RightParen, 'Expect ")" after arguments.');

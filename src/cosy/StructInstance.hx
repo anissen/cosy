@@ -1,14 +1,19 @@
 package cosy;
 
 class StructInstance {
-    final structName: Token;
+    public final structName: Token;
+
     final fields: Map<String, Any>;
     final logger: cosy.Logging.Logger;
+
+    // static var ID = 0;
+    // public final id: Int;
 
     public function new(name: Token, fields: Map<String, Any>, logger: cosy.Logging.Logger) {
         this.structName = name;
         this.fields = fields;
         this.logger = logger;
+        // this.id = ID++;
     }
 
     public function clone() { // Make a deep copy of fields
