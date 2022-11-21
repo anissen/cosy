@@ -178,7 +178,9 @@ class Typer {
 
     function isMutatable(expr: Expr): Bool {
         return switch expr {
-            case Variable(name): variableTypes.get(name.lexeme).mut;
+            case Variable(name):
+                final variable = variableTypes.get(name.lexeme);
+                variable != null ? variable.mut : false;
             case Get(obj, name): // isMutatable(obj); // TODO: What about `name`?
                 switch typeExpr(obj) {
                     case NamedStruct(structName, mutable): mutable && structsMeta.get(structName).members.get(name.lexeme).mutable;
