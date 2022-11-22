@@ -163,7 +163,7 @@ fun x() { print "hej" }
 - [ ] Make the playground work again
 
 ## Long shots
-- [ ] Built-in ECS functionality somehow
+- [x] Built-in ECS functionality somehow
 - [ ] Fibers á la Wren
 - [ ] Yield functionality (generators or coroutines)
 - [ ] Hot reloading
