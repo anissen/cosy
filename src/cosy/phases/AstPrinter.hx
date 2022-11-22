@@ -57,6 +57,8 @@ class AstPrinter {
             case Return(keyword, value): keyword.lexeme + (value != null ? ' ${printExpr(value)}' : '');
             case Struct(name, declarations): 'struct ${name.lexeme} ${printBlock(declarations)}';
             case Let(v, init): '${v.foreign ? "foreign " : ""}${v.mut ? "mut" : "let"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
+
+            case Query(keyword, queryArgs, body): throw 'not implemented'; // TODO: Implement
         }
     }
 
@@ -93,6 +95,7 @@ class AstPrinter {
                 var retType = returnType.annotated.formatType(true);
                 if (retType != '') retType = ' $retType';
                 'fn($parameters)$retType $block';
+            case Spawn(keyword, args): 'SPAWN!';
         }
     }
 

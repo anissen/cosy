@@ -122,6 +122,16 @@ class Resolver {
                 resolveStmts(declarations);
                 endScope();
                 currentStruct = None;
+            case Query(keyword, queryArgs, body):
+                beginScope();
+                for (arg in queryArgs) {
+                    if (arg.name == null) continue;
+                    declare(arg.name, arg.mut);
+                    define(arg.name, arg.mut);
+                }
+                if (body.length == 0) logger.error(keyword, 'Query body is empty.');
+                resolveStmts(body);
+                endScope();
         }
     }
 
@@ -166,7 +176,7 @@ class Resolver {
                 switch obj {
                     case Variable(objName):
                         var variable = findInScopes(objName);
-                        if (variable != null && !variable.mutable) logger.error(name, 'Cannot reassign properties on non-mutable struct.');
+                        if (variable != null && !variable.mutable) logger.error(name, 'Cannot set properties on non-mutable struct.');
                     case Get(getObj, getName): // ignore???
                     case Call(callee, paren, arguments):
                         resolveExpr(callee);
@@ -191,8 +201,8 @@ class Resolver {
                     }
                 }
                 resolveLocal(expr, name, true);
-            case Literal(_):
-            // skip
+            case Spawn(keyword, args): resolveExprs(args);
+            case Literal(_): // skip
             case AnonFunction(params, body, returnType): resolveFunction(null, params, body, Function, false);
         }
     }

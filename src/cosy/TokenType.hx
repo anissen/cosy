@@ -58,4 +58,7 @@ enum TokenType {
     FunctionType;
     ArrayType;
     Eof;
+
+    Spawn;
+    Query;
 }

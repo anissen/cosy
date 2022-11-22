@@ -10,6 +10,7 @@ enum VariableType {
     Array(type: VariableType);
     Struct(variables: Map<String, Variable>);
     NamedStruct(name: String, mutable: Bool);
+    Entity;
 }
 
 typedef ComputedVariableType = {

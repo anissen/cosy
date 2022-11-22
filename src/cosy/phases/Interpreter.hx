@@ -1,6 +1,6 @@
 package cosy.phases;
 
-import haxe.CallStack;
+import composite.*;
 
 class Interpreter {
     final globals: Environment;
@@ -11,6 +11,10 @@ class Interpreter {
     var compiler: Compiler = null;
     var logger: cosy.Logging.Logger = null;
     var hotReload = false;
+
+    final structIds = new Map<String, Int>();
+    var structCount = 0;
+    final context = new Composite.Context();
 
     static final uninitialized: Any = {};
 
@@ -136,6 +140,7 @@ class Interpreter {
                 environment = previousEnv;
                 final struct = new StructInstance(name, fields, logger);
                 environment.assign(name, struct);
+                structIds.set(name.lexeme, structCount++);
             case Let(v, init):
                 if (v.foreign) {
                     environment.define(v.name.lexeme, compiler.foreignVariables[v.name.lexeme]);
@@ -154,6 +159,28 @@ class Interpreter {
                     // Hack for hot reload to disregard already setup variables
                     if (init != null) environment.define(v.name.lexeme, value);
                 }
+            case Query(keyword, queryArgs, body):
+                final include: Array<Composite.Expression> = [];
+                for (arg in queryArgs) {
+                    final componentId = structIds.get(arg.structName.lexeme);
+                    include.push(arg.not ? Exclude(componentId) : Include(componentId));
+                }
+                context.queryEach(Group(include), (entity, components) -> {
+                    var env = new Environment(environment);
+                    for (i => arg in queryArgs) {
+                        if (arg.name == null) continue;
+                        env.define(arg.name.lexeme, components[i]);
+                    }
+                    try {
+                        try {
+                            executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                        } catch (err: Continue) {
+                            // do nothing
+                        }
+                    } catch (err: Break) {
+                        // do nothing
+                    }
+                });
         }
     }
 
@@ -419,6 +446,16 @@ class Interpreter {
                 }
                 structObj;
             case AnonFunction(params, body, returnType): new Function(null, params, body, environment, false, logger);
+            case Spawn(keyword, args):
+                final entity = context.createEntity('');
+                for (arg in args) {
+                    final v = evaluate(arg);
+                    final struct: StructInstance = v;
+                    final structName = struct.structName.lexeme;
+                    final componentId = structIds.get(structName);
+                    context.addComponent(entity, v, componentId);
+                }
+                entity;
         }
     }
 

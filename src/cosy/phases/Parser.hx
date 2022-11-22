@@ -38,6 +38,7 @@ class Parser {
     function statement(): Stmt {
         // TODO: this list of match can be optimized by doing switch tokens[current]
         if (match([For])) return forStatement();
+        if (match([Query])) return queryStatement();
         if (match([If])) return ifStatement();
         if (match([Print])) return printStatement();
         if (match([Return])) return returnStatement();
@@ -94,6 +95,31 @@ class Parser {
 
             ForCondition(keyword, condition, body);
         }
+    }
+
+    function queryStatement(): Stmt {
+        var keyword = previous();
+
+        // query Entity e, Position p, Velocity _, not Health { ... }
+        final queryArgs: Array<QueryArg> = [];
+        do {
+            final not = match([Bang]);
+            final mut = match([Mut]);
+            final structName = consume(Identifier, 'Expect struct name.');
+            if (!isValidNamedStruct(structName)) error(structName, '"${structName.lexeme}" does not name a struct.');
+            final name = not ? null : consume(Identifier, 'Expect variable name.');
+            queryArgs.push({
+                structName: structName,
+                name: name,
+                mut: mut,
+                not: not
+            });
+        } while (match([Comma]));
+
+        consume(LeftBrace, 'Expect "{" before loop body.');
+        var body = block();
+
+        return Query(keyword, queryArgs, body);
     }
 
     function ifStatement(): Stmt {
@@ -404,6 +430,7 @@ class Parser {
         if (match([True])) return Literal(true);
         if (match([Number])) return Literal(previous().literal);
         if (match([String])) return string();
+        if (match([Spawn])) return spawn();
         if (match([Fn])) return funcBody("function", false);
         if (match([Identifier])) return identifier();
         if (match([Mut])) return MutArgument(previous(), consume(Identifier, 'Expect variable name after "mut".'));
@@ -464,6 +491,21 @@ class Parser {
         } else {
             return expr;
         }
+    }
+
+    function spawn(): Expr {
+        var keyword = previous();
+        consume(LeftParen, 'Expect "(" after "spawn" keyword.');
+        var args: Array<Expr> = [];
+        if (!check(RightParen)) {
+            do {
+                if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
+                args.push(expression()); // TODO: Add a way to validate that this is a named struct at this point?
+            } while (match([Comma]));
+        }
+        consume(RightParen, 'Expect ")" after arguments.');
+
+        return Spawn(keyword, args);
     }
 
     function isValidNamedStruct(token: Token): Bool {

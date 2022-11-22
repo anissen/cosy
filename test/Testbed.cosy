@@ -1,2 +1,31 @@
+struct Position {
+    mut x Num
+    mut y Num
+}
+struct Velocity {
+    mut x Num
+    mut y Num
+}
+struct Age {
+    mut age Num
+}
+
+let e = spawn(Position { x = 3.5, y = 2.1 }, Velocity { x = 1.0, y = -3.2 })
+print e
+let e2 = spawn(Position { x = 0.5, y = 0.1 }, Age { age = 42 })
+print e2
+
+query mut Position p, Velocity v {
+    print 'Printing p and v:'
+	print p
+	print v
+	p.x += v.x
+    p.y += v.y
+}
+//query Entity e, !Velocity {
+query Position p {
+    print 'PART 2: Printing p:'
+	print p
+}
 
 print 'done'

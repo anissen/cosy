@@ -1,5 +1,6 @@
 package cosy;
 
+import cosy.QueryArg;
 import cosy.VariableType;
 
 enum Stmt {
@@ -16,4 +17,6 @@ enum Stmt {
     Return(keyword: Token, value: Expr);
     Struct(name: Token, declarations: Array<Stmt>);
     Let(v: Variable, init: Expr);
+
+    Query(keyword: Token, queryArgs: Array<QueryArg>, body: Array<Stmt>);
 }
