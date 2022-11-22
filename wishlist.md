@@ -128,6 +128,7 @@ fun x() { print "hej" }
 - [ ] Make an annotation for memorizing a function (i.e. cache inputs => output)
 - [ ] A way to initialize a list with a size (like in C++; `vector<int>(height, vector<int>(width, 0)))`)
 - [ ] Find a more elegant way of handling variable/parameter/return type/loop variable/named struct mutability. I may have to replace some enums with structures.
+- [ ] Replace nominal typing with structural typing?
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
@@ -159,14 +160,14 @@ fun x() { print "hej" }
 - [x] Use a code linter (https://github.com/HaxeCheckstyle/haxe-checkstyle)
 - [ ] Put on Haxelib
 - [ ] Make auto-generated documentation for the Cosy standard library (see https://oaklang.org/lib)
+- [ ] Make the playground work again
 
 ## Long shots
 - [ ] Built-in ECS functionality somehow
+- [ ] Fibers á la Wren
 - [ ] Yield functionality (generators or coroutines)
 - [ ] Hot reloading
 - [ ] Make a web-based app for creative coding (á la a _very_ simplified p5.js)
 - [ ] Easy to integrate into C/C++ projects
-- [ ] Fibers á la Wren
-- [ ] Built-in threading
 - [ ] Make a Cosy debugger (https://www.google.com/search?q=how+to+write+a+debugger, https://microsoft.github.io/debug-adapter-protocol/)
-- [ ] Cosy Roguelike (see https://github.com/Kode/Kha/wiki/Tutorials, https://github.com/lewislepton/kha-examples, https://github.com/RblSb/khaguide)
+- [ ] Cosy Roguelike
