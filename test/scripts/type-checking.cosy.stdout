@@ -170,7 +170,7 @@
 245 |     struct S { mut s Num }
 246 |     fn mutate_struct(s) {
 247 |         s.s = 666
-                ^ Cannot reassign properties on non-mutable struct.
+                ^ Cannot set properties on non-mutable struct.
 248 |     }
 249 |     mutate_struct(S { s = 3 })
 
