@@ -46,7 +46,7 @@ class JavaScriptPrinter {
                 if (v.foreign) return ''; // TODO: Is this correct behavior?
                 '${v.mut ? "var" : "const"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '') + ';';
 
-            case Query(keyword, queryArgs, body): throw 'not implemented'; // TODO: Implement
+            case Query(keyword, queryArgs, body): throw 'ECS functionality is not supported for the JavaScript target.';
         }
     }
 
@@ -106,7 +106,7 @@ class JavaScriptPrinter {
                 var parameters = [for (token in params) token.name.lexeme].join(', ');
                 var block = printStmt(Block(body));
                 'function ($parameters) $block';
-            case Spawn(keyword, args): 'SPAWN!';
+            case Spawn(keyword, args): throw 'ECS functionality is not supported for the JavaScript target.';
         }
     }
 }

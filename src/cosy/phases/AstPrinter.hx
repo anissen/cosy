@@ -58,7 +58,15 @@ class AstPrinter {
             case Struct(name, declarations): 'struct ${name.lexeme} ${printBlock(declarations)}';
             case Let(v, init): '${v.foreign ? "foreign " : ""}${v.mut ? "mut" : "let"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
 
-            case Query(keyword, queryArgs, body): throw 'not implemented'; // TODO: Implement
+            case Query(keyword, queryArgs, body):
+                var s = '${keyword.lexeme} ';
+                for (arg in queryArgs) {
+                    if (arg.not) s += '!';
+                    if (arg.mut) s += 'mut ';
+                    if (arg.name != null) s += arg.name.lexeme;
+                    s += arg.structName.lexeme;
+                }
+                '$s ${printBlock(body)}';
         }
     }
 
@@ -95,7 +103,9 @@ class AstPrinter {
                 var retType = returnType.annotated.formatType(true);
                 if (retType != '') retType = ' $retType';
                 'fn($parameters)$retType $block';
-            case Spawn(keyword, args): 'SPAWN!';
+            case Spawn(keyword, args):
+                var sArgs = [for (arg in args) printExpr(arg)].join(', ');
+                '${keyword.lexeme}($sArgs)';
         }
     }
 
