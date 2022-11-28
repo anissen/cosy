@@ -165,22 +165,22 @@ class Interpreter {
                     final componentId = structIds.get(arg.structName.lexeme);
                     include.push(arg.not ? Exclude(componentId) : Include(componentId));
                 }
-                context.queryEach(Group(include), (entity, components) -> {
-                    var env = new Environment(environment);
-                    for (i => arg in queryArgs) {
-                        if (arg.name == null) continue;
-                        env.define(arg.name.lexeme, components[i]);
-                    }
-                    try {
+                var env = new Environment(environment); // cache the environment as an optimization
+                try {
+                    context.queryEach(Group(include), (entity, components) -> {
+                        for (i => arg in queryArgs) {
+                            if (arg.name == null) continue;
+                            env.define(arg.name.lexeme, components[i]);
+                        }
                         try {
                             executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
                         } catch (err: Continue) {
                             // do nothing
                         }
-                    } catch (err: Break) {
-                        // do nothing
-                    }
-                });
+                    });
+                } catch (err: Break) {
+                    // do nothing
+                }
         }
     }
 
