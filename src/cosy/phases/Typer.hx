@@ -165,14 +165,7 @@ class Typer {
                     mut: false,
                     foreign: false,
                 });
-            case Query(keyword, queryArgs, body):
-                // for (arg in queryArgs) {
-                //     final argType = typeExpr(arg);
-                //     if (!argType.match(NamedStruct)) {
-                //         logger.error(keyword, 'Expected variable to be a named struct but got ${formatType(argType)}.');
-                //     }
-                // }
-                typeStmts(body);
+            case Query(keyword, queryArgs, body): typeStmts(body);
         }
     }
 

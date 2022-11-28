@@ -500,7 +500,7 @@ class Parser {
         if (!check(RightParen)) {
             do {
                 if (args.length >= 255) error(peek(), 'Cannot have more than 255 arguments');
-                args.push(expression()); // TODO: Add a way to validate that this is a named struct at this point?
+                args.push(expression());
             } while (match([Comma]));
         }
         consume(RightParen, 'Expect ")" after arguments.');

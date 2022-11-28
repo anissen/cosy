@@ -160,20 +160,20 @@ class Interpreter {
                     if (init != null) environment.define(v.name.lexeme, value);
                 }
             case Query(keyword, queryArgs, body):
-                final include: Array<Composite.Expression> = [];
+                final queryExpression: Array<Composite.Expression> = [];
                 for (arg in queryArgs) {
                     final componentId = structIds.get(arg.structName.lexeme);
-                    include.push(arg.not ? Exclude(componentId) : Include(componentId));
+                    queryExpression.push(arg.not ? Exclude(componentId) : Include(componentId));
                 }
                 var env = new Environment(environment); // cache the environment as an optimization
                 try {
-                    context.queryEach(Group(include), (entity, components) -> {
+                    context.queryEach(Group(queryExpression), (entity, components) -> {
                         for (i => arg in queryArgs) {
                             if (arg.name == null) continue;
                             env.define(arg.name.lexeme, components[i]);
                         }
                         try {
-                            executeBlock(body, env); // TODO: Is it required to create a new environment if name is null?
+                            executeBlock(body, env);
                         } catch (err: Continue) {
                             // do nothing
                         }
