@@ -57,8 +57,9 @@ class Resolver {
             case Break(keyword):
             case Continue(keyword):
             case Let(v, init):
-                if (v.foreign && !compiler.foreignVariables.exists(v.name.lexeme)) logger.error(v.name, 'Foreign variable not set.');
-                if (!snakeCaseRegex.match(v.name.lexeme)) logger.error(v.name, 'Variable names must use snake_case.');
+                final name = v.name.lexeme;
+                if (v.foreign && init == null && !compiler.foreignVariables.exists(name)) logger.error(v.name, 'Foreign variable not set.');
+                if (!snakeCaseRegex.match(name)) logger.error(v.name, 'Variable names must use snake_case.');
                 var member = currentStruct.match(Struct);
                 markTypeAsRead(v.type);
                 declare(v.name, v.mut, member);

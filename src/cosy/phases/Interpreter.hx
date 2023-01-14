@@ -142,22 +142,25 @@ class Interpreter {
                 environment.assign(name, struct);
                 structIds.set(name.lexeme, structCount++);
             case Let(v, init):
+                final name = v.name.lexeme;
+                var value: Any = uninitialized;
+                if (init != null) value = evaluate(init);
+
                 if (v.foreign) {
-                    environment.define(v.name.lexeme, compiler.foreignVariables[v.name.lexeme]);
+                    final initialValue = (compiler.foreignVariables.exists(name) ? compiler.foreignVariables[name] : value);
+                    environment.define(name, initialValue);
                     return;
                 }
 
-                var value: Any = uninitialized;
-                if (init != null) value = evaluate(init);
                 // Uncomment this if you want structs to be be passed by value instead of by reference
                 // if (Std.isOfType(value, StructInstance)) {
                 //     value = (value: StructInstance).clone();
                 // }
                 if (!hotReload) {
-                    environment.define(v.name.lexeme, value);
+                    environment.define(name, value);
                 } else {
                     // Hack for hot reload to disregard already setup variables
-                    if (init != null) environment.define(v.name.lexeme, value);
+                    if (init != null) environment.define(name, value);
                 }
             case Query(keyword, queryArgs, body):
                 final queryExpression: Array<Composite.Expression> = [];

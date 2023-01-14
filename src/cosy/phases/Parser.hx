@@ -107,7 +107,7 @@ class Parser {
             final mut = match([Mut]);
             final structName = consume(Identifier, 'Expect struct name.');
             if (!isValidNamedStruct(structName)) error(structName, '"${structName.lexeme}" does not name a struct.');
-            final name = not ? null : consume(Identifier, 'Expect variable name.');
+            final name = (check(Identifier) ? advance() : null);
             queryArgs.push({
                 structName: structName,
                 name: name,
@@ -162,7 +162,7 @@ class Parser {
         var type = paramType();
 
         var initializer = null;
-        if (!foreign && match([Equal])) initializer = expression();
+        if (match([Equal])) initializer = expression();
 
         return Let({
             name: name,
