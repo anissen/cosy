@@ -171,8 +171,9 @@ class Interpreter {
                 var env = new Environment(environment); // cache the environment as an optimization
                 try {
                     context.queryEach(Group(queryExpression), (entity, components) -> {
-                        for (i => arg in queryArgs) {
-                            if (arg.name == null) continue;
+                        final includeArgs = queryArgs.filter(arg -> !arg.not);
+                        for (i => arg in includeArgs) {
+                            if (arg.name == null) continue; // TODO: Not used components should not be included in the query result at all
                             env.define(arg.name.lexeme, components[i]);
                         }
                         try {
