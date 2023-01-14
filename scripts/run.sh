@@ -1,8 +1,11 @@
-# haxe jvm.hxml && java -jar bin/jvm/cosy.jar $@ 
-# haxe jvm.hxml && cp bin/js/cosy.js docs/playground/cosy.js && java -jar bin/jvm/cosy.jar $@ 
+# Target: Java
+# haxe scripts/jvm.hxml && java -jar bin/jvm/cosy.jar $@ 
 
-# haxe -cp src -D no-inline --run cosy.Cosy $@
+# Target: Node (JavaScript)
+haxe scripts/node.hxml && node bin/node/cosy.js $@
 
-# haxe scripts/node.hxml && node bin/node/cosy.js $@
-# haxe -cp src --run cosy.Cosy $@
-haxe scripts/eval_debug.hxml $@
+# Target: C++
+# haxe scripts/cpp.hxml && ./bin/cpp/cosy $@
+
+# Target: Haxe Eval
+# haxe scripts/eval_debug.hxml $@

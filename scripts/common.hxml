@@ -4,6 +4,16 @@
 -dce full
 -D analyzer-optimize
 
+# from here: https://github.com/HaxeFoundation/haxe/issues/10908
+# -D analyzer-module
+# -D analyzer-optimize
+# -D analyzer-user-var-fusion
+# -D analyzer-const_propagation
+# -D analyzer-copy_propagation
+# -D analyzer-local_dce
+# -D analyzer-fusion
+# -D analyzer-purity_inference
+
 # -D warn_var_shadowing
 
 # --macro nullSafety("cosy", Strict)
