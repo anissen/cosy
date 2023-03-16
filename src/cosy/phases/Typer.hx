@@ -218,6 +218,7 @@ class Typer {
             case Assign(name, op, value):
                 final assigningType = typeExpr(value);
                 final v = variableTypes.get(name.lexeme);
+                if (v == null) return Void;
                 final varType = v.type;
                 if (varType.match(Unknown)) {
                     v.type = assigningType;
@@ -489,7 +490,7 @@ class Typer {
                             if (!matchType(valueType,
                                 memberType.type)) logger.error(name,
                                     'Expected value to be of type ${formatType(memberType.type)} but got ${formatType(valueType)}');
-                        case _: throw 'unexpected';
+                        case _: logger.error(structName, 'Expected struct variable assignment.');
                     }
                 }
                 for (memberName => memberMeta in structsMeta[structName.lexeme].members) {

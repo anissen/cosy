@@ -11,7 +11,7 @@ fun x() { print "hej" }
 - [x] Compile-time error to redefine variable/function
 - [x] No semi-colons
 - [ ] Change assignment to be a statement instead of an expression?
-- [ ] Change more statements into expressions
+- [ ] Change more statements into expressions (see http://journal.stuffwithstuff.com/2023/01/03/type-checking-if-expressions/)
 - [x] No variable shadowing
 - [x] Avoid local function variables overwriting function arguments (e.g. `let a = "local"`)
 - [x] Static analysis for
@@ -129,6 +129,7 @@ fun x() { print "hej" }
 - [ ] A way to initialize a list with a size (like in C++; `vector<int>(height, vector<int>(width, 0)))`)
 - [ ] Find a more elegant way of handling variable/parameter/return type/loop variable/named struct mutability. I may have to replace some enums with structures.
 - [ ] Replace nominal typing with structural typing?
+- [ ] Make `print` return the value it prints
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
