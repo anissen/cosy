@@ -56,14 +56,15 @@ class AstPrinter {
             case Let(v, init): '${v.foreign ? "foreign " : ""}${v.mut ? "mut" : "let"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
 
             case Query(keyword, queryArgs, body):
-                var s = '${keyword.lexeme} ';
-                for (arg in queryArgs) {
-                    if (arg.not) s += '!';
-                    if (arg.mut) s += 'mut ';
-                    if (arg.name != null) s += arg.name.lexeme;
-                    s += arg.structName.lexeme;
-                }
-                '$s ${printBlock(body)}';
+                final args = queryArgs.map(arg -> {
+                    final parts = [];
+                    if (arg.not) parts.push('!');
+                    if (arg.mut) parts.push('mut');
+                    if (arg.name != null) parts.push(arg.name.lexeme);
+                    parts.push(arg.structName.lexeme);
+                    parts.join(' ');
+                });
+                '${keyword.lexeme} ${args.join(", ")} ${printBlock(body)}';
         }
     }
 
@@ -92,7 +93,7 @@ class AstPrinter {
                         (i % 2 == 0 ? e.substr(1, e.length - 2) : '{$e}');
                     }
                 ].join('') + "'";
-            case StructInit(name, decls): printExprBlock(decls);
+            case StructInit(name, decls): '${name.lexeme} ${printExprBlock(decls)}';
             case Unary(op, right): '${op.lexeme}${printExpr(right)}';
             case Variable(name): name.lexeme;
             case AnonFunction(params, body, returnType):
