@@ -39,7 +39,6 @@ class JavaScriptPrinter {
                 var block = printStmt(Block(body));
                 '$declaration($parameters) $block';
             case If(keyword, cond, then, el): 'if (${printExpr(cond)}) ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
-            case Print(keyword, e): 'console.log(${printExpr(e)});';
             case Struct(name, declarations): '// ${name.lexeme} struct';
             case Return(keyword, value): 'return' + (value != null ? ' ${printExpr(value)}' : '') + ';';
             case Let(v, init):
@@ -87,6 +86,9 @@ class JavaScriptPrinter {
                     '$v';
                 };
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? '||' : '&&'} ${printExpr(right)}';
+            case Print(keyword, e):
+                final value = printExpr(e);
+                'console.log($value) || $value';
             case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
             case SetIndex(obj, ranged, from, to, op, value):
                 if (ranged) throw 'Ranged indexing not supported on JavaScript yet!';

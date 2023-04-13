@@ -24,7 +24,6 @@ class Optimizer {
             case Block(statements): Block(optimizeStmts(statements));
             case Expression(e): Expression(optimizeExpr(e));
             case If(keyword, cond, then, el): If(keyword, optimizeExpr(cond), optimizeStmt(then), (el != null ? optimizeStmt(el) : null));
-            case Print(keyword, e): Print(keyword, optimizeExpr(e));
             case Let(v, init): Let(v, (init != null ? optimizeExpr(init) : init));
             case Return(keyword, value): Return(keyword, (value != null ? optimizeExpr(value) : null));
             case _: stmt;
@@ -76,6 +75,7 @@ class Optimizer {
                         });
                     case _: Expr.Logical(l, op, r);
                 }
+            case Print(keyword, e): Print(keyword, optimizeExpr(e));
             case StringInterpolation(parts): Expr.StringInterpolation(parts.map(optimizeExpr));
             case _: expr;
         }

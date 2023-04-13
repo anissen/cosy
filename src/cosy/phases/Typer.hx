@@ -110,10 +110,6 @@ class Typer {
             case ForCondition(keyword, cond, body): typeStmts(body);
             case Function(name, params, body, returnType, foreign): handleFunc(name, params, body, returnType, foreign);
             case Expression(e): typeExpr(e);
-            case Print(keyword, e):
-                var type = typeExpr(e);
-                if (type.match(Void)) logger.error(keyword, 'Cannot print values of type void.');
-                type;
             case If(keyword, cond, then, el):
                 var condType = typeExpr(cond);
                 switch condType {
@@ -407,6 +403,10 @@ class Typer {
                 var v = variableTypes.get(name.lexeme);
                 if (!v.mut) logger.error(name, 'Only mutable structs and arrays can be passed as "mut". You passed ${formatType(v.type, false)}.');
                 v.type;
+            case Print(keyword, e):
+                var type = typeExpr(e);
+                if (type.match(Void)) logger.error(keyword, 'Cannot print values of type void.');
+                type;
             case Set(obj, name, op, value):
                 var objType = typeExpr(obj);
                 objType = switch objType {

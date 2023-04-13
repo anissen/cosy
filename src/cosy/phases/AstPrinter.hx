@@ -51,7 +51,6 @@ class AstPrinter {
                 var block = printBlock(body);
                 '$declaration($parameters)$retType $block';
             case If(keyword, cond, then, el): '${keyword.lexeme} ${printExpr(cond)} ${printStmt(then)}' + (el != null ? ' else ${printStmt(el)}' : '');
-            case Print(keyword, e): '${keyword.lexeme} ${printExpr(e)}';
             case Return(keyword, value): keyword.lexeme + (value != null ? ' ${printExpr(value)}' : '');
             case Struct(name, declarations): 'struct ${name.lexeme} ${printBlock(declarations)}';
             case Let(v, init): '${v.foreign ? "foreign " : ""}${v.mut ? "mut" : "let"} ${v.name.lexeme}' + (init != null ? ' = ${printExpr(init)}' : '');
@@ -84,6 +83,7 @@ class AstPrinter {
                 };
             case Logical(left, op, right): '${printExpr(left)} ${op.type.match(Or) ? 'or' : 'and'} ${printExpr(right)}';
             case MutArgument(keyword, name): 'mut ${name.lexeme}';
+            case Print(keyword, e): '${keyword.lexeme} ${printExpr(e)}';
             case Set(obj, name, op, value): '${printExpr(obj)}.${name.lexeme} ${op.lexeme} ${printExpr(value)}';
             case SetIndex(obj, ranged, from, to, op, value): '${printExpr(obj)}[${formatIndexRange(ranged, from, to)}] ${op.lexeme} ${printExpr(value)}';
             case StringInterpolation(exprs): "'" + [

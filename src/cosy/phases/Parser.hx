@@ -40,7 +40,6 @@ class Parser {
         if (match([For])) return forStatement();
         if (match([Query])) return queryStatement();
         if (match([If])) return ifStatement();
-        if (match([Print])) return printStatement();
         if (match([Return])) return returnStatement();
         if (match([Break])) return Break(previous());
         if (match([Continue])) return Continue(previous());
@@ -130,7 +129,7 @@ class Parser {
         return If(keyword, condition, then, el);
     }
 
-    function printStatement(): Stmt {
+    function printExpression(): Expr {
         var keyword = previous();
         var value = expression();
         return Print(keyword, value);
@@ -430,6 +429,7 @@ class Parser {
         if (match([True])) return Literal(true);
         if (match([Number])) return Literal(previous().literal);
         if (match([String])) return string();
+        if (match([Print])) return printExpression();
         if (match([Spawn])) return spawn();
         if (match([Fn])) return funcBody("function", false);
         if (match([Identifier])) return identifier();

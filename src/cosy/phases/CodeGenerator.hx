@@ -113,10 +113,6 @@ class CodeGenerator {
     function genStmt(stmt: Stmt) {
         if (stmt == null) return;
         switch stmt {
-            case Print(keyword, expr):
-                add_token(keyword);
-                genExpr(expr);
-                emit(Print);
             case Let(v, init):
                 add_token(v.name);
                 genExpr(init);
@@ -266,6 +262,10 @@ class CodeGenerator {
             case Literal(v) if (Std.isOfType(v, Bool)): (v ? emit(PushTrue) : emit(PushFalse));
             case Literal(v) if (Std.isOfType(v, Float)): emit(PushNumber(v));
             case Literal(v) if (Std.isOfType(v, String)): emit(ConstantString(v));
+            case Print(keyword, expr):
+                add_token(keyword);
+                genExpr(expr);
+                emit(Print);
             case Grouping(expr): genExpr(expr);
             case Variable(name):
                 add_token(name);

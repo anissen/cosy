@@ -100,7 +100,6 @@ class Resolver {
                 define(name);
                 resolveFunction(name, params, body, Function, foreign);
             case Expression(e): resolveExpr(e);
-            case Print(keyword, e): resolveExpr(e);
             case If(keyword, cond, then, el):
                 switch cond {
                     case Literal(v) if (Std.isOfType(v, Bool)): logger.error(keyword, 'This condition is always $v.');
@@ -170,6 +169,7 @@ class Resolver {
                 if (from != null) resolveExpr(from);
                 if (to != null) resolveExpr(to);
             case MutArgument(keyword, name): resolveLocal(expr, name, true);
+            case Print(keyword, e): resolveExpr(e);
             case Set(obj, name, op, value):
                 resolveExpr(value);
                 resolveExpr(obj);

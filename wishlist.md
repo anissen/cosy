@@ -129,7 +129,7 @@ fun x() { print "hej" }
 - [ ] A way to initialize a list with a size (like in C++; `vector<int>(height, vector<int>(width, 0)))`)
 - [ ] Find a more elegant way of handling variable/parameter/return type/loop variable/named struct mutability. I may have to replace some enums with structures.
 - [ ] Replace nominal typing with structural typing?
-- [ ] Make `print` return the value it prints
+- [x] Make `print` return the value it prints
 
 # Project wishlist
 - [ ] Make a syntax highlighting extension for vscode
