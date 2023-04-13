@@ -1,7 +1,5 @@
 package cosy.phases;
 
-import cosy.phases.Resolver.Variable;
-
 using cosy.VariableType.VariableTypeTools;
 
 class AstPrinter {
@@ -72,7 +70,7 @@ class AstPrinter {
 
     public function printExpr(expr: Expr): String {
         return switch expr {
-            case ArrayLiteral(keyword, exprs): '[' + [for (expr in exprs) ${printExpr(expr)}].join(',') + ']';
+            case ArrayLiteral(keyword, exprs): '[' + [for (expr in exprs) printExpr(expr)].join(',') + ']';
             case Assign(name, op, value): '${name.lexeme} ${op.lexeme} ${printExpr(value)}';
             case Binary(left, op, right): '${printExpr(left)} ${op.lexeme} ${printExpr(right)}';
             case Call(callee, paren, arguments): '${printExpr(callee)}(${[for (arg in arguments) printExpr(arg)].join(', ')})';
